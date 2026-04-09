@@ -16,7 +16,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-          cache: gradle
 
       - name: Setup Node
         uses: actions/setup-node@v4
