@@ -1,0 +1,18 @@
+{
+  "name": "padeladd-mobile",
+  "version": "1.0.0",
+  "description": "Padeladd Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p www && cp -v ../index.html www/ && cp -rv ../assets www/ && cp -rv ../frontend www/ && node scripts/prep-web.js",
+    "cap:sync": "cap sync",
+    "cap:open:android": "cap open android"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/core": "^5.0.0"
+  }
+}

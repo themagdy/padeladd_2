@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <base href="/padeladd4/">
+    <title>Padeladd</title>
+    <link rel="icon" type="image/png" href="assets/logo_ico.png">
+    <!-- Priority: UI Rules - Clean, modern, minimal UI, Mobile-first -->
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="frontend/css/style.css">
+</head>
+<body>
+    <div id="app">
+        <main id="app-content">
+            <!-- SPA router injects content here -->
+        </main>
+    </div>
+
+    <div id="global-loader" class="loading-overlay" style="display: none;">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading...</div>
+    </div>
+
+    <!-- Core App Logic -->
+    <script src="frontend/js/config.js"></script>
+    <script src="frontend/js/auth.js"></script>
+    <script src="frontend/js/api.js"></script>
+    <script src="frontend/js/controllers.js"></script>
+    <script src="frontend/js/router.js"></script>
+    <script src="frontend/js/app.js"></script>
+</body>
+</html>

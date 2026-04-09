@@ -1,0 +1,6 @@
+{
+  "appId": "com.padeladd.app",
+  "appName": "Padeladd",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

@@ -1,0 +1,51 @@
+<?php
+$pdo = getDB();
+
+$userId = $data['user_id'] ?? null;
+$code = trim($data['code'] ?? '');
+
+if (empty($userId) || empty($code)) {
+    jsonResponse(false, 'User ID and OTP are required.');
+}
+
+$stmt = $pdo->prepare("SELECT * FROM verification_codes WHERE user_id = ? AND code_value = ? AND code_type = 'sms' AND is_used = 0 AND expires_at > NOW()");
+$stmt->execute([$userId, $code]);
+$tokenRow = $stmt->fetch();
+
+if (!$tokenRow) {
+    jsonResponse(false, 'Invalid or expired OTP.');
+}
+
+try {
+    $pdo->beginTransaction();
+    
+    // Mark verified
+    $updateUser = $pdo->prepare("UPDATE users SET is_phone_verified = 1 WHERE id = ?");
+    $updateUser->execute([$userId]);
+
+    // Mark code used
+    $updateCode = $pdo->prepare("UPDATE verification_codes SET is_used = 1 WHERE id = ?");
+    $updateCode->execute([$tokenRow['id']]);
+
+    $pdo->commit();
+
+    // Check if fully verified to auto-login
+    $stmtCheck = $pdo->prepare("SELECT is_email_verified, is_phone_verified FROM users WHERE id = ?");
+    $stmtCheck->execute([$userId]);
+    $u = $stmtCheck->fetch();
+
+    $authToken = null;
+    if ($u['is_email_verified'] && $u['is_phone_verified']) {
+        $authToken = generateRandomString(40);
+        $pdo->prepare("UPDATE users SET auth_token = ? WHERE id = ?")->execute([$authToken, $userId]);
+    }
+
+    jsonResponse(true, 'Phone successfully verified.', [
+        'token' => $authToken,
+        'fully_verified' => ($authToken !== null)
+    ]);
+} catch (Exception $e) {
+    $pdo->rollBack();
+    jsonResponse(false, 'OTP Verification failed due to server error.');
+}
+?>

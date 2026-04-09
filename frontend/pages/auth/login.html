@@ -1,0 +1,65 @@
+<div class="auth-page desktop-split-auth page active">
+  <header class="auth-desk-header">
+    <div class="auth-desk-header-inner" style="display:flex; justify-content:space-between; align-items:center; width:100%; max-width:1440px; margin:0 auto; padding:0 80px;">
+      <div class="header-logo">
+        <img src="assets/logo.png" alt="Padeladd" style="height: 54px; width: auto;">
+      </div>
+      <a href="#" class="header-link">CONTACT US</a>
+    </div>
+  </header>
+
+  <div class="auth-split-container">
+    
+    <!-- Left Side: Marketing -->
+    <div class="auth-marketing">
+      <div class="marketing-img hidden-mobile">
+        <img src="assets/landing_banner.jpg" alt="Padeladd Egypt" style="width:100%; height:280px; object-fit:cover; border-radius:12px; margin-bottom:40px;">
+      </div>
+      <div class="marketing-content">
+        <h3 class="marketing-tag">Growing Padel in <span class="text-orange" style="color: var(--c-orange);">Egypt</span> 🇪🇬</h3>
+        <h1 class="marketing-headline" style="font-weight:800; margin:10px 0;">Compete. <span class="text-orange" style="color: var(--c-orange);">Rank</span> Up,<br><span class="text-orange" style="color: var(--c-orange);">Dominate</span> the Court.</h1>
+        <p class="marketing-desc hidden-mobile" style="color:var(--c-text-muted); margin-bottom:24px;">Padeladd is the ultimate padel ranking platform. Create matches, challenge opponents, and climb the leaderboard. Fair play, competitive spirit, real rankings.</p>
+        <button class="btn btn-primary" style="padding:16px 40px; font-size:16px; width:auto;" data-link href="/register">Sign up, it's Free!</button>
+      </div>
+    </div>
+
+    <!-- Right Side: The Form -->
+    <div class="auth-form-wrap">
+      <!-- Unified Title -->
+      <h1 class="auth-desk-title" style="font-size:24px; font-weight:700; margin-bottom:30px;">Sign in to Padeladd</h1>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label hidden-desktop" for="login-email">Email</label>
+          <input class="form-input form-input-lg" type="email" id="login-email" name="email" placeholder="Phone number or email address" autocomplete="email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label hidden-desktop" for="login-password">Password</label>
+          <div class="password-wrap">
+            <input class="form-input form-input-lg" type="password" id="login-password" name="password" placeholder="Password" autocomplete="current-password" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg mt-md" id="btn-login" style="padding:16px; font-size:16px;">
+          <span>Sign in</span>
+        </button>
+
+        <div class="auth-centered-link" style="text-align:center; margin-top:25px;">
+          <a data-link href="/forgot-password" class="auth-link text-sm" style="color: var(--c-primary); font-weight: 600;">Forgot your password?</a>
+        </div>
+
+
+      </form>
+    </div>
+  
+  </div>
+
+  <!-- Footer -->
+  <footer class="auth-desk-footer" style="margin-top:auto; border-top:1px solid var(--c-border);">
+    <div class="auth-desk-footer-inner" style="display:flex; justify-content:space-between; width:100%; max-width:1440px; margin:0 auto; padding:30px 80px; color:var(--c-text-dim); font-size:12px;">
+      <div class="footer-terms">Check our <span class="text-orange" style="cursor:pointer; color:var(--c-orange);">terms of use</span></div>
+      <div class="footer-version">Padeladd V1.0</div>
+    </div>
+  </footer>
+</div>

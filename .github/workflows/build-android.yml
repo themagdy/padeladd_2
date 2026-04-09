@@ -1,0 +1,48 @@
+name: Build Android
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: mobile_app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: mobile_app
+        run: npm install
+
+      - name: Build Web Assets
+        working-directory: mobile_app
+        run: npm run build
+
+      - name: Capacitor Sync
+        working-directory: mobile_app
+        run: npx cap sync
+
+      - name: Build Android APK
+        working-directory: mobile_app/android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug.apk
+          path: mobile_app/android/app/build/outputs/apk/debug/app-debug.apk

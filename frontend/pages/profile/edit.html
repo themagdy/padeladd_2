@@ -1,0 +1,83 @@
+<div class="profile-container page active" style="max-width: 480px; margin: 20px auto; padding: 20px; text-align: left;">
+    <div style="margin-bottom:10px; text-align:left;">
+      <a href="javascript:history.back()" style="display:inline-flex; align-items:center; background:transparent; border:none; color:var(--c-text); text-decoration:none; margin-left:-14px;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
+    <div class="auth-logo" style="display:flex; justify-content:left; margin: 24px 0 24px 0;">
+      <img src="assets/logo_ico.png" alt="Padeladd" style="width:38px; height:auto; object-fit:contain;">
+    </div>
+    <h1 class="auth-title" style="font-size:24px; font-weight:800; text-align:left;">Complete Your Profile</h1>
+    <p style="opacity: 0.8; margin-bottom: 20px; text-align:left;">Tell us more about yourself to join the leaderboard.</p>
+    
+    <form id="profile-form" novalidate>
+        <div class="form-group">
+            <label class="form-label">Nickname (Optional)</label>
+            <input type="text" name="nickname" class="form-input" placeholder="e.g. Smash King">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Date of Birth *</label>
+            <div style="display: flex; gap: 8px;">
+                <select name="dob_day" class="form-select" style="flex: 0.8;" required>
+                    <option value="">Day</option>
+                </select>
+                <select name="dob_month" class="form-select" style="flex: 1.5;" required>
+                    <option value="">Month</option>
+                    <option value="01">Jan</option>
+                    <option value="02">Feb</option>
+                    <option value="03">Mar</option>
+                    <option value="04">Apr</option>
+                    <option value="05">May</option>
+                    <option value="06">Jun</option>
+                    <option value="07">Jul</option>
+                    <option value="08">Aug</option>
+                    <option value="09">Sep</option>
+                    <option value="10">Oct</option>
+                    <option value="11">Nov</option>
+                    <option value="12">Dec</option>
+                </select>
+                <select name="dob_year" class="form-select" style="flex: 1.2;" required>
+                    <option value="">Year</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label class="form-label">Gender *</label>
+                <select name="gender" class="form-select" required>
+                    <option value="">Select...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                <label class="form-label">Playing Hand *</label>
+                <select name="playing_hand" class="form-select" required>
+                    <option value="">Select...</option>
+                    <option value="right">Right</option>
+                    <option value="left">Left</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Location</label>
+            <select name="location" class="form-select">
+                <option value="">Select city...</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Giza">Giza</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Sahel">Sahel</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Short Bio</label>
+            <textarea name="bio" class="form-textarea" rows="3" placeholder="A bit about your playstyle..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Save Profile & Start Playing</button>
+    </form>
+</div>

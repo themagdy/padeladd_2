@@ -1,0 +1,55 @@
+<div class="auth-page page active" style="padding: 20px; max-width: 480px; margin: 0 auto; text-align: left;">
+    <div style="margin-bottom:10px; text-align:left;">
+      <a href="javascript:history.back()" style="display:inline-flex; align-items:center; background:transparent; border:none; color:var(--c-text); text-decoration:none; margin-left:-14px;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </a>
+    </div>
+    <div class="auth-logo" style="display:flex; justify-content:left; margin: 24px 0 24px 0;">
+      <img src="assets/logo_ico.png" alt="Padeladd" style="width:38px; height:auto; object-fit:contain;">
+    </div>
+    <h1 class="auth-title" style="font-size:24px; font-weight:800; text-align:left;">Verify Account</h1>
+    <p class="text-muted text-sm mb-md" style="color:var(--c-text-muted); text-align:left; margin-bottom: 30px;">
+        Follow the steps below to activate your Padeladd account.
+    </p>
+
+    <!-- Email Step -->
+    <div class="verify-step-box" style="background:var(--c-bg-card); padding:20px; border-radius:16px; border:1px solid var(--c-border); margin-bottom:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:rgba(27,82,206,0.1); display:flex; align-items:center; justify-content:center; color:var(--c-primary); font-weight:700;">1</div>
+                <span class="form-label" style="margin-bottom:0; text-transform:none;">Email Verification</span>
+            </div>
+            <span id="email-status-badge" class="badge badge-orange">Pending</span>
+        </div>
+        <p style="font-size:13px; color:var(--c-text-muted); line-height:1.4;">
+            We've sent a verification link to your email. Please click it to verify your address.
+        </p>
+        <div id="email-verified-msg" style="display:none; color:var(--c-green); font-size:13px; font-weight:600; margin-top:10px;">
+            ✓ Email verified successfully
+        </div>
+    </div>
+
+    <!-- WhatsApp Step -->
+    <div class="verify-step-box" style="background:var(--c-bg-card); padding:20px; border-radius:16px; border:1px solid var(--c-border); margin-bottom:24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:rgba(27,82,206,0.1); display:flex; align-items:center; justify-content:center; color:var(--c-primary); font-weight:700;">2</div>
+                <span class="form-label" style="margin-bottom:0; text-transform:none;">WhatsApp OTP</span>
+            </div>
+            <span id="sms-status-badge" class="badge badge-orange">Pending</span>
+        </div>
+        
+        <form id="verify-sms-form" novalidate>
+            <div class="form-group" style="margin-bottom:15px;">
+                <input class="form-input" type="text" name="code" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric" required style="text-align:center; font-size:20px; letter-spacing:4px; font-weight:800;">
+            </div>
+            <button type="submit" class="btn btn-secondary" id="btn-verify-sms">Verify OTP</button>
+        </form>
+    </div>
+
+    <button id="btn-complete-verify" class="btn btn-primary" disabled style="margin-bottom:20px; opacity:0.3;">Continue to Profile →</button>
+
+    <p style="text-align:center; font-size:13px; color:var(--c-text-muted);">
+        Didn't receive code? <a href="#" id="resend-codes" style="color:var(--c-primary); font-weight:600;">Resend now</a>
+    </p>
+</div>
