@@ -1954,7 +1954,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 32px 0 12px; /* Less left (12px), More right (32px) */
+    padding: 0 32px 0 5px; /* Extremely tight left (5px), More right (32px) */
     gap: 0;
   }
 
