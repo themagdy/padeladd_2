@@ -350,7 +350,10 @@ const DashboardController = {
 
         // Nav avatar
         const av = document.getElementById('nav-avatar');
-        if (av) av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+        if (av) {
+            av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+            av.setAttribute('onclick', `Router.navigate('/profile/view/${user.id}')`);
+        }
 
         // Stats
         const rankEl = document.getElementById('dash-ranking');
@@ -494,6 +497,12 @@ const ProfileViewController = {
         // Avatar
         const av = document.getElementById('prof-avatar');
         if (av) av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+
+        // Edit button visibility (only for self)
+        const editBtn = document.getElementById('prof-edit-btn');
+        if (editBtn) {
+            editBtn.style.display = (!params || !params.id) ? 'block' : 'none';
+        }
 
         // Name
         const nameEl = document.getElementById('prof-name');
