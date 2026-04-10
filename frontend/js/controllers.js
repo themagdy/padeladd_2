@@ -352,7 +352,9 @@ const DashboardController = {
         const av = document.getElementById('nav-avatar');
         if (av) {
             av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
-            av.setAttribute('onclick', `Router.navigate('/profile/view/${user.id}')`);
+            // Use player_code for the link if available
+            const linkId = profile?.player_code || user.id;
+            av.setAttribute('onclick', `Router.navigate('/profile/view/${linkId}')`);
         }
 
         // Stats
@@ -489,7 +491,13 @@ const DashboardController = {
 // -------------------------------------------------------
 const ProfileViewController = {
     init: async function(params) {
-        const payload = params && params.id ? { user_id: params.id } : {};
+        // ID could be user_id (numeric) or player_code (string)
+        const payload = {};
+        if (params && params.id) {
+            if (/^\d+$/.test(params.id)) payload.target_id = params.id;
+            else payload.player_code = params.id;
+        }
+        
         const res = await API.post('/profile/get', payload);
         if (!res || !res.success) return;
         const { user, profile, stats } = res.data;

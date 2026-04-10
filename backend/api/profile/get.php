@@ -2,19 +2,37 @@
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 
+// Logic: If target_id or player_code is provided, fetch THAT user. Otherwise, fetch self.
+$targetId = $data['target_id'] ?? null;
+$playerCode = $data['player_code'] ?? null;
+
+if ($playerCode) {
+    // Find user by player_code
+    $stmtFind = $pdo->prepare("SELECT user_id FROM user_profiles WHERE player_code = ?");
+    $stmtFind->execute([$playerCode]);
+    $found = $stmtFind->fetch();
+    if (!$found) jsonResponse(false, 'Player not found.');
+    $viewingId = $found['user_id'];
+} elseif ($targetId) {
+    $viewingId = $targetId;
+} else {
+    $viewingId = $user['id'];
+}
+
 // Get basic user info
 $stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile FROM users WHERE id = ?");
-$stmtUser->execute([$user['id']]);
+$stmtUser->execute([$viewingId]);
 $u = $stmtUser->fetch();
+if (!$u) jsonResponse(false, 'User not found.');
 
 // Get profile info
 $stmtProf = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id = ?");
-$stmtProf->execute([$user['id']]);
+$stmtProf->execute([$viewingId]);
 $profile = $stmtProf->fetch();
 
 // Get stats
 $stmtStats = $pdo->prepare("SELECT * FROM player_stats WHERE user_id = ?");
-$stmtStats->execute([$user['id']]);
+$stmtStats->execute([$viewingId]);
 $stats = $stmtStats->fetch();
 
 // Calculate age if DOB available
