@@ -6,7 +6,7 @@
          WELCOME + STATS SECTION
     ═══════════════════════════════════════════ -->
     <div style="padding:40px 0 32px; border-bottom:1px solid var(--c-border);">
-      <h1 style="font-size:32px; font-weight:400; margin-bottom:6px;">Welcome back, <strong id="dash-name" style="font-weight:800;">Player</strong></h1>
+      <h1 class="dash-title" style="font-size:32px; font-weight:400; margin-bottom:6px;">Welcome back, <strong id="dash-name" style="font-weight:800;">Player</strong></h1>
       <p style="color:var(--c-text-muted); font-size:15px; margin-bottom:32px;">Here's your padel overview</p>
 
       <!-- Stats + Actions grid -->
@@ -43,7 +43,7 @@
         <!-- Right action column -->
         <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:10px;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" style="background:#0062E6; border:none; border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:16px; font-weight:800; color:#fff; transition:all 0.2s;" onmouseover="this.style.background='#0052cc'" onmouseout="this.style.background='#0062E6'">
+          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between;">
             <span style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:20px;">🔥</span>
               <span><span id="dash-upcoming-count" style="font-size:20px; margin-right:4px;">0</span> Upcoming Matches</span>
@@ -52,10 +52,10 @@
           </button>
           <!-- Create / Join -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button onclick="Router.navigate('/matches/create')" style="background:#293342; border:none; border-radius:18px; padding:16px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
+            <button onclick="Router.navigate('/matches/create')" class="btn" style="background:#293342; color:#fff;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
               <span style="font-size:18px;">🎾</span> Create
             </button>
-            <button onclick="Router.navigate('/matches/join')" style="background:#293342; border:none; border-radius:18px; padding:16px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
+            <button onclick="Router.navigate('/matches/join')" class="btn" style="background:#293342; color:#fff;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
               <span style="font-size:18px;">🔍</span> Join
             </button>
           </div>
@@ -95,7 +95,7 @@
           <div class="skeleton" style="height:54px; border-radius:10px; margin-bottom:8px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px; width:100%;">Full Ranking</button>
+        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px;">Full Ranking</button>
       </div>
 
       <!-- RIGHT: LATEST MATCHES -->
@@ -117,7 +117,7 @@
           <div class="skeleton" style="height:100px; border-radius:14px; margin-bottom:12px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px; width:100%;">All Matches</button>
+        <button onclick="Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px;">All Matches</button>
       </div>
     </div>
 
