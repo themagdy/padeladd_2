@@ -7,10 +7,10 @@
     SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
     CGIPassAuth On
 
-    RewriteBase /padeladd4/
+    # Handle SPA routing - relative to wherever .htaccess is placed
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    # Exclude the backend/api directory from frontend routing
-    RewriteCond %{REQUEST_URI} !^/padeladd4/backend/api/
+    # Exclude the backend/api directory from frontend routing (wildcard match)
+    RewriteCond %{REQUEST_URI} !/backend/api/
     RewriteRule ^ index.html [QSA,L]
 </IfModule>
