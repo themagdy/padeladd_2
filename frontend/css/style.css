@@ -1954,7 +1954,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 5px;
+    padding: 0 20px; /* Match standard page padding */
     gap: 0;
   }
 
@@ -1966,7 +1966,7 @@ ul, ol { list-style: none; }
     flex: 1;
     min-width: 0 !important;
     width: auto !important;
-    padding-left: 10px;
+    padding-left: 0; /* Remove offset for alignment */
     cursor: pointer;
   }
   .nav-logo img {
@@ -2048,7 +2048,7 @@ ul, ol { list-style: none; }
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    margin: 0 12px 0 0; /* More right margin, 0 extra left margin */
+    margin: 0; /* Align with container edge */
   }
   .nav-notif img {
     width: 24px;
