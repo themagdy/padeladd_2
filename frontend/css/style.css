@@ -1952,13 +1952,13 @@ ul, ol { list-style: none; }
   .nav-container {
     display: flex !important;
     align-items: center;
-    justify-content: center; /* Centered cluster */
+    justify-content: center !important; /* Forces centered tight cluster */
     width: 100%;
     padding: 0;
-    gap: 1px; /* Precision 1px gap between all 6 items */
+    gap: 1px !important; /* Precision 1px gap between every item */
   }
 
-  /* Flatten hierarchy: all 6 items become direct flex children */
+  /* Flatten all groups into a single row of 6 direct children */
   .nav-links, .nav-right {
     display: contents !important;
   }
@@ -1966,9 +1966,12 @@ ul, ol { list-style: none; }
   /* ---- ZONE 1: Logo ---- */
   .nav-logo {
     display: flex !important;
+    flex: none !important;
     align-items: center;
     justify-content: center;
     width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important; /* True 1px distance */
     cursor: pointer;
   }
   .nav-logo img {
@@ -1982,14 +1985,16 @@ ul, ol { list-style: none; }
   /* ---- Nav link items (Tight Cluster) ---- */
   .nav-links .nav-item {
     display: flex !important;
+    flex: none !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: auto !important;
     gap: 4px;
+    margin: 0 !important;
+    padding: 0 !important; /* True 1px distance */
     cursor: pointer;
     text-decoration: none;
-    padding: 0 10px; /* Some internal padding to make the icon clickable */
   }
   .nav-links .nav-item img {
     height: 20px;
@@ -2005,18 +2010,21 @@ ul, ol { list-style: none; }
   /* ---- User section ---- */
   .nav-right .nav-notif {
     display: flex !important;
+    flex: none !important;
     align-items: center;
     justify-content: center;
-    padding: 0 10px;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   /* ---- Avatar ---- */
   .avatar-circle {
     display: flex !important;
+    flex: none !important;
     align-items: center;
     justify-content: center;
-    width: 48px !important;
-    height: 48px !important;
+    width: 44px !important; /* Slighly smaller for tight layout */
+    height: 44px !important;
     border-radius: 50% !important;
     font-size: 16px !important;
     font-weight: 800 !important;
@@ -2030,11 +2038,12 @@ ul, ol { list-style: none; }
   /* ---- Notification bell ---- */
   .nav-notif {
     display: flex !important;
+    flex: none !important;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
     position: relative;
-    margin: 0; /* Align with container edge */
+    margin: 0 !important;
+    padding: 0 !important;
   }
   .nav-notif img {
     width: 24px;
