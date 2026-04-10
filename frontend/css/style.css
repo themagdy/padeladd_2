@@ -1738,7 +1738,7 @@ ul, ol { list-style: none; }
   gap: 12px;
   min-width: 0;
   cursor: pointer;
-  margin-left: -8px; /* Balanced alignment with content guidelines */
+  margin-left: 0; /* Aligned flush with 20px container padding */
   flex-shrink: 0;
 }
 
@@ -2065,7 +2065,7 @@ ul, ol { list-style: none; }
   
   #main-nav .nav-logo {
     display: flex !important;
-    margin-left: -8px !important; /* Visual alignment with dashboard content */
+    margin-left: 0 !important; /* Visual alignment with dashboard content */
     min-width: 0 !important;
     flex: none !important;
   }
