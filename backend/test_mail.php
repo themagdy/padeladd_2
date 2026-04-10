@@ -1,27 +1,22 @@
 <?php
-echo "<h1>Mail Diagnostic - Iteration 3 (Plain Text)</h1>";
+echo "<h1>Mail Diagnostic - Iteration 4 (Bare Minimum)</h1>";
 
 $to = 'aworking@gmail.com';
-$subject = "Plain Text Test - " . date('H:i:s');
-$fromEmail = 'no-reply@ahmedmagdy.com';
+$subject = "Padeladd Minimal Test";
+$fromEmail = 'themagdy@ahmedmagdy.com'; // Trying a different sender name
 
-// Pure plain text - no HTML at all
-$message = "This is Iteration 3.\n";
-$message .= "If you see this, then simple plain text mails are working.\n";
-$message .= "Time: " . date('Y-m-d H:i:s');
+$message = "Test message from Padeladd app.\nIf you received this, the minimal style is working.";
 
-// Using \n (Linux Style) which is often required on many shared hosts
-$headers = "From: Padeladd <$fromEmail>\n";
-$headers .= "Reply-To: $fromEmail\n";
-$headers .= "X-Mailer: PHP/" . phpversion();
+// Absolute minimum header - exactly like a 5-line contact form
+$headers = "From: " . $fromEmail;
 
-echo "Attempting PLAIN TEXT send to: <b>$to</b>...<br>";
+echo "Attempting BARE MINIMUM send to: <b>$to</b> from <b>$fromEmail</b>...<br>";
 
-$result = mail($to, $subject, $message, $headers, "-f $fromEmail");
+$result = mail($to, $subject, $message, $headers);
 
 if ($result) {
-    echo "<span style='color: green; font-weight: bold;'>SUCCESS!</span> Server accepted plain text mail.<br>";
+    echo "<span style='color: green; font-weight: bold;'>SUCCESS!</span> Bare minimum mail accepted.<br>";
 } else {
-    echo "<span style='color: red; font-weight: bold;'>FAILED!</span> Server rejected even plain text.<br>";
+    echo "<span style='color: red; font-weight: bold;'>FAILED!</span>";
 }
 ?>
