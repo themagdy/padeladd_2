@@ -20,23 +20,23 @@ if (!preg_match('/^01[0125][0-9]{8}$/', $mobile)) {
     jsonResponse(false, 'Invalid Egyptian mobile number. Must be 11 digits starting with 01.');
 }
 
-// Check uniqueness (Only blocking if verified)
-$stmt = $pdo->prepare("SELECT id, email, mobile, is_email_verified, is_phone_verified FROM users WHERE email = ? OR mobile = ?");
+// Check uniqueness
+$stmt = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, email, mobile FROM users WHERE email = ? OR mobile = ?");
 $stmt->execute([$email, $mobile]);
-$existing = $stmt->fetch();
+$existingUsers = $stmt->fetchAll();
 
-if ($existing) {
-    // If it's the exact same email AND same mobile, we allow "Restarting" by deleting stale
-    if ($existing['email'] === $email && $existing['mobile'] === $mobile && !$existing['is_email_verified'] && !$existing['is_phone_verified']) {
-        $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$existing['id']]);
-    } else {
-        // Otherwise, if either is already verified OR if it's a cross-match, block it.
-        if ($existing['email'] === $email) {
-            jsonResponse(false, 'Email is already registered.');
-        } else {
-            jsonResponse(false, 'Mobile number is already registered.');
-        }
+foreach ($existingUsers as $existing) {
+    if ($existing['email'] === $email && $existing['is_email_verified']) {
+        jsonResponse(false, 'Email is already registered.');
     }
+    if ($existing['mobile'] === $mobile && $existing['is_phone_verified']) {
+        jsonResponse(false, 'Mobile number is already registered.');
+    }
+}
+
+// If we reached here, any matches are unverified. Clear them out so this new registration can proceed.
+foreach ($existingUsers as $existing) {
+    $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$existing['id']]);
 }
 
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -66,7 +66,7 @@ try {
     $message = "Welcome to Padeladd! Please verify your email address to active your account and start your Padel journey.";
     sendEmail($email, "Welcome to Padeladd - Verify Your Email", $message, "Verify Email", $verifyLink);
 
-    jsonResponse(true, 'Registration successful. We\'ve sent a verification link to your email address.');
+    jsonResponse(true, 'Registration successful. We\'ve sent a verification link to your email address.', ['user_id' => $userId]);
 
 } catch (Exception $e) {
     $pdo->rollBack();

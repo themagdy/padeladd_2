@@ -36,6 +36,14 @@ try {
     $updateCode = $pdo->prepare("UPDATE verification_codes SET is_used = 1 WHERE id = ?");
     $updateCode->execute([$tokenRow['id']]);
 
+    // Cleanup: Remove any other unverified accounts using this verified phone
+    $verifiedMobile = $pdo->prepare("SELECT mobile FROM users WHERE id = ?");
+    $verifiedMobile->execute([$userId]);
+    $mobileStr = $verifiedMobile->fetchColumn();
+    if ($mobileStr) {
+        $pdo->prepare("DELETE FROM users WHERE mobile = ? AND is_phone_verified = 0 AND id != ?")->execute([$mobileStr, $userId]);
+    }
+
     $pdo->commit();
 
     // Check if fully verified to auto-login

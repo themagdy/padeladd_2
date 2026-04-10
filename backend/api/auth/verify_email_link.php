@@ -42,6 +42,15 @@ try {
     $stmtDone = $pdo->prepare("UPDATE verification_codes SET is_used = 1 WHERE id = ?");
     $stmtDone->execute([$row['id']]);
 
+    // Cleanup: Remove any other unverified accounts using this verified email
+    $pdo->prepare("SELECT email FROM users WHERE id = ?")->execute([$row['user_id']]);
+    $verifiedEmail = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+    $verifiedEmail->execute([$row['user_id']]);
+    $emailStr = $verifiedEmail->fetchColumn();
+    if ($emailStr) {
+        $pdo->prepare("DELETE FROM users WHERE email = ? AND is_email_verified = 0 AND id != ?")->execute([$emailStr, $row['user_id']]);
+    }
+
     $pdo->commit();
 
     // Check if fully verified to auto-login
