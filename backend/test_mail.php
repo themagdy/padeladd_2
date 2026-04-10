@@ -1,23 +1,39 @@
 <?php
-require_once __DIR__ . '/core/db.php';
-require_once __DIR__ . '/helpers/response.php';
-require_once __DIR__ . '/helpers/mail_helper.php';
+define('SITE_URL', 'https://ahmedmagdy.com/pl'); // Temporary for testing
 
-// Change this to YOUR email address to test
-$testEmail = 'aworking@gmail.com'; 
+echo "<h1>Mail Diagnostic - Iteration 2</h1>";
 
-echo "<h1>Mail Diagnostic</h1>";
-echo "Attempting to send a test email to: <b>$testEmail</b>...<br><br>";
+$to = 'aworking@gmail.com';
+$subject = "Padeladd Diagnostic - " . date('H:i:s');
+$fromEmail = 'no-reply@ahmedmagdy.com';
+$siteName = 'Padeladd';
 
-$result = sendEmail($testEmail, "Padeladd Test Diagnostic", "If you are reading this, your server is capable of sending HTML emails!", "Visit Site", "https://ahmedmagdy.com/pl");
+// Simplest possible HTML content to avoid spam filters
+$message = "
+<html>
+<body>
+    <h2 style='color: #f7941d;'>PADELADD</h2>
+    <p>This is a manual diagnostic test to see which headers your server requires.</p>
+    <p>Time sent: " . date('Y-m-d H:i:s') . "</p>
+    <a href='https://ahmedmagdy.com/pl' style='background: #f7941d; color: black; padding: 10px 20px; text-decoration: none;'>Verify Email</a>
+</body>
+</html>
+";
+
+// TRYING BASIC HEADERS
+$headers = "From: $siteName <$fromEmail>\r\n";
+$headers .= "Reply-To: $fromEmail\r\n";
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-type: text/html; charset=UTF-8\r\n";
+
+echo "Attempting to send to: <b>$to</b>...<br>";
+
+// We use the 5th parameter -f which is often CRITICAL
+$result = mail($to, $subject, $message, $headers, "-f $fromEmail");
 
 if ($result) {
-    echo "<span style='color: green; font-weight: bold;'>SUCCESS!</span> The server accepted the mail for delivery.<br>";
-    echo "<i>Note: If you don't see it, check your SPAM/Junk folder.</i>";
+    echo "<span style='color: green; font-weight: bold;'>SUCCESS!</span> Server accepted mail.<br>";
 } else {
-    echo "<span style='color: red; font-weight: bold;'>FAILED!</span> The PHP mail() function returned FALSE.<br>";
-    echo "Possible reasons:<br>";
-    echo "1. The host has disabled mail() function.<br>";
-    echo "2. The 'From' address needs to be exactly an email hosted on this domain (e.g. info@ahmedmagdy.com).<br>";
+    echo "<span style='color: red; font-weight: bold;'>FAILED!</span> Server rejected mail.<br>";
 }
 ?>
