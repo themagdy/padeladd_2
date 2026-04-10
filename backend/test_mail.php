@@ -4,7 +4,7 @@ require_once __DIR__ . '/helpers/response.php';
 require_once __DIR__ . '/helpers/mail_helper.php';
 
 // Change this to YOUR email address to test
-$testEmail = 'themagdy@gmail.com'; 
+$testEmail = 'aworking@gmail.com'; 
 
 echo "<h1>Mail Diagnostic</h1>";
 echo "Attempting to send a test email to: <b>$testEmail</b>...<br><br>";
