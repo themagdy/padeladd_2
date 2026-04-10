@@ -1959,17 +1959,17 @@ ul, ol { list-style: none; }
 
   /* ---- ZONE 1: Logo (left) ---- */
   .nav-logo {
-    flex: 0 0 auto;
+    flex: 1;
     display: flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     min-width: 0;
-    padding-right: 14px;
+    padding: 0;
     gap: 0;
   }
   .nav-logo img {
-    height: 46px;
+    height: 28px;
     width: auto;
   }
   /* Hide the "Padeladd" text on mobile */
@@ -1979,11 +1979,11 @@ ul, ol { list-style: none; }
 
   /* ---- ZONE 2: Center links ---- */
   .nav-links {
-    flex: 1 1 auto;
+    flex: 3;
     display: flex !important;
     flex-direction: row !important;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     margin: 0;
     gap: 0;
   }
@@ -1991,17 +1991,17 @@ ul, ol { list-style: none; }
     display: flex !important;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     cursor: pointer;
     text-decoration: none;
     padding: 0;
   }
   .nav-links .nav-item img {
-    height: 22px;
+    height: 18px;
     width: auto;
   }
   .nav-links .nav-item .nav-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.8px;
     color: var(--c-text);
@@ -2009,21 +2009,22 @@ ul, ol { list-style: none; }
 
   /* ---- ZONE 3: User section (right, separated by a line) ---- */
   .nav-right {
-    flex: 0 0 auto;
+    flex: 2;
     display: flex !important;
     flex-direction: row !important;
     align-items: center;
-    gap: 14px;
-    padding-left: 16px;
+    justify-content: center;
+    gap: 16px;
+    padding-left: 14px;
     border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
 
-  /* Large circular avatar */
+  /* Avatar */
   .avatar-circle {
-    width: 48px !important;
-    height: 48px !important;
+    width: 38px !important;
+    height: 38px !important;
     border-radius: 50% !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     background: var(--g-primary) !important;
     display: flex !important;
