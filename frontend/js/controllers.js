@@ -67,6 +67,7 @@ const AuthController = {
         
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            Auth.clearAll();
             UI.clearErrors(form);
 
             if (!form.first_name.value) { UI.showError('first_name', 'First name is required', form); return; }
