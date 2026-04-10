@@ -3,7 +3,7 @@
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
     $siteName = 'Padeladd';
     $siteUrl = SITE_URL;
-    $fromEmail = 'no-reply@ahmedmagdy.com';
+    $fromEmail = 'aworking@gmail.com';
     
     // Premium Dark Theme HTML Template
     $html = "
