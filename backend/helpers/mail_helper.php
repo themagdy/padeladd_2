@@ -9,10 +9,10 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
         $message .= $actionText . ": " . $actionUrl;
     }
 
-    $headers = "From: Padeladd <no-reply@padeladd.com>\r\n";
-    $headers .= "Reply-To: no-reply@padeladd.com\r\n";
+    $headers = "From: Padeladd <no-reply@ahmedmagdy.com>\r\n";
+    $headers .= "Reply-To: no-reply@ahmedmagdy.com\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
 
-    return mail($to, $subject, $message, $headers, "-fno-reply@padeladd.com");
+    return mail($to, $subject, $message, $headers, "-fno-reply@ahmedmagdy.com");
 }
 ?>
