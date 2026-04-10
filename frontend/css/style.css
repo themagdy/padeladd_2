@@ -1966,7 +1966,8 @@ ul, ol { list-style: none; }
     flex: 1;
     min-width: 0 !important;
     width: auto !important;
-    padding-left: 0; /* Remove offset for alignment */
+    padding-left: 0;
+    margin-left: -8px; /* Move logo closer to edge */
     cursor: pointer;
   }
   .nav-logo img {
