@@ -1955,7 +1955,7 @@ ul, ol { list-style: none; }
     justify-content: center !important; /* Perfect absolute centering */
     width: 100%;
     padding: 0;
-    gap: 10px !important; /* Uniform 10px space between all 6 items */
+    gap: 30px !important; /* Expanded 30px space between all 6 items */
   }
 
   /* Flat structure for the 6-item centered block */
