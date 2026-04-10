@@ -52,13 +52,20 @@ try {
     $u = $stmtCheck->fetch();
 
     $authToken = null;
+    $hasProfile = false;
     if ($u['is_email_verified'] && $u['is_phone_verified']) {
         $authToken = generateRandomString(40);
         $pdo->prepare("UPDATE users SET auth_token = ? WHERE id = ?")->execute([$authToken, $userId]);
+        
+        // Check if profile exists
+        $stmtProf = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
+        $stmtProf->execute([$userId]);
+        $hasProfile = $stmtProf->rowCount() > 0;
     }
 
     jsonResponse(true, 'Phone successfully verified.', [
         'token' => $authToken,
+        'has_profile' => $hasProfile,
         'fully_verified' => ($authToken !== null)
     ]);
 } catch (Exception $e) {
