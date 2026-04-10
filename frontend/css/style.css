@@ -1824,12 +1824,12 @@ ul, ol { list-style: none; }
   gap: 12px;
   min-width: 0;
   cursor: pointer;
-  margin-left: -18px; /* Increased to pull visual P-edge into vertical alignment with content */
+  margin-left: -26px; /* Aggressively pulled left to align visual branding with content */
   flex-shrink: 0;
 }
 
 .logo-icon { display: none; }
-.logo-full { display: block; height: 42px; width: auto; object-fit: contain; }
+.logo-full { display: block; height: 56px; width: auto; object-fit: contain; }
 
 .nav-logo span {
   display: none; /* Hide span as PADELADD text is likely in assets/logo.png */
