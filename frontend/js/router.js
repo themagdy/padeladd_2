@@ -75,8 +75,11 @@ const Router = {
         if (route) {
             try {
                 // Ensure we fetch relative to the base URL
-                const targetUrl = CONFIG.BASE_PATH + '/' + route.template;
-                const response = await fetch(targetUrl);
+                // Add a cache-buster so browsers don't serve old HTML files
+                const v = new Date().getTime(); 
+                const targetUrl = CONFIG.BASE_PATH + '/' + route.template + '?v=' + v;
+                
+                const response = await fetch(targetUrl, { cache: 'no-cache' });
                 if (!response.ok) throw new Error('Template not found');
                 const html = await response.text();
                 
