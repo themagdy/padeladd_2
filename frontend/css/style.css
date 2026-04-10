@@ -1953,6 +1953,11 @@ ul, ol { list-style: none; }
   /* Dashboard Grid Adjustments for Mobile */
   .dash-stats-grid {
     grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .dash-stats-grid > *:last-child {
+    grid-column: span 2;
+    margin-top: 10px;
   }
   .dash-main-grid {
     grid-template-columns: 1fr !important;
