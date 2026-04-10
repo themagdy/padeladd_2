@@ -322,25 +322,25 @@ const AuthController = {
 //  DASHBOARD CONTROLLER
 // -------------------------------------------------------
 const DashboardController = {
+    _allMatches: [],
+    _currentMatchTab: 'completed',
+    _currentRankTab: 'male',
+    _currentUser: null,
+
     init: async function() {
-        // Load profile data
         const res = await API.post('/profile/get', {});
         if (!res || !res.success) return;
 
         const { user, profile, stats } = res.data;
+        DashboardController._currentUser = user;
 
-        // Name
-        const firstName = profile?.nickname || user.first_name;
-        const el = document.getElementById('dash-name');
-        if (el) el.textContent = firstName;
+        // Welcome name
+        const nameEl = document.getElementById('dash-name');
+        if (nameEl) nameEl.textContent = profile?.nickname || user.first_name;
 
-        // Avatar initials
-        const av = document.getElementById('dash-avatar');
+        // Nav avatar
+        const av = document.getElementById('nav-avatar');
         if (av) av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
-
-        // Player code
-        const pc = document.getElementById('dash-player-code');
-        if (pc && profile?.player_code) pc.textContent = profile.player_code;
 
         // Stats
         const rankEl = document.getElementById('dash-ranking');
@@ -355,7 +355,7 @@ const DashboardController = {
         const pwEl = document.getElementById('dash-points-week');
         if (pwEl && stats.points_this_week > 0) pwEl.textContent = `+${stats.points_this_week} this week`;
 
-        const mEl = document.getElementById('dash-matches');
+        const mEl = document.getElementById('dash-matches-count');
         if (mEl) mEl.textContent = stats.matches_played;
 
         const wlEl = document.getElementById('dash-wl');
@@ -364,42 +364,108 @@ const DashboardController = {
         const wrEl = document.getElementById('dash-winrate');
         if (wrEl) wrEl.textContent = stats.win_rate + '%';
 
-        // Recent matches
+        // Matches
         const matchRes = await API.post('/matches/user', {});
-        const listEl = document.getElementById('dash-matches-list');
-        if (listEl) {
-            if (!matchRes || !matchRes.success || matchRes.data.matches.length === 0) {
-                listEl.innerHTML = `<div class='empty-state'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to get started.</p></div>`;
-            } else {
-                listEl.innerHTML = matchRes.data.matches.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
-            }
+        if (matchRes && matchRes.success) {
+            DashboardController._allMatches = matchRes.data.matches;
+            const upcoming = matchRes.data.matches.filter(m => m.status === 'upcoming').length;
+            const upCountEl = document.getElementById('dash-upcoming-count');
+            if (upCountEl) upCountEl.textContent = upcoming;
         }
+        DashboardController.renderMatches();
+
+        // Ranking (placeholder — real API in Phase 8)
+        DashboardController.renderRanking();
+    },
+
+    switchRankTab: function(gender) {
+        DashboardController._currentRankTab = gender;
+        const males = document.getElementById('tab-males');
+        const females = document.getElementById('tab-females');
+        if (males) {
+            males.style.borderBottomColor = gender === 'male' ? 'var(--c-primary)' : 'transparent';
+            males.style.color = gender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
+        }
+        if (females) {
+            females.style.borderBottomColor = gender === 'female' ? 'var(--c-primary)' : 'transparent';
+            females.style.color = gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
+        }
+        DashboardController.renderRanking();
+    },
+
+    switchMatchTab: function(tab) {
+        DashboardController._currentMatchTab = tab;
+        const comp = document.getElementById('tab-completed');
+        const upco = document.getElementById('tab-upcoming');
+        if (comp) {
+            comp.style.borderBottomColor = tab === 'completed' ? 'var(--c-primary)' : 'transparent';
+            comp.style.color = tab === 'completed' ? 'var(--c-text)' : 'var(--c-text-muted)';
+        }
+        if (upco) {
+            upco.style.borderBottomColor = tab === 'upcoming' ? 'var(--c-primary)' : 'transparent';
+            upco.style.color = tab === 'upcoming' ? 'var(--c-text)' : 'var(--c-text-muted)';
+        }
+        DashboardController.renderMatches();
+    },
+
+    renderMatches: function() {
+        const listEl = document.getElementById('dash-matches-list');
+        if (!listEl) return;
+        const filtered = DashboardController._allMatches.filter(m => m.status === DashboardController._currentMatchTab);
+        if (filtered.length === 0) {
+            listEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🎾</div><h3>No ${DashboardController._currentMatchTab} matches</h3><p>Your matches will appear here.</p></div>`;
+            return;
+        }
+        const uid = DashboardController._currentUser?.id;
+        listEl.innerHTML = filtered.map(m => DashboardController.renderMatchCard(m, uid)).join('');
     },
 
     renderMatchCard: function(m, userId) {
         const userTeam = m.user_team;
-        const oppTeam = userTeam === 'a' ? m.team_b : m.team_a;
         const myTeam  = userTeam === 'a' ? m.team_a : m.team_b;
+        const oppTeam = userTeam === 'a' ? m.team_b : m.team_a;
         const myScore  = userTeam === 'a' ? m.score_a : m.score_b;
         const oppScore = userTeam === 'a' ? m.score_b : m.score_a;
         const won = m.winner_team === userTeam;
-        const statusColor = m.status === 'completed' ? (won ? 'var(--c-green)' : 'var(--c-red)') : 'var(--c-orange)';
-        const statusLabel = m.status === 'completed' ? (won ? 'Win' : 'Loss') : m.status.charAt(0).toUpperCase() + m.status.slice(1);
-        const names = myTeam.map(p => p.name.split(' ')[0]).filter(Boolean).join(' & ');
-        const date = m.scheduled_at ? new Date(m.scheduled_at).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }) : 'TBD';
-        return `<div class='match-card' style='margin-bottom:10px;'>
-            <div class='match-card-header'>
-                <span class='match-card-venue' style='font-size:13px; font-weight:700;'>${m.venue || 'Venue TBD'}</span>
-                <span class='badge' style='background:none; border:1px solid ${statusColor}; color:${statusColor};'>${statusLabel}</span>
+        const isCompleted = m.status === 'completed';
+        const winnerColor = won ? 'var(--c-green)' : 'var(--c-red)';
+        const scoreColor = isCompleted ? winnerColor : 'var(--c-text-muted)';
+        const dateStr = m.scheduled_at
+            ? new Date(m.scheduled_at).toLocaleDateString('en-US', { weekday:'long', hour:'2-digit', minute:'2-digit' })
+            : 'TBD';
+
+        const renderTeamRow = (players, score, isWinner) => players.map((p, i) => `
+            <div style="display:grid; grid-template-columns:18px 1fr auto auto; align-items:center; gap:8px; padding:6px 0; border-bottom:${i === 0 ? '1px solid var(--c-border)' : 'none'};">
+                <div style="color:${isWinner?'var(--c-orange)':'transparent'}; font-size:10px;">▶</div>
+                <span style="font-size:13px; font-weight:700;">${p.name || '—'}</span>
+                <span style="font-size:10px; color:var(--c-text-dim); background:var(--c-bg-secondary); border-radius:4px; padding:2px 6px;">P${i+1}</span>
+                <span style="font-size:14px; font-weight:800; color:${isWinner?'var(--c-orange)':'var(--c-text)'}; min-width:20px; text-align:right;">${score ?? '—'}</span>
             </div>
-            <div style='display:flex; justify-content:space-between; align-items:center;'>
-                <span style='font-size:13px; color:var(--c-text-muted);'>${names || 'You'}</span>
-                <span style='font-weight:800; font-size:16px; color:var(--c-text);'>${myScore ?? '—'} <span style='color:var(--c-text-dim); font-size:12px;'>vs</span> ${oppScore ?? '—'}</span>
+        `).join('');
+
+        return `
+        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--c-text-dim)'" onmouseout="this.style.borderColor='var(--c-border)'">
+            <div style="font-size:12px; color:var(--c-text-muted); font-weight:600; margin-bottom:10px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0;">
+                <div style="padding-right:12px; border-right:1px solid var(--c-border);">
+                    ${renderTeamRow(m.team_a, m.score_a, m.winner_team === 'a')}
+                </div>
+                <div style="padding-left:12px;">
+                    ${renderTeamRow(m.team_b, m.score_b, m.winner_team === 'b')}
+                </div>
             </div>
-            <div style='font-size:11px; color:var(--c-text-dim); margin-top:4px;'>${date}</div>
         </div>`;
+    },
+
+    renderRanking: function() {
+        const listEl = document.getElementById('dash-ranking-list');
+        if (!listEl) return;
+        // Placeholder rows until Phase 8 leaderboard API
+        listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>Ranking coming soon</h3><p>Full leaderboard available in Phase 8.</p></div>`;
     }
 };
+
+
 
 // -------------------------------------------------------
 //  PROFILE VIEW CONTROLLER
