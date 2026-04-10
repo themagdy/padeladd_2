@@ -1948,27 +1948,22 @@ ul, ol { list-style: none; }
     padding-bottom: 80px;
   }
 
-  /* The container is the single grid parent */
+  /* Mobile Bottom Nav - Bulletproof Percentage Layout */
   .nav-container {
-    display: grid !important;
-    grid-template-columns: repeat(6, 1fr) !important;
+    display: flex !important;
     align-items: center;
-    justify-items: center;
+    justify-content: flex-start;
     width: 100%;
-    padding: 0 5px;
+    padding: 0;
     gap: 0;
   }
 
-  /* Unwrap wrappers — items become direct grid children */
-  .nav-links, .nav-right {
-    display: contents !important;
-  }
-
-  /* ---- ZONE 1: Logo ---- */
+  /* ---- ZONE 1: Logo (1/6 of screen) ---- */
   .nav-logo {
     display: flex !important;
     align-items: center;
     justify-content: center;
+    width: 16.666% !important;
     cursor: pointer;
     padding: 0;
   }
@@ -1980,17 +1975,25 @@ ul, ol { list-style: none; }
     display: none;
   }
 
-  /* ---- Nav link items (Rank, Play, Matches) ---- */
+  /* ---- Nav link items (3/6 of screen) ---- */
+  .nav-links {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-around;
+    width: 50% !important;
+    margin: 0;
+    padding: 0;
+  }
   .nav-links .nav-item {
     display: flex !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 33.333% !important; /* 1/3 of the 50% width */
     gap: 4px;
     cursor: pointer;
     text-decoration: none;
     padding: 0;
-    width: 100%;
   }
   .nav-links .nav-item img {
     height: 20px;
@@ -2003,30 +2006,47 @@ ul, ol { list-style: none; }
     color: var(--c-text);
   }
 
+  /* ---- User section (2/6 of screen) ---- */
+  .nav-right {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-around;
+    width: 33.333% !important;
+    padding: 0;
+    gap: 0;
+    border: none;
+  }
+
   /* ---- Avatar ---- */
   .avatar-circle {
-    width: 54px !important;
-    height: 54px !important;
-    border-radius: 50% !important;
-    font-size: 18px !important;
-    font-weight: 800 !important;
-    background: var(--g-primary) !important;
     display: flex !important;
     align-items: center;
     justify-content: center;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    background: var(--g-primary) !important;
     cursor: pointer;
     border: 2px solid rgba(255,255,255,0.15) !important;
     flex-shrink: 0;
-    max-width: 54px;
     margin: 0 auto;
+  }
+
+  /* Avatar Wrapper */
+  .nav-right > .avatar-circle {
+      /* To ensure it centers properly within its 50% slot */
   }
 
   /* ---- Notification bell ---- */
   .nav-notif {
-    position: relative;
     display: flex !important;
     align-items: center;
     justify-content: center;
+    width: 50% !important; /* 1/2 of the 33.3% width */
+    position: relative;
   }
   .nav-notif img {
     width: 24px;
