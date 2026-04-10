@@ -20,6 +20,31 @@ const UI = {
     clearErrors: function(form) {
         form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
         form.querySelectorAll('.form-error').forEach(el => el.style.display = 'none');
+    },
+    syncNav: async function() {
+        if (!Auth.isAuthenticated()) return;
+        const res = await API.post('/profile/get', {});
+        if (!res || !res.success) return;
+        const { user, profile } = res.data;
+
+        // Nav avatar
+        const av = document.getElementById('nav-avatar');
+        if (av) {
+            av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+            const linkId = profile?.player_code || user.id;
+            av.setAttribute('onclick', `Router.navigate('/${linkId}')`);
+        }
+
+        // Notifications
+        const matchRes = await API.post('/matches/user', {});
+        if (matchRes && matchRes.success) {
+            const upcoming = matchRes.data.matches.filter(m => m.status === 'upcoming').length;
+            const navNotifEl = document.getElementById('nav-notif-badge');
+            if (navNotifEl) {
+                navNotifEl.textContent = upcoming;
+                navNotifEl.style.display = upcoming > 0 ? 'flex' : 'none';
+            }
+        }
     }
 };
 
@@ -338,6 +363,8 @@ const DashboardController = {
     _currentUser: null,
 
     init: async function() {
+        await UI.syncNav();
+        
         const res = await API.post('/profile/get', {});
         if (!res || !res.success) return;
 
@@ -347,15 +374,6 @@ const DashboardController = {
         // Welcome name
         const nameEl = document.getElementById('dash-name');
         if (nameEl) nameEl.textContent = profile?.nickname || user.first_name;
-
-        // Nav avatar
-        const av = document.getElementById('nav-avatar');
-        if (av) {
-            av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
-            // Root-level vanity URL
-            const linkId = profile?.player_code || user.id;
-            av.setAttribute('onclick', `Router.navigate('/${linkId}')`);
-        }
 
         // Stats
         const rankEl = document.getElementById('dash-ranking');
@@ -383,16 +401,9 @@ const DashboardController = {
         const matchRes = await API.post('/matches/user', {});
         if (matchRes && matchRes.success) {
             DashboardController._allMatches = matchRes.data.matches;
-            const upcoming = matchRes.data.matches.filter(m => m.status === 'upcoming').length;
+            // Dashboard upcoming count (specific to dash)
             const upCountEl = document.getElementById('dash-upcoming-count');
             if (upCountEl) upCountEl.textContent = upcoming;
-            
-            // Global nav notification badge
-            const navNotifEl = document.getElementById('nav-notif-badge');
-            if (navNotifEl) {
-                navNotifEl.textContent = upcoming;
-                navNotifEl.style.display = upcoming > 0 ? 'flex' : 'none';
-            }
         }
         DashboardController.renderMatches();
 
@@ -494,6 +505,8 @@ const DashboardController = {
 // -------------------------------------------------------
 const ProfileViewController = {
     init: async function(params) {
+        await UI.syncNav();
+        
         // ID could be user_id (numeric) or player_code (string)
         const payload = {};
         if (params && params.id) {
