@@ -123,8 +123,10 @@ const Router = {
 
         if (Auth.isAuthenticated() && Auth.hasProfile() && !isAuthPage) {
             nav.style.display = 'flex';
+            document.body.classList.add('has-nav');
         } else {
             nav.style.display = 'none';
+            document.body.classList.remove('has-nav');
         }
     }
 };
