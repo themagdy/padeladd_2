@@ -17,6 +17,38 @@
         <main id="app-content">
             <!-- SPA router injects content here -->
         </main>
+
+        <!-- Global Navigation -->
+        <nav id="main-nav" style="display: none;">
+            <div class="nav-container">
+                <div class="nav-logo" onclick="Router.navigate('/dashboard')">
+                    <img src="assets/logo_ico.png" alt="Padeladd">
+                    <span>Padeladd</span>
+                </div>
+                <div class="nav-links">
+                    <a href="javascript:void(0)" onclick="Router.navigate('/ranking')" class="nav-item">
+                        <img src="assets/nav_icons/rank.svg" alt="Rank">
+                        <span class="nav-label">RANK</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="Router.navigate('/matches')" class="nav-item">
+                        <img src="assets/nav_icons/play.svg" alt="Play">
+                        <span class="nav-label">PLAY</span>
+                    </a>
+                    <a href="javascript:void(0)" onclick="Router.navigate('/matches')" class="nav-item">
+                        <img src="assets/nav_icons/matches.svg" alt="Matches">
+                        <span class="nav-label">MATCHES</span>
+                    </a>
+                </div>
+                <div class="nav-right">
+                    <div id="nav-avatar" onclick="Router.navigate('/profile/view')" class="avatar-circle">?</div>
+                    <div class="nav-notif">
+                        <img src="assets/nav_icons/notif.svg" alt="Notifications">
+                        <span id="nav-notif-badge" class="notif-badge">0</span>
+                    </div>
+                    <button id="nav-logout" onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" class="btn-logout">Sign out</button>
+                </div>
+            </div>
+        </nav>
     </div>
 
     <div id="global-loader" class="loading-overlay" style="display: none;">

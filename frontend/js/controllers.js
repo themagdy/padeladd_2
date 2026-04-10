@@ -371,6 +371,10 @@ const DashboardController = {
             const upcoming = matchRes.data.matches.filter(m => m.status === 'upcoming').length;
             const upCountEl = document.getElementById('dash-upcoming-count');
             if (upCountEl) upCountEl.textContent = upcoming;
+            
+            // Global nav notification badge
+            const navNotifEl = document.getElementById('nav-notif-badge');
+            if (navNotifEl) navNotifEl.textContent = upcoming;
         }
         DashboardController.renderMatches();
 

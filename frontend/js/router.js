@@ -58,6 +58,8 @@ const Router = {
         if (loader) loader.style.display = 'flex';
         
         // Protection: Dashboard requires completed profile
+        this.updateNavVisibility(path);
+
         if (path === '/dashboard') {
             if (!Auth.isAuthenticated()) {
                 if (loader) loader.style.display = 'none';
@@ -109,6 +111,20 @@ const Router = {
                     <a href="/" data-link class="btn btn-primary">Go Home</a>
                 </div>
             `;
+        }
+    },
+
+    updateNavVisibility: function(path) {
+        const nav = document.getElementById('main-nav');
+        if (!nav) return;
+
+        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit'];
+        const isAuthPage = authRoutes.includes(path) || path === '/';
+
+        if (Auth.isAuthenticated() && Auth.hasProfile() && !isAuthPage) {
+            nav.style.display = 'flex';
+        } else {
+            nav.style.display = 'none';
         }
     }
 };
