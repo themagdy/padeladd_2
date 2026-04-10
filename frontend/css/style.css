@@ -1949,11 +1949,11 @@ ul, ol { list-style: none; }
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 0 5px;
+    padding: 0 10px;
   }
 
   /* All items behave the same */
-  .nav-item, .nav-logo, .avatar-circle, .nav-notif {
+  .nav-item, .nav-logo {
     flex: 1;
     display: flex !important;
     flex-direction: column;
@@ -1962,42 +1962,74 @@ ul, ol { list-style: none; }
     min-width: 0;
     text-decoration: none;
     cursor: pointer;
+    gap: 6px;
   }
 
-  .nav-item img, .nav-logo img, .nav-notif img {
-    height: 24px;
+  .nav-item img, .nav-notif img {
+    height: 22px;
+    width: auto;
+    display: block;
+  }
+  
+  .nav-logo img {
+    height: 48px; /* Larger logo */
     width: auto;
     display: block;
   }
 
   .nav-label {
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
-    margin-top: 5px;
-    letter-spacing: 0.1px;
+    margin-top: 0;
+    letter-spacing: 0.5px;
     color: var(--c-text);
   }
 
+  /* User section wrapper to handle separator line */
+  .nav-right {
+    display: flex !important;
+    align-items: center;
+    gap: 15px;
+    padding-left: 15px;
+    margin-left: 5px;
+    border-left: 1px solid rgba(255,255,255,0.1);
+  }
+
   .avatar-circle {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     font-size: 16px;
     font-weight: 800;
-    margin: 0 auto;
-    border: 2px solid var(--c-primary);
-    background: var(--c-bg-secondary);
+    margin: 0;
+    display: flex !important;
+    border: none;
+    background: transparent;
     border-radius: 50%;
+  }
+
+  /* Specific fix for image if avatar becomes an image later */
+  .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
   }
 
   /* Notification Bell specific positioning */
   .nav-notif {
     position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
   .notif-badge {
-    top: -4px;
-    right: 50%;
-    margin-right: -15px;
+    top: -6px;
+    right: -8px;
+    margin-right: 0;
     transform: none;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
   }
 
   #nav-logout {
@@ -2005,7 +2037,7 @@ ul, ol { list-style: none; }
   }
 
   .has-nav #app-content {
-    padding-bottom: 85px; /* Space for slightly taller bottom nav */
+    padding-bottom: 90px; /* Space for slightly taller bottom nav */
   }
 
   .has-nav #app-content {
