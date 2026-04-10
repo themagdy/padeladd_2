@@ -17,9 +17,12 @@ if ($stmt->rowCount() > 0) {
     $insert = $pdo->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)");
     $insert->execute([$email, $token, $expiresAt]);
     
-    // Send email logic here...
-    // For Phase 1 demo, return token in response to simulate flow
-    jsonResponse(true, "Check your inbox! We've sent a reset link to your email.", ['test_reset_token' => $token]);
+    // Send real email
+    $resetLink = SITE_URL . "/reset-password?token=" . $token;
+    $message = "We received a request to reset your Padeladd password. Click the button below to choose a new one.";
+    sendEmail($email, "Reset Your Padeladd Password", $message, "Reset Password", $resetLink);
+    
+    jsonResponse(true, "Check your inbox! We've sent a reset link to your email.");
 }
 
 // If email not found or not active

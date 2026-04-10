@@ -61,13 +61,12 @@ try {
 
     $pdo->commit();
 
-    // In a real app, send Email & SMS here. 
-    // We return the codes/links in the response temporarily for easy testing during Phase 1.
-    jsonResponse(true, 'Registration successful. Please verify your account.', [
-        'user_id' => $userId,
-        'test_email_link' => "/verify-email?token=" . $emailCode,
-        'test_sms_code' => $smsCode
-    ]);
+    // Send real email
+    $verifyLink = SITE_URL . "/verify-email?token=" . $emailCode;
+    $message = "Welcome to Padeladd! Please verify your email address to active your account and start your Padel journey.";
+    sendEmail($email, "Welcome to Padeladd - Verify Your Email", $message, "Verify Email", $verifyLink);
+
+    jsonResponse(true, 'Registration successful. We\'ve sent a verification link to your email address.');
 
 } catch (Exception $e) {
     $pdo->rollBack();
