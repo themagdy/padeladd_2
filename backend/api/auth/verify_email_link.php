@@ -6,7 +6,23 @@ if (empty($token)) {
     jsonResponse(false, 'Missing verification token.');
 }
 
-// Find token
+// Check if already used
+$stmtCodeCheck = $pdo->prepare("SELECT user_id, is_used FROM verification_codes WHERE code_type = 'email' AND code_value = ?");
+$stmtCodeCheck->execute([$token]);
+$codeRow = $stmtCodeCheck->fetch();
+
+if ($codeRow) {
+    if ($codeRow['is_used'] == 1) {
+        $stmtUser = $pdo->prepare("SELECT is_email_verified FROM users WHERE id = ?");
+        $stmtUser->execute([$codeRow['user_id']]);
+        $u = $stmtUser->fetch();
+        if ($u && $u['is_email_verified']) {
+            jsonResponse(true, 'Email is already verified.', ['already_verified' => true]);
+        }
+    }
+}
+
+// Proceed with active token check
 $stmt = $pdo->prepare("SELECT user_id, id FROM verification_codes WHERE code_type = 'email' AND code_value = ? AND is_used = 0 AND expires_at > NOW()");
 $stmt->execute([$token]);
 $row = $stmt->fetch();
