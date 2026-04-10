@@ -25,6 +25,11 @@ const UI = {
 
 const AuthController = {
     initLogin: function() {
+        if (Auth.isAuthenticated()) {
+            if (Auth.hasProfile()) Router.navigate('/dashboard');
+            else Router.navigate('/profile/edit');
+            return;
+        }
         const form = document.getElementById('login-form');
         if (!form) return;
         
@@ -62,6 +67,11 @@ const AuthController = {
     },
 
     initRegister: function() {
+        if (Auth.isAuthenticated()) {
+            if (Auth.hasProfile()) Router.navigate('/dashboard');
+            else Router.navigate('/profile/edit');
+            return;
+        }
         const form = document.getElementById('register-form');
         if (!form) return;
         
