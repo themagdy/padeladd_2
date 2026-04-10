@@ -1967,7 +1967,7 @@ ul, ol { list-style: none; }
     min-width: 0 !important;
     width: auto !important;
     padding-left: 0;
-    margin-left: -15px; /* Shifted an additional 5px left */
+    margin-left: -20px; /* Shifted more to the left */
     cursor: pointer;
   }
   .nav-logo img {
