@@ -1954,7 +1954,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 32px 0 5px; /* Extremely tight left (5px), More right (32px) */
+    padding: 0 54px 0 0; /* Pushing more from right (54px), No left padding (0) */
     gap: 0;
   }
 
@@ -1963,11 +1963,12 @@ ul, ol { list-style: none; }
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
-    flex: 1;
+    flex: 0 0 auto; /* Stop it from growing so items stay left */
     min-width: 0 !important;
     width: auto !important;
     padding-left: 0;
     margin-left: 0;
+    margin-right: 24px; /* Push the 3 links slightly away from logo */
     cursor: pointer;
   }
   .nav-logo img {
