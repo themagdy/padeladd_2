@@ -8,7 +8,6 @@ Thumbs.db
 
 # Environment/Secret Files
 backend/core/config.php
-backend/core/config.live.php
 .env
 
 # Build outputs
