@@ -1,7 +1,7 @@
 <?php
 
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
-    $fromEmail = 'themagdy@ahmedmagdy.com';
+    $fromEmail = 'no-reply@padeladd.com';
     
     // Exact same plain-text format that worked in the test
     $message = $content . "\n\n";
