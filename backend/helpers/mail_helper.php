@@ -9,8 +9,11 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
         $message .= $actionText . ": " . $actionUrl;
     }
 
-    $headers = "From: " . $fromEmail;
+    $headers = "From: Padeladd <no-reply@padeladd.com>\r\n";
+    $headers .= "Reply-To: no-reply@padeladd.com\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
 
-    return mail($to, $subject, $message, $headers);
+    // Use -f with the actual hosted server email to bypass Bluehost spoofing protection
+    return mail($to, $subject, $message, $headers, "-fthemagdy@ahmedmagdy.com");
 }
 ?>
