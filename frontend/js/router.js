@@ -115,7 +115,7 @@ const Router = {
     },
 
     updateNavVisibility: function(path) {
-        const nav = document.getElementById('main-nav');
+        const nav = document.getElementById('top-nav');
         const bnav = document.getElementById('bottom-nav');
         if (!nav) return;
 
