@@ -1,7 +1,7 @@
 <?php
 
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
-    $fromEmail = 'themagdy@ahmedmagdy.com';
+    $fromEmail = 'noreply@ahmedmagdy.com';
     
     // Exact same plain-text format that worked in the test
     $message = $content . "\n\n";
@@ -9,7 +9,9 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
         $message .= $actionText . ": " . $actionUrl;
     }
 
-    $headers = "From: " . $fromEmail;
+    $headers = "From: Padeladd <noreply@ahmedmagdy.com>\r\n";
+    $headers .= "Reply-To: noreply@ahmedmagdy.com\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
 
     return mail($to, $subject, $message, $headers);
 }
