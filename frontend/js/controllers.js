@@ -268,9 +268,14 @@ const AuthController = {
         const form = document.getElementById('reset-form');
         if(!form) return;
 
-        // Auto-fill test token if available
+        // Auto-fill test token or URL token if available
+        const params = new URLSearchParams(window.location.search);
+        const urlToken = params.get('token');
         const testToken = localStorage.getItem('test_reset_token');
-        if (testToken && form.token) {
+        
+        if (urlToken && form.token) {
+            form.token.value = urlToken;
+        } else if (testToken && form.token) {
             form.token.value = testToken;
             localStorage.removeItem('test_reset_token');
         }
