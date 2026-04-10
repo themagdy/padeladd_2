@@ -318,6 +318,162 @@ const AuthController = {
     }
 };
 
+// -------------------------------------------------------
+//  DASHBOARD CONTROLLER
+// -------------------------------------------------------
+const DashboardController = {
+    init: async function() {
+        // Load profile data
+        const res = await API.post('/profile/get', {});
+        if (!res || !res.success) return;
+
+        const { user, profile, stats } = res.data;
+
+        // Name
+        const firstName = profile?.nickname || user.first_name;
+        const el = document.getElementById('dash-name');
+        if (el) el.textContent = firstName;
+
+        // Avatar initials
+        const av = document.getElementById('dash-avatar');
+        if (av) av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+
+        // Player code
+        const pc = document.getElementById('dash-player-code');
+        if (pc && profile?.player_code) pc.textContent = profile.player_code;
+
+        // Stats
+        const rankEl = document.getElementById('dash-ranking');
+        if (rankEl) rankEl.textContent = stats.ranking ?? '—';
+
+        const highEl = document.getElementById('dash-highest-rank');
+        if (highEl && stats.highest_ranking) highEl.textContent = `${stats.highest_ranking} Highest rank`;
+
+        const ptsEl = document.getElementById('dash-points');
+        if (ptsEl) ptsEl.textContent = stats.points;
+
+        const pwEl = document.getElementById('dash-points-week');
+        if (pwEl && stats.points_this_week > 0) pwEl.textContent = `+${stats.points_this_week} this week`;
+
+        const mEl = document.getElementById('dash-matches');
+        if (mEl) mEl.textContent = stats.matches_played;
+
+        const wlEl = document.getElementById('dash-wl');
+        if (wlEl && stats.matches_played > 0) wlEl.textContent = `${stats.matches_won}W / ${stats.matches_lost}L`;
+
+        const wrEl = document.getElementById('dash-winrate');
+        if (wrEl) wrEl.textContent = stats.win_rate + '%';
+
+        // Recent matches
+        const matchRes = await API.post('/matches/user', {});
+        const listEl = document.getElementById('dash-matches-list');
+        if (listEl) {
+            if (!matchRes || !matchRes.success || matchRes.data.matches.length === 0) {
+                listEl.innerHTML = `<div class='empty-state'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to get started.</p></div>`;
+            } else {
+                listEl.innerHTML = matchRes.data.matches.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
+            }
+        }
+    },
+
+    renderMatchCard: function(m, userId) {
+        const userTeam = m.user_team;
+        const oppTeam = userTeam === 'a' ? m.team_b : m.team_a;
+        const myTeam  = userTeam === 'a' ? m.team_a : m.team_b;
+        const myScore  = userTeam === 'a' ? m.score_a : m.score_b;
+        const oppScore = userTeam === 'a' ? m.score_b : m.score_a;
+        const won = m.winner_team === userTeam;
+        const statusColor = m.status === 'completed' ? (won ? 'var(--c-green)' : 'var(--c-red)') : 'var(--c-orange)';
+        const statusLabel = m.status === 'completed' ? (won ? 'Win' : 'Loss') : m.status.charAt(0).toUpperCase() + m.status.slice(1);
+        const names = myTeam.map(p => p.name.split(' ')[0]).filter(Boolean).join(' & ');
+        const date = m.scheduled_at ? new Date(m.scheduled_at).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }) : 'TBD';
+        return `<div class='match-card' style='margin-bottom:10px;'>
+            <div class='match-card-header'>
+                <span class='match-card-venue' style='font-size:13px; font-weight:700;'>${m.venue || 'Venue TBD'}</span>
+                <span class='badge' style='background:none; border:1px solid ${statusColor}; color:${statusColor};'>${statusLabel}</span>
+            </div>
+            <div style='display:flex; justify-content:space-between; align-items:center;'>
+                <span style='font-size:13px; color:var(--c-text-muted);'>${names || 'You'}</span>
+                <span style='font-weight:800; font-size:16px; color:var(--c-text);'>${myScore ?? '—'} <span style='color:var(--c-text-dim); font-size:12px;'>vs</span> ${oppScore ?? '—'}</span>
+            </div>
+            <div style='font-size:11px; color:var(--c-text-dim); margin-top:4px;'>${date}</div>
+        </div>`;
+    }
+};
+
+// -------------------------------------------------------
+//  PROFILE VIEW CONTROLLER
+// -------------------------------------------------------
+const ProfileViewController = {
+    init: async function() {
+        const res = await API.post('/profile/get', {});
+        if (!res || !res.success) return;
+        const { user, profile, stats } = res.data;
+
+        // Avatar
+        const av = document.getElementById('prof-avatar');
+        if (av) av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
+
+        // Name
+        const nameEl = document.getElementById('prof-name');
+        if (nameEl) nameEl.textContent = (profile?.nickname || user.first_name + ' ' + user.last_name);
+
+        // Player code
+        const codeEl = document.getElementById('prof-code');
+        if (codeEl) {
+            if (profile?.player_code) {
+                codeEl.textContent = profile.player_code;
+                codeEl.style.display = 'inline-flex';
+            } else {
+                codeEl.style.display = 'none';
+            }
+        }
+
+        // Meta pills (gender, location, hand)
+        const metaEl = document.getElementById('prof-meta');
+        if (metaEl) {
+            const items = [];
+            if (profile?.gender) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>${profile.gender === 'male' ? '♂' : '♀'} ${profile.gender}</span>`);
+            if (profile?.location) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>📍 ${profile.location}</span>`);
+            if (profile?.playing_hand) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>✋ ${profile.playing_hand} hand</span>`);
+            if (profile?.age) items.push(`<span style='font-size:12px; color:var(--c-text-muted);'>Age ${profile.age}</span>`);
+            metaEl.innerHTML = items.join('');
+        }
+
+        // Rank badge
+        const rankVal = document.getElementById('prof-rank-val');
+        if (rankVal) rankVal.textContent = stats.ranking ?? '—';
+
+        // Bio
+        const bioEl = document.getElementById('prof-bio');
+        if (bioEl && profile?.bio) {
+            bioEl.textContent = profile.bio;
+            bioEl.style.display = 'block';
+        }
+
+        // Stats mini grid
+        const pvPts = document.getElementById('pv-points');
+        if (pvPts) pvPts.textContent = stats.points;
+        const pvRank = document.getElementById('pv-rank');
+        if (pvRank) pvRank.textContent = stats.ranking ?? '—';
+        const pvWR = document.getElementById('pv-winrate');
+        if (pvWR) pvWR.textContent = stats.win_rate + '%';
+        const pvM = document.getElementById('pv-matches');
+        if (pvM) pvM.textContent = stats.matches_played;
+
+        // Matches list
+        const matchRes = await API.post('/matches/user', {});
+        const listEl = document.getElementById('pv-matches-list');
+        if (listEl) {
+            if (!matchRes || !matchRes.success || matchRes.data.matches.length === 0) {
+                listEl.innerHTML = `<div class='empty-state'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to start tracking results.</p></div>`;
+            } else {
+                listEl.innerHTML = matchRes.data.matches.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
+            }
+        }
+    }
+};
+
 const ProfileController = {
     initEdit: function() {
         const form = document.getElementById('profile-form');

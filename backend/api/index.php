@@ -64,6 +64,15 @@ switch ($endpoint) {
     case 'profile/update':
         require __DIR__ . '/profile/update.php';
         break;
+    case 'profile/get':
+        require __DIR__ . '/profile/get.php';
+        break;
+    case 'stats/get':
+        require __DIR__ . '/stats/get.php';
+        break;
+    case 'matches/user':
+        require __DIR__ . '/matches/user.php';
+        break;
     default:
         jsonResponse(false, 'Endpoint not found: ' . $endpoint, null, 404);
 }

@@ -8,8 +8,9 @@ const Router = {
         '/forgot-password': { template: 'frontend/pages/auth/forgot_password.html', init: () => AuthController.initForgotPassword() },
         '/reset-password': { template: 'frontend/pages/auth/reset_password.html', init: () => AuthController.initResetPassword() },
         '/profile/edit': { template: 'frontend/pages/profile/edit.html', init: () => ProfileController.initEdit() },
+        '/profile/view': { template: 'frontend/pages/profile/view.html', init: () => ProfileViewController.init() },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
-        '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => {} } 
+        '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() } 
     },
     
     init: function() {
