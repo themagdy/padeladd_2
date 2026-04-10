@@ -1963,6 +1963,21 @@ ul, ol { list-style: none; }
     grid-template-columns: 1fr !important;
     gap: 40px !important;
   }
+  .dash-footer {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 24px !important;
+    padding-bottom: 40px !important;
+  }
+  .dash-footer button {
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+  .footer-bottom-text {
+    margin-left: 0 !important;
+    margin-top: 10px !important;
+  }
 }
 
 .btn-logout {
