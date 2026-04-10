@@ -2032,12 +2032,7 @@ ul, ol { list-style: none; }
     cursor: pointer;
     border: 2px solid rgba(255,255,255,0.15) !important;
     flex-shrink: 0;
-    margin: 0 auto;
-  }
-
-  /* Avatar Wrapper */
-  .nav-right > .avatar-circle {
-      /* To ensure it centers properly within its 50% slot */
+    margin: 0;
   }
 
   /* ---- Notification bell ---- */
@@ -2045,8 +2040,9 @@ ul, ol { list-style: none; }
     display: flex !important;
     align-items: center;
     justify-content: center;
-    width: 50% !important; /* 1/2 of the 33.3% width */
+    flex-shrink: 0;
     position: relative;
+    margin: 0;
   }
   .nav-notif img {
     width: 24px;
