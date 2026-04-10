@@ -3,7 +3,7 @@
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
     $siteName = 'Padeladd';
     $siteUrl = SITE_URL;
-    $fromEmail = 'aworking@gmail.com';
+    $fromEmail = 'no-reply@ahmedmagdy.com';
     
     // Premium Dark Theme HTML Template
     $html = "
@@ -45,9 +45,11 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
     </html>
     ";
 
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= "From: $siteName <$fromEmail>" . "\r\n";
+    $headers = "From: $siteName <$fromEmail>\r\n";
+    $headers .= "Reply-To: $fromEmail\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-type: text/html; charset=UTF-8\r\n";
 
     return mail($to, $subject, $html, $headers, "-f $fromEmail");
 }
