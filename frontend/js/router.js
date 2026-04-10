@@ -39,12 +39,17 @@ const Router = {
     },
     
     handleRoute: async function() {
-        // Normalize path by stripping CONFIG.BASE_PATH
         let path = window.location.pathname;
-        if (CONFIG.BASE_PATH && path.startsWith(CONFIG.BASE_PATH)) {
+        
+        // Handle Capacitor specific startup path
+        if (path.includes('index.html')) {
+            path = '/'; 
+        } else if (CONFIG.BASE_PATH && path.startsWith(CONFIG.BASE_PATH)) {
             path = path.slice(CONFIG.BASE_PATH.length);
         }
-        if (path === '' || path === '/index.html') path = '/';
+        
+        if (path === '' || path === 'index.html') path = '/';
+        
         if (path !== '/' && path.endsWith('/')) {
             path = path.slice(0, -1);
         }
