@@ -116,16 +116,35 @@ const Router = {
 
     updateNavVisibility: function(path) {
         const nav = document.getElementById('main-nav');
+        const bnav = document.getElementById('bottom-nav');
         if (!nav) return;
 
-        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit'];
+        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/index.html'];
         const isAuthPage = authRoutes.includes(path) || path === '/';
 
         if (Auth.isAuthenticated() && Auth.hasProfile() && !isAuthPage) {
             nav.style.display = 'flex';
+            if (bnav) bnav.style.display = 'flex';
             document.body.classList.add('has-nav');
+            
+            // Set active item for both navs
+            const allNavs = [nav, bnav].filter(el => el !== null);
+            allNavs.forEach(navEl => {
+                navEl.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    const attr = item.getAttribute('onclick') || '';
+                    if ((path === '/dashboard' && attr.includes('/dashboard')) ||
+                        (path.includes('/ranking') && attr.includes('/ranking')) ||
+                        (path.includes('/matches') && attr.includes('/matches')) ||
+                        (path.includes('/profile') && attr.includes('/profile'))) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+
         } else {
             nav.style.display = 'none';
+            if (bnav) bnav.style.display = 'none';
             document.body.classList.remove('has-nav');
         }
     }
