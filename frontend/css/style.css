@@ -279,6 +279,11 @@ ul, ol { list-style: none; }
   filter: brightness(10);
 }
 
+.nav-item img.nav-icon.nav-logo-icon {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
 .nav-item span {
   font-size: 10px;
   font-weight: 600;
