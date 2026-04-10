@@ -1822,19 +1822,17 @@ ul, ol { list-style: none; }
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 140px;
+  min-width: 0;
   cursor: pointer;
+  margin-left: -18px; /* Increased to pull visual P-edge into vertical alignment with content */
+  flex-shrink: 0;
 }
 
-.nav-logo img {
-  height: 36px;
-  width: auto;
-}
+.logo-icon { display: none; }
+.logo-full { display: block; height: 42px; width: auto; object-fit: contain; }
 
 .nav-logo span {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  display: none; /* Hide span as PADELADD text is likely in assets/logo.png */
 }
 
 .nav-links {
@@ -1962,6 +1960,9 @@ ul, ol { list-style: none; }
   .nav-links, .nav-right {
     display: contents !important;
   }
+
+  .nav-logo .logo-full { display: none; }
+  .nav-logo .logo-icon { display: block; height: 32px; width: auto; }
 
   /* ---- ZONE 1: Logo ---- */
   .nav-logo {
