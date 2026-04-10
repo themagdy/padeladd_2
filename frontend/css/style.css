@@ -1928,87 +1928,113 @@ ul, ol { list-style: none; }
   }
 }
 
-/* Mobile Bottom Nav */
+/* =====================================================
+   MOBILE BOTTOM NAV - Clean authoritative rules
+   ===================================================== */
 @media (max-width: 768px) {
+  /* Nav bar sits at the very bottom */
   #main-nav {
     bottom: 0;
     top: auto;
     border-bottom: none;
     border-top: 1px solid var(--c-border);
-    height: 74px;
-    padding-bottom: env(safe-area-inset-bottom);
+    height: 70px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
-  .nav-links, .nav-right {
-    display: flex !important;
-    flex-direction: row !important;
+  /* Now app content gets bottom padding, not top */
+  .has-nav #app-content {
+    padding-top: 0 !important;
+    padding-bottom: 80px;
   }
 
-  /* Reset container to group sub-sections */
+  /* The container is the single flex parent */
   .nav-container {
     display: flex !important;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
-    padding: 0 15px;
-    gap: 10px;
+    padding: 0 16px;
+    gap: 0;
   }
 
-  .nav-item.nav-logo {
+  /* ---- ZONE 1: Logo (left) ---- */
+  .nav-logo {
     flex: 0 0 auto;
-    padding: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 0;
+    padding-right: 14px;
+    gap: 0;
   }
-  .nav-item.nav-logo img {
-    height: 44px;
+  .nav-logo img {
+    height: 46px;
     width: auto;
   }
-
-  .nav-links {
-    flex: 1;
-    display: flex;
-    justify-content: space-evenly;
-    max-width: 50%; /* Constrain links to middle */
+  /* Hide the "Padeladd" text on mobile */
+  .nav-logo span {
+    display: none;
   }
 
+  /* ---- ZONE 2: Center links ---- */
+  .nav-links {
+    flex: 1 1 auto;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0;
+    gap: 0;
+  }
   .nav-links .nav-item {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    cursor: pointer;
     text-decoration: none;
+    padding: 0;
   }
   .nav-links .nav-item img {
     height: 22px;
     width: auto;
   }
-  .nav-links .nav-label {
+  .nav-links .nav-item .nav-label {
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     color: var(--c-text);
   }
 
+  /* ---- ZONE 3: User section (right, separated by a line) ---- */
   .nav-right {
     flex: 0 0 auto;
     display: flex !important;
+    flex-direction: row !important;
     align-items: center;
-    gap: 15px;
-    padding-left: 15px;
+    gap: 14px;
+    padding-left: 16px;
     border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
 
+  /* Large circular avatar */
   .avatar-circle {
-    width: 44px;
-    height: 44px;
-    font-size: 16px;
-    font-weight: 800;
-    border-radius: 50%;
-    background: var(--c-bg-secondary);
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    background: var(--g-primary) !important;
     display: flex !important;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.2) !important;
+    flex-shrink: 0;
   }
 
+  /* Notification bell */
   .nav-notif {
     position: relative;
     display: flex !important;
@@ -2016,10 +2042,11 @@ ul, ol { list-style: none; }
     justify-content: center;
   }
   .nav-notif img {
-    height: 24px;
-    width: auto;
+    width: 26px;
+    height: 26px;
   }
   .notif-badge {
+    position: absolute;
     top: -6px;
     right: -8px;
     width: 18px;
@@ -2028,16 +2055,9 @@ ul, ol { list-style: none; }
     z-index: 2;
   }
 
+  /* Hide sign out button on mobile nav */
   #nav-logout {
     display: none !important;
-  }
-
-  .has-nav #app-content {
-    padding-bottom: 90px;
-  }
-
-  .has-nav #app-content {
-    padding-bottom: 80px; /* Space for bottom nav */
   }
 
   /* Dashboard Grid Adjustments for Mobile */
