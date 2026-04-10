@@ -1954,7 +1954,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 8px; /* Tightened to match page buttons exactly */
+    padding: 0 20px; /* Aligned exactly with page content guidelines */
     gap: 0;
   }
 
@@ -1984,7 +1984,7 @@ ul, ol { list-style: none; }
     justify-content: center;
     flex: 0 0 auto;
     width: auto !important;
-    gap: 34px; /* Expanded to fill the width better */
+    gap: 20px; /* Tighter cluster to fit within inner guidelines */
     margin: 0;
     padding: 0;
   }
