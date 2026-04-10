@@ -28,9 +28,15 @@ if ($emailV && $phoneV) {
     }
 }
 
+// Check if profile exists
+$stmtProf = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
+$stmtProf->execute([$userId]);
+$hasProfile = $stmtProf->rowCount() > 0;
+
 jsonResponse(true, 'Status retrieved.', [
     'email_verified' => $emailV,
     'phone_verified' => $phoneV,
-    'token' => $authToken
+    'token' => $authToken,
+    'has_profile' => $hasProfile
 ]);
 ?>

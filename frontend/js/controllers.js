@@ -161,6 +161,9 @@ const AuthController = {
                  if (res.data.token) {
                      Auth.setToken(res.data.token);
                  }
+                 if (res.data.fully_verified || (isEmailVerified && isPhoneVerified)) {
+                    Auth.setHasProfile(res.data.has_profile);
+                 }
                  updateUI();
              }
         };
@@ -203,6 +206,9 @@ const AuthController = {
                     if (res.data.token) {
                         Auth.setToken(res.data.token);
                     }
+                    if (res.data.fully_verified) {
+                        Auth.setHasProfile(res.data.has_profile);
+                    }
                     updateUI();
                 } else {
                     Toast.show(res ? res.message : 'Invalid code');
@@ -232,6 +238,9 @@ const AuthController = {
         if (res && res.success) {
             if (res.data.token) {
                 Auth.setToken(res.data.token);
+            }
+            if (res.data.fully_verified) {
+                Auth.setHasProfile(res.data.has_profile);
             }
             const badge = document.getElementById('email-status-badge');
             const msg = document.getElementById('email-verified-msg');
