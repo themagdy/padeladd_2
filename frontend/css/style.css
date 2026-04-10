@@ -1939,8 +1939,20 @@ ul, ol { list-style: none; }
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .nav-logo {
-    display: none; /* Hide logo on mobile bottom nav */
+  .nav-item.nav-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+  }
+  .nav-item.nav-logo img {
+    height: 22px;
+    width: auto;
+  }
+  .nav-item.nav-logo span {
+    font-size: 10px;
+    font-weight: 700;
   }
 
   .nav-container {
