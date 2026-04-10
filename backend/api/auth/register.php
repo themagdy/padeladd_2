@@ -26,15 +26,19 @@ $stmt->execute([$email, $mobile]);
 $existingUsers = $stmt->fetchAll();
 
 foreach ($existingUsers as $existing) {
-    if ($existing['email'] === $email && $existing['is_email_verified']) {
-        jsonResponse(false, 'Email is already registered.');
-    }
-    if ($existing['mobile'] === $mobile && $existing['is_phone_verified']) {
-        jsonResponse(false, 'Mobile number is already registered.');
+    // A record only "claims" the email/mobile if it is FULLY verified (both flags)
+    if ((int)$existing['is_email_verified'] === 1 && (int)$existing['is_phone_verified'] === 1) {
+        if ($existing['email'] === $email) {
+            jsonResponse(false, 'Email is already registered by a verified user.');
+        }
+        if ($existing['mobile'] === $mobile) {
+            jsonResponse(false, 'Mobile number is already registered by a verified user.');
+        }
     }
 }
 
-// If we reached here, any matches are unverified. Clear them out so this new registration can proceed.
+// If we reached here, any matches are not fully verified (pending one or both). 
+// Clear them out so this new registration can take ownership of the identifiers.
 foreach ($existingUsers as $existing) {
     $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$existing['id']]);
 }
