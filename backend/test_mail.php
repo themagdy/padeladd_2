@@ -3,7 +3,7 @@ echo "<h1>Mail Diagnostic - Iteration 4 (Bare Minimum)</h1>";
 
 $to = 'aworking@gmail.com';
 $subject = "Padeladd Minimal Test";
-$fromEmail = 'themagdy@ahmedmagdy.com'; // Trying a different sender name
+$fromEmail = 'no-reply@padeladd.com'; // Trying a different sender name
 
 $message = "Test message from Padeladd app.\nIf you received this, the minimal style is working.";
 
