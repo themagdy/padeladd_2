@@ -56,4 +56,11 @@ const Toast = {
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize the SPA router once DOM is ready
     Router.init();
+
+    // Mobile Status Bar Fix
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+        const StatusBar = window.Capacitor.Plugins.StatusBar;
+        StatusBar.setBackgroundColor({ color: '#171C26' });
+        StatusBar.setStyle({ style: 'DARK' });
+    }
 });
