@@ -325,10 +325,10 @@ ul, ol { list-style: none; }
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: 14px var(--space-lg);
-  border-radius: var(--r-md);
+  padding: 16px var(--space-lg);
+  border-radius: 12px;
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.3px;
   transition: all var(--t-fast);
