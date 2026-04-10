@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <base href="./">
+    <script>
+        // Dynamic Base Href to support both Web (subfolders) and Mobile (root)
+        const isMobile = window.location.protocol === 'capacitor:' || window.location.protocol === 'http:' && !window.location.hostname.includes('.');
+        const base = document.createElement('base');
+        base.href = (window.location.hostname === 'localhost' && window.location.pathname.startsWith('/padeladd4')) ? '/padeladd4/' : (window.location.pathname.startsWith('/pl') ? '/pl/' : './');
+        if (window.location.protocol === 'capacitor:') base.href = './';
+        document.head.appendChild(base);
+    </script>
     <title>Padeladd</title>
     <link rel="icon" type="image/png" href="assets/logo_ico.png">
     <!-- Priority: UI Rules - Clean, modern, minimal UI, Mobile-first -->
