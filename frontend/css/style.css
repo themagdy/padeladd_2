@@ -173,92 +173,6 @@ ul, ol { list-style: none; }
   padding: 0 var(--space-md);
 }
 
-/* -------------------------------------------------------
-   [4] TOP NAV BAR
-   ------------------------------------------------------- */
-#top-nav {
-  height: var(--nav-h);
-  background: var(--c-bg-card);
-  border-bottom: 1px solid var(--c-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--space-md);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-}
-
-#top-nav .nav-logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-#top-nav .nav-logo img {
-  height: 32px;
-  width: auto;
-}
-
-#top-nav .nav-logo span {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--c-text);
-}
-
-#top-nav .nav-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.notif-btn {
-  position: relative;
-  background: transparent;
-  color: var(--c-text-muted);
-  font-size: 20px;
-  padding: var(--space-xs);
-  border-radius: var(--r-sm);
-  transition: color var(--t-fast);
-}
-
-.notif-btn:hover { color: var(--c-text); }
-
-.notif-badge {
-  position: absolute;
-  top: 0; right: 0;
-  background: var(--c-red);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  min-width: 16px;
-  height: 16px;
-  border-radius: var(--r-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 3px;
-}
-
-/* -------------------------------------------------------
-   [5] BOTTOM NAV BAR
-   ------------------------------------------------------- */
-#bottom-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: var(--bottom-nav-h);
-  background: var(--c-bg-card);
-  border-top: 1px solid var(--c-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-
-.nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1824,12 +1738,12 @@ ul, ol { list-style: none; }
   gap: 12px;
   min-width: 0;
   cursor: pointer;
-  margin-left: -26px; /* Aggressively pulled left to align visual branding with content */
+  margin-left: -30px; /* Aligned visually with left content edge */
   flex-shrink: 0;
 }
 
 .logo-icon { display: none; }
-.logo-full { display: block; height: 56px; width: auto; object-fit: contain; }
+.logo-full { display: block; height: 60px; width: auto; object-fit: contain; }
 
 .nav-logo span {
   display: none; /* Hide span as PADELADD text is likely in assets/logo.png */
@@ -1920,6 +1834,10 @@ ul, ol { list-style: none; }
 @media (min-width: 769px) {
   #main-nav {
     top: 0;
+  }
+  #main-nav .nav-container {
+    justify-content: space-between !important; /* Force desktop layout */
+    padding: 0 20px !important;
   }
   .has-nav #app-content {
     padding-top: 74px; /* Space for top nav */
