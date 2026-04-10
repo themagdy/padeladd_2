@@ -613,6 +613,11 @@ const ProfileController = {
         for (let i = currentYear - 6; i >= 1950; i--) {
             yearSelect.options.add(new Option(i, i));
         }
+        // Only show logout option if they don't have a profile yet
+        const logoutOption = document.getElementById('logout-option');
+        if (logoutOption) {
+            logoutOption.style.display = Auth.hasProfile() ? 'none' : 'block';
+        }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
