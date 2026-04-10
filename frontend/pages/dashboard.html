@@ -63,10 +63,10 @@
     <!-- ═══════════════════════════════════════════
          MAIN CONTENT: RANKING + LATEST MATCHES
     ═══════════════════════════════════════════ -->
-    <div class="dash-main-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:80px; padding:40px 0;">
+    <div class="dash-main-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:80px; padding:40px 0; align-items: stretch;">
 
       <!-- LEFT: RANKING -->
-      <div>
+      <div style="display:flex; flex-direction:column; border-right:1px solid var(--c-border); padding-right:40px; margin-right:-40px;">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
           <img src="assets/logo_ico.png" style="height:20px; width:auto; opacity:0.6;">
           <span style="font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted);">Ranking</span>
@@ -84,7 +84,7 @@
         </div>
 
         <!-- Ranking rows -->
-        <div id="dash-ranking-list" style="min-height:360px;">
+        <div id="dash-ranking-list" style="flex:1; min-height:360px;">
           <div class="skeleton" style="height:54px; border-radius:10px; margin-bottom:8px;"></div>
           <div class="skeleton" style="height:54px; border-radius:10px; margin-bottom:8px;"></div>
           <div class="skeleton" style="height:54px; border-radius:10px; margin-bottom:8px;"></div>
@@ -92,11 +92,11 @@
           <div class="skeleton" style="height:54px; border-radius:10px; margin-bottom:8px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px;">Full Ranking</button>
+        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px; width:100%;">Full Ranking</button>
       </div>
 
       <!-- RIGHT: LATEST MATCHES -->
-      <div>
+      <div style="display:flex; flex-direction:column;">
         <div style="margin-bottom:24px;">
           <span style="font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted);">Latest Matches</span>
         </div>
@@ -108,13 +108,13 @@
         </div>
 
         <!-- Match Cards -->
-        <div id="dash-matches-list" style="min-height:360px;">
+        <div id="dash-matches-list" style="flex:1; min-height:360px;">
           <div class="skeleton" style="height:100px; border-radius:14px; margin-bottom:12px;"></div>
           <div class="skeleton" style="height:100px; border-radius:14px; margin-bottom:12px;"></div>
           <div class="skeleton" style="height:100px; border-radius:14px; margin-bottom:12px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px;">All Matches</button>
+        <button onclick="Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px; padding:16px; font-size:15px; width:100%;">All Matches</button>
       </div>
     </div>
 
