@@ -2038,3 +2038,35 @@ ul, ol { list-style: none; }
     display: none; /* Hide logout on mobile bottom nav */
   }
 }
+
+/* =====================================================
+   FINAL AUTHORITATIVE OVERRIDES (Desktop)
+   ===================================================== */
+@media (min-width: 769px) {
+  #main-nav .nav-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+  }
+  
+  #main-nav .logo-full { 
+    display: block !important; 
+    height: 60px !important; 
+    width: auto !important; 
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  #main-nav .logo-icon { 
+    display: none !important; 
+  }
+  
+  #main-nav .nav-logo {
+    display: flex !important;
+    margin-left: -32px !important; /* Visual alignment with dashboard content */
+    min-width: 0 !important;
+    flex: none !important;
+  }
+}
