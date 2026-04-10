@@ -32,14 +32,29 @@ if ($hasProfile) {
 } else {
     // Insert new profile
     // Generate unique player code
-    $playerCode = 'PADEL-' . strtoupper(substr($user['first_name'], 0, 1) . substr($user['last_name'], 0, 1)) . '-' . mt_rand(1000, 9999);
+    // Generate unique player code: 3 characters (1 letter 2 numbers)
+    $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $playerCode = '';
     
-    // Ensure uniqueness
     $checkCode = $pdo->prepare("SELECT id FROM user_profiles WHERE player_code = ?");
+    $attempts = 0;
+    $maxAttempts = 50; // Safety break
+
     do {
+        $letter = $chars[mt_rand(0, strlen($chars) - 1)];
+        $numbers = str_pad(mt_rand(0, 99), 2, '0', STR_PAD_LEFT);
+        $playerCode = $letter . $numbers;
+
         $checkCode->execute([$playerCode]);
         if ($checkCode->rowCount() == 0) break;
-        $playerCode = 'PADEL-' . mt_rand(10000, 99999);
+        
+        $attempts++;
+        if ($attempts > $maxAttempts) {
+            // Fallback: If random is failing too much (near full), try more letters? 
+            // Better to just fail or extend, but user specifically asked for 3 chars.
+            // Let's just keep trying or throw error.
+            jsonResponse(false, 'Unable to generate unique player code. Population limit reached.');
+        }
     } while(true);
 
     $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_hand, nickname, location, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
