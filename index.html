@@ -43,7 +43,7 @@
                     <div id="nav-avatar" onclick="Router.navigate('/profile/view')" class="avatar-circle">?</div>
                     <div class="nav-notif">
                         <img src="assets/nav_icons/notif.svg" alt="Notifications">
-                        <span id="nav-notif-badge" class="notif-badge">0</span>
+                        <span id="nav-notif-badge" class="notif-badge" style="display: none;">0</span>
                     </div>
                     <button id="nav-logout" onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" class="btn-logout">Sign out</button>
                 </div>
