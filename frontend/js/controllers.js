@@ -557,7 +557,7 @@ const ProfileViewController = {
         const metaEl = document.getElementById('prof-meta');
         if (metaEl) {
             const items = [];
-            if (profile?.gender) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>${profile.gender === 'male' ? '♂' : '♀'} ${profile.gender}</span>`);
+            if (profile?.gender) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>${profile.gender === 'male' ? '👨' : '👩'} ${profile.gender}</span>`);
             if (profile?.location) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>📍 ${profile.location}</span>`);
             if (profile?.playing_hand) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>✋ ${profile.playing_hand} hand</span>`);
             if (profile?.age) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>🎂 Age ${profile.age}</span>`);
