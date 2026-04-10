@@ -1948,25 +1948,26 @@ ul, ol { list-style: none; }
     padding-bottom: 80px;
   }
 
-  /* Mobile Bottom Nav - Bulletproof Percentage Layout */
+  /* Mobile Bottom Nav - Floating Semantic Layout */
   .nav-container {
     display: flex !important;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     width: 100%;
-    padding: 0;
+    padding: 0 5px;
     gap: 0;
   }
 
-  /* ---- ZONE 1: Logo (1/6 of screen) ---- */
+  /* ---- ZONE 1: Logo ---- */
   .nav-logo {
     display: flex !important;
     align-items: center;
-    justify-content: center;
-    width: 16.666% !important;
+    justify-content: flex-start;
+    flex: 1;
     min-width: 0 !important;
+    width: auto !important;
+    padding-left: 10px;
     cursor: pointer;
-    padding: 0;
   }
   .nav-logo img {
     height: 32px;
@@ -1976,12 +1977,14 @@ ul, ol { list-style: none; }
     display: none;
   }
 
-  /* ---- Nav link items (3/6 of screen) ---- */
+  /* ---- Nav link items (Tight Cluster) ---- */
   .nav-links {
     display: flex !important;
     align-items: center;
-    justify-content: space-around;
-    width: 50% !important;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: auto !important;
+    gap: 22px; /* Tighter gap between Rank/Play/Matches */
     margin: 0;
     padding: 0;
   }
@@ -1990,7 +1993,7 @@ ul, ol { list-style: none; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 33.333% !important; /* 1/3 of the 50% width */
+    width: auto !important;
     gap: 4px;
     cursor: pointer;
     text-decoration: none;
@@ -2007,16 +2010,17 @@ ul, ol { list-style: none; }
     color: var(--c-text);
   }
 
-  /* ---- User section (2/6 of screen) ---- */
+  /* ---- User section ---- */
   .nav-right {
     display: flex !important;
     flex-direction: row !important;
     align-items: center;
-    justify-content: space-around;
-    width: 33.333% !important;
+    justify-content: flex-end;
+    flex: 1;
+    width: auto !important;
     min-width: 0 !important;
     padding: 0;
-    gap: 0;
+    gap: 10px; /* Less left margin / closer to avatar */
     border: none;
   }
 
@@ -2044,7 +2048,7 @@ ul, ol { list-style: none; }
     justify-content: center;
     flex-shrink: 0;
     position: relative;
-    margin: 0;
+    margin: 0 12px 0 0; /* More right margin, 0 extra left margin */
   }
   .nav-notif img {
     width: 24px;
