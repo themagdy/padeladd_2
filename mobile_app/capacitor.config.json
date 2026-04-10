@@ -2,5 +2,11 @@
   "appId": "com.padeladd.app",
   "appName": "Padeladd",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "StatusBar": {
+      "backgroundColor": "#171C26",
+      "style": "DARK"
+    }
+  }
 }
