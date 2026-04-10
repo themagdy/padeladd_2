@@ -389,7 +389,10 @@ const DashboardController = {
             
             // Global nav notification badge
             const navNotifEl = document.getElementById('nav-notif-badge');
-            if (navNotifEl) navNotifEl.textContent = upcoming;
+            if (navNotifEl) {
+                navNotifEl.textContent = upcoming;
+                navNotifEl.style.display = upcoming > 0 ? 'flex' : 'none';
+            }
         }
         DashboardController.renderMatches();
 
