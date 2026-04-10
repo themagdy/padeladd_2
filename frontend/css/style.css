@@ -1918,7 +1918,7 @@ ul, ol { list-style: none; }
   #main-nav {
     top: 0;
   }
-  #app-content {
+  .has-nav #app-content {
     padding-top: 74px; /* Space for top nav */
   }
 }
@@ -1946,7 +1946,7 @@ ul, ol { list-style: none; }
     min-width: auto;
   }
 
-  #app-content {
+  .has-nav #app-content {
     padding-bottom: 80px; /* Space for bottom nav */
   }
 
