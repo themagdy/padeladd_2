@@ -49,6 +49,26 @@
                 </div>
             </div>
         </nav>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav id="bottom-nav" style="display: none;">
+            <div class="nav-item" onclick="Router.navigate('/dashboard')">
+                <img src="assets/logo_ico.png" alt="Home" class="nav-icon" style="filter:none; opacity:1;">
+                <span style="margin-top:2px;">Home</span>
+            </div>
+            <div class="nav-item" onclick="Router.navigate('/ranking')">
+                <img src="assets/nav_icons/rank.svg" alt="Rank" class="nav-icon">
+                <span>Rank</span>
+            </div>
+            <div class="nav-item" onclick="Router.navigate('/matches')">
+                <img src="assets/nav_icons/play.svg" alt="Play" class="nav-icon">
+                <span>Play</span>
+            </div>
+            <div class="nav-item" onclick="Router.navigate('/profile/view')">
+                <img src="assets/nav_icons/notif.svg" alt="Profile" class="nav-icon">
+                <span>Profile</span>
+            </div>
+        </nav>
     </div>
 
     <div id="global-loader" class="loading-overlay" style="display: none;">
