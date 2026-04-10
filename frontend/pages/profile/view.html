@@ -19,15 +19,14 @@
             <div style="display:flex; flex-direction:column; gap:12px;">
               <div id="prof-code" class="profile-code" style="display:inline-flex; align-items:center; width:fit-content; gap:6px; background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.3); border-radius:var(--r-full); padding:4px 14px; font-size:11px; font-weight:800; letter-spacing:1px; color:var(--c-orange);"></div>
               <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:16px;"></div>
+              <!-- Bio -->
+              <p id="prof-bio" style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px; margin-top:12px; font-style:italic;"></p>
             </div>
           </div>
         </div>
         
         <button id="prof-edit-btn" onclick="Router.navigate('/profile/edit')" class="btn" style="display:none; background:#293342; color:#fff; padding:12px 24px; font-weight:700; border-radius:12px; border:1px solid var(--c-border); flex-shrink:0;">Edit Profile</button>
       </div>
-
-      <!-- Bio -->
-      <p id="prof-bio" style="font-size:16px; color:var(--c-text-muted); line-height:1.7; display:none; max-width:750px; margin-bottom:50px; padding:20px; background:rgba(255,255,255,0.03); border-left:3px solid var(--c-primary); border-radius:4px;"></p>
 
       <!-- Stats Grid (Dashboard style) -->
       <div class="prof-stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; align-items:stretch;">
