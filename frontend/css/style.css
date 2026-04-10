@@ -1950,15 +1950,16 @@ ul, ol { list-style: none; }
 
   /* Mobile Bottom Nav - Floating Semantic Layout */
   .nav-container {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important; /* 6 equal slots */
     align-items: center;
-    justify-content: center !important; /* Forces centered tight cluster */
+    justify-items: center; /* Center each icon in its slot */
     width: 100%;
-    padding: 0;
-    gap: 1px !important; /* Precision 1px gap between every item */
+    padding: 0 10px; /* Slight edge safety */
+    gap: 1px !important; /* Precision 1px gap */
   }
 
-  /* Flatten all groups into a single row of 6 direct children */
+  /* Flatten structure so children are mapped to the 6 slots */
   .nav-links, .nav-right {
     display: contents !important;
   }
@@ -1966,33 +1967,34 @@ ul, ol { list-style: none; }
   /* ---- ZONE 1: Logo ---- */
   .nav-logo {
     display: flex !important;
-    flex: none !important;
     align-items: center;
     justify-content: center;
-    width: auto !important;
+    width: 100% !important;
+    height: 100%;
     margin: 0 !important;
-    padding: 0 !important; /* True 1px distance */
+    padding: 0 !important;
     cursor: pointer;
+    grid-column: 1; /* First slot */
   }
   .nav-logo img {
-    height: 32px;
+    height: 28px; /* Slightly smaller for grid fit */
     width: auto;
   }
   .nav-logo span {
     display: none;
   }
 
-  /* ---- Nav link items (Tight Cluster) ---- */
+  /* ---- Nav link items ---- */
   .nav-links .nav-item {
     display: flex !important;
-    flex: none !important;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: auto !important;
+    width: 100% !important;
+    height: 100%;
     gap: 4px;
     margin: 0 !important;
-    padding: 0 !important; /* True 1px distance */
+    padding: 0 !important;
     cursor: pointer;
     text-decoration: none;
   }
@@ -2010,9 +2012,10 @@ ul, ol { list-style: none; }
   /* ---- User section ---- */
   .nav-right .nav-notif {
     display: flex !important;
-    flex: none !important;
     align-items: center;
     justify-content: center;
+    width: 100% !important;
+    height: 100%;
     padding: 0 !important;
     margin: 0 !important;
   }
@@ -2020,28 +2023,27 @@ ul, ol { list-style: none; }
   /* ---- Avatar ---- */
   .avatar-circle {
     display: flex !important;
-    flex: none !important;
     align-items: center;
     justify-content: center;
-    width: 44px !important; /* Slighly smaller for tight layout */
-    height: 44px !important;
+    width: 42px !important;
+    height: 42px !important;
     border-radius: 50% !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     font-weight: 800 !important;
     background: var(--g-primary) !important;
     cursor: pointer;
     border: 2px solid rgba(255,255,255,0.15) !important;
-    flex-shrink: 0;
-    margin: 0;
+    margin: 0 !important;
   }
 
   /* ---- Notification bell ---- */
   .nav-notif {
     display: flex !important;
-    flex: none !important;
     align-items: center;
     justify-content: center;
     position: relative;
+    width: 100% !important;
+    height: 100%;
     margin: 0 !important;
     padding: 0 !important;
   }
