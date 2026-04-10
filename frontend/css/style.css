@@ -1939,97 +1939,93 @@ ul, ol { list-style: none; }
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Flatten hierarchy for perfect spacing */
   .nav-links, .nav-right {
-    display: contents !important;
+    display: flex !important;
+    flex-direction: row !important;
   }
 
+  /* Reset container to group sub-sections */
   .nav-container {
     display: flex !important;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
-    padding: 0 10px;
+    padding: 0 15px;
+    gap: 10px;
   }
 
-  /* All items behave the same */
-  .nav-item, .nav-logo {
+  .nav-item.nav-logo {
+    flex: 0 0 auto;
+    padding: 0;
+  }
+  .nav-item.nav-logo img {
+    height: 44px;
+    width: auto;
+  }
+
+  .nav-links {
     flex: 1;
-    display: flex !important;
+    display: flex;
+    justify-content: space-evenly;
+    max-width: 50%; /* Constrain links to middle */
+  }
+
+  .nav-links .nav-item {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-width: 0;
+    gap: 4px;
     text-decoration: none;
-    cursor: pointer;
-    gap: 6px;
   }
-
-  .nav-item img, .nav-notif img {
+  .nav-links .nav-item img {
     height: 22px;
     width: auto;
-    display: block;
   }
-  
-  .nav-logo img {
-    height: 48px; /* Larger logo */
-    width: auto;
-    display: block;
-  }
-
-  .nav-label {
+  .nav-links .nav-label {
     font-size: 10px;
     font-weight: 700;
-    margin-top: 0;
     letter-spacing: 0.5px;
     color: var(--c-text);
   }
 
-  /* User section wrapper to handle separator line */
   .nav-right {
+    flex: 0 0 auto;
     display: flex !important;
     align-items: center;
     gap: 15px;
     padding-left: 15px;
-    margin-left: 5px;
-    border-left: 1px solid rgba(255,255,255,0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .avatar-circle {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     font-size: 16px;
     font-weight: 800;
-    margin: 0;
-    display: flex !important;
-    border: none;
-    background: transparent;
     border-radius: 50%;
+    background: var(--c-bg-secondary);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Specific fix for image if avatar becomes an image later */
-  .avatar-circle img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-  }
-
-  /* Notification Bell specific positioning */
   .nav-notif {
     position: relative;
     display: flex !important;
     align-items: center;
     justify-content: center;
   }
+  .nav-notif img {
+    height: 24px;
+    width: auto;
+  }
   .notif-badge {
     top: -6px;
     right: -8px;
-    margin-right: 0;
-    transform: none;
     width: 18px;
     height: 18px;
     font-size: 10px;
+    z-index: 2;
   }
 
   #nav-logout {
@@ -2037,7 +2033,7 @@ ul, ol { list-style: none; }
   }
 
   .has-nav #app-content {
-    padding-bottom: 90px; /* Space for slightly taller bottom nav */
+    padding-bottom: 90px;
   }
 
   .has-nav #app-content {
