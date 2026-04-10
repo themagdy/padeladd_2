@@ -485,8 +485,9 @@ const DashboardController = {
 //  PROFILE VIEW CONTROLLER
 // -------------------------------------------------------
 const ProfileViewController = {
-    init: async function() {
-        const res = await API.post('/profile/get', {});
+    init: async function(params) {
+        const payload = params && params.id ? { user_id: params.id } : {};
+        const res = await API.post('/profile/get', payload);
         if (!res || !res.success) return;
         const { user, profile, stats } = res.data;
 
@@ -513,16 +514,12 @@ const ProfileViewController = {
         const metaEl = document.getElementById('prof-meta');
         if (metaEl) {
             const items = [];
-            if (profile?.gender) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>${profile.gender === 'male' ? '♂' : '♀'} ${profile.gender}</span>`);
-            if (profile?.location) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>📍 ${profile.location}</span>`);
-            if (profile?.playing_hand) items.push(`<span style='font-size:12px; color:var(--c-text-muted); display:flex; align-items:center; gap:4px;'>✋ ${profile.playing_hand} hand</span>`);
-            if (profile?.age) items.push(`<span style='font-size:12px; color:var(--c-text-muted);'>Age ${profile.age}</span>`);
+            if (profile?.gender) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>${profile.gender === 'male' ? '♂' : '♀'} ${profile.gender}</span>`);
+            if (profile?.location) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>📍 ${profile.location}</span>`);
+            if (profile?.playing_hand) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>✋ ${profile.playing_hand} hand</span>`);
+            if (profile?.age) items.push(`<span style='font-size:13px; color:var(--c-text-muted);'>Age ${profile.age}</span>`);
             metaEl.innerHTML = items.join('');
         }
-
-        // Rank badge
-        const rankVal = document.getElementById('prof-rank-val');
-        if (rankVal) rankVal.textContent = stats.ranking ?? '—';
 
         // Bio
         const bioEl = document.getElementById('prof-bio');
@@ -531,7 +528,7 @@ const ProfileViewController = {
             bioEl.style.display = 'block';
         }
 
-        // Stats mini grid
+        // Stats cards
         const pvPts = document.getElementById('pv-points');
         if (pvPts) pvPts.textContent = stats.points;
         const pvRank = document.getElementById('pv-rank');
@@ -542,11 +539,12 @@ const ProfileViewController = {
         if (pvM) pvM.textContent = stats.matches_played;
 
         // Matches list
-        const matchRes = await API.post('/matches/user', {});
+        const matchPayload = params && params.id ? { user_id: params.id } : {};
+        const matchRes = await API.post('/matches/user', matchPayload);
         const listEl = document.getElementById('pv-matches-list');
         if (listEl) {
             if (!matchRes || !matchRes.success || matchRes.data.matches.length === 0) {
-                listEl.innerHTML = `<div class='empty-state'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to start tracking results.</p></div>`;
+                listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to start tracking results.</p></div>`;
             } else {
                 listEl.innerHTML = matchRes.data.matches.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
             }

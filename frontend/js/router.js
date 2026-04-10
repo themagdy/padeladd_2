@@ -8,7 +8,8 @@ const Router = {
         '/forgot-password': { template: 'frontend/pages/auth/forgot_password.html', init: () => AuthController.initForgotPassword() },
         '/reset-password': { template: 'frontend/pages/auth/reset_password.html', init: () => AuthController.initResetPassword() },
         '/profile/edit': { template: 'frontend/pages/profile/edit.html', init: () => ProfileController.initEdit() },
-        '/profile/view': { template: 'frontend/pages/profile/view.html', init: () => ProfileViewController.init() },
+        '/profile/view': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
+        '/profile/view/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
         '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() } 
     },
@@ -73,12 +74,33 @@ const Router = {
             }
         }
 
-        const route = this.routes[path];
+        // Find route with parameter support
+        let matchedParams = null;
+        let route = this.routes[path];
+        
+        if (!route) {
+            // Try matching dynamic routes (e.g. /profile/view/:id)
+            for (const [rPath, rTarget] of Object.entries(this.routes)) {
+                if (rPath.includes(':')) {
+                    const regexPath = new RegExp('^' + rPath.replace(/:\w+/g, '([^/]+)') + '$');
+                    const match = path.match(regexPath);
+                    if (match) {
+                        route = rTarget;
+                        // Extract params (for now just simple mapping)
+                        const keys = rPath.match(/:\w+/g);
+                        matchedParams = {};
+                        keys.forEach((key, i) => {
+                            matchedParams[key.substring(1)] = match[i + 1];
+                        });
+                        break;
+                    }
+                }
+            }
+        }
         
         if (route) {
             try {
                 // Ensure we fetch relative to the base URL
-                // Add a cache-buster so browsers don't serve old HTML files
                 const v = new Date().getTime(); 
                 const targetUrl = CONFIG.BASE_PATH + '/' + route.template + '?v=' + v;
                 
@@ -93,7 +115,7 @@ const Router = {
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
                     // slight timeout to ensure DOM is updated
-                    setTimeout(() => route.init(), 0);
+                    setTimeout(() => route.init(matchedParams), 0);
                 }
             } catch (err) {
                 console.error(err);
@@ -115,7 +137,7 @@ const Router = {
     },
 
     updateNavVisibility: function(path) {
-        const nav = document.getElementById('top-nav');
+        const nav = document.getElementById('main-nav');
         const bnav = document.getElementById('bottom-nav');
         if (!nav) return;
 
