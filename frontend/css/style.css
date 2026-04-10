@@ -2007,7 +2007,7 @@ ul, ol { list-style: none; }
     color: var(--c-text);
   }
 
-  /* ---- ZONE 3: User section (right, separated by a line) ---- */
+  /* ---- ZONE 3: User section (right) ---- */
   .nav-right {
     flex: 2;
     display: flex !important;
@@ -2015,8 +2015,8 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding-left: 14px;
-    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    padding-left: 0;
+    border-left: none;
   }
 
   /* Avatar */
