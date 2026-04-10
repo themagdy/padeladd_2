@@ -13,7 +13,6 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
     $headers .= "Reply-To: no-reply@padeladd.com\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
 
-    // Use -f with the actual hosted server email to bypass Bluehost spoofing protection
-    return mail($to, $subject, $message, $headers, "-fthemagdy@ahmedmagdy.com");
+    return mail($to, $subject, $message, $headers, "-fno-reply@padeladd.com");
 }
 ?>
