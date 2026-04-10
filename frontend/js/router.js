@@ -11,7 +11,8 @@ const Router = {
         '/profile/view': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/profile/view/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
-        '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() } 
+        '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() },
+        '/:profileId': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init({ id: params.profileId }) }
     },
     
     init: function() {
@@ -158,7 +159,8 @@ const Router = {
                     if ((path === '/dashboard' && attr.includes('/dashboard')) ||
                         (path.includes('/ranking') && attr.includes('/ranking')) ||
                         (path.includes('/matches') && attr.includes('/matches')) ||
-                        (path.includes('/profile') && attr.includes('/profile'))) {
+                        (path.includes('/profile') && attr.includes('/profile')) ||
+                        (!this.routes[path] && attr.includes('/profile'))) { // vanity URL
                         item.classList.add('active');
                     }
                 });

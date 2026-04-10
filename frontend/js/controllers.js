@@ -352,9 +352,9 @@ const DashboardController = {
         const av = document.getElementById('nav-avatar');
         if (av) {
             av.textContent = (user.first_name[0] + user.last_name[0]).toUpperCase();
-            // Use player_code for the link if available
+            // Root-level vanity URL
             const linkId = profile?.player_code || user.id;
-            av.setAttribute('onclick', `Router.navigate('/profile/view/${linkId}')`);
+            av.setAttribute('onclick', `Router.navigate('/${linkId}')`);
         }
 
         // Stats
