@@ -528,9 +528,19 @@ const ProfileViewController = {
             editBtn.style.display = (!params || !params.id) ? 'block' : 'none';
         }
 
-        // Name
-        const nameEl = document.getElementById('prof-name');
-        if (nameEl) nameEl.textContent = (profile?.nickname || user.first_name + ' ' + user.last_name);
+        // Names (Nickname + Full Name)
+        const nickEl = document.getElementById('prof-nickname');
+        if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
+        
+        const fullEl = document.getElementById('prof-fullname');
+        if (fullEl) {
+            if (profile?.nickname) {
+                fullEl.textContent = user.first_name + ' ' + user.last_name;
+                fullEl.style.display = 'block';
+            } else {
+                fullEl.style.display = 'none';
+            }
+        }
 
         // Player code
         const codeEl = document.getElementById('prof-code');
