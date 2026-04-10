@@ -1948,24 +1948,24 @@ ul, ol { list-style: none; }
     padding-bottom: 80px;
   }
 
-  /* The container is the single flex parent */
+  /* The container is the single grid parent */
   .nav-container {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
     align-items: center;
-    justify-content: space-around;
+    justify-items: center;
     width: 100%;
-    padding: 0 8px;
+    padding: 0 5px;
     gap: 0;
   }
 
-  /* Unwrap wrappers — items become direct flex children */
+  /* Unwrap wrappers — items become direct grid children */
   .nav-links, .nav-right {
     display: contents !important;
   }
 
   /* ---- ZONE 1: Logo ---- */
   .nav-logo {
-    flex: 1;
     display: flex !important;
     align-items: center;
     justify-content: center;
@@ -1982,7 +1982,6 @@ ul, ol { list-style: none; }
 
   /* ---- Nav link items (Rank, Play, Matches) ---- */
   .nav-links .nav-item {
-    flex: 1;
     display: flex !important;
     flex-direction: column;
     align-items: center;
@@ -1991,6 +1990,7 @@ ul, ol { list-style: none; }
     cursor: pointer;
     text-decoration: none;
     padding: 0;
+    width: 100%;
   }
   .nav-links .nav-item img {
     height: 20px;
@@ -2005,7 +2005,6 @@ ul, ol { list-style: none; }
 
   /* ---- Avatar ---- */
   .avatar-circle {
-    flex: 1;
     width: 54px !important;
     height: 54px !important;
     border-radius: 50% !important;
@@ -2024,7 +2023,6 @@ ul, ol { list-style: none; }
 
   /* ---- Notification bell ---- */
   .nav-notif {
-    flex: 1;
     position: relative;
     display: flex !important;
     align-items: center;
