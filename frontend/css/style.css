@@ -2021,7 +2021,7 @@ ul, ol { list-style: none; }
     width: auto !important;
     min-width: 0 !important;
     padding: 0;
-    gap: 10px; /* Less left margin / closer to avatar */
+    gap: 20px; /* Increased space between avatar and notif */
     border: none;
   }
 
