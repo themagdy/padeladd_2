@@ -1952,22 +1952,23 @@ ul, ol { list-style: none; }
   .nav-container {
     display: flex !important;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center; /* Centered cluster */
     width: 100%;
-    padding: 0 20px; /* Symmetrical centering */
-    gap: 0;
+    padding: 0;
+    gap: 1px; /* Precision 1px gap between all 6 items */
+  }
+
+  /* Flatten hierarchy: all 6 items become direct flex children */
+  .nav-links, .nav-right {
+    display: contents !important;
   }
 
   /* ---- ZONE 1: Logo ---- */
   .nav-logo {
     display: flex !important;
     align-items: center;
-    justify-content: flex-start;
-    flex: 1;
-    min-width: 0 !important;
+    justify-content: center;
     width: auto !important;
-    padding-left: 0;
-    margin-left: 0;
     cursor: pointer;
   }
   .nav-logo img {
@@ -1979,16 +1980,6 @@ ul, ol { list-style: none; }
   }
 
   /* ---- Nav link items (Tight Cluster) ---- */
-  .nav-links {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: auto !important;
-    gap: 1px; /* Extremely tight cluster per request */
-    margin: 0;
-    padding: 0;
-  }
   .nav-links .nav-item {
     display: flex !important;
     flex-direction: column;
@@ -1998,7 +1989,7 @@ ul, ol { list-style: none; }
     gap: 4px;
     cursor: pointer;
     text-decoration: none;
-    padding: 0;
+    padding: 0 10px; /* Some internal padding to make the icon clickable */
   }
   .nav-links .nav-item img {
     height: 20px;
@@ -2012,17 +2003,11 @@ ul, ol { list-style: none; }
   }
 
   /* ---- User section ---- */
-  .nav-right {
+  .nav-right .nav-notif {
     display: flex !important;
-    flex-direction: row !important;
     align-items: center;
-    justify-content: flex-end;
-    flex: 1;
-    width: auto !important;
-    min-width: 0 !important;
-    padding: 0;
-    gap: 15px; /* Clean centered spacing */
-    border: none;
+    justify-content: center;
+    padding: 0 10px;
   }
 
   /* ---- Avatar ---- */
