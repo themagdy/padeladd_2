@@ -41,19 +41,22 @@
         </div>
 
         <!-- Right action column -->
-        <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" style="background:var(--g-primary); border:none; border-radius:var(--r-lg); padding:20px 24px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:16px; font-weight:700; color:#fff; transition:opacity 0.2s;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">
-            <span>🔥 <span id="dash-upcoming-count">0</span> Upcoming Matches</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" style="background:var(--g-primary); border:none; border-radius:var(--r-lg); padding:24px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:18px; font-weight:800; color:#fff; transition:opacity 0.2s; text-align:left;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">
+            <span style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:24px;">🔥</span>
+              <span><span id="dash-upcoming-count">0</span> Upcoming Matches</span>
+            </span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>
           </button>
           <!-- Create / Join -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <button onclick="Router.navigate('/matches/create')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:18px; font-size:15px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
-              🎾 Create
+            <button onclick="Router.navigate('/matches/create')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; font-size:16px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:20px;">🎾</span> Create
             </button>
-            <button onclick="Router.navigate('/matches/join')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:18px; font-size:15px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
-              🔍 Join
+            <button onclick="Router.navigate('/matches/join')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; font-size:16px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:20px;">🔍</span> Join
             </button>
           </div>
         </div>
