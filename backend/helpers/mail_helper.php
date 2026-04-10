@@ -49,6 +49,6 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $headers .= "From: $siteName <$fromEmail>" . "\r\n";
 
-    return mail($to, $subject, $html, $headers);
+    return mail($to, $subject, $html, $headers, "-f $fromEmail");
 }
 ?>
