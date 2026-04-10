@@ -1967,7 +1967,7 @@ ul, ol { list-style: none; }
     min-width: 0 !important;
     width: auto !important;
     padding-left: 0;
-    margin-left: 0;
+    margin-left: -10px; /* Shifted an additional 10px left */
     cursor: pointer;
   }
   .nav-logo img {
@@ -1986,7 +1986,7 @@ ul, ol { list-style: none; }
     flex: 0 0 auto;
     width: auto !important;
     gap: 20px;
-    margin: 0 0 0 -5px; /* Explicitly shift links 5px further left */
+    margin: 0 0 0 -15px; /* Shifting an additional 10px left (-5px -> -15px) */
     padding: 0;
   }
   .nav-links .nav-item {
