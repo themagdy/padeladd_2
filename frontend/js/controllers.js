@@ -140,6 +140,15 @@ const AuthController = {
             if (isEmailVerified && isPhoneVerified && continueBtn) {
                 continueBtn.disabled = false;
                 continueBtn.style.opacity = '1';
+                
+                // Auto-advance so they don't get stuck verifying again
+                setTimeout(() => {
+                    if (Auth.hasProfile()) {
+                        Router.navigate('/dashboard');
+                    } else {
+                        Router.navigate('/profile/edit');
+                    }
+                }, 1500);
             }
         };
 

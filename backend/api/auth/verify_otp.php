@@ -8,6 +8,15 @@ if (empty($userId) || empty($code)) {
     jsonResponse(false, 'User ID and OTP are required.');
 }
 
+$stmtCheck = $pdo->prepare("SELECT is_phone_verified FROM users WHERE id = ?");
+$stmtCheck->execute([$userId]);
+$u = $stmtCheck->fetch();
+
+if ($u && $u['is_phone_verified']) {
+    // Already verified! Don't throw an error, just succeed.
+    jsonResponse(true, 'Phone is already verified.', ['already_verified' => true]);
+}
+
 $stmt = $pdo->prepare("SELECT * FROM verification_codes WHERE user_id = ? AND code_value = ? AND code_type = 'sms' AND is_used = 0 AND expires_at > NOW()");
 $stmt->execute([$userId, $code]);
 $tokenRow = $stmt->fetch();
