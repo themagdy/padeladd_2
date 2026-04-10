@@ -1952,52 +1952,48 @@ ul, ol { list-style: none; }
   .nav-container {
     display: flex !important;
     align-items: center;
+    justify-content: space-around;
     width: 100%;
-    padding: 0 16px;
+    padding: 0 8px;
     gap: 0;
   }
 
-  /* ---- ZONE 1: Logo (left) ---- */
+  /* Unwrap wrappers — items become direct flex children */
+  .nav-links, .nav-right {
+    display: contents !important;
+  }
+
+  /* ---- ZONE 1: Logo ---- */
   .nav-logo {
     flex: 1;
     display: flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    min-width: 0;
     padding: 0;
-    gap: 0;
   }
   .nav-logo img {
-    height: 28px;
+    height: 32px;
     width: auto;
   }
-  /* Hide the "Padeladd" text on mobile */
   .nav-logo span {
     display: none;
   }
 
-  /* ---- ZONE 2: Center links ---- */
-  .nav-links {
-    flex: 3;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    justify-content: space-evenly;
-    margin: 0;
-    gap: 0;
-  }
+  /* ---- Nav link items (Rank, Play, Matches) ---- */
   .nav-links .nav-item {
+    flex: 1;
     display: flex !important;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     cursor: pointer;
     text-decoration: none;
     padding: 0;
   }
   .nav-links .nav-item img {
-    height: 18px;
+    height: 20px;
     width: auto;
   }
   .nav-links .nav-item .nav-label {
@@ -2007,52 +2003,44 @@ ul, ol { list-style: none; }
     color: var(--c-text);
   }
 
-  /* ---- ZONE 3: User section (right) ---- */
-  .nav-right {
-    flex: 2;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding-left: 0;
-    border-left: none;
-  }
-
-  /* Avatar */
+  /* ---- Avatar ---- */
   .avatar-circle {
-    width: 38px !important;
-    height: 38px !important;
+    flex: 1;
+    width: 54px !important;
+    height: 54px !important;
     border-radius: 50% !important;
-    font-size: 14px !important;
+    font-size: 18px !important;
     font-weight: 800 !important;
     background: var(--g-primary) !important;
     display: flex !important;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 2px solid rgba(255,255,255,0.2) !important;
+    border: 2px solid rgba(255,255,255,0.15) !important;
     flex-shrink: 0;
+    max-width: 54px;
+    margin: 0 auto;
   }
 
-  /* Notification bell */
+  /* ---- Notification bell ---- */
   .nav-notif {
+    flex: 1;
     position: relative;
     display: flex !important;
     align-items: center;
     justify-content: center;
   }
   .nav-notif img {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
   .notif-badge {
     position: absolute;
-    top: -6px;
-    right: -8px;
-    width: 18px;
-    height: 18px;
-    font-size: 10px;
+    top: -4px;
+    right: calc(50% - 20px);
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
     z-index: 2;
   }
 
