@@ -1964,6 +1964,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: center;
     width: 16.666% !important;
+    min-width: 0 !important;
     cursor: pointer;
     padding: 0;
   }
@@ -2013,6 +2014,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: space-around;
     width: 33.333% !important;
+    min-width: 0 !important;
     padding: 0;
     gap: 0;
     border: none;
