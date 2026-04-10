@@ -1939,66 +1939,73 @@ ul, ol { list-style: none; }
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  .nav-item.nav-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: 0;
-  }
-  .nav-item.nav-logo img {
-    height: 24px;
-    width: auto;
-  }
-
-  .nav-links {
-    display: flex !important;
-    flex: 3;
-    justify-content: space-around;
-    gap: 0;
-  }
-  .nav-links .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .nav-links .nav-item img {
-    height: 20px;
-    width: auto;
-  }
-  .nav-links .nav-label {
-    font-size: 9px;
-    font-weight: 700;
-    margin-top: 4px;
-    letter-spacing: 0.2px;
+  /* Flatten hierarchy for perfect spacing */
+  .nav-links, .nav-right {
+    display: contents !important;
   }
 
   .nav-container {
-    padding: 0;
+    display: flex !important;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
+    padding: 0 5px;
   }
 
-  .nav-right {
-    flex: 2;
-    min-width: auto;
-    display: flex;
-    justify-content: space-around;
+  /* All items behave the same */
+  .nav-item, .nav-logo, .avatar-circle, .nav-notif {
+    flex: 1;
+    display: flex !important;
+    flex-direction: column;
     align-items: center;
-    gap: 0;
+    justify-content: center;
+    min-width: 0;
+    text-decoration: none;
+    cursor: pointer;
   }
+
+  .nav-item img, .nav-logo img, .nav-notif img {
+    height: 24px;
+    width: auto;
+    display: block;
+  }
+
+  .nav-label {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 5px;
+    letter-spacing: 0.1px;
+    color: var(--c-text);
+  }
+
   .avatar-circle {
-    width: 32px;
-    height: 32px;
-    font-size: 13px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0 auto;
+    border: 2px solid var(--c-primary);
+    background: var(--c-bg-secondary);
+    border-radius: 50%;
   }
-  .nav-notif img {
-    height: 20px;
+
+  /* Notification Bell specific positioning */
+  .nav-notif {
+    position: relative;
   }
+  .notif-badge {
+    top: -4px;
+    right: 50%;
+    margin-right: -15px;
+    transform: none;
+  }
+
   #nav-logout {
-    display: none;
+    display: none !important;
+  }
+
+  .has-nav #app-content {
+    padding-bottom: 85px; /* Space for slightly taller bottom nav */
   }
 
   .has-nav #app-content {
