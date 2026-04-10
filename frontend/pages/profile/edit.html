@@ -80,4 +80,9 @@
         
         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Profile & Start Playing</button>
     </form>
+    
+    <div id="logout-option" style="margin-top: 32px; text-align: center; border-top: 1px solid var(--c-border); padding-top: 24px;">
+        <p style="font-size: 13px; color: var(--c-text-muted); margin-bottom: 12px;">Not ready yet?</p>
+        <button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="background: transparent; border: 1px solid var(--c-border); color: var(--c-text); padding: 8px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">Sign Out</button>
+    </div>
 </div>
