@@ -1970,6 +1970,7 @@ ul, ol { list-style: none; }
     align-items: center;
     justify-content: center;
     width: auto !important;
+    min-width: 0 !important; /* Neutralize desktop 140px */
     margin: 0 !important;
     padding: 0 !important;
     cursor: pointer;
@@ -2023,8 +2024,8 @@ ul, ol { list-style: none; }
     flex: none !important;
     align-items: center;
     justify-content: center;
-    width: 46px !important;
-    height: 46px !important;
+    width: 40px !important; /* Slightly smaller for centered tight fit */
+    height: 40px !important;
     border-radius: 50% !important;
     font-size: 14px !important;
     font-weight: 800 !important;
