@@ -12,7 +12,7 @@ $stmt->execute([$email]);
 if ($stmt->rowCount() > 0) {
     // Generate reset token
     $token = generateRandomString(40);
-    $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour'));
+    $expiresAt = date('Y-m-d H:i:s', strtotime('+24 hours'));
     
     $insert = $pdo->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)");
     $insert->execute([$email, $token, $expiresAt]);
