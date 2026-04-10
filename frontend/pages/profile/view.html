@@ -1,54 +1,56 @@
-<div class="page active" style="padding-bottom: calc(var(--bottom-nav-h) + 16px);">
+<div class="page active">
 
-  <!-- HEADER -->
-  <div style="background:var(--g-card); border-bottom:1px solid var(--c-border); padding:20px 20px 24px;">
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
-      <!-- Avatar -->
-      <div id="prof-avatar" style="width:72px; height:72px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; color:#fff; flex-shrink:0; border:3px solid var(--c-border);">?</div>
-      <div style="flex:1; min-width:0;">
-        <div id="prof-name" style="font-size:20px; font-weight:800; letter-spacing:-0.3px; margin-bottom:4px;">Loading...</div>
-        <div id="prof-code" class="profile-code" style="display:inline-flex; align-items:center; gap:4px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-full); padding:3px 12px; font-size:11px; font-weight:800; letter-spacing:1px; color:var(--c-orange); margin-bottom:8px;"></div>
-        <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+  <div style="width:100%; max-width:1200px; margin:0 auto; min-height:100vh;">
+    <!-- HEADER -->
+    <div style="background:var(--g-card); border-bottom:1px solid var(--c-border); padding:30px 20px 34px;">
+      <div style="display:flex; align-items:center; gap:20px; margin-bottom:24px;">
+        <!-- Avatar -->
+        <div id="prof-avatar" style="width:84px; height:84px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:800; color:#fff; flex-shrink:0; border:4px solid var(--c-border);">?</div>
+        <div style="flex:1; min-width:0;">
+          <div id="prof-name" style="font-size:24px; font-weight:800; letter-spacing:-0.3px; margin-bottom:6px;">Loading...</div>
+          <div id="prof-code" class="profile-code" style="display:inline-flex; align-items:center; gap:4px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-full); padding:4px 14px; font-size:12px; font-weight:800; letter-spacing:1px; color:var(--c-orange); margin-bottom:10px;"></div>
+          <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:12px;"></div>
+        </div>
+      </div>
+
+      <!-- Rank badge -->
+      <div id="prof-rank-row" style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+        <div id="prof-rank-badge" style="background:var(--g-primary); border-radius:var(--r-full); padding:8px 20px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:8px;">
+          🏅 <span id="prof-rank-val">—</span>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <p id="prof-bio" style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px;"></p>
+    </div>
+
+    <!-- STATS MINI GRID -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--c-border); border-bottom:1px solid var(--c-border);">
+      <div style="background:var(--c-bg); padding:24px 10px; text-align:center;">
+        <div id="pv-points" style="font-size:24px; font-weight:800; color:var(--c-orange);">0</div>
+        <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;">Points</div>
+      </div>
+      <div style="background:var(--c-bg); padding:24px 10px; text-align:center;">
+        <div id="pv-rank" style="font-size:24px; font-weight:800; color:var(--c-text);">—</div>
+        <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;">Rank</div>
+      </div>
+      <div style="background:var(--c-bg); padding:24px 10px; text-align:center;">
+        <div id="pv-winrate" style="font-size:24px; font-weight:800; color:var(--c-green);">0%</div>
+        <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;">Win Rate</div>
+      </div>
+      <div style="background:var(--c-bg); padding:24px 10px; text-align:center;">
+        <div id="pv-matches" style="font-size:24px; font-weight:800; color:var(--c-text);">0</div>
+        <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:6px;">Matches</div>
       </div>
     </div>
 
-    <!-- Rank badge -->
-    <div id="prof-rank-row" style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
-      <div id="prof-rank-badge" style="background:var(--g-primary); border-radius:var(--r-full); padding:6px 16px; font-size:13px; font-weight:700; display:inline-flex; align-items:center; gap:6px;">
-        🏅 <span id="prof-rank-val">—</span>
+    <!-- MATCHES LIST -->
+    <div style="padding:40px 20px;">
+      <h2 style="font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--c-text-muted); margin-bottom:20px;">Match History</h2>
+      <div id="pv-matches-list" style="max-width:800px;">
+        <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+        <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
       </div>
-    </div>
-
-    <!-- Bio -->
-    <p id="prof-bio" style="font-size:13px; color:var(--c-text-muted); line-height:1.5; display:none;"></p>
-  </div>
-
-  <!-- STATS MINI GRID -->
-  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--c-border); border-bottom:1px solid var(--c-border);">
-    <div style="background:var(--c-bg); padding:16px 10px; text-align:center;">
-      <div id="pv-points" style="font-size:20px; font-weight:800; color:var(--c-orange);">0</div>
-      <div style="font-size:10px; font-weight:600; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px;">Points</div>
-    </div>
-    <div style="background:var(--c-bg); padding:16px 10px; text-align:center;">
-      <div id="pv-rank" style="font-size:20px; font-weight:800; color:var(--c-text);">—</div>
-      <div style="font-size:10px; font-weight:600; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px;">Rank</div>
-    </div>
-    <div style="background:var(--c-bg); padding:16px 10px; text-align:center;">
-      <div id="pv-winrate" style="font-size:20px; font-weight:800; color:var(--c-green);">0%</div>
-      <div style="font-size:10px; font-weight:600; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px;">Win Rate</div>
-    </div>
-    <div style="background:var(--c-bg); padding:16px 10px; text-align:center;">
-      <div id="pv-matches" style="font-size:20px; font-weight:800; color:var(--c-text);">0</div>
-      <div style="font-size:10px; font-weight:600; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px;">Matches</div>
-    </div>
-  </div>
-
-  <!-- MATCHES LIST -->
-  <div style="padding:20px;">
-    <h2 style="font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--c-text-muted); margin-bottom:16px;">Match History</h2>
-    <div id="pv-matches-list">
-      <div class="skeleton" style="height:80px; border-radius:var(--r-lg); margin-bottom:10px;"></div>
-      <div class="skeleton" style="height:80px; border-radius:var(--r-lg); margin-bottom:10px;"></div>
     </div>
   </div>
 
