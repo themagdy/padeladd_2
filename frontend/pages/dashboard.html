@@ -10,53 +10,53 @@
       <p style="color:var(--c-text-muted); font-size:15px; margin-bottom:32px;">Here's your padel overview</p>
 
       <!-- Stats + Actions grid -->
-      <div class="dash-stats-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 340px; gap:16px; align-items:stretch;">
+      <div class="dash-stats-grid" style="display:grid; grid-template-columns:repeat(4, 1fr) 320px; gap:12px; align-items:stretch;">
 
         <!-- Ranking -->
-        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px 22px;">
-          <div id="dash-ranking" style="font-size:40px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:12px;">—</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text); margin-bottom:4px;">Ranking</div>
-          <div id="dash-highest-rank" style="font-size:12px; color:var(--c-green);"></div>
+        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:16px; padding:20px 18px; display:flex; flex-direction:column; justify-content:center;">
+          <div id="dash-ranking" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">—</div>
+          <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:6px;">Ranking</div>
+          <div id="dash-highest-rank" style="font-size:11px; font-weight:700; color:var(--c-green);"></div>
         </div>
 
         <!-- Points -->
-        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px 22px;">
-          <div id="dash-points" style="font-size:40px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:12px;">0</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text); margin-bottom:4px;">Points</div>
-          <div id="dash-points-week" style="font-size:12px; color:var(--c-green);"></div>
+        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:16px; padding:20px 18px; display:flex; flex-direction:column; justify-content:center;">
+          <div id="dash-points" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+          <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:6px;">Points</div>
+          <div id="dash-points-week" style="font-size:11px; font-weight:700; color:var(--c-green);"></div>
         </div>
 
         <!-- Matches -->
-        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px 22px;">
-          <div id="dash-matches-count" style="font-size:40px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:12px;">0</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text); margin-bottom:4px;">Matches</div>
-          <div id="dash-wl" style="font-size:12px; color:var(--c-text-dim);"></div>
+        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:16px; padding:20px 18px; display:flex; flex-direction:column; justify-content:center;">
+          <div id="dash-matches-count" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+          <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:6px;">Matches</div>
+          <div id="dash-wl" style="font-size:11px; color:var(--c-text-dim); font-weight:600;"></div>
         </div>
 
         <!-- Win Rate -->
-        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px 22px;">
-          <div id="dash-winrate" style="font-size:40px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:12px;">0%</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text); margin-bottom:4px;">Win rate</div>
-          <div style="font-size:12px; color:var(--c-text-dim);">&nbsp;</div>
+        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:16px; padding:20px 18px; display:flex; flex-direction:column; justify-content:center;">
+          <div id="dash-winrate" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0%</div>
+          <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:6px;">Win rate</div>
+          <div style="font-size:11px; color:var(--c-text-dim);">&nbsp;</div>
         </div>
 
         <!-- Right action column -->
-        <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:10px;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" style="background:var(--g-primary); border:none; border-radius:var(--r-lg); padding:24px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:18px; font-weight:800; color:#fff; transition:opacity 0.2s; text-align:left;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">
-            <span style="display:flex; align-items:center; gap:12px;">
-              <span style="font-size:24px;">🔥</span>
-              <span><span id="dash-upcoming-count">0</span> Upcoming Matches</span>
+          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" style="background:#0062E6; border:none; border-radius:18px; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-size:16px; font-weight:800; color:#fff; transition:all 0.2s;" onmouseover="this.style.background='#0052cc'" onmouseout="this.style.background='#0062E6'">
+            <span style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:20px;">🔥</span>
+              <span><span id="dash-upcoming-count" style="font-size:20px; margin-right:4px;">0</span> Upcoming Matches</span>
             </span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
           <!-- Create / Join -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <button onclick="Router.navigate('/matches/create')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; font-size:16px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
-              <span style="font-size:20px;">🎾</span> Create
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button onclick="Router.navigate('/matches/create')" style="background:rgba(255,255,255,0.08); border:none; border-radius:18px; padding:16px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+              <span style="font-size:18px;">🎾</span> Create
             </button>
-            <button onclick="Router.navigate('/matches/join')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; font-size:16px; font-weight:700; color:var(--c-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='var(--c-bg-secondary)'" onmouseout="this.style.background='var(--c-bg-card)'">
-              <span style="font-size:20px;">🔍</span> Join
+            <button onclick="Router.navigate('/matches/join')" style="background:rgba(255,255,255,0.08); border:none; border-radius:18px; padding:16px; font-size:14px; font-weight:700; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+              <span style="font-size:18px;">🔍</span> Join
             </button>
           </div>
         </div>
