@@ -32,7 +32,7 @@ if ($hasProfile) {
 } else {
     // Insert new profile
     // Generate unique player code
-    // Generate unique player code: 4 characters (1 small letter 3 numbers)
+    // Generate unique player code: 3 characters (1 small letter 2 numbers)
     $chars = 'abcdefghijklmnopqrstuvwxyz';
     $playerCode = '';
     
@@ -42,7 +42,7 @@ if ($hasProfile) {
 
     do {
         $letter = $chars[mt_rand(0, strlen($chars) - 1)];
-        $numbers = str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+        $numbers = str_pad(mt_rand(0, 99), 2, '0', STR_PAD_LEFT);
         $playerCode = $letter . $numbers;
 
         $checkCode->execute([$playerCode]);
