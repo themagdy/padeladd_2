@@ -520,7 +520,7 @@ const ProfileViewController = {
             if (pageEl) {
                 pageEl.innerHTML = `
                     <div style="width:100%; max-width:1200px; margin:0 auto; padding:100px 20px; text-align:center;">
-                        <div style="font-size:64px; margin-bottom:24px;">🚫</div>
+                        <div style="font-size:64px; margin-bottom:24px;">🎾🔎</div>
                         <h1 style="font-size:32px; font-weight:800; color:#fff; margin-bottom:12px;">Player Not Found</h1>
                         <p style="color:var(--c-text-muted); font-size:16px; margin-bottom:32px;">The player code you are looking for does not exist or has been removed.</p>
                         <button onclick="Router.navigate('/dashboard')" class="btn btn-primary">Return to Dashboard</button>
