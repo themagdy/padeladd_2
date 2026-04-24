@@ -1699,6 +1699,9 @@ const MatchesController = {
         });
         MatchesController._currentMatchPlayerIds = playerIds;
 
+        let isPast = false;
+        let isAuthorized = false;
+
         const dt      = new Date(match.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
@@ -2136,8 +2139,8 @@ const MatchesController = {
                 }
 
                 // Phase 5: Chat access logic
-                const isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
-                const isAuthorized = !!(user_in_match || my_waitlist_entry || my_pending_request || pending_for_me || is_creator);
+                isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
+                isAuthorized = !!(user_in_match || my_waitlist_entry || my_pending_request || pending_for_me || is_creator);
                 
                 // Allow chat access if authorized OR if the match is in the past (to see history)
                 if (isAuthorized || isPast) {
