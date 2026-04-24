@@ -1419,8 +1419,9 @@ const MatchesController = {
         let endpoint = '/match/list';
         let payload  = { mode: MatchesController._currentTab };
 
-        // For 'mine' tabs, use the user-specific matches API which returns full score objects
-        if (MatchesController._currentTab.startsWith('mine_')) {
+        // ONLY use /matches/user for completed/past tabs in 'mine' mode to get scores
+        // Keep upcoming tabs on /match/list to avoid breaking their specific structure/filters
+        if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'mine_past') {
             endpoint = '/matches/user';
             payload  = {};
         }
@@ -1444,13 +1445,9 @@ const MatchesController = {
 
         let matches = res.data.matches;
 
-        // If we used /matches/user, we must filter manually to match the intended tab
-        if (MatchesController._currentTab.startsWith('mine_')) {
-            if (MatchesController._currentTab === 'mine_upcoming') {
-                matches = matches.filter(m => m.status === 'upcoming' || m.status === 'on_hold');
-            } else if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'mine_past') {
-                matches = matches.filter(m => m.status === 'completed' || m.status === 'past');
-            }
+        // If we used /matches/user, filter for completed/past only
+        if (endpoint === '/matches/user') {
+            matches = matches.filter(m => m.status === 'completed' || m.status === 'past');
         }
         
         // Empty state handling
