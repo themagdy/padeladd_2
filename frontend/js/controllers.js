@@ -1828,6 +1828,22 @@ const MatchesController = {
 
         if (statusBadgeContainer) statusBadgeContainer.innerHTML = ''; // Moved into title area
 
+        // Calculate team averages (integer floor, as per brief style)
+        const getTeamAvg = (teamNo) => {
+            const teamSlots = slots.filter(s => parseInt(s.team_no) === teamNo && s.status === 'confirmed');
+            if (teamSlots.length === 0) return null;
+            const sum = teamSlots.reduce((acc, s) => acc + (parseInt(s.points) || 50), 0);
+            return Math.floor(sum / teamSlots.length);
+        };
+
+        const team1Avg = getTeamAvg(1);
+        const team2Avg = getTeamAvg(2);
+
+        const t1p = document.getElementById('mv-team1-points');
+        if (t1p) t1p.innerHTML = team1Avg !== null ? `${team1Avg} pts avg` : '';
+        const t2p = document.getElementById('mv-team2-points');
+        if (t2p) t2p.innerHTML = team2Avg !== null ? `${team2Avg} pts avg` : '';
+
         // Render slot elements
         [[1,1],[1,2],[2,1],[2,2]].forEach(([team, slot]) => {
             const s   = slots.find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
@@ -1857,9 +1873,12 @@ const MatchesController = {
                             ${displayName}
                             ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
                         </div>
-                        <div style="display:flex; align-items:center; gap:4px;">
-                            ${s.player_code ? `<span class="slot-code" style="color:var(--c-orange); font-weight:800; font-family:monospace; background:rgba(247,148,29,0.1); padding:1px 6px; border-radius:4px; font-size:10px;">${s.player_code}</span>` : ''}
-                            ${isMe ? '<span style="font-size:12px; flex-shrink:0;">🫵</span>' : ''}
+                        <div style="display:flex; align-items:center; gap:4px; justify-content:space-between; width:100%;">
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                ${s.player_code ? `<span class="slot-code" style="color:var(--c-orange); font-weight:800; font-family:monospace; background:rgba(247,148,29,0.1); padding:1px 6px; border-radius:4px; font-size:10px;">${s.player_code}</span>` : ''}
+                                ${isMe ? '<span style="font-size:12px; flex-shrink:0;">🫵</span>' : ''}
+                            </div>
+                            <span class="slot-points" style="font-size:10px; font-weight:700; color:var(--c-text-muted); opacity:0.8;">${s.points || 50} pts</span>
                         </div>
                     </div>`;
             } else {
