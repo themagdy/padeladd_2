@@ -1,1 +1,5 @@
-9621d84 - Fri Apr 24 04:26:36 2026 +0300
+a28060d - 2026-04-24 16:46:13 +0300
+- Resolved Match Chat Permalink auto-open issues.
+- Fixed back button logic to return to match details from chat.
+- Fixed 'isAuthorized' scoping error in Match Controller.
+- Moved 'Report a problem' button to the match header row.
