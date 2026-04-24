@@ -94,7 +94,7 @@ if ($mode === 'play_upcoming') {
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE (m.creator_id = ? 
                OR m.id IN (SELECT match_id FROM match_players WHERE user_id = ?)
-               OR m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?))
+               OR m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status NOT IN ('denied', 'cancelled'))
         )
         AND (
             (m.status = 'cancelled') 
