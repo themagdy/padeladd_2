@@ -1527,10 +1527,28 @@ const MatchesController = {
             if (matches.length === 0) {
                 resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
             } else {
-                resultsContainer.innerHTML = matches.map(m => MatchesController.renderMatchCard(m)).join('');
+                let html = '';
+                matches.forEach(m => {
+                    const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+                    if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
+                        m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
+                    } else {
+                        html += MatchesController.renderMatchCard(m);
+                    }
+                });
+                resultsContainer.innerHTML = html;
             }
         } else {
-            list.innerHTML = matches.map(m => MatchesController.renderMatchCard(m)).join('');
+            let html = '';
+            matches.forEach(m => {
+                const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+                if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
+                    m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
+                } else {
+                    html += MatchesController.renderMatchCard(m);
+                }
+            });
+            list.innerHTML = html;
         }
     },
 
@@ -1564,9 +1582,9 @@ const MatchesController = {
         </div>`;
     },
 
-    renderMatchCard: function(m) {
-        // Fallback: take first score if no 'approved' one found, especially for completed matches
-        const approvedScore = (m.scores || []).find(s => s.status === 'approved') || (m.scores && m.scores.length > 0 ? m.scores[0] : null);
+    renderMatchCard: function(m, specificScore = null) {
+        // Use specificScore if provided, otherwise fallback to finding one
+        const approvedScore = specificScore || (m.scores || []).find(s => s.status === 'approved') || (m.scores && m.scores.length > 0 ? m.scores[0] : null);
         
         const dt      = new Date(m.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
