@@ -82,8 +82,8 @@ if ((int)$countStmt->fetchColumn() >= 5) {
 
 // 4. Check if there's already a PENDING score from the same user to avoid duplicates
 $checkPending = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND submitted_by_user_id = ? AND status = 'pending'");
-$checkPending.execute([$match_id, $uid]);
-if ($checkPending.fetch()) {
+$checkPending->execute([$match_id, $uid]);
+if ($checkPending->fetch()) {
     jsonResponse(false, 'You already have a pending score submission for this match.', null, 400);
 }
 
