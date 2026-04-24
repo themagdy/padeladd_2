@@ -1610,12 +1610,15 @@ const MatchesController = {
         }
 
         if (autoOpenChat && match_id) {
-            // Delay to ensure all DOM rendering and initJoinForm has completed
+            console.log('[Chat Permalink] Scheduling auto-open for match_id:', match_id);
             setTimeout(() => {
+                console.log('[Chat Permalink] Opening chat now for match_id:', match_id);
                 if (typeof ChatController !== 'undefined') {
                     ChatController.open(match_id);
                 }
             }, 300);
+        } else if (autoOpenChat) {
+            console.warn('[Chat Permalink] autoOpenChat=true but match_id is still 0, cannot open chat');
         }
 
 
