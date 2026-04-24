@@ -1604,13 +1604,18 @@ const MatchesController = {
         const result = await MatchesController.loadDetails({ match_id, match_code });
         if (result && result.id) match_id = result.id;
 
+        // Fallback: use the match_id that loadDetails stored in state
+        if (!match_id && MatchesController._currentMatchId) {
+            match_id = parseInt(MatchesController._currentMatchId);
+        }
+
         if (autoOpenChat && match_id) {
-            // Give the UI a tiny moment to settle then open chat
+            // Delay to ensure all DOM rendering and initJoinForm has completed
             setTimeout(() => {
                 if (typeof ChatController !== 'undefined') {
                     ChatController.open(match_id);
                 }
-            }, 200);
+            }, 300);
         }
 
 
@@ -2205,21 +2210,6 @@ const MatchesController = {
 
         if (typeof ChatController !== 'undefined' && ChatController._isShowing) {
             ChatController.renderPlayerBar();
-        }
-
-        if (window.location.pathname.endsWith('/chat')) {
-            // Poll until the chat overlay element exists then open it
-            let attempts = 0;
-            const tryOpen = setInterval(() => {
-                attempts++;
-                const overlay = document.getElementById('mv-chat-overlay');
-                if (overlay || attempts >= 20) {
-                    clearInterval(tryOpen);
-                    if (overlay && typeof ChatController !== 'undefined') {
-                        ChatController.open(parseInt(match.id));
-                    }
-                }
-            }, 100);
         }
 
         return { id: parseInt(match.id), isAuthorized, isChatAllowed: (isAuthorized || isPast) };
