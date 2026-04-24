@@ -1828,21 +1828,20 @@ const MatchesController = {
 
         if (statusBadgeContainer) statusBadgeContainer.innerHTML = ''; // Moved into title area
 
-        // Calculate team averages (integer floor, as per brief style)
-        const getTeamAvg = (teamNo) => {
+        // Calculate team sums (as per user request)
+        const getTeamSum = (teamNo) => {
             const teamSlots = slots.filter(s => parseInt(s.team_no) === teamNo && s.status === 'confirmed');
             if (teamSlots.length === 0) return null;
-            const sum = teamSlots.reduce((acc, s) => acc + (parseInt(s.points) || 50), 0);
-            return Math.floor(sum / teamSlots.length);
+            return teamSlots.reduce((acc, s) => acc + (parseInt(s.points) || 50), 0);
         };
 
-        const team1Avg = getTeamAvg(1);
-        const team2Avg = getTeamAvg(2);
+        const team1Sum = getTeamSum(1);
+        const team2Sum = getTeamSum(2);
 
         const t1p = document.getElementById('mv-team1-points');
-        if (t1p) t1p.innerHTML = team1Avg !== null ? `${team1Avg} pts avg` : '';
+        if (t1p) t1p.innerHTML = team1Sum !== null ? `${team1Sum} pts total` : '';
         const t2p = document.getElementById('mv-team2-points');
-        if (t2p) t2p.innerHTML = team2Avg !== null ? `${team2Avg} pts avg` : '';
+        if (t2p) t2p.innerHTML = team2Sum !== null ? `${team2Sum} pts total` : '';
 
         // Render slot elements
         [[1,1],[1,2],[2,1],[2,2]].forEach(([team, slot]) => {
