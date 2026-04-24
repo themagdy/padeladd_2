@@ -47,7 +47,6 @@ if ($mode === 'play_upcoming') {
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE (m.status IN ('completed', 'cancelled') OR (m.status IN ('open', 'full') AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR)))
-        AND (m.score_a IS NOT NULL OR m.winner_team IS NOT NULL OR m.status IN ('completed', 'cancelled'))
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
