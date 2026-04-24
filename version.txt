@@ -12,3 +12,4 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Fixed sticky positioning reliability by ensuring parent containers have visible overflow and adding -webkit prefixes.
 - Applied !important and explicit display:block to ranking page layout to resolve persistent sticky header issues.
 - Completely refactored Ranking page structure to optimize sticky positioning for filters and headers.
+- Fine-tuned sticky offsets to prevent header cropping on both mobile and desktop views.
