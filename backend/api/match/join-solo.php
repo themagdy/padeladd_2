@@ -4,6 +4,7 @@
  * Current user joins a specific empty team/slot in an open match.
  * team_no and slot_no must be specified, or the backend picks the first available.
  */
+require_once __DIR__ . '/../../helpers/ranking_helper.php';
 $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];

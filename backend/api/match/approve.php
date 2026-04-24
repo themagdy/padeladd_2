@@ -4,6 +4,7 @@
  * Partner approves a team join request from the waiting list.
  * Slots are filled only if team 2 still has 2 open spots.
  */
+require_once __DIR__ . '/../../helpers/ranking_helper.php';
 $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
