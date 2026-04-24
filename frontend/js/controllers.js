@@ -1512,6 +1512,7 @@ const MatchesController = {
     },
 
     renderMatchCard: function(m) {
+        const approvedScore = (m.scores || []).find(s => s.status === 'approved');
         const dt      = new Date(m.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
@@ -1568,6 +1569,11 @@ const MatchesController = {
             </div>
           </div>
 
+          ${approvedScore ? `
+            <div style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
+                ${ScoreUI.renderMatchScore(m, approvedScore, null, false)}
+            </div>
+          ` : `
           <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; margin-top:20px; border:1px solid rgba(255,255,255,0.03);">
              <div>
                 <div style="font-size:10px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 1</div>
@@ -1581,6 +1587,7 @@ const MatchesController = {
                 ${MatchesController.renderMiniSlot(m, 2, 2)}
              </div>
           </div>
+          `}
 
 
         </div>`;
@@ -1857,9 +1864,9 @@ const MatchesController = {
                     const isFull = match.status === 'full' || confirmedCount >= 4;
 
                     // Time tracking
-                const matchTimeDate = new Date(match.match_datetime.replace(' ', 'T'));
-                const now = new Date();
-                const diffHrs = (matchTimeDate - now) / (1000 * 60 * 60);
+                    const matchTimeDate = new Date(match.match_datetime.replace(' ', 'T'));
+                    const now = new Date();
+                    const diffHrs = (matchTimeDate - now) / (1000 * 60 * 60);
                 const isPastMatch = diffHrs <= 0;
                 const isLiveMatch = !isPastMatch && match.status !== 'completed';
 
