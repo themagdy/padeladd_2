@@ -2207,6 +2207,14 @@ const MatchesController = {
             ChatController.renderPlayerBar();
         }
 
+        if (window.location.pathname.endsWith('/chat')) {
+            setTimeout(() => {
+                if (typeof ChatController !== 'undefined') {
+                    ChatController.open(parseInt(match.id));
+                }
+            }, 100);
+        }
+
         return { id: parseInt(match.id), isAuthorized, isChatAllowed: (isAuthorized || isPast) };
     },
 
