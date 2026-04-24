@@ -73,18 +73,18 @@ if (!$mySlot) {
     jsonResponse(false, 'Only match participants can submit scores.', null, 403);
 }
 
-// 3. Max 2 submissions check
+// 3. Max 5 submissions check
 $countStmt = $pdo->prepare("SELECT COUNT(*) FROM scores WHERE match_id = ?");
 $countStmt->execute([$match_id]);
-if ((int)$countStmt->fetchColumn() >= 2) {
-    jsonResponse(false, 'Maximum of 2 score submissions allowed per match.', null, 400);
+if ((int)$countStmt->fetchColumn() >= 5) {
+    jsonResponse(false, 'Maximum of 5 match results allowed per session.', null, 400);
 }
 
-// 4. Check if there's already an approved score
-$checkApproved = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND status = 'approved'");
-$checkApproved->execute([$match_id]);
-if ($checkApproved->fetch()) {
-    jsonResponse(false, 'A score has already been approved for this match.', null, 400);
+// 4. Check if there's already a PENDING score from the same user to avoid duplicates
+$checkPending = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND submitted_by_user_id = ? AND status = 'pending'");
+$checkPending.execute([$match_id, $uid]);
+if ($checkPending.fetch()) {
+    jsonResponse(false, 'You already have a pending score submission for this match.', null, 400);
 }
 
 // 5. Insert score
