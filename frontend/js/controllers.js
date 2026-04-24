@@ -2134,15 +2134,9 @@ const MatchesController = {
 
         const wlSection = document.getElementById('mv-waiting-section');
         const wlList    = document.getElementById('mv-waiting-list');
-        
-        // Show all active requests, PLUS any denied/cancelled ones IF they belong to the current user
-        const activeWl  = (waiting_list || []).filter(w => {
-            const isMine = parseInt(w.requester_id) === myUserId || parseInt(w.partner_id) === myUserId;
-            const isActive = ['pending', 'approved'].includes(w.request_status);
-            return isActive || (isMine && ['denied', 'cancelled'].includes(w.request_status));
-        });
+        const activeWl  = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
 
-        const isWaitlisted = my_waitlist_entry || my_pending_request || (activeWl.some(w => parseInt(w.requester_id) === myUserId || parseInt(w.partner_id) === myUserId));
+        const isWaitlisted = my_waitlist_entry || my_pending_request;
         if ((is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
             wlSection.style.display = 'block';
             wlList.innerHTML = activeWl.map(w => {
