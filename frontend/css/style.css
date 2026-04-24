@@ -3748,7 +3748,7 @@ form {
     align-items: center;
     gap: 0;
     flex: 1;
-    padding-left: 20px; /* Room for the arrow inside */
+    padding-left: 24px; /* Balanced room for the arrow and text */
 }
 
 .msc-winner-indicator {
@@ -3763,7 +3763,7 @@ form {
     border-bottom: 4px solid transparent;
     border-left: 7px solid var(--c-orange);
     position: absolute;
-    left: 0;
+    left: 8px;
     top: 50%;
     transform: translateY(-50%);
 }
@@ -3831,7 +3831,7 @@ form {
     color: #fff;
     font-size: 18px;
     font-weight: 400;
-    margin: 0 20px;
+    margin: 0 12px;
     opacity: 0.8;
 }
 
