@@ -148,8 +148,8 @@ try {
         WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
     ")->execute([$match_id, $uid, $uid]);
 
-    // Ensure player_stats row
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$uid]);
+    // Ensure player_stats row (starting points = 50 per brief)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$uid]);
 
     // Check if match is now full
     if (count($occupied) + 1 >= 4) {

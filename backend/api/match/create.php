@@ -87,8 +87,8 @@ try {
     ");
     $ins->execute([$match_id, $uid, $creator_side]);
 
-    // Ensure creator has a player_stats row
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$uid]);
+    // Ensure creator has a player_stats row (starting points = 50 per brief)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$uid]);
 
     // Partner -> Send invite to waiting_list instead of confirming directly
     if ($partner_id !== null) {

@@ -60,7 +60,7 @@ try {
             VALUES (?, ?, 1, 2, 'team', 'confirmed', ?)
         ");
         $ins->execute([$match_id, $partner_id, $partner_side]);
-        $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$partner_id]);
+        $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$partner_id]);
 
         // Finish waiting list
         $pdo->prepare("UPDATE waiting_list SET request_status = 'joined' WHERE id = ?")->execute([$wl_id]);
@@ -133,9 +133,9 @@ try {
     $ins->execute([$match_id, $partner_id,   2, 2, $par_side]);
 
 
-    // Ensure player_stats rows
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$requester_id]);
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$partner_id]);
+    // Ensure player_stats rows (starting points = 50 per brief)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$requester_id]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$partner_id]);
 
     // Move to joined status (terminal)
     $pdo->prepare("UPDATE waiting_list SET request_status = 'joined' WHERE id = ?")->execute([$wl_id]);
