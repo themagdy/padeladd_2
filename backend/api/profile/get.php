@@ -61,6 +61,10 @@ if ($profile && $stats) {
     ");
     $rankStmt->execute([$gender, $stats['points'], $stats['points'], $stats['matches_played']]);
     $currentRanking = (int)$rankStmt->fetchColumn();
+    $rankingChange = null;
+    if ($stats && $stats['previous_ranking'] && $currentRanking) {
+        $rankingChange = $stats['previous_ranking'] - $currentRanking;
+    }
 }
 
 jsonResponse(true, 'Profile loaded.', [
@@ -88,12 +92,13 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
         'ranking'          => $currentRanking,
+        'ranking_change'   => $rankingChange,
         'highest_ranking'  => $stats['highest_ranking'],
         'points_this_week' => (int)$stats['points_this_week'],
         'win_rate'         => $winRate,
     ] : [
         'points' => 0, 'matches_played' => 0, 'matches_won' => 0,
-        'matches_lost' => 0, 'ranking' => null, 'highest_ranking' => null,
+        'matches_lost' => 0, 'ranking' => null, 'ranking_change' => null, 'highest_ranking' => null,
         'points_this_week' => 0, 'win_rate' => 0
     ],
     'is_self' => ($viewingId === $user['id'])

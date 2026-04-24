@@ -294,12 +294,33 @@ const StatsUI = {
         }
 
         // Secondary details (if elements exist)
-        const highEl = document.getElementById(`${prefix}-highest-rank`);
-        if (highEl && stats.highest_ranking) highEl.textContent = `${stats.highest_ranking} Highest rank`;
+        const rcEl = document.getElementById(`${prefix}-ranking-change`) || document.getElementById(`${prefix}-highest-rank`);
+        if (rcEl) {
+            if (stats.ranking_change > 0) {
+                rcEl.textContent = `↑ ${stats.ranking_change} positions`;
+                rcEl.style.color = 'var(--c-green)';
+            } else if (stats.ranking_change < 0) {
+                rcEl.textContent = `↓ ${Math.abs(stats.ranking_change)} positions`;
+                rcEl.style.color = 'var(--c-red)';
+            } else if (stats.highest_ranking) {
+                rcEl.textContent = `${stats.highest_ranking} Highest rank`;
+                rcEl.style.color = 'var(--c-text-muted)';
+            } else {
+                rcEl.textContent = '';
+            }
+        }
 
         const pwEl = document.getElementById(`${prefix}-points-week`);
         if (pwEl && stats.points_this_week !== undefined) {
-            pwEl.textContent = stats.points_this_week > 0 ? `+${stats.points_this_week} this week` : '';
+            if (stats.points_this_week > 0) {
+                pwEl.textContent = `↑ +${stats.points_this_week} this week`;
+                pwEl.style.color = 'var(--c-green)';
+            } else if (stats.points_this_week < 0) {
+                pwEl.textContent = `↓ ${stats.points_this_week} this week`;
+                pwEl.style.color = 'var(--c-red)';
+            } else {
+                pwEl.textContent = '';
+            }
         }
 
         const wlEl = document.getElementById(`${prefix}-wl`);
