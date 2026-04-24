@@ -128,7 +128,7 @@
           <div class="skeleton" style="height:100px; border-radius: var(--r-md); margin-bottom:12px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px;">All Matches</button>
+        <button onclick="sessionStorage.setItem('last_sub_tab_play', 'play_past'); Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px;">All Matches</button>
       </div>
     </div>
 
