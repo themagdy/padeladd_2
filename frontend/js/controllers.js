@@ -1550,7 +1550,9 @@ const MatchesController = {
     },
 
     renderMatchCard: function(m) {
-        const approvedScore = (m.scores || []).find(s => s.status === 'approved');
+        // Fallback: take first score if no 'approved' one found, especially for completed matches
+        const approvedScore = (m.scores || []).find(s => s.status === 'approved') || (m.scores && m.scores.length > 0 ? m.scores[0] : null);
+        
         const dt      = new Date(m.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
@@ -1581,11 +1583,11 @@ const MatchesController = {
         }
         
         const matchCode = m.match_code || `M-${m.id.toString().padStart(4, '0')}`;
-        const venueParts = m.venue_name.split('-');
+        const venueParts = (m.venue_name || 'Venue TBD').split('-');
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
-        // If completed and has a score, use the simplified "Score Listing" template
+        // If completed and has ANY score, use the simplified "Score Listing" template
         if (m.status === 'completed' && approvedScore) {
             return `
             <div class="match-card-modern" onclick="Router.navigate('/matches/view/${m.id}')" id="mc-${m.id}" style="padding: 20px 0;">
