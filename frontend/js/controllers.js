@@ -2208,9 +2208,16 @@ const MatchesController = {
         }
 
         if (window.location.pathname.endsWith('/chat')) {
-            setTimeout(() => {
-                if (typeof ChatController !== 'undefined') {
-                    ChatController.open(parseInt(match.id));
+            // Poll until the chat overlay element exists then open it
+            let attempts = 0;
+            const tryOpen = setInterval(() => {
+                attempts++;
+                const overlay = document.getElementById('mv-chat-overlay');
+                if (overlay || attempts >= 20) {
+                    clearInterval(tryOpen);
+                    if (overlay && typeof ChatController !== 'undefined') {
+                        ChatController.open(parseInt(match.id));
+                    }
                 }
             }, 100);
         }
