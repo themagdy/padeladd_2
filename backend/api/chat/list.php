@@ -44,23 +44,28 @@ if ($maxId > 0) {
 }
 
 // Verify match exists
-$mStmt = $pdo->prepare("SELECT id FROM matches WHERE id = ?");
+$mStmt = $pdo->prepare("SELECT id, status, match_datetime FROM matches WHERE id = ?");
 $mStmt->execute([$match_id]);
-if (!$mStmt->fetch()) {
+$match = $mStmt->fetch(PDO::FETCH_ASSOC);
+if (!$match) {
     jsonResponse(false, 'Match not found.', null, 404);
 }
 
+// Check access: must be a confirmed player, in the waiting list, OR the match is in the past/cancelled
+$isPast = strtotime($match['match_datetime']) <= time();
+$isCancelled = ($match['status'] === 'cancelled');
 
-// Check access: must be a confirmed player or in the waiting list
-$accessStmt = $pdo->prepare("
-    SELECT 1 FROM match_players WHERE match_id = ? AND user_id = ? AND status = 'confirmed'
-    UNION
-    SELECT 1 FROM waiting_list WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
-    LIMIT 1
-");
-$accessStmt->execute([$match_id, $uid, $match_id, $uid, $uid]);
-if (!$accessStmt->fetch()) {
-    jsonResponse(false, 'You are not a member of this match.', null, 403);
+if (!$isPast && !$isCancelled) {
+    $accessStmt = $pdo->prepare("
+        SELECT 1 FROM match_players WHERE match_id = ? AND user_id = ? AND status = 'confirmed'
+        UNION
+        SELECT 1 FROM waiting_list WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
+        LIMIT 1
+    ");
+    $accessStmt->execute([$match_id, $uid, $match_id, $uid, $uid]);
+    if (!$accessStmt->fetch()) {
+        jsonResponse(false, 'You are not a member of this match.', null, 403);
+    }
 }
 
 // Fetch messages - optionally only newer than since_id
