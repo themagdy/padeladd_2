@@ -509,15 +509,17 @@ const DashboardController = {
     renderMatchCard: function(m, userId, specificScore = null) {
         if (m.status === 'completed' && (specificScore || (m.scores && m.scores.length > 0))) {
             const scoreToRender = specificScore || m.scores[0];
-            const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
+            const allPlayers = [...(m.team_a || []), ...(m.team_b || []), ...(m.slots || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
             
-            const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
+            const rawDate = m.scheduled_at || m.match_datetime || new Date().toISOString();
+            const dateObj = new Date(rawDate.replace(' ', 'T'));
             const isToday = dateObj.toDateString() === new Date().toDateString();
             const dayStr = isToday ? 'Today' : dateObj.toLocaleDateString('en-US', { weekday: 'long' });
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
             
-            const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
+            const venueName = m.venue || m.venue_name || 'Venue TBD';
+            const venueTitle = venueName.split(' - ')[0].trim();
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
                     ${venueTitle} &nbsp;·&nbsp; ${dayStr}
