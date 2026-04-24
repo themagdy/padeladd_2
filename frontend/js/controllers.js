@@ -2108,8 +2108,11 @@ const MatchesController = {
                 }
 
                 // Phase 5: Chat access logic
+                const isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
                 const isAuthorized = !!(user_in_match || my_waitlist_entry || my_pending_request || pending_for_me || is_creator);
-                if (isAuthorized && match.status !== 'cancelled') {
+                
+                // Allow chat access if authorized OR if the match is in the past (to see history)
+                if (isAuthorized || isPast) {
                     const unreadCount = res.data.unread_count || 0;
                     const badgeHtml = unreadCount > 0 ? `
                         <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">

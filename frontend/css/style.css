@@ -3192,8 +3192,8 @@ form {
 }
 
 .status-badge-pill.status-incomplete {
-  border-color: var(--c-text-muted);
-  color: var(--c-text-muted);
+  border-color: var(--c-text-dim);
+  color: var(--c-text-dim);
 }
 
 .match-code-badge {
