@@ -5,3 +5,4 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Moved 'Report a problem' button to the match header row.
 - Implemented live Ranking/Leaderboard on the Dashboard with gender tabs and age calculation.
 - Polished ranking UI: updated points to white and age to gray for better contrast.
+- Created full Ranking page with premium leaderboard design, gender filtering, and real-time search.
