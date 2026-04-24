@@ -49,6 +49,20 @@ if ($stats && $stats['matches_played'] > 0) {
     $winRate = intval(($stats['matches_won'] * 100) / $stats['matches_played']);
 }
 
+// Calculate rank on the fly (relative to others of the same gender)
+$currentRanking = $stats['ranking'];
+if ($profile && $stats) {
+    $gender = $profile['gender'] ?? 'male';
+    $rankStmt = $pdo->prepare("
+        SELECT COUNT(*) + 1 
+        FROM player_stats ps
+        JOIN user_profiles up ON ps.user_id = up.user_id
+        WHERE up.gender = ? AND (ps.points > ? OR (ps.points = ? AND ps.matches_played > ?))
+    ");
+    $rankStmt->execute([$gender, $stats['points'], $stats['points'], $stats['matches_played']]);
+    $currentRanking = (int)$rankStmt->fetchColumn();
+}
+
 jsonResponse(true, 'Profile loaded.', [
     'user' => [
         'id'         => $u['id'],
@@ -73,7 +87,7 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_played'   => (int)$stats['matches_played'],
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
-        'ranking'          => $stats['ranking'],
+        'ranking'          => $currentRanking,
         'highest_ranking'  => $stats['highest_ranking'],
         'points_this_week' => (int)$stats['points_this_week'],
         'win_rate'         => $winRate,
