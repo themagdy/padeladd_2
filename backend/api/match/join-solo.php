@@ -67,7 +67,7 @@ try {
     }
 
     // Get current slots
-    $slotsStmt = $pdo->prepare("SELECT team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
+    $slotsStmt = $pdo->prepare("SELECT user_id, team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
     $slotsStmt->execute([$match_id]);
     $occupied = $slotsStmt->fetchAll(PDO::FETCH_ASSOC);
 
