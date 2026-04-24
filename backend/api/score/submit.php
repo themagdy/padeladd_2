@@ -59,6 +59,12 @@ if ($match['status'] === 'cancelled') {
     jsonResponse(false, 'Cannot submit score for a cancelled match.', null, 400);
 }
 
+// Only allow scoring if the match reached 'full' or 'completed' status.
+// 'Incomplete' matches (past and still open) cannot be scored.
+if ($match['status'] !== 'full' && $match['status'] !== 'completed') {
+    jsonResponse(false, 'Only full (2v2) matches can be scored.', null, 400);
+}
+
 // Cannot submit before match time
 if (strtotime($match['match_datetime']) > time()) {
     jsonResponse(false, 'Cannot submit score before match time.', null, 400);
