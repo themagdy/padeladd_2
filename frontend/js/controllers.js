@@ -2052,10 +2052,19 @@ const MatchesController = {
                     const teamSlots = slots.filter(s => parseInt(s.team_no) === myTeam && s.status === 'confirmed');
                     const hasPartner = teamSlots.length > 1;
 
+                    const isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
+                    const isFull = match.status === 'full' || match.status === 'completed';
+                    const showBanner = !isPast || isFull;
+
                     let actionHtml = `<div style="display:flex; flex-direction:column; gap:10px;">`;
                     actionHtml += `<div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>`;
-                    actionHtml += `<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.15); border-radius:var(--r-md); padding:12px 16px;">`;
-                    actionHtml += `<div style="font-size:13px; font-weight:600; color:var(--c-green);"><span style="margin-right:6px;">✅</span>You are in this match</div>`;
+                    
+                    if (showBanner) {
+                        actionHtml += `<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.15); border-radius:var(--r-md); padding:12px 16px;">`;
+                        actionHtml += `<div style="font-size:13px; font-weight:600; color:var(--c-green);"><span style="margin-right:6px;">✅</span>${isPast ? 'You were in this match' : 'You are in this match'}</div>`;
+                    } else {
+                        actionHtml += `<div style="display:none;">`;
+                    }
                     actionHtml += `<div style="display:flex; gap:8px;">`;
                     
                     if (isLiveMatch && !isCreator) {
