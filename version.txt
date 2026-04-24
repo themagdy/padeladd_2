@@ -9,3 +9,4 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Added a quick reset (X) button to the ranking search for better user experience.
 - Renamed 'Ranking' to 'Players Ranking' across the application for clarity.
 - Optimized Ranking page UX with sticky controls and sticky table headers for better navigation.
+- Fixed sticky positioning reliability by ensuring parent containers have visible overflow and adding -webkit prefixes.
