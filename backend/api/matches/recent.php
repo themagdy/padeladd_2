@@ -92,10 +92,10 @@ foreach ($matches as $m) {
     $result[] = [
         'id'             => $mid,
         'match_code'     => $m['match_code'],
-        'match_datetime' => $m['match_datetime'],
-        'venue_name'     => $m['venue_name'],
+        'scheduled_at'   => $m['match_datetime'],
+        'venue'          => $m['venue_name'],
         'court_name'     => $m['court_name'],
-        'status'         => 'completed', // Explicitly completed
+        'status'         => 'completed',
         'team_a'         => $teamA,
         'team_b'         => $teamB,
         'user_team'      => $userTeam,
