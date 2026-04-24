@@ -598,8 +598,8 @@ const DashboardController = {
                             <div style="font-size:10px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px;">${r.player_code}</div>
                         </div>
                     </div>
-                    <span style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text);">${r.age || '—'}</span>
-                    <span style="text-align:right; font-size:14px; font-weight:800; color:var(--c-primary);">${r.points}</span>
+                    <span style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
+                    <span style="text-align:right; font-size:14px; font-weight:800; color:#fff;">${r.points}</span>
                     <span style="text-align:right; font-size:12px; font-weight:700;">${trendHtml}</span>
                 </div>
             `;
