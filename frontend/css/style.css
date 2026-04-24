@@ -229,6 +229,7 @@ ol {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid transparent;
+  white-space: nowrap;
 }
 .stat-trend.up {
   background: rgba(0, 206, 0, 0.1);
