@@ -12,38 +12,36 @@
     </div>
   </div>
 
-  <!-- 2. Sticky Controls (Gender + Search) -->
-  <div class="sticky-controls-wrapper">
+  <!-- 2. Consolidated Sticky Block (Filters + Header) -->
+  <div class="ranking-sticky-bundle">
+    <!-- Controls Row -->
     <div style="width:100%; max-width:900px; margin:0 auto; padding:10px 20px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
-      <!-- Gender Tabs -->
       <div style="background:var(--c-bg-card); padding:6px; border-radius:12px; display:flex; gap:4px; border:1px solid var(--c-border);">
         <button id="rank-tab-male" onclick="RankingController.switchTab('male')" class="rank-tab-btn active">Males</button>
         <button id="rank-tab-female" onclick="RankingController.switchTab('female')" class="rank-tab-btn">Females</button>
       </div>
-
-      <!-- Search -->
       <div style="position:relative; width:100%; max-width:300px;">
         <input type="text" id="rank-search" placeholder="Search player..." oninput="RankingController.handleSearch(this.value)" style="width:100%; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 40px 12px 40px; color:#fff; font-size:14px;">
         <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5;">🔍</span>
         <span id="rank-search-clear" onclick="RankingController.clearSearch()" style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; opacity:0.5; font-size:18px;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✕</span>
       </div>
     </div>
+
+    <!-- Table Header Row -->
+    <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px;">
+        <div class="rank-table-row header" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
+            <span>Rank</span>
+            <span>Player</span>
+            <span style="text-align:center;">Age</span>
+            <span style="text-align:center;">Matches</span>
+            <span style="text-align:right;">Win Rate</span>
+            <span style="text-align:right;">Points</span>
+        </div>
+    </div>
   </div>
 
-  <!-- 3. Table Content -->
+  <!-- 3. Table Content (Body only) -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px 80px; display:block !important; overflow:visible !important;">
-    
-    <!-- Table Header (Sticky & Self-Contained) -->
-    <div class="rank-table-row header sticky-header-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
-      <span>Rank</span>
-      <span>Player</span>
-      <span style="text-align:center;">Age</span>
-      <span style="text-align:center;">Matches</span>
-      <span style="text-align:right;">Win Rate</span>
-      <span style="text-align:right;">Points</span>
-    </div>
-
-    <!-- Table Body Card -->
     <div style="background:var(--g-card); border:1px solid var(--c-border); border-top:none; border-radius: 0 0 var(--r-lg) var(--r-lg); overflow:visible !important;">
       <div id="ranking-full-list" style="min-height:400px;">
         <!-- Skeletons -->
@@ -62,35 +60,24 @@
             Check the <a href="#" style="color:var(--c-primary); font-weight:700;">Ranking Rules</a> to learn more.
         </p>
     </div>
-
   </div>
 </div>
 
 <style>
-/* Sticky Layout Management */
-.sticky-controls-wrapper {
+/* Consolidated Sticky Management */
+.ranking-sticky-bundle {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 74px !important; /* Desktop Top Nav height */
+    top: 74px !important; /* Desktop Offset */
     z-index: 110;
     background: var(--c-bg);
-    padding-bottom: 10px;
+    padding-bottom: 0;
 }
 
-.sticky-header-row {
-    position: -webkit-sticky !important;
-    position: sticky !important;
-    top: 144px !important; /* Top Nav (74) + Controls (~70) */
-    z-index: 100;
-}
-
-/* Mobile Adjustments (Bottom Nav) */
+/* Mobile Adjustment */
 @media (max-width: 768px) {
-    .sticky-controls-wrapper {
+    .ranking-sticky-bundle {
         top: 0 !important;
-    }
-    .sticky-header-row {
-        top: 132px !important; /* Fine-tuned for mobile stacking */
     }
 }
 
