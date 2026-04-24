@@ -90,6 +90,9 @@ try {
         case 'matches/user':
             require __DIR__ . '/matches/user.php';
             break;
+        case 'matches/recent':
+            require __DIR__ . '/matches/recent.php';
+            break;
         // ── Phase 3: Match System ──────────────────────────────
         case 'match/venues':
             require __DIR__ . '/match/venues.php';
