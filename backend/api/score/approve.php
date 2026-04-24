@@ -33,6 +33,10 @@ if ($score['status'] !== 'pending') {
     jsonResponse(false, 'This score is not in pending status.', null, 400);
 }
 
+if ($score['match_status'] === 'completed') {
+    jsonResponse(false, 'A score has already been approved for this match.', null, 400);
+}
+
 $match_id = (int)$score['match_id'];
 
 // 2. Validate that the approver is on the opponent team of the submitter
@@ -81,7 +85,9 @@ try {
     $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = ? WHERE id = ?");
     $upd->execute([$uid, $score_id]);
 
-    // We no longer delete other pending scores to support multiple match entries per Match ID
+    // Deny other pending scores for this match (set to disputed)
+    $pdo->prepare("UPDATE scores SET status = 'disputed' WHERE match_id = ? AND id != ? AND status = 'pending'")
+        ->execute([$match_id, $score_id]);
 
     // TRIGGER RANKING UPDATE
     $updatedPlayers = calculateRankingUpdates($pdo, $match_id, $score_id);
