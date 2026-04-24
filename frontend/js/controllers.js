@@ -1416,13 +1416,22 @@ const MatchesController = {
         if (!isSilent && skeleton) skeleton.style.display = 'block';
         if (!isSilent && list)     list.style.display = 'none';
 
-        let res = await API.post('/match/list', { mode: MatchesController._currentTab });
+        let endpoint = '/match/list';
+        let payload  = { mode: MatchesController._currentTab };
+
+        // For 'mine' tabs, use the user-specific matches API which returns full score objects
+        if (MatchesController._currentTab.startsWith('mine_')) {
+            endpoint = '/matches/user';
+            payload  = {};
+        }
+
+        let res = await API.post(endpoint, payload);
         
-        // Phase 6: Silent retry on first failure (handles transient issues/race conditions)
+        // Phase 6: Silent retry on first failure
         if ((!res || !res.success) && !isSilent) {
             console.warn("Matches list failed, retrying once...");
             await new Promise(r => setTimeout(r, 1000));
-            res = await API.post('/match/list', { mode: MatchesController._currentTab });
+            res = await API.post(endpoint, payload);
         }
 
         if (!isSilent && skeleton) skeleton.style.display = 'none';
@@ -1434,6 +1443,15 @@ const MatchesController = {
         }
 
         let matches = res.data.matches;
+
+        // If we used /matches/user, we must filter manually to match the intended tab
+        if (MatchesController._currentTab.startsWith('mine_')) {
+            if (MatchesController._currentTab === 'mine_upcoming') {
+                matches = matches.filter(m => m.status === 'upcoming' || m.status === 'on_hold');
+            } else if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'mine_past') {
+                matches = matches.filter(m => m.status === 'completed' || m.status === 'past');
+            }
+        }
         
         // Empty state handling
         if (matches.length === 0) {
