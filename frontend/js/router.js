@@ -92,11 +92,19 @@ const Router = {
         } else {
             // Determine the best fallback for landing pages (navDepth 0)
             const path = window.location.pathname;
+
+            // If on a /chat sub-route, go back to the match detail (strip /chat)
+            if (path.endsWith('/chat')) {
+                const matchPath = path.replace('/chat', '').slice(CONFIG.BASE_PATH.length);
+                this.navigate(matchPath, true, true);
+                return;
+            }
+
             const isMatchDetail = path.includes('/matches/view') || path.includes('/matches/open');
 
             if (isMatchDetail) {
-                // If they landed on a match detail directly, first choice for back is dashboard
-                this.navigate('/dashboard', true, true);
+                // If they landed on a match detail directly, go to matches list
+                this.navigate('/matches', true, true);
             } else if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
                 this.navigate('/dashboard', true, true);
             } else {
