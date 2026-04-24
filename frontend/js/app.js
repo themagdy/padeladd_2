@@ -271,6 +271,44 @@ const ScoreUI = {
     }
 };
 
+const StatsUI = {
+    /**
+     * Updates a set of stat elements with the provided stats object.
+     * @param {Object} stats - The stats object from the API
+     * @param {String} prefix - The ID prefix for the elements (e.g., 'dash' or 'pv')
+     */
+    update: function(stats, prefix) {
+        if (!stats) return;
+
+        const elMap = {
+            'ranking': stats.ranking ?? '—',
+            'points': stats.points,
+            'matches': stats.matches_played,
+            'winrate': stats.win_rate + '%'
+        };
+
+        for (const [key, val] of Object.entries(elMap)) {
+            // Try both prefix-key and prefix-key-count for flexibility
+            const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
+            if (el) el.textContent = val;
+        }
+
+        // Secondary details (if elements exist)
+        const highEl = document.getElementById(`${prefix}-highest-rank`);
+        if (highEl && stats.highest_ranking) highEl.textContent = `${stats.highest_ranking} Highest rank`;
+
+        const pwEl = document.getElementById(`${prefix}-points-week`);
+        if (pwEl && stats.points_this_week !== undefined) {
+            pwEl.textContent = stats.points_this_week > 0 ? `+${stats.points_this_week} this week` : '';
+        }
+
+        const wlEl = document.getElementById(`${prefix}-wl`);
+        if (wlEl && stats.matches_played > 0) {
+            wlEl.textContent = `${stats.matches_won}W / ${stats.matches_lost}L`;
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the SPA router once DOM is ready
