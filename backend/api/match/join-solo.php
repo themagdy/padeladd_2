@@ -134,6 +134,46 @@ try {
     // Use overrides if provided
     $user_side = $data['playing_side'] ?? $profile_side;
 
+    // ── Eligibility Check (per brief: points_integrity.md) ─────────────────
+    // Only enforce when this join would complete both teams (4 players total).
+    // Build projected team compositions with the joining player included.
+    if (count($occupied) + 1 === 4) {
+        // Get stats for all current players
+        $currentIds = array_column($occupied, 'user_id');
+        $allCheckIds = array_merge($currentIds, [$uid]);
+        $phStr = implode(',', array_fill(0, count($allCheckIds), '?'));
+        $statsStmt = $pdo->prepare("SELECT user_id, points, matches_played FROM player_stats WHERE user_id IN ($phStr)");
+        $statsStmt->execute($allCheckIds);
+        $statsMap = [];
+        foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $statsMap[(int)$r['user_id']] = ['points' => (int)$r['points'], 'matches_played' => (int)$r['matches_played']];
+        }
+        // Default to starting values if no stats yet
+        foreach ($allCheckIds as $pid) {
+            if (!isset($statsMap[$pid])) $statsMap[$pid] = ['points' => 50, 'matches_played' => 0];
+        }
+
+        // Build projected teams (include joining player in their target slot)
+        $projectedPlayers = array_merge($occupied, [['user_id' => $uid, 'team_no' => $targetTeam, 'slot_no' => $targetSlot]]);
+        $projT1 = array_values(array_filter($projectedPlayers, fn($p) => (int)$p['team_no'] === 1));
+        $projT2 = array_values(array_filter($projectedPlayers, fn($p) => (int)$p['team_no'] === 2));
+
+        if (count($projT1) === 2 && count($projT2) === 2) {
+            $eligResult = checkTeamEligibility(
+                array_map(fn($p) => $statsMap[(int)$p['user_id']], $projT1),
+                array_map(fn($p) => $statsMap[(int)$p['user_id']], $projT2)
+            );
+            if (!$eligResult['eligible']) {
+                $pdo->rollBack();
+                jsonResponse(false, 'Teams are too mismatched for a fair game. Your skill gap is ' . $eligResult['gap'] . ' (tolerance: ' . $eligResult['tolerance'] . '). Consider joining the waitlist instead.', [
+                    'eligibility_failed' => true,
+                    'gap'        => $eligResult['gap'],
+                    'tolerance'  => $eligResult['tolerance'],
+                ], 422);
+            }
+        }
+    }
+
     // Insert the player
     $ins = $pdo->prepare("
         INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)

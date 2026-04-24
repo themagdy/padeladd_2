@@ -6,6 +6,47 @@
 
 const RANK_SCALE = 1000000000000;
 
+/**
+ * Calculate a single player's match score (integer-only, per brief).
+ * Confidence_i = min(100, 5 * M_i)
+ * PlayerMatchScore_i = floor((P_i * (300 + Confidence_i)) / 400)
+ */
+function getPlayerMatchScore(int $points, int $matches_played): int {
+    $confidence = min(100, 5 * $matches_played);
+    return intdiv($points * (300 + $confidence), 400);
+}
+
+/**
+ * Check if two teams are eligible to play each other (per brief).
+ * TeamMatchScore = floor((score_p1 + score_p2) / 2)
+ * Eligible if: abs(A - B) <= 8 + floor((max(A,B) * 15) / 100)
+ *
+ * $teamA / $teamB: arrays of ['points' => int, 'matches_played' => int]
+ * Returns: ['eligible' => bool, 'gap' => int, 'tolerance' => int, 'team_a_score' => int, 'team_b_score' => int]
+ */
+function checkTeamEligibility(array $teamA, array $teamB): array {
+    $scoreA = intdiv(
+        getPlayerMatchScore($teamA[0]['points'], $teamA[0]['matches_played']) +
+        getPlayerMatchScore($teamA[1]['points'], $teamA[1]['matches_played']),
+        2
+    );
+    $scoreB = intdiv(
+        getPlayerMatchScore($teamB[0]['points'], $teamB[0]['matches_played']) +
+        getPlayerMatchScore($teamB[1]['points'], $teamB[1]['matches_played']),
+        2
+    );
+    $gap       = abs($scoreA - $scoreB);
+    $tolerance = 8 + intdiv(max($scoreA, $scoreB) * 15, 100);
+    return [
+        'eligible'     => $gap <= $tolerance,
+        'gap'          => $gap,
+        'tolerance'    => $tolerance,
+        'team_a_score' => $scoreA,
+        'team_b_score' => $scoreB,
+    ];
+}
+
+
 function getLiveRank(PDO $pdo, int $user_id) {
     $stmt = $pdo->prepare("
         SELECT ps.points, ps.matches_played, up.gender
