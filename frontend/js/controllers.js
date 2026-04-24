@@ -492,42 +492,72 @@ const DashboardController = {
             return;
         }
         const uid = DashboardController._currentUser?.id;
-        listEl.innerHTML = filtered.map(m => DashboardController.renderMatchCard(m, uid)).join('');
+        
+        let html = '';
+        filtered.forEach(m => {
+            if (m.status === 'completed' && m.scores && m.scores.length > 0) {
+                m.scores.forEach(s => {
+                    html += DashboardController.renderMatchCard(m, uid, s);
+                });
+            } else {
+                html += DashboardController.renderMatchCard(m, uid);
+            }
+        });
+        listEl.innerHTML = html;
     },
 
-    renderMatchCard: function(m, userId) {
+    renderMatchCard: function(m, userId, specificScore = null) {
+        if (m.status === 'completed' && (specificScore || (m.scores && m.scores.length > 0))) {
+            const scoreToRender = specificScore || m.scores[0];
+            const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
+            const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
+            
+            const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
+            const isToday = dateObj.toDateString() === new Date().toDateString();
+            const dayStr = isToday ? 'Today' : dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
+            
+            const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
+            const dashHeader = `
+                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
+                    ${venueTitle} &nbsp;·&nbsp; ${dayStr}
+                </div>
+            `;
+            
+            return `
+                <div onclick="MatchesController.loadDetails({match_id:${m.id}})" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                    ${dashHeader}
+                    ${scoreHtml}
+                </div>
+            `;
+        }
+
         const userTeam = m.user_team;
-        const myTeam  = userTeam === 'a' ? m.team_a : m.team_b;
-        const oppTeam = userTeam === 'a' ? m.team_b : m.team_a;
-        const myScore  = userTeam === 'a' ? m.score_a : m.score_b;
-        const oppScore = userTeam === 'a' ? m.score_b : m.score_a;
-        const won = m.winner_team === userTeam;
-        const isCompleted = m.status === 'completed';
-        const winnerColor = won ? 'var(--c-green)' : 'var(--c-red)';
-        const scoreColor = isCompleted ? winnerColor : 'var(--c-text-muted)';
         const dateStr = m.scheduled_at
-            ? new Date(m.scheduled_at).toLocaleDateString('en-US', { weekday:'long', hour:'2-digit', minute:'2-digit' })
+            ? new Date(m.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday:'long', hour:'2-digit', minute:'2-digit' })
             : 'TBD';
 
-        const renderTeamRow = (players, score, isWinner) => (players || []).map((p, i) => `
-            <div style="display:grid; grid-template-columns:18px 1fr auto auto; align-items:center; gap:8px; padding:6px 0; border-bottom:${i === 0 ? '1px solid var(--c-border)' : 'none'};">
-                <div style="color:${isWinner?'var(--c-orange)':'transparent'}; font-size:10px;">▶</div>
-                <span style="font-size:13px; font-weight:700;">${p.name || '—'}</span>
-                <span style="font-size:10px; color:var(--c-text-dim); background:var(--c-bg-secondary); border-radius:4px; padding:2px 6px;">P${i+1}</span>
-                <span style="font-size:14px; font-weight:800; color:${isWinner?'var(--c-orange)':'var(--c-text)'}; min-width:20px; text-align:right;">${score ?? '—'}</span>
-            </div>
-        `).join('');
+        const renderTeamRow = (players) => {
+            const p1 = players[0] || { name: '—' };
+            const p2 = players[1] || { name: '—' };
+            return `
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                    <div style="font-size:13px; font-weight:700;">${p1.name}</div>
+                    <div style="font-size:13px; font-weight:700;">${p2.name}</div>
+                </div>
+            `;
+        };
 
         return `
-        <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--c-text-dim)'" onmouseout="this.style.borderColor='var(--c-border)'">
-            <div style="font-size:12px; color:var(--c-text-muted); font-weight:600; margin-bottom:10px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0;">
-                <div style="padding-right:12px; border-right:1px solid var(--c-border);">
-                    ${renderTeamRow(m.team_a, m.score_a, m.winner_team === 'a')}
+        <div onclick="MatchesController.loadDetails({match_id:${m.id}})" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
+            <div style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; gap:16px; align-items:center;">
+                    ${renderTeamRow(m.team_a)}
+                    <div style="font-size:12px; color:var(--c-text-dim); font-weight:700;">VS</div>
+                    ${renderTeamRow(m.team_b)}
                 </div>
-                <div style="padding-left:12px;">
-                    ${renderTeamRow(m.team_b, m.score_b, m.winner_team === 'b')}
-                </div>
+                <div class="status-badge" style="font-size:10px;">${m.status.toUpperCase()}</div>
             </div>
         </div>`;
     },
@@ -1810,96 +1840,89 @@ const MatchesController = {
                 if (isPastMatch && match.status !== 'cancelled') {
                     let scoringHtml = '';
                     
-                    // Check if there is an approved score
-                    const approvedScore = scores.find(s => s.status === 'approved');
-                    
-                    if (match.status === 'completed' || approvedScore) {
-                        const s = approvedScore || scores[0]; // Should be approved if completed
+                    if ((scores || []).length > 0) {
+                        (scores || []).forEach((s, idx) => {
+                            if (idx > 0) {
+                                scoringHtml += `<div style="height:1px; background:rgba(255,255,255,0.08); margin:40px 16px;"></div>`;
+                            }
+                            if (s.status === 'approved') {
+                                scoringHtml += `
+                                    <div class="approved-score-wrapper" style="margin-bottom:24px;">
+                                        ${(scores || []).length > 1 ? `<div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; padding:0 4px; opacity:0.6;">Match Result #${idx + 1}</div>` : ''}
+                                        ${ScoreUI.renderMatchScore(match, s, slots, false)}
+                                    </div>
+                                `;
+                            } else if (s.status === 'pending') {
+                                const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
+                                const submitterName = s.nickname || s.first_name;
+                                const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(s.submitted_by_user_id));
+                                const amOpponent = user_in_match && submitterSlot && parseInt(user_in_match.team_no) !== parseInt(submitterSlot.team_no);
+
+                                scoringHtml += `
+                                    <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 4px;">
+                                            <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.7;">
+                                                ${(scores || []).length > 1 ? `Match #${idx + 1} ` : ''}Result Submitted
+                                            </div>
+                                            <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending Approval</div>
+                                        </div>
+                                        ${ScoreUI.renderMatchScore(match, s, slots, false)}
+                                        
+                                        <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:20px;">
+                                            <p style="font-size:12px; color:var(--c-text-muted); margin:0;">Submitted by ${isSubmitter ? 'you' : submitterName}</p>
+                                            ${!isSubmitter ? `
+                                                <span style="width:4px; height:4px; background:var(--c-text-muted); border-radius:50%; opacity:0.3;"></span>
+                                                <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">
+                                                    ${amOpponent ? 'Please verify the result' : 'Waiting for opponents to verify...'}
+                                                </p>
+                                            ` : `
+                                                <span style="width:4px; height:4px; background:var(--c-text-muted); border-radius:50%; opacity:0.3;"></span>
+                                                <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">Waiting for opponents to verify...</p>
+                                            `}
+                                        </div>
+                                        
+                                        ${amOpponent ? `
+                                            <div class="approval-actions" style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                                <button class="btn btn-success" onclick="ScoringController.approveScore(${s.id})" style="height:44px; font-weight:700;">Approve Result</button>
+                                                <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${s.id})" style="height:44px; font-weight:700;">Dispute Result</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            } else if (s.status === 'disputed') {
+                                scoringHtml += `
+                                    <div class="results-banner" style="border-color:var(--c-red); margin-bottom:24px;">
+                                        <div class="results-header">
+                                            <div class="results-title">Match Disputed</div>
+                                            <div class="status-tag disputed">Under Review</div>
+                                        </div>
+                                        <p style="font-size:13px; color:var(--c-text); text-align:center; margin:10px 0;">This match result has been disputed. Admins are reviewing the logs.</p>
+                                        ${user_in_match ? `<button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Correct Score</button>` : ''}
+                                    </div>
+                                `;
+                            }
+                        });
+                    } else if (user_in_match) {
+                        // No scores yet
                         scoringHtml = `
                             <div class="results-banner">
-                                <div class="results-header">
-                                    <div class="results-title">Final Result</div>
-                                    <div class="status-tag approved">Verified</div>
-                                </div>
-                                <div class="score-display">
-                                    <div style="display:flex; flex-direction:column; align-items:center;">
-                                        <span style="font-size:12px; color:var(--c-text-dim); margin-bottom:4px;">TEAM A</span>
-                                        ${s.t1_set1 + s.t1_set2 + s.t1_set3 > s.t2_set1 + s.t2_set2 + s.t2_set3 ? '🏆' : ''}
-                                    </div>
-                                    <div style="display:flex; gap:8px; align-items:center;">
-                                        <span class="score-set-mini">${s.t1_set1}-${s.t2_set1}</span>
-                                        ${s.t1_set2 || s.t2_set2 ? `<span class="score-set-mini">${s.t1_set2}-${s.t2_set2}</span>` : ''}
-                                        ${s.t1_set3 || s.t2_set3 ? `<span class="score-set-mini">${s.t1_set3}-${s.t2_set3}</span>` : ''}
-                                    </div>
-                                    <div style="display:flex; flex-direction:column; align-items:center;">
-                                        <span style="font-size:12px; color:var(--c-text-dim); margin-bottom:4px;">TEAM B</span>
-                                        ${s.t2_set1 + s.t2_set2 + s.t2_set3 > s.t1_set1 + s.t1_set2 + s.t1_set3 ? '🏆' : ''}
-                                    </div>
-                                </div>
+                                <div class="results-title" style="margin-bottom:12px;">Match Ended</div>
+                                <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Match Result</button>
+                                <p style="font-size:11px; color:var(--c-text-dim); text-align:center; margin-top:12px;">Record the score to update your rankings.</p>
                             </div>
                         `;
-                    } else {
-                        // Match ended but no approved score yet
-                        const pendingScore = scores.find(s => s.status === 'pending');
-                        const disputedScore = scores.find(s => s.status === 'disputed');
-                        
-                        if (pendingScore || disputedScore) {
-                            const activeScore = pendingScore || disputedScore;
-                            const isSubmitter = parseInt(activeScore.submitted_by_user_id) === myUserId;
-                            const submitterName = activeScore.nickname || activeScore.first_name;
-                            
-                            // Check if I am an opponent of the submitter
-                            const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(activeScore.submitted_by_user_id));
-                            const amOpponent = user_in_match && submitterSlot && parseInt(user_in_match.team_no) !== parseInt(submitterSlot.team_no);
+                    }
 
-                            scoringHtml = `
-                                <div class="results-banner ${activeScore.status === 'disputed' ? 'disputed' : ''}">
-                                    <div class="results-header">
-                                        <div class="results-title">${activeScore.status === 'disputed' ? 'Match Disputed' : 'Result Submitted'}</div>
-                                        <div class="status-tag ${activeScore.status}">${activeScore.status === 'disputed' ? 'Under Review' : 'Pending Approval'}</div>
-                                    </div>
-                                    <div class="score-display">
-                                        <div style="display:flex; gap:8px; align-items:center;">
-                                            <span class="score-set-mini">${activeScore.t1_set1}-${activeScore.t2_set1}</span>
-                                            ${activeScore.t1_set2 || activeScore.t2_set2 ? `<span class="score-set-mini">${activeScore.t1_set2}-${activeScore.t2_set2}</span>` : ''}
-                                            ${activeScore.t1_set3 || activeScore.t2_set3 ? `<span class="score-set-mini">${activeScore.t1_set3}-${activeScore.t2_set3}</span>` : ''}
-                                        </div>
-                                    </div>
-                                    <p style="font-size:12px; color:var(--c-text-muted); text-align:center; margin:0;">Submitted by ${isSubmitter ? 'you' : submitterName}</p>
-                                    
-                                    ${(amOpponent && activeScore.status === 'pending') ? `
-                                        <div class="approval-actions" style="margin-top:16px;">
-                                            <button class="btn btn-success" onclick="ScoringController.approveScore(${activeScore.id})">Approve</button>
-                                            <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${activeScore.id})">Dispute</button>
-                                        </div>
-                                    ` : ''}
-
-                                    ${(activeScore.status === 'pending' && !amOpponent) ? `
-                                        <p style="font-size:11px; color:var(--c-orange); text-align:center; margin-top:12px; font-weight:700;">Waiting for opponents to verify...</p>
-                                    ` : ''}
-
-                                    ${(activeScore.status === 'disputed') ? `
-                                        <p style="font-size:12px; color:var(--c-text-dim); text-align:center; margin-top:12px;">This result is being reviewed by admins.</p>
-                                    ` : ''}
-
-                                    ${(user_in_match && scores.length < 2) ? `
-                                        <div style="margin-top:16px; border-top:1px dashed var(--c-border); padding-top:16px; text-align:center;">
-                                            <p style="font-size:11px; color:var(--c-text-muted); margin-bottom:12px;">Don't agree with this score? You can still submit your version.</p>
-                                            <button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit My Version</button>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `;
-                        } else if (user_in_match) {
-                            // No score submitted yet, and user is a participant
-                            scoringHtml = `
-                                <div class="results-banner">
-                                    <div class="results-title" style="margin-bottom:12px;">Match Ended</div>
-                                    <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Match Result</button>
-                                    <p style="font-size:11px; color:var(--c-text-dim); text-align:center; margin-top:12px;">Only one player needs to submit. Opponents will verify.</p>
-                                </div>
-                            `;
-                        }
+                    // Secondary match submission (Multi-score support)
+                    if (user_in_match && (scores || []).length === 1) {
+                        scoringHtml += `
+                            <div style="margin-top:40px; padding-top:32px; border-top:1px solid rgba(255,255,255,0.05); text-align:center;">
+                                <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; opacity:0.6;">Played another match?</div>
+                                <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:54px; border-radius:12px;">
+                                    Submit Score #2
+                                </button>
+                            </div>
+                        `;
                     }
 
                     // Add Reporting button for all participants after match
@@ -1911,7 +1934,7 @@ const MatchesController = {
                         `;
                     }
                     
-                    actionArea.innerHTML = scoringHtml;
+                    actionArea.innerHTML = `<div style="margin-top:40px;">${scoringHtml}</div>`;
                     MatchesController._currentMatchData = match; // Store for controller use
 
                 } else if (pending_for_me) {
@@ -3894,9 +3917,13 @@ const ScoringController = {
 
     adjustScore: function(set, team, delta) {
         const key = `s${set}_t${team}`;
-        this._scoreData[key] = Math.max(0, this._scoreData[key] + delta);
+        let newVal = this._scoreData[key] + delta;
+        if (newVal < 0) newVal = 0;
+        if (newVal > 7) newVal = 7;
+        
+        this._scoreData[key] = newVal;
         const el = document.getElementById(`val-s${set}-t${team}`);
-        if (el) el.textContent = this._scoreData[key];
+        if (el) el.textContent = newVal;
     },
 
     toggleComposition: function() {

@@ -46,7 +46,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
     }
 
     if ($composition) {
-        // Update match_players to reflect actual teams
+        // Update match_players to reflect actual teams from the submitted composition
         foreach ($composition as $c) {
             $upd = $pdo->prepare("UPDATE match_players SET team_no = ?, slot_no = ? WHERE match_id = ? AND user_id = ?");
             $upd->execute([$c['team_no'], $c['slot_no'], $match_id, $c['user_id']]);

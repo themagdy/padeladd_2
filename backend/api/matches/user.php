@@ -32,9 +32,22 @@ if (empty($matches)) {
 $matchIds = array_map(fn($m) => (int)$m['id'], $matches);
 $matchIdsStr = implode(',', $matchIds);
 
+// Bulk fetch scores (approved or pending for the user's matches)
+$sStmt = $pdo->prepare("
+    SELECT * FROM scores 
+    WHERE match_id IN ($matchIdsStr) AND (status = 'approved' OR status = 'pending')
+    ORDER BY created_at ASC
+");
+$sStmt->execute();
+$allScores = $sStmt->fetchAll(PDO::FETCH_ASSOC);
+$scoresByMatch = [];
+foreach ($allScores as $s) {
+    $scoresByMatch[$s['match_id']][] = $s;
+}
+
 // Bulk fetch players
 $pStmt = $pdo->prepare("
-    SELECT mp.match_id, mp.team_no, mp.slot_no, mp.user_id, u.first_name, u.last_name, up.nickname
+    SELECT mp.match_id, mp.team_no, mp.slot_no, mp.user_id, u.first_name, u.last_name, up.nickname, up.player_code
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id
     LEFT JOIN user_profiles up ON mp.user_id = up.user_id
@@ -71,22 +84,22 @@ foreach ($matches as $m) {
 
     foreach ($matchPlayers as $p) {
         $pData = [
-            'name' => $p['nickname'] ?: ($p['first_name'] . ' ' . $p['last_name'])
+            'user_id' => $p['user_id'],
+            'name'    => $p['nickname'] ?: ($p['first_name'] . ' ' . $p['last_name']),
+            'nickname' => $p['nickname'],
+            'first_name' => $p['first_name'],
+            'last_name'  => $p['last_name'],
+            'player_code' => $p['player_code'],
+            'team_no' => $p['team_no'],
+            'slot_no' => $p['slot_no']
         ];
-        if ($p['team_no'] == 1) {
-            $teamA[] = $pData;
-        } else {
-            $teamB[] = $pData;
-        }
+        if ($p['team_no'] == 1) $teamA[] = $pData;
+        else $teamB[] = $pData;
         
-        if ($p['user_id'] == $uid) {
-            $userTeam = $p['team_no'] == 1 ? 'a' : 'b';
-        }
+        if ($p['user_id'] == $uid) $userTeam = $p['team_no'] == 1 ? 'a' : 'b';
     }
 
-    // Ensure they have 2 slots each (placeholder if empty)
-    while (count($teamA) < 2) $teamA[] = ['name' => null];
-    while (count($teamB) < 2) $teamB[] = ['name' => null];
+    $score = $scoresByMatch[$mid] ?? null;
 
     $result[] = [
         'id'             => $mid,
@@ -97,9 +110,7 @@ foreach ($matches as $m) {
         'original_status' => $m['status'],
         'team_a'         => $teamA,
         'team_b'         => $teamB,
-        'score_a'        => null,
-        'score_b'        => null,
-        'winner_team'    => null,
+        'scores'         => $scoresByMatch[$mid] ?? [],
         'user_team'      => $userTeam
     ];
 }

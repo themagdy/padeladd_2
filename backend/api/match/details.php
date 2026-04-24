@@ -146,7 +146,7 @@ $scoresStmt = $pdo->prepare("
     JOIN users u ON s.submitted_by_user_id = u.id
     LEFT JOIN user_profiles up ON s.submitted_by_user_id = up.user_id
     WHERE s.match_id = ?
-    ORDER BY s.created_at DESC
+    ORDER BY s.created_at ASC
 ");
 $scoresStmt->execute([$m['id']]);
 $scores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
