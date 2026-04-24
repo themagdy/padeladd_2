@@ -33,19 +33,18 @@
   <!-- 3. Table Content -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px 80px; display:block !important; overflow:visible !important;">
     
-    <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); overflow:visible !important;">
-      
-      <!-- Sticky Table Header -->
-      <div class="rank-table-row header sticky-header-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
-        <span>Rank</span>
-        <span>Player</span>
-        <span style="text-align:center;">Age</span>
-        <span style="text-align:center;">Matches</span>
-        <span style="text-align:right;">Win Rate</span>
-        <span style="text-align:right;">Points</span>
-      </div>
+    <!-- Table Header (Sticky & Self-Contained) -->
+    <div class="rank-table-row header sticky-header-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
+      <span>Rank</span>
+      <span>Player</span>
+      <span style="text-align:center;">Age</span>
+      <span style="text-align:center;">Matches</span>
+      <span style="text-align:right;">Win Rate</span>
+      <span style="text-align:right;">Points</span>
+    </div>
 
-      <!-- Table Body -->
+    <!-- Table Body Card -->
+    <div style="background:var(--g-card); border:1px solid var(--c-border); border-top:none; border-radius: 0 0 var(--r-lg) var(--r-lg); overflow:visible !important;">
       <div id="ranking-full-list" style="min-height:400px;">
         <!-- Skeletons -->
         <div class="rank-row-skeleton"></div>
@@ -54,7 +53,6 @@
         <div class="rank-row-skeleton"></div>
         <div class="rank-row-skeleton"></div>
       </div>
-
     </div>
 
     <!-- Info Footer -->
@@ -92,7 +90,7 @@
         top: 0 !important;
     }
     .sticky-header-row {
-        top: 132px !important; /* Fine-tuned to sit right below the stacked search bar */
+        top: 132px !important; /* Fine-tuned for mobile stacking */
     }
 }
 
