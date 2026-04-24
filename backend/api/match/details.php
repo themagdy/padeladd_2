@@ -182,6 +182,7 @@ jsonResponse(true, 'Match details loaded.', [
     'unread_count'       => $unreadCount,
     'scores'             => $scores,
     'disputes'           => $disputes,
+    'viewer_id'          => $uid,
 ]);
 
 

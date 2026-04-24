@@ -1635,7 +1635,8 @@ const MatchesController = {
             return;
         }
 
-        const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes } = res.data;
+        const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes, viewer_id } = res.data;
+        const myUserId = viewer_id || (user_in_match ? parseInt(user_in_match.user_id) : 0);
         
         if (!match || !slots) {
             Toast.show('Incomplete match data', 'error');
@@ -1736,7 +1737,6 @@ const MatchesController = {
         if (statusBadgeContainer) statusBadgeContainer.innerHTML = ''; // Moved into title area
 
         // Render slot elements
-        const myUserId = user_in_match ? parseInt(user_in_match.user_id) : 0;
         [[1,1],[1,2],[2,1],[2,2]].forEach(([team, slot]) => {
             const s   = slots.find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
             const el  = document.getElementById(`mv-team${team}-slot${slot}`);
