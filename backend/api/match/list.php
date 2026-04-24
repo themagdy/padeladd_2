@@ -46,7 +46,8 @@ if ($mode === 'play_upcoming') {
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
-        WHERE (m.status IN ('completed', 'cancelled') OR (m.status IN ('open', 'full') AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR)))
+        WHERE m.status = 'completed'
+          AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
@@ -79,7 +80,8 @@ if ($mode === 'play_upcoming') {
             UNION
             SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
         )
-        AND m.status IN ('completed', 'cancelled')
+        AND m.status = 'completed'
+        AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
@@ -94,7 +96,8 @@ if ($mode === 'play_upcoming') {
                OR m.id IN (SELECT match_id FROM match_players WHERE user_id = ?)
                OR m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?))
         )
-        AND (m.status IN ('completed', 'cancelled') OR (m.status IN ('open', 'full', 'on_hold') AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR)))
+        AND m.status = 'completed'
+        AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
@@ -158,24 +161,10 @@ foreach ($allWl as $w) {
     $wlByMatch[$w['match_id']] = $w;
 }
 
-// 3. Bulk fetch ALL approved/pending scores for these matches
-$scoresStmt = $pdo->prepare("
-    SELECT * FROM scores 
-    WHERE match_id IN ($matchIdsStr) AND (status = 'approved' OR status = 'pending')
-    ORDER BY created_at ASC
-");
-$scoresStmt->execute();
-$allScores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
-$scoresByMatch = [];
-foreach ($allScores as $s) {
-    $scoresByMatch[$s['match_id']][] = $s;
-}
-
-// 4. Construct result
+// 3. Construct result
 foreach ($matches as $m) {
     $mid = (int)$m['id'];
     $slotsArray = $slotsByMatch[$mid] ?? [];
-    $matchScores = $scoresByMatch[$mid] ?? [];
     
     // Count confirmed players
     $confirmedCount = 0;
@@ -217,7 +206,6 @@ foreach ($matches as $m) {
         'user_is_invited'      => $userIsInvited,
         'user_is_waiting'      => $userIsWaiting,
         'waiting_list_id'      => $wlRequest ? (int)$wlRequest['id'] : null,
-        'scores'               => $matchScores,
     ];
 }
 

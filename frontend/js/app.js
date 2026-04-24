@@ -182,8 +182,8 @@ const ScoreUI = {
         const sets = [];
         let t1Sets = 0, t2Sets = 0;
         for (let i = 1; i <= 3; i++) {
-            const s1 = parseInt(approvedScore[`t1_set${i}`]);
-            const s2 = parseInt(approvedScore[`t2_set${i}`]);
+            const s1 = parseInt(approvedScore[`set${i}_team1`]);
+            const s2 = parseInt(approvedScore[`set${i}_team2`]);
             if (isNaN(s1) || isNaN(s2)) continue;
             
             const winner = s1 > s2 ? 1 : (s2 > s1 ? 2 : 0);
