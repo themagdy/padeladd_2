@@ -224,24 +224,33 @@ const ScoreUI = {
             else if (pData.team_no === 2) team2.push(pData);
         });
 
-        const renderTeamRow = (teamPlayers, isWinnerRow) => {
-            const playersHtml = teamPlayers.map(p => `
-                <div class="msc-player-group">
-                    <span class="msc-player-name">${p.name}</span>
-                    ${p.code ? `<span class="msc-player-code">${p.code}</span>` : ''}
-                </div>
-            `).join('<span class="msc-separator">/</span>');
-
-            const setsHtml = sets.map(s => {
-                const score = (teamPlayers === team1) ? s.s1 : s.s2;
-                const didWinSet = (teamPlayers === team1 && s.winner === 1) || (teamPlayers === team2 && s.winner === 2);
-                return `<div class="msc-set-score ${didWinSet ? 'win' : ''}">${score}</div>`;
-            }).join('');
-
+        const renderTeamRow = (teamPlayers, isWinner) => {
+            const p1 = teamPlayers[0] || { name: '—' };
+            const p2 = teamPlayers[1] || { name: '—' };
+            
             return `
-                <div class="msc-team ${isWinnerRow ? 'winner' : ''}">
-                    <div class="msc-players">${playersHtml}</div>
-                    <div class="msc-sets">${setsHtml}</div>
+                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; margin-bottom:6px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.15)' : 'transparent'};">
+                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
+                        ${isWinner ? '<span style="color:var(--c-orange); font-size:11px; flex-shrink:0;">▶</span>' : '<span style="width:11px; flex-shrink:0;"></span>'}
+                        <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">
+                            <div style="display:flex; align-items:center; gap:4px; min-width:0;">
+                                <span style="font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p1.name}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:6px; color:var(--c-text-muted); text-transform:lowercase; flex-shrink:0;">${p1.code}</span>
+                            </div>
+                            <span style="color:var(--c-text-dim); font-size:10px;">/</span>
+                            <div style="display:flex; align-items:center; gap:4px; min-width:0;">
+                                <span style="font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p2.name}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:6px; color:var(--c-text-muted); text-transform:lowercase; flex-shrink:0;">${p2.code}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-shrink:0;">
+                        ${sets.map(s => `
+                            <span style="font-size:18px; font-weight:800; color:${s.winner === (teamPlayers === team1 ? 1 : 2) ? 'var(--c-orange)' : '#fff'}; width:16px; text-align:center;">
+                                ${(teamPlayers === team1) ? s.s1 : s.s2}
+                            </span>
+                        `).join('')}
+                    </div>
                 </div>
             `;
         };
