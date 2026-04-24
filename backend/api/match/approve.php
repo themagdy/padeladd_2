@@ -124,6 +124,35 @@ try {
     $req_side = $sidesMap[$requester_id] ?? 'flexible';
     $par_side = $data['playing_side'] ?? ($sidesMap[$partner_id] ?? 'flexible');
 
+    // ── Eligibility Check (per brief: points_integrity.md) ─────────────────
+    // Team 1 already has 2 confirmed players; check if Team 2 (joining) is a fair match.
+    $team1Players = array_values(array_filter($occupied, fn($o) => (int)$o['team_no'] === 1));
+    if (count($team1Players) === 2) {
+        $allCheckIds = array_map('intval', array_column($occupied, 'user_id'));
+        $allCheckIds = array_merge($allCheckIds, [$requester_id, $partner_id]);
+        $phStr = implode(',', array_fill(0, count($allCheckIds), '?'));
+        $statsStmt = $pdo->prepare("SELECT user_id, points, matches_played FROM player_stats WHERE user_id IN ($phStr)");
+        $statsStmt->execute($allCheckIds);
+        $statsMap = [];
+        foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $statsMap[(int)$r['user_id']] = ['points' => (int)$r['points'], 'matches_played' => (int)$r['matches_played']];
+        }
+        foreach ($allCheckIds as $pid) {
+            if (!isset($statsMap[$pid])) $statsMap[$pid] = ['points' => 50, 'matches_played' => 0];
+        }
+        $t1Stats = array_map(fn($p) => $statsMap[(int)$p['user_id']], $team1Players);
+        $t2Stats = [$statsMap[$requester_id], $statsMap[$partner_id]];
+        $eligResult = checkTeamEligibility($t1Stats, $t2Stats);
+        if (!$eligResult['eligible']) {
+            $pdo->rollBack();
+            jsonResponse(false, 'Teams are too mismatched for a fair game. Skill gap is ' . $eligResult['gap'] . ' (tolerance: ' . $eligResult['tolerance'] . ').', [
+                'eligibility_failed' => true,
+                'gap'       => $eligResult['gap'],
+                'tolerance' => $eligResult['tolerance'],
+            ], 422);
+        }
+    }
+
     // Insert both players into team 2
     $ins = $pdo->prepare("
         INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
