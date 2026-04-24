@@ -1551,44 +1551,19 @@ const MatchesController = {
 
     renderMatchCard: function(m) {
         const approvedScore = (m.scores || []).find(s => s.status === 'approved');
-        const dt      = new Date(m.match_datetime.replace(' ', 'T'));
+        const dt      = new Date(m.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
-        const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' }).replace(':00', '');
-
-        // If completed with score, use the high-end Dashboard Template style
-        if (m.status === 'completed' && approvedScore) {
-            const players = (m.slots || []).map(s => ({
-                id: s.user_id,
-                user_id: s.user_id,
-                nickname: s.nickname,
-                first_name: s.first_name,
-                last_name: s.last_name,
-                profile_image: s.profile_image,
-                team_no: s.team_no,
-                slot_no: s.slot_no,
-                player_code: s.player_code
-            }));
-
-            const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, players, false);
-            const venueTitle = (m.venue_name || 'Venue TBD').split(' - ')[0].trim();
-            const matchCode = m.match_code || `M-${m.id.toString().padStart(4, '0')}`;
-            
-            const cardHeader = `
-                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between;">
-                    <span>${venueTitle} &nbsp;·&nbsp; ${dateStr}</span>
-                    <span style="color:var(--c-primary); opacity:0.6;">${matchCode}</span>
-                </div>
-            `;
-            
-            return `
-                <div onclick="Router.navigate('/matches/open/${matchCode}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:all 0.2s;">
-                    ${cardHeader}
-                    ${scoreHtml}
-                </div>
-            `;
-        }
+        const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
         const isPast = dt < new Date();
+        const statusColor = {
+            open:      isPast ? 'var(--c-text-muted)' : 'var(--c-green)',
+            on_hold:   'var(--c-gold)',
+            full:      'var(--c-orange)',
+            completed: 'var(--c-text-muted)',
+            cancelled: 'var(--c-red)',
+        };
+
         let label = m.status.charAt(0).toUpperCase() + m.status.slice(1);
         if (m.status === 'on_hold') label = 'Pending Partner';
         if (m.status === 'open' && isPast) label = 'Incomplete';
@@ -1610,6 +1585,32 @@ const MatchesController = {
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
+        // If completed and has a score, use the simplified "Score Listing" template
+        if (m.status === 'completed' && approvedScore) {
+            return `
+            <div class="match-card-modern" onclick="Router.navigate('/matches/view/${m.id}')" id="mc-${m.id}" style="padding: 20px 0;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; padding: 0 20px; margin-bottom:12px;">
+                    <div style="min-width:0; flex:1;">
+                        <h3 class="match-venue-name">
+                            ${mainTitle} ${subTitle ? `<span style="margin: 0 4px; opacity: 0.3; font-weight: 300;">|</span><span style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); opacity: 0.8;">${subTitle}</span>` : ''}
+                        </h3>
+                        <div style="font-size:11px; color:var(--c-text-muted); font-weight:700; margin-top:4px; display:flex; align-items:center; gap:8px;">
+                            <span>🗓 ${dateStr}</span>
+                            <span style="opacity:0.2;">•</span>
+                            <span>⏰ ${timeStr}</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="status-badge-pill status-completed" style="padding: 3px 14px; min-width: 80px; font-size: 10px;">COMPLETED</div>
+                        <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
+                    </div>
+                </div>
+                ${ScoreUI.renderMatchScore(m, approvedScore, null, false)}
+                <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
+            </div>`;
+        }
+
+        // Default template for upcoming/incomplete/etc.
         return `
         <div class="match-card-modern" onclick="Router.navigate('/matches/open/${matchCode}')" id="mc-${m.id}">
           <div class="match-title-row">
