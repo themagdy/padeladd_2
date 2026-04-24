@@ -6,6 +6,28 @@
 
 const RANK_SCALE = 1000000000000;
 
+function getLiveRank(PDO $pdo, int $user_id) {
+    $stmt = $pdo->prepare("
+        SELECT ps.points, ps.matches_played, up.gender
+        FROM player_stats ps
+        JOIN user_profiles up ON ps.user_id = up.user_id
+        WHERE ps.user_id = ?
+    ");
+    $stmt->execute([$user_id]);
+    $p = $stmt->fetch();
+    if (!$p) return null;
+
+    $rankStmt = $pdo->prepare("
+        SELECT COUNT(*) + 1
+        FROM player_stats ps
+        JOIN user_profiles up ON ps.user_id = up.user_id
+        WHERE up.gender = ? AND (ps.points > ? OR (ps.points = ? AND ps.matches_played > ?))
+    ");
+    $rankStmt->execute([$p['gender'], $p['points'], $p['points'], $p['matches_played']]);
+    return (int)$rankStmt->fetchColumn();
+}
+
+
 function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
     // 1. Fetch score and determine winner
     $scoreStmt = $pdo->prepare("SELECT * FROM scores WHERE id = ?");
@@ -138,7 +160,11 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
             $p['delta'] = -$delta;
             $p['won'] = false;
         }
+        
+        // Track current rank as previous before updating
+        $p['old_rank'] = getLiveRank($pdo, $p['user_id']);
     }
+
 
     // 6. Update database for each player
     foreach ($players as $p) {
@@ -163,6 +189,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
                 win_rate = ?, 
                 streak = ?,
                 points_this_week = points_this_week + ?,
+                previous_ranking = ?,
                 updated_at = NOW()
             WHERE user_id = ?
         ");
@@ -174,8 +201,16 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
             $new_win_rate,
             $new_streak,
             $p['delta'],
+            $p['old_rank'],
             $p['user_id']
         ]);
+
+        // Update highest ranking if reached a new peak
+        $newRank = getLiveRank($pdo, $p['user_id']);
+        if ($newRank && ($p['highest_ranking'] === null || $newRank < $p['highest_ranking'])) {
+            $pdo->prepare("UPDATE player_stats SET highest_ranking = ? WHERE user_id = ?")
+                ->execute([$newRank, $p['user_id']]);
+        }
     }
 
     // Mark match as completed
