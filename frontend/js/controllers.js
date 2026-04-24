@@ -1697,7 +1697,13 @@ const MatchesController = {
         
         const titleEl = document.getElementById('mv-title');
         if (titleEl) {
-            const statusLabel = match.status === 'on_hold' ? 'Pending Partner' : (match.status.charAt(0).toUpperCase() + match.status.slice(1));
+            const isPast = dt < new Date();
+            let label = match.status.charAt(0).toUpperCase() + match.status.slice(1);
+            if (match.status === 'on_hold') label = 'Pending Partner';
+            if (match.status === 'open' && isPast) label = 'Incomplete';
+            const statusLabel = label;
+            const statusClass = (match.status === 'open' && isPast) ? 'incomplete' : match.status;
+
             const matchCode = match.match_code || `M-${match.id.toString().padStart(4, '0')}`;
             
             const venueParts = match.venue_name.split('-');
@@ -1707,7 +1713,7 @@ const MatchesController = {
             titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
                     <span class="match-code-badge">${matchCode}</span>
-                    <span class="status-badge-pill status-${match.status}">${statusLabel}</span>
+                    <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
                 </div>
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2;">
                     ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: var(--c-text-muted); opacity: 0.7;">${subTitle}</span>` : ''}
