@@ -1,0 +1,40 @@
+<!-- Chat Box Component — Phase 5 -->
+<div id="mv-chat-section" style="display:none; margin-top:24px;">
+
+  <!-- Chat Header -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+    <div style="font-size:11px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted);">
+      💬 Match Chat
+    </div>
+    <div id="chat-online-indicator" style="font-size:11px; color:var(--c-text-muted); display:none;">
+      <span style="display:inline-block; width:7px; height:7px; background:var(--c-primary); border-radius:50%; margin-right:5px; vertical-align:middle;"></span>Live
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div id="chat-messages-container"
+    style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; min-height:180px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; scroll-behavior:smooth;">
+    <div id="chat-empty-state" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:13px; text-align:center; padding:24px 0;">
+      No messages yet.<br>Be the first to say something! 🎾
+    </div>
+  </div>
+
+  <!-- Input Row -->
+  <div style="display:flex; gap:10px; margin-top:12px; align-items:flex-end;">
+    <textarea
+      id="chat-input"
+      placeholder="Type a message…"
+      maxlength="500"
+      rows="1"
+      oninput="ChatController.autoResize(this)"
+      onkeydown="ChatController.handleKey(event)"
+      style="flex:1; background:var(--g-card); border:1px solid var(--c-border); border-radius:14px; padding:12px 16px; font-size:14px; color:var(--c-text); font-family:var(--font); resize:none; outline:none; line-height:1.4; max-height:100px; overflow-y:auto; transition:border-color 0.2s;"
+    ></textarea>
+    <button
+      id="chat-send-btn"
+      onclick="ChatController.sendMessage()"
+      style="background:var(--g-primary); border:none; border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:18px; transition:opacity 0.2s;"
+    >➤</button>
+  </div>
+
+</div>

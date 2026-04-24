@@ -23,6 +23,8 @@ if (isCapacitor) {
 const CONFIG = {
     BASE_PATH: BASE_PATH,
     API_BASE_URL: API_BASE,
+    ASSET_BASE: isCapacitor ? 'https://ahmedmagdy.com/pl' : (isLocal ? '/padeladd4' : '/pl'),
     LIVE_URL: 'https://ahmedmagdy.com/pl',
-    APP_ENV: isLocal ? 'development' : 'production'
+    APP_ENV: isLocal ? 'development' : 'production',
+    SKELETON_DELAY: 300
 };

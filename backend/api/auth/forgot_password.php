@@ -22,7 +22,12 @@ if ($stmt->rowCount() > 0) {
     $message = "We received a request to reset your Padeladd password. Click the button below to choose a new one.";
     sendEmail($email, "Reset Your Padeladd Password", $message, "Reset Password", $resetLink);
     
-    jsonResponse(true, "Check your inbox! We've sent a reset link to your email.");
+    $responseData = [];
+    if (defined('APP_ENV') && APP_ENV === 'development') {
+        $responseData['test_reset_token'] = $token;
+    }
+    
+    jsonResponse(true, "Check your inbox! We've sent a reset link to your email.", $responseData);
 }
 
 // If email not found or not active

@@ -16,6 +16,7 @@
 - Never use decimals or rounding for ranking and eligibility calculations
 - The folder `briefing/sample_screens/` includes sample UI screens that represent the target look and feel of the app, and the implementation should follow that visual direction as closely as practical
 - Prefer simple, maintainable solutions over overengineering
+- Never use javascript alerts or confirmation msgs
 
 ## Required AI Return Format After Each Phase
 

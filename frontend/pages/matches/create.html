@@ -1,0 +1,161 @@
+<div class="auth-page page active" style="max-width: 480px; margin: 0 auto; padding: 20px; text-align: left;">
+
+  <!-- Logo -->
+  <div class="auth-logo" style="display:flex; justify-content:left; margin: 24px 0 24px 0;">
+    <img src="assets/logo_ico.png" alt="Padeladd" style="width:38px; height:auto; object-fit:contain;">
+  </div>
+
+  <h1 class="auth-title">Create a Match</h1>
+  <p style="color:var(--c-text-muted); text-align:left; margin-bottom:30px;">
+    Set up a new padel match and invite players.
+  </p>
+
+  <form id="create-match-form" novalidate>
+
+    <!-- Venue Name -->
+    <div class="form-group" style="position:relative;">
+      <label class="form-label" for="cm-venue">Venue / Club *</label>
+      <input
+        type="text"
+        name="venue_name"
+        id="cm-venue"
+        class="form-input"
+        placeholder="e.g. Cairo Padel Club"
+        maxlength="255"
+        autocomplete="off"
+      >
+      <!-- Autocomplete Dropdown -->
+      <ul id="cm-venue-dropdown" class="autocomplete-dropdown" style="display:none;"></ul>
+    </div>
+
+
+    <!-- Court Name -->
+    <div class="form-group">
+      <label class="form-label" for="cm-court">Court Name / Number *</label>
+      <input
+        type="text"
+        name="court_name"
+        id="cm-court"
+        class="form-input"
+        placeholder="e.g. Court 3"
+        maxlength="100"
+        autocomplete="off"
+      >
+    </div>
+
+    <!-- Date Selection (Mobile-First Scroller) -->
+    <div class="form-group" style="margin-bottom:24px; position:relative;">
+      <label class="form-label">Select Date *</label>
+      <div class="scroller-wrapper">
+        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-date-scroller', -1)">‹</button>
+        <div id="cm-date-scroller" class="pill-scroller">
+          <!-- Date pills injected by JS -->
+        </div>
+        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-date-scroller', 1)">›</button>
+      </div>
+      <input type="hidden" name="date" id="cm-date" value="">
+    </div>
+
+    <!-- Time Selection (Mobile-First Scroller) -->
+    <div class="form-group" style="margin-bottom:24px; position:relative;">
+      <label class="form-label">Select Time *</label>
+      <div class="scroller-wrapper">
+        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-time-scroller', -1)">‹</button>
+        <div id="cm-time-scroller" class="pill-scroller">
+          <!-- Time pills injected by JS -->
+        </div>
+        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-time-scroller', 1)">›</button>
+      </div>
+      <input type="hidden" name="time" id="cm-time" value="">
+    </div>
+
+    <!-- Duration Selection (Mobile-First Scroller) -->
+    <div class="form-group" style="margin-bottom:24px;">
+      <label class="form-label">Match Duration *</label>
+      <div class="scroller-wrapper">
+        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-duration-scroller', -1)">‹</button>
+        <div id="cm-duration-scroller" class="pill-scroller">
+          <div class="pill" data-value="60" onclick="MatchesController._selectPill(this, 'cm-duration')">
+            <span class="pill-main">1h</span>
+          </div>
+          <div class="pill" data-value="90" onclick="MatchesController._selectPill(this, 'cm-duration')">
+            <span class="pill-main">1.5h</span>
+          </div>
+          <div class="pill active" data-value="120" onclick="MatchesController._selectPill(this, 'cm-duration')">
+            <span class="pill-main">2h</span>
+          </div>
+          <div class="pill" data-value="150" onclick="MatchesController._selectPill(this, 'cm-duration')">
+            <span class="pill-main">2.5h</span>
+          </div>
+          <div class="pill" data-value="180" onclick="MatchesController._selectPill(this, 'cm-duration')">
+            <span class="pill-main">3h</span>
+          </div>
+        </div>
+        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-duration-scroller', 1)">›</button>
+      </div>
+      <input type="hidden" name="duration_minutes" id="cm-duration" value="120">
+    </div>
+
+
+
+    <!-- Hidden combined field consumed by initCreate() -->
+    <input type="hidden" name="match_datetime" id="cm-datetime">
+
+
+    <!-- Divider -->
+    <div class="divider">Partner (optional)</div>
+
+    <!-- Partner Toggle Row -->
+    <div
+      id="cm-partner-toggle-row"
+      onclick="MatchesController.togglePartner()"
+      style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;"
+    >
+      <div>
+        <div style="font-size:14px; font-weight:700; color:var(--c-text);">Bring a Partner</div>
+        <div style="font-size:12px; color:var(--c-text-muted); margin-top:2px;">You and a partner fill Team 1 together</div>
+      </div>
+      <!-- Toggle switch -->
+      <div id="cm-partner-toggle-icon" style="width:44px; height:24px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-full); position:relative; transition:background 0.2s, border-color 0.2s; flex-shrink:0;">
+        <div id="cm-partner-toggle-thumb" style="width:18px; height:18px; background:var(--c-text-dim); border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s;"></div>
+      </div>
+    </div>
+
+    <!-- Partner Code Input (hidden by default) -->
+    <div id="cm-partner-section" style="display:none;">
+      <div class="form-group">
+        <label class="form-label" for="cm-partner-code">Partner Player Code</label>
+        <div style="position:relative;">
+          <input
+            type="text"
+            name="partner_player_code"
+            id="cm-partner-code"
+            class="form-input"
+            placeholder="e.g. a123"
+            maxlength="10"
+            autocomplete="off"
+          >
+          
+          <!-- Stylish Partner Badge Overlay -->
+          <div id="cm-partner-badge" style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); border:1px solid var(--c-primary); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="cm-badge-code" style="font-weight:800; font-family:monospace; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;"></span>
+              <span style="color:var(--c-text-muted); font-size:10px;">•</span>
+              <span id="cm-badge-name" style="font-weight:600; color:#fff; font-size:14px;"></span>
+            </div>
+            <div id="cm-badge-clear" style="color:var(--c-text-muted); cursor:pointer; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--c-bg-secondary); font-size:12px; transition:color 0.2s;">
+              ✕
+            </div>
+          </div>
+        </div>
+        <span class="form-help" id="cm-partner-help">Enter your partner's 4-character player code</span>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-primary" id="cm-submit" style="margin-top:8px;">
+      🎾 Create Match
+    </button>
+
+  </form>
+</div>

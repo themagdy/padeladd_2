@@ -12,7 +12,7 @@ if ($stats && $stats['matches_played'] > 0) {
 }
 
 jsonResponse(true, 'Stats loaded.', [
-    'points'           => $stats ? (int)$stats['points'] : 0,
+    'points'           => $stats ? (int)$stats['points'] : 50,
     'matches_played'   => $stats ? (int)$stats['matches_played'] : 0,
     'matches_won'      => $stats ? (int)$stats['matches_won'] : 0,
     'matches_lost'     => $stats ? (int)$stats['matches_lost'] : 0,
