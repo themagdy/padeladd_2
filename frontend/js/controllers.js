@@ -1587,29 +1587,27 @@ const MatchesController = {
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
-        // If completed and has ANY score, use the simplified "Score Listing" template
+        // If completed and has ANY score, use the EXACT Dashboard template
         if (m.status === 'completed' && approvedScore) {
-            return `
-            <div class="match-card-modern" onclick="Router.navigate('/matches/view/${m.id}')" id="mc-${m.id}" style="padding: 20px 0;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; padding: 0 20px; margin-bottom:12px;">
-                    <div style="min-width:0; flex:1;">
-                        <h3 class="match-venue-name">
-                            ${mainTitle} ${subTitle ? `<span style="margin: 0 4px; opacity: 0.3; font-weight: 300;">|</span><span style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); opacity: 0.8;">${subTitle}</span>` : ''}
-                        </h3>
-                        <div style="font-size:11px; color:var(--c-text-muted); font-weight:700; margin-top:4px; display:flex; align-items:center; gap:8px;">
-                            <span>🗓 ${dateStr}</span>
-                            <span style="opacity:0.2;">•</span>
-                            <span>⏰ ${timeStr}</span>
-                        </div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div class="status-badge-pill status-completed" style="padding: 3px 14px; min-width: 80px; font-size: 10px;">COMPLETED</div>
-                        <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
-                    </div>
+            const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
+            const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, allPlayers, false);
+            
+            const isToday = dt.toDateString() === new Date().toDateString();
+            const dayStr = isToday ? 'Today' : dt.toLocaleDateString('en-US', { weekday: 'long' });
+            
+            const dashHeader = `
+                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
+                    ${mainTitle} &nbsp;·&nbsp; ${dayStr}
                 </div>
-                ${ScoreUI.renderMatchScore(m, approvedScore, null, false)}
-                <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
-            </div>`;
+            `;
+            
+            return `
+                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                    ${dashHeader}
+                    ${scoreHtml}
+                    <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
+                </div>
+            `;
         }
 
         // Default template for upcoming/incomplete/etc.
