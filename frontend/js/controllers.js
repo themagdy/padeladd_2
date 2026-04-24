@@ -1472,13 +1472,13 @@ const MatchesController = {
                 });
             }
             
-            const resultsContainer = document.getElementById('ml-filtered-results');
+            const listEl = document.getElementById('ml-list');
             if (matches.length === 0) {
-                resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
+                listEl.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
             } else {
                 const user = Auth.getUser();
                 const uid = user ? user.id : null;
-                resultsContainer.innerHTML = matches.map(m => {
+                listEl.innerHTML = matches.map(m => {
                     if (m.status === 'completed' && m.scores && m.scores.length > 0) {
                         return m.scores.map(s => DashboardController.renderMatchCard(m, uid, s)).join('');
                     }
@@ -1486,9 +1486,10 @@ const MatchesController = {
                 }).join('');
             }
         } else {
+            const listEl = document.getElementById('ml-list');
             const user = Auth.getUser();
             const uid = user ? user.id : null;
-            list.innerHTML = matches.map(m => {
+            listEl.innerHTML = matches.map(m => {
                 if (m.status === 'completed' && m.scores && m.scores.length > 0) {
                     return m.scores.map(s => DashboardController.renderMatchCard(m, uid, s)).join('');
                 }
