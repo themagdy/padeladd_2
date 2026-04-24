@@ -1604,6 +1604,7 @@ const MatchesController = {
         const result = await MatchesController.loadDetails({ match_id, match_code });
         if (result && result.id) match_id = result.id;
 
+        Toast.show('Debug: autoOpen=' + autoOpenChat + ', isChatAllowed=' + result?.isChatAllowed, 'success');
         if (autoOpenChat && match_id && result?.isChatAllowed) {
             // Give the UI a tiny moment to settle then open chat
             setTimeout(() => {
