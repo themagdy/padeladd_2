@@ -1843,48 +1843,51 @@ const MatchesController = {
                         const pendingScore = scores.find(s => s.status === 'pending');
                         const disputedScore = scores.find(s => s.status === 'disputed');
                         
-                        if (pendingScore) {
-                            const isSubmitter = parseInt(pendingScore.submitted_by_user_id) === myUserId;
-                            const submitterName = pendingScore.nickname || pendingScore.first_name;
+                        if (pendingScore || disputedScore) {
+                            const activeScore = pendingScore || disputedScore;
+                            const isSubmitter = parseInt(activeScore.submitted_by_user_id) === myUserId;
+                            const submitterName = activeScore.nickname || activeScore.first_name;
                             
                             // Check if I am an opponent of the submitter
-                            const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(pendingScore.submitted_by_user_id));
+                            const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(activeScore.submitted_by_user_id));
                             const amOpponent = user_in_match && submitterSlot && parseInt(user_in_match.team_no) !== parseInt(submitterSlot.team_no);
 
                             scoringHtml = `
-                                <div class="results-banner">
+                                <div class="results-banner ${activeScore.status === 'disputed' ? 'disputed' : ''}">
                                     <div class="results-header">
-                                        <div class="results-title">Result Submitted</div>
-                                        <div class="status-tag pending">Pending Approval</div>
+                                        <div class="results-title">${activeScore.status === 'disputed' ? 'Match Disputed' : 'Result Submitted'}</div>
+                                        <div class="status-tag ${activeScore.status}">${activeScore.status === 'disputed' ? 'Under Review' : 'Pending Approval'}</div>
                                     </div>
                                     <div class="score-display">
                                         <div style="display:flex; gap:8px; align-items:center;">
-                                            <span class="score-set-mini">${pendingScore.t1_set1}-${pendingScore.t2_set1}</span>
-                                            ${pendingScore.t1_set2 || pendingScore.t2_set2 ? `<span class="score-set-mini">${pendingScore.t1_set2}-${pendingScore.t2_set2}</span>` : ''}
-                                            ${pendingScore.t1_set3 || pendingScore.t2_set3 ? `<span class="score-set-mini">${pendingScore.t1_set3}-${pendingScore.t2_set3}</span>` : ''}
+                                            <span class="score-set-mini">${activeScore.t1_set1}-${activeScore.t2_set1}</span>
+                                            ${activeScore.t1_set2 || activeScore.t2_set2 ? `<span class="score-set-mini">${activeScore.t1_set2}-${activeScore.t2_set2}</span>` : ''}
+                                            ${activeScore.t1_set3 || activeScore.t2_set3 ? `<span class="score-set-mini">${activeScore.t1_set3}-${activeScore.t2_set3}</span>` : ''}
                                         </div>
                                     </div>
                                     <p style="font-size:12px; color:var(--c-text-muted); text-align:center; margin:0;">Submitted by ${isSubmitter ? 'you' : submitterName}</p>
                                     
-                                    ${amOpponent ? `
-                                        <div class="approval-actions">
-                                            <button class="btn btn-success" onclick="ScoringController.approveScore(${pendingScore.id})">Approve</button>
-                                            <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${pendingScore.id})">Dispute</button>
+                                    ${(amOpponent && activeScore.status === 'pending') ? `
+                                        <div class="approval-actions" style="margin-top:16px;">
+                                            <button class="btn btn-success" onclick="ScoringController.approveScore(${activeScore.id})">Approve</button>
+                                            <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${activeScore.id})">Dispute</button>
                                         </div>
-                                    ` : `
-                                        <p style="font-size:11px; color:var(--c-orange); text-align:center; margin-top:8px; font-weight:700;">Waiting for opponents to verify...</p>
-                                    `}
-                                </div>
-                            `;
-                        } else if (disputedScore) {
-                             scoringHtml = `
-                                <div class="results-banner" style="border-color:var(--c-red);">
-                                    <div class="results-header">
-                                        <div class="results-title">Match Disputed</div>
-                                        <div class="status-tag disputed">Under Review</div>
-                                    </div>
-                                    <p style="font-size:13px; color:var(--c-text); text-align:center; margin:10px 0;">This match result has been disputed. Admins are reviewing the logs.</p>
-                                    ${user_in_match ? `<button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Correct Score</button>` : ''}
+                                    ` : ''}
+
+                                    ${(activeScore.status === 'pending' && !amOpponent) ? `
+                                        <p style="font-size:11px; color:var(--c-orange); text-align:center; margin-top:12px; font-weight:700;">Waiting for opponents to verify...</p>
+                                    ` : ''}
+
+                                    ${(activeScore.status === 'disputed') ? `
+                                        <p style="font-size:12px; color:var(--c-text-dim); text-align:center; margin-top:12px;">This result is being reviewed by admins.</p>
+                                    ` : ''}
+
+                                    ${(user_in_match && scores.length < 2) ? `
+                                        <div style="margin-top:16px; border-top:1px dashed var(--c-border); padding-top:16px; text-align:center;">
+                                            <p style="font-size:11px; color:var(--c-text-muted); margin-bottom:12px;">Don't agree with this score? You can still submit your version.</p>
+                                            <button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit My Version</button>
+                                        </div>
+                                    ` : ''}
                                 </div>
                             `;
                         } else if (user_in_match) {
