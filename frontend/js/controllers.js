@@ -395,7 +395,7 @@ const DashboardController = {
         // Use Promise.all for initial data if UI.syncNav didn't already populate it (or just always for freshness)
         const [res, matchRes] = await Promise.all([
             API.post('/profile/get', {}),
-            API.post('/matches/user', {})
+            API.post('/matches/recent', { limit: 10 })
         ]);
 
         if (!res || !res.success) {
@@ -1395,7 +1395,10 @@ const MatchesController = {
 
         // ONLY use /matches/user for 'Completed' tabs (mine_completed and play_past) to get scores
         // Revert 'mine_past' to original /match/list to show teams instead of scores
-        if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past') {
+        if (MatchesController._currentTab === 'play_past') {
+            endpoint = '/matches/recent';
+            payload  = { limit: 50 };
+        } else if (MatchesController._currentTab === 'mine_completed') {
             endpoint = '/matches/user';
             payload  = {};
         }
