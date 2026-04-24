@@ -280,6 +280,9 @@ const StatsUI = {
     update: function(stats, prefix) {
         if (!stats) return;
 
+        const upIcon = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+        const downIcon = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
         const elMap = {
             'ranking': stats.ranking ?? '—',
             'points': stats.points,
@@ -297,11 +300,11 @@ const StatsUI = {
         const rcEl = document.getElementById(`${prefix}-ranking-change`) || document.getElementById(`${prefix}-highest-rank`);
         if (rcEl) {
             if (stats.ranking_change > 0) {
-                rcEl.textContent = `↑ ${stats.ranking_change} positions`;
-                rcEl.style.color = 'var(--c-green)';
+                rcEl.innerHTML = `<span class="stat-trend up">${upIcon} ${stats.ranking_change} POSITIONS</span>`;
+                rcEl.style.color = ''; // Use CSS
             } else if (stats.ranking_change < 0) {
-                rcEl.textContent = `↓ ${Math.abs(stats.ranking_change)} positions`;
-                rcEl.style.color = 'var(--c-red)';
+                rcEl.innerHTML = `<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`;
+                rcEl.style.color = '';
             } else if (stats.highest_ranking) {
                 rcEl.textContent = `${stats.highest_ranking} Highest rank`;
                 rcEl.style.color = 'var(--c-text-muted)';
@@ -313,11 +316,11 @@ const StatsUI = {
         const pwEl = document.getElementById(`${prefix}-points-week`);
         if (pwEl && stats.points_this_week !== undefined) {
             if (stats.points_this_week > 0) {
-                pwEl.textContent = `↑ +${stats.points_this_week} this week`;
-                pwEl.style.color = 'var(--c-green)';
+                pwEl.innerHTML = `<span class="stat-trend up">${upIcon} +${stats.points_this_week} THIS WEEK</span>`;
+                pwEl.style.color = '';
             } else if (stats.points_this_week < 0) {
-                pwEl.textContent = `↓ ${stats.points_this_week} this week`;
-                pwEl.style.color = 'var(--c-red)';
+                pwEl.innerHTML = `<span class="stat-trend down">${downIcon} ${stats.points_this_week} THIS WEEK</span>`;
+                pwEl.style.color = '';
             } else {
                 pwEl.textContent = '';
             }

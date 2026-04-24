@@ -218,6 +218,26 @@ ol {
   color: #fff;
 }
 
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.stat-trend.up {
+  background: rgba(0, 206, 0, 0.1);
+  color: var(--c-green);
+}
+.stat-trend.down {
+  background: rgba(241, 90, 41, 0.1);
+  color: var(--c-red);
+}
+
 @keyframes pageFadeIn {
   from {
     opacity: 0;
