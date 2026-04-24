@@ -736,7 +736,7 @@ const ProfileViewController = {
         await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
 
         // Matches list
-        const matchPayload = params && params.id ? { target_id: params.id } : {};
+        const matchPayload = { target_id: user.id };
         const matchRes = await API.post('/matches/user', matchPayload);
         const listEl = document.getElementById('pv-matches-list');
         if (listEl) {
