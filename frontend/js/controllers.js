@@ -422,26 +422,7 @@ const DashboardController = {
         if (nameEl) nameEl.textContent = profile?.nickname || user.first_name;
 
         // Stats
-        const rankEl = document.getElementById('dash-ranking');
-        if (rankEl) rankEl.textContent = stats.ranking ?? '—';
-
-        const highEl = document.getElementById('dash-highest-rank');
-        if (highEl && stats.highest_ranking) highEl.textContent = `${stats.highest_ranking} Highest rank`;
-
-        const ptsEl = document.getElementById('dash-points');
-        if (ptsEl) ptsEl.textContent = stats.points;
-
-        const pwEl = document.getElementById('dash-points-week');
-        if (pwEl && stats.points_this_week > 0) pwEl.textContent = `+${stats.points_this_week} this week`;
-
-        const mEl = document.getElementById('dash-matches-count');
-        if (mEl) mEl.textContent = stats.matches_played;
-
-        const wlEl = document.getElementById('dash-wl');
-        if (wlEl && stats.matches_played > 0) wlEl.textContent = `${stats.matches_won}W / ${stats.matches_lost}L`;
-
-        const wrEl = document.getElementById('dash-winrate');
-        if (wrEl) wrEl.textContent = stats.win_rate + '%';
+        StatsUI.update(stats, 'dash');
 
         // Wait to showcase placeholder loaders for lists
         await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
@@ -723,14 +704,7 @@ const ProfileViewController = {
         }
 
         // Stats cards
-        const pvPts = document.getElementById('pv-points');
-        if (pvPts) pvPts.textContent = stats.points;
-        const pvRank = document.getElementById('pv-rank');
-        if (pvRank) pvRank.textContent = stats.ranking ?? '—';
-        const pvWR = document.getElementById('pv-winrate');
-        if (pvWR) pvWR.textContent = stats.win_rate + '%';
-        const pvM = document.getElementById('pv-matches');
-        if (pvM) pvM.textContent = stats.matches_played;
+        StatsUI.update(stats, 'pv');
 
         // Wait to showcase placeholder loaders for matches
         await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
