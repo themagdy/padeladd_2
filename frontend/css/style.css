@@ -3191,6 +3191,11 @@ form {
   color: var(--c-red);
 }
 
+.status-badge-pill.status-incomplete {
+  border-color: var(--c-text-muted);
+  color: var(--c-text-muted);
+}
+
 .match-code-badge {
   background: rgba(255, 255, 255, 0.05);
   color: var(--c-text);
