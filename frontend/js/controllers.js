@@ -1875,8 +1875,27 @@ const MatchesController = {
                             } else if (s.status === 'pending') {
                                 const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                                 const submitterName = s.nickname || s.first_name;
-                                const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(s.submitted_by_user_id));
-                                const amOpponent = user_in_match && submitterSlot && parseInt(user_in_match.team_no) !== parseInt(submitterSlot.team_no);
+                                
+                                // Determine teams based on composition switch if available
+                                let currentTeamNo = user_in_match ? parseInt(user_in_match.team_no) : null;
+                                let subTeamNo = null;
+                                
+                                if (s.composition_json) {
+                                    try {
+                                        const comp = JSON.parse(s.composition_json);
+                                        const myEntry = comp.find(cx => parseInt(cx.user_id) === myUserId);
+                                        const subEntry = comp.find(cx => parseInt(cx.user_id) === parseInt(s.submitted_by_user_id));
+                                        if (myEntry) currentTeamNo = parseInt(myEntry.team_no);
+                                        if (subEntry) subTeamNo = parseInt(subEntry.team_no);
+                                    } catch(e) {}
+                                }
+                                
+                                if (!subTeamNo) {
+                                    const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(s.submitted_by_user_id));
+                                    if (submitterSlot) subTeamNo = parseInt(submitterSlot.team_no);
+                                }
+                                
+                                const amOpponent = user_in_match && currentTeamNo && subTeamNo && currentTeamNo !== subTeamNo;
 
                                 scoringHtml += `
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">

@@ -36,21 +36,41 @@ if ($score['status'] !== 'pending') {
 $match_id = (int)$score['match_id'];
 
 // 2. Validate that the approver is on the opponent team of the submitter
-$playerStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
+$subTeamNo = null;
+$appTeamNo = null;
 
-// Submitter's team
-$playerStmt->execute([$match_id, $score['submitted_by_user_id']]);
-$submitterTeam = $playerStmt->fetchColumn();
+if ($score['composition_json']) {
+    try {
+        $comp = json_decode($score['composition_json'], true);
+        if (is_array($comp)) {
+            foreach ($comp as $entry) {
+                if ((int)$entry['user_id'] === (int)$score['submitted_by_user_id']) $subTeamNo = (int)$entry['team_no'];
+                if ((int)$entry['user_id'] === $uid) $appTeamNo = (int)$entry['team_no'];
+            }
+        }
+    } catch (Exception $e) {}
+}
 
-// Approver's team
-$playerStmt->execute([$match_id, $uid]);
-$approverTeam = $playerStmt->fetchColumn();
+// Fallback to original slots if composition not found or partial
+if ($subTeamNo === null || $appTeamNo === null) {
+    $playerStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
+    
+    if ($subTeamNo === null) {
+        $playerStmt->execute([$match_id, $score['submitted_by_user_id']]);
+        $subTeamNo = $playerStmt->fetchColumn();
+    }
+    
+    if ($appTeamNo === null) {
+        $playerStmt->execute([$match_id, $uid]);
+        $appTeamNo = $playerStmt->fetchColumn();
+    }
+}
 
-if (!$approverTeam) {
+if (!$appTeamNo) {
     jsonResponse(false, 'Only match participants can approve scores.', null, 403);
 }
 
-if ($approverTeam == $submitterTeam) {
+if ($appTeamNo == $subTeamNo) {
     jsonResponse(false, 'Only opponents can approve the submitted score.', null, 403);
 }
 
