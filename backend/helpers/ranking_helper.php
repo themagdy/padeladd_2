@@ -58,6 +58,8 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
     $losing_games = ($winner_team === 1) ? $t2_games : $t1_games;
 
     // Heavy loss flag H
+    // H = 1 if the losing team won 2 or fewer total games across the entire match (per brief)
+    // e.g. 6-0, 6-1, 6-2 in a 1-set match → H=1; in multi-set: total loser games summed
     $H = ($losing_games <= 2) ? 1 : 0;
 
     // 2. Determine player composition
@@ -94,8 +96,8 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
         $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$ps) {
-            // Auto-create stats if missing
-            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$part['user_id']]);
+            // Auto-create stats at starting points (50 per brief)
+            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$part['user_id']]);
             $psStmt->execute([$part['user_id']]);
             $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         }
@@ -269,10 +271,9 @@ function calculateIntegrityFactor(PDO $pdo, int $user_id, int $match_id): int {
         $count = max($count, (int)$checkStmt->fetchColumn());
     }
 
-    // Rules:
-    // 1st and 2nd time -> 100 (this counts previous matches, so if count is 0 or 1, it's the 1st or 2nd time)
+    // Brief requires: IntegrityFactor must always be between 10 and 100
     if ($count < 2) return 100;
     if ($count == 2) return 75; // 3rd time
     if ($count == 3) return 50; // 4th time
-    return 25; // 5th time or more
+    return max(10, 25);          // 5th time or more (max(10,...) guard per brief)
 }
