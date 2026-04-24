@@ -4067,11 +4067,16 @@ const ScoringController = {
             name: s.nickname || s.first_name
         }));
 
-        const nicksA = players.filter(p => p.team_no == 1).map(p => p.name).join(' / ');
-        const nicksB = players.filter(p => p.team_no == 2).map(p => p.name).join(' / ');
+        const listA = players.filter(p => p.team_no == 1);
+        const listB = players.filter(p => p.team_no == 2);
 
-        teamA.textContent = nicksA || 'Empty';
-        teamB.textContent = nicksB || 'Empty';
+        if (listA.length === 2 && listB.length === 2) {
+            teamA.textContent = listA.map(p => p.name).join(' / ');
+            teamB.textContent = listB.map(p => p.name).join(' / ');
+        } else {
+            teamA.textContent = '';
+            teamB.textContent = '';
+        }
     },
 
     _renderSetInputs: function(set, team) {
