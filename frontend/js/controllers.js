@@ -1604,14 +1604,14 @@ const MatchesController = {
         const result = await MatchesController.loadDetails({ match_id, match_code });
         if (result && result.id) match_id = result.id;
 
-        if (autoOpenChat && match_id && result?.isAuthorized) {
+        if (autoOpenChat && match_id && result?.isChatAllowed) {
             // Give the UI a tiny moment to settle then open chat
             setTimeout(() => {
                 if (typeof ChatController !== 'undefined') {
                     ChatController.open(match_id);
                 }
             }, 100);
-        } else if (autoOpenChat && result && !result.isAuthorized) {
+        } else if (autoOpenChat && result && !result.isChatAllowed) {
             Toast.show('You must be a participant to join the match chat', 'warning');
             // Clean up the URL to match-view without /chat
             const cleanPath = window.location.pathname.replace('/chat', '');
@@ -2212,7 +2212,7 @@ const MatchesController = {
             ChatController.renderPlayerBar();
         }
 
-        return { id: parseInt(match.id), isAuthorized };
+        return { id: parseInt(match.id), isAuthorized, isChatAllowed: (isAuthorized || isPast) };
     },
 
 
