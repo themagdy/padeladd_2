@@ -525,7 +525,7 @@ const DashboardController = {
             `;
             
             return `
-                <div onclick="MatchesController.loadDetails({match_id:${m.id}})" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                 </div>
@@ -549,7 +549,7 @@ const DashboardController = {
         };
 
         return `
-        <div onclick="MatchesController.loadDetails({match_id:${m.id}})" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
+        <div onclick="Router.navigate('/matches/view/${m.id}')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
             <div style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
