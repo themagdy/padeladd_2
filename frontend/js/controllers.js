@@ -509,17 +509,15 @@ const DashboardController = {
     renderMatchCard: function(m, userId, specificScore = null) {
         if (m.status === 'completed' && (specificScore || (m.scores && m.scores.length > 0))) {
             const scoreToRender = specificScore || m.scores[0];
-            const allPlayers = [...(m.team_a || []), ...(m.team_b || []), ...(m.slots || [])];
+            const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
             
-            const rawDate = m.scheduled_at || m.match_datetime || new Date().toISOString();
-            const dateObj = new Date(rawDate.replace(' ', 'T'));
+            const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
             const isToday = dateObj.toDateString() === new Date().toDateString();
             const dayStr = isToday ? 'Today' : dateObj.toLocaleDateString('en-US', { weekday: 'long' });
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
             
-            const venueName = m.venue || m.venue_name || 'Venue TBD';
-            const venueTitle = venueName.split(' - ')[0].trim();
+            const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
                     ${venueTitle} &nbsp;·&nbsp; ${dayStr}
@@ -1476,24 +1474,10 @@ const MatchesController = {
             if (matches.length === 0) {
                 resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
             } else {
-                const user = Auth.getUser();
-                const uid = user ? user.id : null;
-                resultsContainer.innerHTML = matches.map(m => {
-                    if (m.status === 'completed' && m.scores && m.scores.length > 0) {
-                        return m.scores.map(s => DashboardController.renderMatchCard(m, uid, s)).join('');
-                    }
-                    return MatchesController.renderMatchCard(m);
-                }).join('');
+                resultsContainer.innerHTML = matches.map(m => MatchesController.renderMatchCard(m)).join('');
             }
         } else {
-            const user = Auth.getUser();
-            const uid = user ? user.id : null;
-            list.innerHTML = matches.map(m => {
-                if (m.status === 'completed' && m.scores && m.scores.length > 0) {
-                    return m.scores.map(s => DashboardController.renderMatchCard(m, uid, s)).join('');
-                }
-                return MatchesController.renderMatchCard(m);
-            }).join('');
+            list.innerHTML = matches.map(m => MatchesController.renderMatchCard(m)).join('');
         }
     },
 
