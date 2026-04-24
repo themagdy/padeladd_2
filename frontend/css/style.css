@@ -221,21 +221,24 @@ ol {
 .stat-trend {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 4px;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 6px;
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border: 1px solid transparent;
 }
 .stat-trend.up {
   background: rgba(0, 206, 0, 0.1);
   color: var(--c-green);
+  border-color: rgba(0, 206, 0, 0.2);
 }
 .stat-trend.down {
   background: rgba(241, 90, 41, 0.1);
   color: var(--c-red);
+  border-color: rgba(241, 90, 41, 0.2);
 }
 
 @keyframes pageFadeIn {
