@@ -1419,9 +1419,9 @@ const MatchesController = {
         let endpoint = '/match/list';
         let payload  = { mode: MatchesController._currentTab };
 
-        // ONLY use /matches/user for completed/past tabs in 'mine' mode to get scores
-        // Keep upcoming tabs on /match/list to avoid breaking their specific structure/filters
-        if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'mine_past') {
+        // ONLY use /matches/user for 'Completed' tabs (mine_completed and play_past) to get scores
+        // Revert 'mine_past' to original /match/list to show teams instead of scores
+        if (MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past') {
             endpoint = '/matches/user';
             payload  = {};
         }
@@ -1445,9 +1445,9 @@ const MatchesController = {
 
         let matches = res.data.matches;
 
-        // If we used /matches/user, filter for completed/past only
+        // If we used /matches/user, filter for completed only
         if (endpoint === '/matches/user') {
-            matches = matches.filter(m => m.status === 'completed' || m.status === 'past');
+            matches = matches.filter(m => m.status === 'completed');
         }
         
         // Empty state handling
@@ -1602,8 +1602,10 @@ const MatchesController = {
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
-        // If completed and has ANY score, use the EXACT Dashboard template
-        if (m.status === 'completed' && approvedScore) {
+        const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+
+        // If completed and has ANY score, use the EXACT Dashboard template (ONLY for Completed tabs)
+        if (m.status === 'completed' && approvedScore && isCompletedTab) {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, allPlayers, false);
             
