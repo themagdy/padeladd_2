@@ -1848,7 +1848,7 @@ const MatchesController = {
                             if (s.status === 'approved') {
                                 scoringHtml += `
                                     <div class="approved-score-wrapper" style="margin-bottom:24px;">
-                                        ${(scores || []).length > 1 ? `<div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; padding:0 4px; opacity:0.6;">Match Result #${idx + 1}</div>` : ''}
+                                        ${(scores || []).length > 1 ? `<div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; padding:0 20px; opacity:0.6;">Match Result #${idx + 1}</div>` : ''}
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                     </div>
                                 `;
@@ -1860,7 +1860,7 @@ const MatchesController = {
 
                                 scoringHtml += `
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 4px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
                                             <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.7;">
                                                 ${(scores || []).length > 1 ? `Match #${idx + 1} ` : ''}Result Submitted
                                             </div>
