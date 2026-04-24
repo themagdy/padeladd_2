@@ -708,9 +708,24 @@ const ProfileViewController = {
             if (historyMatches.length === 0) {
                 listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
             } else {
-                // Limit to latest 5
-                const latest = historyMatches.slice(0, 5);
-                listEl.innerHTML = latest.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
+                // Limit to latest 5 results (scores)
+                let scoreCount = 0;
+                let html = '';
+                for (const m of historyMatches) {
+                    if (scoreCount >= 5) break;
+                    
+                    if (m.scores && m.scores.length > 0) {
+                        for (const s of m.scores) {
+                            if (scoreCount >= 5) break;
+                            html += DashboardController.renderMatchCard(m, user.id, s);
+                            scoreCount++;
+                        }
+                    } else {
+                        html += DashboardController.renderMatchCard(m, user.id);
+                        scoreCount++;
+                    }
+                }
+                listEl.innerHTML = html;
             }
         }
     }
