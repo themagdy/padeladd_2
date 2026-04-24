@@ -61,9 +61,7 @@ try {
     $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = ? WHERE id = ?");
     $upd->execute([$uid, $score_id]);
 
-    // Delete other pending scores for this match (if any)
-    $del = $pdo->prepare("DELETE FROM scores WHERE match_id = ? AND id != ? AND status = 'pending'");
-    $del->execute([$match_id, $score_id]);
+    // We no longer delete other pending scores to support multiple match entries per Match ID
 
     // TRIGGER RANKING UPDATE
     $updatedPlayers = calculateRankingUpdates($pdo, $match_id, $score_id);

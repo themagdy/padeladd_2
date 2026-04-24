@@ -162,7 +162,116 @@ const PollManager = {
     }
 };
 
+
+const ScoreUI = {
+    /**
+     * Renders a match score card based on the provided UI design.
+     * @param {Object} match - The match object
+     * @param {Object} approvedScore - The score record to render
+     * @param {Array} players - Optional explicit player list
+     * @param {Boolean} showHeader - Whether to show the Venue/Date header
+     */
+    renderMatchScore: function(match, approvedScore = null, players = null, showHeader = true) {
+        if (!approvedScore && match.scores) {
+            approvedScore = match.scores.find(s => s.status === 'approved');
+        }
+        
+        if (!approvedScore) return '';
+
+        // Process sets and winner
+        const sets = [];
+        let t1Sets = 0, t2Sets = 0;
+        for (let i = 1; i <= 3; i++) {
+            const s1 = parseInt(approvedScore[`set${i}_team1`]);
+            const s2 = parseInt(approvedScore[`set${i}_team2`]);
+            if (isNaN(s1) || isNaN(s2)) continue;
+            
+            const winner = s1 > s2 ? 1 : (s2 > s1 ? 2 : 0);
+            if (winner === 1) t1Sets++; else if (winner === 2) t2Sets++;
+            sets.push({ s1, s2, winner });
+        }
+        const t1Winner = t1Sets > t2Sets;
+
+        // Map players to teams (handle different data structures)
+        let team1 = [], team2 = [];
+        const allPlayers = players || [...(match.team_a || []), ...(match.team_b || [])];
+        
+        // Handle custom composition (team switches)
+        let customComp = null;
+        if (approvedScore.composition_json) {
+            try {
+                customComp = typeof approvedScore.composition_json === 'string' 
+                    ? JSON.parse(approvedScore.composition_json) 
+                    : approvedScore.composition_json;
+            } catch(e) {}
+        }
+
+        allPlayers.forEach(p => {
+            let finalPlayer = { ...p };
+            if (customComp) {
+                const compMatch = customComp.find(c => parseInt(c.user_id) === parseInt(p.user_id || p.id));
+                if (compMatch) finalPlayer = { ...p, ...compMatch };
+            }
+            
+            const pData = {
+                name: finalPlayer.nickname || finalPlayer.name || (finalPlayer.first_name + ' ' + finalPlayer.last_name) || '—',
+                code: finalPlayer.player_code || finalPlayer.code || '',
+                team_no: parseInt(finalPlayer.team_no)
+            };
+
+            if (pData.team_no === 1) team1.push(pData);
+            else if (pData.team_no === 2) team2.push(pData);
+        });
+
+        const renderTeamRow = (teamPlayers, isWinnerRow) => {
+            const playersHtml = teamPlayers.map(p => `
+                <div class="msc-player-group">
+                    <span class="msc-player-name">${p.name}</span>
+                    ${p.code ? `<span class="msc-player-code">${p.code}</span>` : ''}
+                </div>
+            `).join('<span class="msc-separator">/</span>');
+
+            const setsHtml = sets.map(s => {
+                const score = (teamPlayers === team1) ? s.s1 : s.s2;
+                const didWinSet = (teamPlayers === team1 && s.winner === 1) || (teamPlayers === team2 && s.winner === 2);
+                return `<div class="msc-set-score ${didWinSet ? 'win' : ''}">${score}</div>`;
+            }).join('');
+
+            return `
+                <div class="msc-team ${isWinnerRow ? 'winner' : ''}">
+                    <div class="msc-players">${playersHtml}</div>
+                    <div class="msc-sets">${setsHtml}</div>
+                </div>
+            `;
+        };
+
+        const headerVenue = (match.venue || 'Venue TBD').split(' - ')[0].trim();
+        const headerDate = match.scheduled_at 
+            ? new Date(match.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })
+            : '';
+
+        const headerHtml = showHeader ? `
+            <div class="msc-header" style="padding:0 24px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <span class="msc-venue">${headerVenue}</span>
+                <span style="opacity:0.2;">•</span>
+                <span class="msc-date" style="font-size:11px; color:var(--c-text-muted); font-weight:700;">${headerDate}</span>
+            </div>
+        ` : '';
+
+        return `
+            <div class="msc-card ${showHeader ? 'with-header' : ''}" style="width:100%; position:relative; overflow:hidden;">
+                ${headerHtml}
+                <div class="msc-body" style="padding: 0 ${showHeader ? '24px' : '20px'};">
+                    ${renderTeamRow(team1, t1Winner)}
+                    ${renderTeamRow(team2, !t1Winner)}
+                </div>
+            </div>
+        `;
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+
     // Initialize the SPA router once DOM is ready
     Router.init();
 
