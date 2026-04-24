@@ -38,9 +38,16 @@ $stmt->execute([$gender, $limit]);
 $ranking = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Formatting for frontend
+$currentRank = 1;
+$previousPoints = null;
+
 foreach ($ranking as $index => &$row) {
-    $row['rank'] = $index + 1;
-    
+    if ($previousPoints !== null && $row['points'] < $previousPoints) {
+        $currentRank = $index + 1;
+    }
+    $row['rank'] = $currentRank;
+    $previousPoints = $row['points'];
+
     // Calculate age
     $row['age'] = null;
     if (!empty($row['date_of_birth'])) {

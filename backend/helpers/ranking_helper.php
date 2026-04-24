@@ -21,9 +21,9 @@ function getLiveRank(PDO $pdo, int $user_id) {
         SELECT COUNT(*) + 1
         FROM player_stats ps
         JOIN user_profiles up ON ps.user_id = up.user_id
-        WHERE up.gender = ? AND (ps.points > ? OR (ps.points = ? AND ps.matches_played > ?))
+        WHERE up.gender = ? AND ps.points > ?
     ");
-    $rankStmt->execute([$p['gender'], $p['points'], $p['points'], $p['matches_played']]);
+    $rankStmt->execute([$p['gender'], $p['points']]);
     return (int)$rankStmt->fetchColumn();
 }
 
