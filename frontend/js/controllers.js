@@ -1516,15 +1516,19 @@ const MatchesController = {
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
+        const isPast = dt < new Date();
         const statusColor = {
-            open:      'var(--c-green)',
+            open:      isPast ? 'var(--c-text-muted)' : 'var(--c-green)',
             on_hold:   'var(--c-gold)',
             full:      'var(--c-orange)',
             completed: 'var(--c-text-muted)',
             cancelled: 'var(--c-red)',
         };
 
-        const statusLabel = m.status === 'on_hold' ? 'Pending Partner' : (m.status.charAt(0).toUpperCase() + m.status.slice(1));
+        let label = m.status.charAt(0).toUpperCase() + m.status.slice(1);
+        if (m.status === 'on_hold') label = 'Pending Partner';
+        if (m.status === 'open' && isPast) label = 'Incomplete';
+        const statusLabel = label;
 
         let myBadge = '';
         if (m.user_in_match) {
