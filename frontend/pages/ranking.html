@@ -13,7 +13,7 @@
   </div>
 
   <!-- 2. Sticky Controls (Gender + Search) -->
-  <div style="position:-webkit-sticky !important; position:sticky !important; top:74px !important; z-index:110; background:var(--c-bg); padding-bottom:10px;">
+  <div class="sticky-controls-wrapper">
     <div style="width:100%; max-width:900px; margin:0 auto; padding:10px 20px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
       <!-- Gender Tabs -->
       <div style="background:var(--c-bg-card); padding:6px; border-radius:12px; display:flex; gap:4px; border:1px solid var(--c-border);">
@@ -36,7 +36,7 @@
     <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); overflow:visible !important;">
       
       <!-- Sticky Table Header -->
-      <div class="rank-table-row header" style="position:-webkit-sticky !important; position:sticky !important; top:134px !important; z-index:100; display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important;">
+      <div class="rank-table-row header sticky-header-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important;">
         <span>Rank</span>
         <span>Player</span>
         <span style="text-align:center;">Age</span>
@@ -69,6 +69,33 @@
 </div>
 
 <style>
+/* Sticky Layout Management */
+.sticky-controls-wrapper {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 74px !important; /* Desktop Top Nav height */
+    z-index: 110;
+    background: var(--c-bg);
+    padding-bottom: 10px;
+}
+
+.sticky-header-row {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 134px !important; /* Top Nav (74) + Controls (~60) */
+    z-index: 100;
+}
+
+/* Mobile Adjustments (Bottom Nav) */
+@media (max-width: 768px) {
+    .sticky-controls-wrapper {
+        top: 0 !important;
+    }
+    .sticky-header-row {
+        top: 115px !important; /* On mobile, controls wrap so height is ~115px */
+    }
+}
+
 .rank-tab-btn {
     background:transparent;
     border:none;
