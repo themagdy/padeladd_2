@@ -96,10 +96,11 @@ if ($mode === 'play_upcoming') {
                OR m.id IN (SELECT match_id FROM match_players WHERE user_id = ?)
                OR m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?))
         )
-        AND m.status != 'completed'
-        AND m.status != 'cancelled'
-        AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR)
-        AND m.id NOT IN (SELECT match_id FROM scores)
+        AND (
+            (m.status = 'cancelled') 
+            OR 
+            (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR) AND m.id NOT IN (SELECT match_id FROM scores))
+        )
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
