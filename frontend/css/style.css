@@ -3860,6 +3860,44 @@ form {
     font-weight: 800;
 }
 
+/* Mobile Adjustments for Scores */
+@media (max-width: 480px) {
+    .msc-team {
+        height: auto;
+        min-height: 44px;
+        padding: 8px 12px;
+    }
+    .msc-players {
+        padding-left: 20px;
+    }
+    .msc-player-group {
+        gap: 4px;
+    }
+    .msc-player-name {
+        font-size: 13px;
+        max-width: 70px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .msc-player-code {
+        font-size: 8px;
+        padding: 1px 6px;
+    }
+    .msc-separator {
+        margin: 0 6px;
+        font-size: 14px;
+    }
+    .msc-sets {
+        gap: 10px;
+        min-width: auto;
+    }
+    .msc-set-score {
+        font-size: 16px;
+        width: 14px;
+    }
+}
+
 .modal-close-btn {
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--c-border);
