@@ -63,9 +63,10 @@ jsonResponse(true, 'Profile loaded.', [
         'gender'        => $profile['gender'],
         'location'      => $profile['location'],
         'bio'           => $profile['bio'],
-        'playing_hand'  => $profile['playing_hand'],
+        'playing_side'  => $profile['playing_side'],
         'profile_image' => $profile['profile_image'],
         'age'           => $age,
+        'date_of_birth' => $profile['date_of_birth'],
     ] : null,
     'stats' => $stats ? [
         'points'           => (int)$stats['points'],
@@ -81,5 +82,6 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_lost' => 0, 'ranking' => null, 'highest_ranking' => null,
         'points_this_week' => 0, 'win_rate' => 0
     ],
+    'is_self' => ($viewingId === $user['id'])
 ]);
 ?>

@@ -1,0 +1,30 @@
+<div class="page active" id="matches-list-page" style="background:var(--c-bg);">
+  <div style="width:100%; max-width:800px; margin:0 auto; padding:32px 20px 80px;">
+
+    <!-- Header + CTA -->
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h1 id="ml-header-title" style="font-size:28px; font-weight:800; margin-bottom:4px;">Matches</h1>
+        <p id="ml-header-sub" style="color:var(--c-text-muted); font-size:14px;">Browse open matches or see yours</p>
+      </div>
+      <button onclick="Router.navigate('/matches/create')" class="btn btn-primary" style="width:auto; padding:12px 24px; font-size:14px;">
+        🎾 Create Match
+      </button>
+    </div>
+
+    <!-- Tabs Container -->
+    <div id="ml-tabs-container" style="display:flex; gap:0; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
+    </div>
+
+    <!-- Loading skeletons -->
+    <div id="ml-skeleton">
+      <div class="skeleton" style="height:120px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div class="skeleton" style="height:120px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div class="skeleton" style="height:120px; border-radius:var(--r-lg);"></div>
+    </div>
+
+    <!-- Match cards list -->
+    <div id="ml-list" style="display:none;"></div>
+
+  </div>
+</div>

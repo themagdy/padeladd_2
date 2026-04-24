@@ -12,23 +12,63 @@ const Router = {
         '/profile/view/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
         '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() },
-        '/:profileId': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init({ id: params.profileId }) }
+        '/p/:profileId': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init({ id: params.profileId }) },
+        // ── Phase 3: Match System ──────────────────────────────────────────────
+        '/matches': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
+        '/matches/my': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('mine') },
+        '/matches/create': { template: 'frontend/pages/matches/create.html', init: () => MatchesController.initCreate() },
+        '/matches/join': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
+        '/matches/view/:id': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
+        '/matches/view/:id/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
+        '/matches/open/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
+        '/matches/open/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) }
+
+
     },
     
+    navDepth: 0,
+    
     init: function() {
-        window.addEventListener('popstate', this.handleRoute.bind(this));
+        // Initialize depth if not present (direct landing)
+        if (!history.state || typeof history.state.depth === 'undefined') {
+            history.replaceState({ depth: 0 }, null, window.location.href);
+        } else {
+            this.navDepth = history.state.depth;
+        }
+
+        window.addEventListener('popstate', (e) => {
+            // Phase 5: If we are popping back from the chat overlay, ignore the route change
+            if (typeof ChatController !== 'undefined' && ChatController._isShowing) {
+                return;
+            }
+            if (e.state && e.state.ignoreRoute) return;
+
+            if (e.state && typeof e.state.depth !== 'undefined') {
+                this.navDepth = e.state.depth;
+            }
+            this.handleRoute();
+        });
+
+
         document.body.addEventListener('click', e => {
             let target = e.target.closest('[data-link]');
             if (target) {
                 e.preventDefault();
                 let href = target.getAttribute('href');
+                
+                // Clear sub-tabs when navigating via main menu items
+                if (target.classList.contains('nav-item')) {
+                    sessionStorage.removeItem('last_sub_tab_play');
+                    sessionStorage.removeItem('last_sub_tab_mine');
+                }
+
                 this.navigate(href);
             }
         });
         this.handleRoute(); // Process initial load
     },
     
-    navigate: function(path, addToHistory = true) {
+    navigate: function(path, addToHistory = true, replace = false) {
         let finalPath = path;
         // Auto-prefix with BASE_PATH if needed
         if (finalPath.startsWith('/') && !finalPath.startsWith(CONFIG.BASE_PATH)) {
@@ -36,12 +76,41 @@ const Router = {
         }
 
         if (addToHistory) {
-            history.pushState(null, null, finalPath);
+            if (replace) {
+                history.replaceState({ depth: this.navDepth }, null, finalPath);
+            } else {
+                this.navDepth++;
+                history.pushState({ depth: this.navDepth }, null, finalPath);
+            }
         }
         this.handleRoute();
     },
+
+    back: function() {
+        if (this.navDepth > 0) {
+            window.history.back();
+        } else {
+            // Determine the best fallback for landing pages (navDepth 0)
+            const path = window.location.pathname;
+            const isMatchDetail = path.includes('/matches/view') || path.includes('/matches/open');
+
+            if (isMatchDetail) {
+                // If they landed on a match detail directly, first choice for back is dashboard
+                this.navigate('/dashboard', true, true);
+            } else if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
+                this.navigate('/dashboard', true, true);
+            } else {
+                this.navigate('/', true, true);
+            }
+        }
+    },
     
     handleRoute: async function() {
+        // Stop any active polling from the previous page
+        if (typeof PollManager !== 'undefined') PollManager.stop();
+        if (typeof ChatController !== 'undefined') ChatController.stop();
+
+
         // Normalize path by stripping CONFIG.BASE_PATH
         let path = window.location.pathname;
         if (path.startsWith(CONFIG.BASE_PATH)) {
@@ -59,21 +128,34 @@ const Router = {
         const loader = document.getElementById('global-loader');
         if (loader) loader.style.display = 'flex';
         
-        // Protection: Dashboard requires completed profile
-        this.updateNavVisibility(path);
+        // Global Protection: Redirect to login if not authenticated and trying to access private route
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
+        const isPublic = publicRoutes.includes(path);
 
-        if (path === '/dashboard') {
-            if (!Auth.isAuthenticated()) {
-                if (loader) loader.style.display = 'none';
-                this.navigate('/login');
-                return;
-            }
-            if (!Auth.hasProfile()) {
-                if (loader) loader.style.display = 'none';
-                this.navigate('/profile/edit');
-                return;
-            }
+        if (!Auth.isAuthenticated() && !isPublic) {
+            // Verify is a special case: you are "authenticated" but might not have a profile yet
+            if (loader) loader.style.display = 'none';
+            this.navigate('/login');
+            return;
         }
+
+        // If authenticated, don't allow hitting /login or /register
+        if (Auth.isAuthenticated() && (path === '/login' || path === '/register' || path === '/')) {
+             if (Auth.hasProfile()) {
+                 this.navigate('/dashboard');
+                 return;
+             }
+        }
+
+        const isPublicVanity = path.startsWith('/p/') || path.startsWith('/profile/view/');
+
+        // Force profile completion if authenticated but no profile
+        if (Auth.isAuthenticated() && !Auth.hasProfile() && path !== '/profile/edit' && path !== '/verify' && !isPublicVanity) {
+             this.navigate('/profile/edit');
+             return;
+        }
+
+        this.updateNavVisibility(path);
 
         // Find route with parameter support
         let matchedParams = null;
@@ -120,10 +202,12 @@ const Router = {
                 }
             } catch (err) {
                 console.error(err);
+                if (loader) loader.style.display = 'none';
                 appDiv.innerHTML = `
-                    <div class="test-page" style="text-align: center;">
-                        <h2>Error loading page</h2>
-                        <a href="/" data-link class="btn btn-primary">Go Home</a>
+                    <div class="test-page" style="text-align: center; padding: 50px 20px;">
+                        <h2 style="color: #fff; margin-bottom: 20px;">Oops! Error loading page</h2>
+                        <p style="color: var(--c-text-muted); margin-bottom: 30px;">${err.message}</p>
+                        <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
                     </div>
                 `;
             }
@@ -140,12 +224,60 @@ const Router = {
     updateNavVisibility: function(path) {
         const nav = document.getElementById('main-nav');
         const bnav = document.getElementById('bottom-nav');
+        const tbar = document.getElementById('top-bar-nav');
+        const tactions = document.getElementById('top-bar-actions');
         if (!nav) return;
 
-        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/index.html'];
-        const isAuthPage = authRoutes.includes(path) || path === '/';
+        // Ensure path starts with / and has no trailing slash (uniform matching)
+        let nPath = path;
+        if (!nPath.startsWith('/')) nPath = '/' + nPath;
+        if (nPath !== '/' && nPath.endsWith('/')) nPath = nPath.slice(0, -1);
 
-        if (Auth.isAuthenticated() && Auth.hasProfile() && !isAuthPage) {
+        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/index.html'];
+        const isAuthPage = authRoutes.includes(nPath) || nPath === '/';
+
+        // Pages that need the unified back bar
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create'];
+        const isDynamicBackBar = nPath.startsWith('/matches/view/') || 
+                                 nPath.startsWith('/matches/open/') || 
+                                 nPath.startsWith('/p/') || 
+                                 (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
+                                 
+        const needsBackBar = backBarRoutes.includes(nPath) || isDynamicBackBar;
+
+        if (needsBackBar) {
+            tbar.style.display = 'flex';
+            document.body.classList.add('has-fixed-bar');
+            
+            const tbarInner = document.getElementById('top-bar-inner');
+            if (tbarInner) {
+                if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
+                    tbarInner.style.maxWidth = '1200px';
+                } else if (path.startsWith('/matches/view/') || path.startsWith('/matches/open/')) {
+                    tbarInner.style.maxWidth = '900px';
+                } else {
+                    tbarInner.style.maxWidth = '480px';
+                }
+            }
+            
+            // Special case for logout on profile edit (only if new user)
+            if (nPath === '/profile/edit' && tactions) {
+                if (!Auth.hasProfile()) {
+                    tactions.innerHTML = `<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`;
+                } else {
+                    tactions.innerHTML = '';
+                }
+            } else {
+                if (tactions) tactions.innerHTML = '';
+            }
+        } else {
+            tbar.style.display = 'none';
+            document.body.classList.remove('has-fixed-bar');
+        }
+
+        const hideNavBar = isAuthPage || needsBackBar;
+
+        if (Auth.isAuthenticated() && Auth.hasProfile() && !hideNavBar) {
             nav.style.display = 'flex';
             if (bnav) bnav.style.display = 'flex';
             document.body.classList.add('has-nav');
@@ -155,12 +287,16 @@ const Router = {
             allNavs.forEach(navEl => {
                 navEl.querySelectorAll('.nav-item').forEach(item => {
                     item.classList.remove('active');
-                    const attr = item.getAttribute('onclick') || '';
-                    if ((path === '/dashboard' && attr.includes('/dashboard')) ||
-                        (path.includes('/ranking') && attr.includes('/ranking')) ||
-                        (path.includes('/matches') && attr.includes('/matches')) ||
-                        (path.includes('/profile') && attr.includes('/profile')) ||
-                        (!this.routes[path] && attr.includes('/profile'))) { // vanity URL
+                    const href = item.getAttribute('href') || '';
+                    
+                    // Precise matching
+                    const isDashboard = (path === '/dashboard' && href === 'dashboard');
+                    const isRanking = (path.startsWith('/ranking') && href === 'ranking');
+                    const isPlay = ((path === '/matches' || path === '/matches/join') && href === 'matches');
+                    const isMyMatches = (path === '/matches/my' && href === 'matches/my');
+                    const isProfile = ((path.startsWith('/profile') || path.startsWith('/p/')) && href === 'profile/view');
+
+                    if (isDashboard || isRanking || isPlay || isMyMatches || isProfile) {
                         item.classList.add('active');
                     }
                 });

@@ -1,47 +1,108 @@
 <?php
+/**
+ * Refactored to match the new schema and provide data for DashboardController.
+ * Now using bulk fetching to avoid N+1 queries and MySQL server gone away crashes.
+ */
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
+// Fetch matches where user is a participant or has an active waiting list entry
 $stmt = $pdo->prepare("
-    SELECT m.*,
-        ua1.first_name as a1_first, ua1.last_name as a1_last,
-        ua2.first_name as a2_first, ua2.last_name as a2_last,
-        ub1.first_name as b1_first, ub1.last_name as b1_last,
-        ub2.first_name as b2_first, ub2.last_name as b2_last
+    SELECT m.*
     FROM matches m
-    LEFT JOIN users ua1 ON m.team_a1_id = ua1.id
-    LEFT JOIN users ua2 ON m.team_a2_id = ua2.id
-    LEFT JOIN users ub1 ON m.team_b1_id = ub1.id
-    LEFT JOIN users ub2 ON m.team_b2_id = ub2.id
-    WHERE m.team_a1_id = ? OR m.team_a2_id = ? OR m.team_b1_id = ? OR m.team_b2_id = ?
-    ORDER BY m.scheduled_at DESC
-    LIMIT 20
+    WHERE m.id IN (
+        SELECT match_id FROM match_players WHERE user_id = ?
+        UNION
+        SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
+    )
+    AND m.status != 'cancelled'
+    ORDER BY m.match_datetime DESC
+    LIMIT 50
 ");
-$stmt->execute([$uid, $uid, $uid, $uid]);
-$matches = $stmt->fetchAll();
+$stmt->execute([$uid, $uid, $uid]);
+$matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
+
+if (empty($matches)) {
+    jsonResponse(true, 'User matches loaded.', ['matches' => []]);
+}
+
+$matchIds = array_map(fn($m) => (int)$m['id'], $matches);
+$matchIdsStr = implode(',', $matchIds);
+
+// Bulk fetch players
+$pStmt = $pdo->prepare("
+    SELECT mp.match_id, mp.team_no, mp.slot_no, mp.user_id, u.first_name, u.last_name, up.nickname
+    FROM match_players mp
+    JOIN users u ON mp.user_id = u.id
+    LEFT JOIN user_profiles up ON mp.user_id = up.user_id
+    WHERE mp.match_id IN ($matchIdsStr)
+    ORDER BY mp.match_id, mp.team_no, mp.slot_no
+");
+$pStmt->execute();
+$allPlayers = $pStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$playersByMatch = [];
+foreach ($allPlayers as $p) {
+    $playersByMatch[$p['match_id']][] = $p;
+}
+
+// Map the result
 foreach ($matches as $m) {
+    $mid = (int)$m['id'];
+    
+    // 1. Map Status for Frontend Badges
+    $status = $m['status'];
+    if (in_array($m['status'], ['open', 'full', 'on_hold'])) {
+        $matchTime = strtotime($m['match_datetime']);
+        $cutoff    = time() - (6 * 3600); // 6 hours ago
+        if ($matchTime > $cutoff) {
+            $status = 'upcoming';
+        }
+    }
+
+    $matchPlayers = $playersByMatch[$mid] ?? [];
+    
+    $teamA = [];
+    $teamB = [];
+    $userTeam = null;
+
+    foreach ($matchPlayers as $p) {
+        $pData = [
+            'name' => $p['nickname'] ?: ($p['first_name'] . ' ' . $p['last_name'])
+        ];
+        if ($p['team_no'] == 1) {
+            $teamA[] = $pData;
+        } else {
+            $teamB[] = $pData;
+        }
+        
+        if ($p['user_id'] == $uid) {
+            $userTeam = $p['team_no'] == 1 ? 'a' : 'b';
+        }
+    }
+
+    // Ensure they have 2 slots each (placeholder if empty)
+    while (count($teamA) < 2) $teamA[] = ['name' => null];
+    while (count($teamB) < 2) $teamB[] = ['name' => null];
+
     $result[] = [
-        'id'        => $m['id'],
-        'venue'     => $m['venue'],
-        'scheduled_at' => $m['scheduled_at'],
-        'status'    => $m['status'],
-        'score_a'   => $m['score_a'],
-        'score_b'   => $m['score_b'],
-        'winner_team' => $m['winner_team'],
-        'team_a' => [
-            ['name' => trim(($m['a1_first'] ?? '') . ' ' . ($m['a1_last'] ?? '')), 'id' => $m['team_a1_id']],
-            ['name' => trim(($m['a2_first'] ?? '') . ' ' . ($m['a2_last'] ?? '')), 'id' => $m['team_a2_id']],
-        ],
-        'team_b' => [
-            ['name' => trim(($m['b1_first'] ?? '') . ' ' . ($m['b1_last'] ?? '')), 'id' => $m['team_b1_id']],
-            ['name' => trim(($m['b2_first'] ?? '') . ' ' . ($m['b2_last'] ?? '')), 'id' => $m['team_b2_id']],
-        ],
-        'user_team' => (in_array($uid, [$m['team_a1_id'], $m['team_a2_id']])) ? 'a' : 'b',
+        'id'             => $mid,
+        'match_code'     => $m['match_code'],
+        'venue'          => $m['venue_name'],
+        'scheduled_at'   => $m['match_datetime'],
+        'status'         => $status,
+        'original_status' => $m['status'],
+        'team_a'         => $teamA,
+        'team_b'         => $teamB,
+        'score_a'        => null,
+        'score_b'        => null,
+        'winner_team'    => null,
+        'user_team'      => $userTeam
     ];
 }
 
-jsonResponse(true, 'Matches loaded.', ['matches' => $result]);
+jsonResponse(true, 'User matches loaded.', ['matches' => $result]);
 ?>

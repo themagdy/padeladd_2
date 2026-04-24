@@ -1,0 +1,187 @@
+<?php
+/**
+ * POST /api/match/details
+ * Returns full details for a single match including all slot info and waiting list.
+ */
+$pdo  = getDB();
+$user = getAuthenticatedUser($pdo);
+$uid  = $user['id'];
+
+$match_id   = (int)($data['match_id'] ?? 0);
+$match_code = trim($data['match_code'] ?? '');
+
+if ($match_id <= 0 && $match_code === '') {
+    jsonResponse(false, 'match_id or match_code is required.', null, 422);
+}
+
+// Fetch match
+if ($match_id > 0) {
+    $stmt = $pdo->prepare("
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        FROM matches m
+        JOIN users u ON m.creator_id = u.id
+        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        WHERE m.id = ?
+    ");
+    $stmt->execute([$match_id]);
+} else {
+    $stmt = $pdo->prepare("
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        FROM matches m
+        JOIN users u ON m.creator_id = u.id
+        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        WHERE m.match_code = ?
+    ");
+    $stmt->execute([$match_code]);
+}
+$m = $stmt->fetch(PDO::FETCH_ASSOC);
+if (!$m) {
+    jsonResponse(false, 'Match not found.', null, 404);
+}
+
+// Slot details
+$slotStmt = $pdo->prepare("
+    SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
+           u.first_name, u.last_name,
+           up.player_code, up.profile_image, up.nickname
+    FROM match_players mp
+    JOIN users u ON mp.user_id = u.id
+    LEFT JOIN user_profiles up ON mp.user_id = up.user_id
+    WHERE mp.match_id = ?
+    ORDER BY mp.team_no, mp.slot_no
+");
+$slotStmt->execute([$m['id']]);
+$slots = $slotStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Waiting list
+$wlStmt = $pdo->prepare("
+    SELECT wl.id, wl.request_status, wl.created_at,
+           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile,
+           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile,
+           wl.requester_id, wl.partner_id
+    FROM waiting_list wl
+    JOIN users ur  ON wl.requester_id = ur.id
+    LEFT JOIN users up2 ON wl.partner_id = up2.id
+    LEFT JOIN user_profiles upr ON wl.requester_id = upr.user_id
+    LEFT JOIN user_profiles upp ON wl.partner_id   = upp.user_id
+    WHERE wl.match_id = ?
+    ORDER BY wl.created_at ASC
+");
+$wlStmt->execute([$m['id']]);
+$waiting_list = $wlStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Is the current user already in the match?
+$mySlotData = null;
+foreach ($slots as $s) {
+    if ((int)$s['user_id'] === $uid) {
+        $mySlotData = $s;
+        break;
+    }
+}
+
+// Request/Waitlist involving current user
+$pendingForMe     = null;
+$myPendingRequest = null; // Outgoing invitation
+$myWaitlistEntry  = null; // In queue (approved)
+foreach ($waiting_list as $w) {
+    if ((int)$w['partner_id'] === $uid && $w['request_status'] === 'pending') {
+        $pendingForMe = $w;
+    }
+    if ((int)$w['requester_id'] === $uid && $w['request_status'] === 'pending') {
+        $myPendingRequest = $w;
+    }
+    // If approved but still in waiting_list, it means they are in queue
+    if ($w['request_status'] === 'approved') {
+        if ((int)$w['requester_id'] === $uid || (int)$w['partner_id'] === $uid) {
+            $myWaitlistEntry = $w;
+        }
+    }
+}
+
+// Fetch late withdrawal events if any
+$lw = $pdo->prepare("
+    SELECT me.*, u.first_name, u.last_name, up.nickname, up.player_code
+    FROM match_events me
+    JOIN users u ON me.user_id = u.id
+    LEFT JOIN user_profiles up ON me.user_id = up.user_id
+    WHERE me.match_id = ? AND me.event_type = 'late_withdrawal'
+    ORDER BY me.created_at DESC LIMIT 1
+");
+
+$lw->execute([$m['id']]);
+$lateWithdrawal = $lw->fetch(PDO::FETCH_ASSOC);
+
+if ($lateWithdrawal) {
+    $lateWithdrawal['event_data'] = json_decode($lateWithdrawal['event_data'], true);
+}
+
+// Fetch current user's preferred side from profile
+$ups = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
+$ups->execute([$uid]);
+$upRow = $ups->fetch();
+$user_playing_side = $upRow ? $upRow['playing_side'] : 'flexible';
+
+// Ensure read status table exists
+$pdo->exec('CREATE TABLE IF NOT EXISTS chat_read_status (
+    user_id INT,
+    match_id INT,
+    last_read_id INT DEFAULT 0,
+    PRIMARY KEY (user_id, match_id)
+)');
+
+// Fetch last read message ID for this user/match
+$readStmt = $pdo->prepare("SELECT last_read_id FROM chat_read_status WHERE user_id = ? AND match_id = ?");
+$readStmt->execute([$uid, (int)$m['id']]);
+$lastReadId = (int)$readStmt->fetchColumn();
+
+// Count unread messages (excluding those sent by the current user)
+$unreadStmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE match_id = ? AND user_id != ? AND id > ?");
+$unreadStmt->execute([(int)$m['id'], $uid, $lastReadId]);
+$unreadCount = (int)$unreadStmt->fetchColumn();
+
+// Fetch scores and disputes
+$scoresStmt = $pdo->prepare("
+    SELECT s.*, u.first_name, u.last_name, up.nickname
+    FROM scores s
+    JOIN users u ON s.submitted_by_user_id = u.id
+    LEFT JOIN user_profiles up ON s.submitted_by_user_id = up.user_id
+    WHERE s.match_id = ?
+    ORDER BY s.created_at DESC
+");
+$scoresStmt->execute([$m['id']]);
+$scores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$disputesStmt = $pdo->prepare("SELECT * FROM disputes WHERE match_id = ?");
+$disputesStmt->execute([$m['id']]);
+$disputes = $disputesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+jsonResponse(true, 'Match details loaded.', [
+    'match' => [
+        'id'                   => (int)$m['id'],
+        'match_code'           => $m['match_code'],
+        'venue_name'           => $m['venue_name'],
+        'court_name'           => $m['court_name'],
+        'match_datetime'       => $m['match_datetime'],
+        'status'               => $m['status'],
+        'created_with_partner' => (bool)$m['created_with_partner'],
+        'creator_id'           => (int)$m['creator_id'],
+        'creator_name'         => trim($m['creator_first'] . ' ' . $m['creator_last']),
+        'creator_nickname'     => $m['creator_nickname'] ?? null,
+        'cancellation_reason'  => $m['cancellation_reason'] ?? null,
+        'is_policy_violation'  => (bool)($m['is_policy_violation'] ?? 0),
+    ],
+    'slots'           => $slots,
+    'waiting_list'    => $waiting_list,
+    'user_in_match'      => $mySlotData,
+    'pending_for_me'     => $pendingForMe,
+    'my_pending_request' => $myPendingRequest,
+    'my_waitlist_entry'  => $myWaitlistEntry,
+    'is_creator'         => (int)$m['creator_id'] === $uid,
+    'user_playing_side'  => $user_playing_side,
+    'late_withdrawal'    => $lateWithdrawal,
+    'unread_count'       => $unreadCount,
+    'scores'             => $scores,
+    'disputes'           => $disputes,
+]);
+
+

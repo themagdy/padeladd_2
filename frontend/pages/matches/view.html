@@ -1,0 +1,233 @@
+<div class="page active" id="match-view-page" style="background:var(--c-bg);">
+  <div style="width:100%; max-width:900px; margin:0 auto; padding:32px 20px 32px;">
+
+
+
+    <!-- Loading skeleton -->
+    <div id="mv-skeleton">
+      <div class="skeleton" style="height:60px; border-radius:var(--r-md); margin-bottom:12px;"></div>
+      <div class="skeleton" style="height:260px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+      <div class="skeleton" style="height:120px; border-radius:var(--r-lg);"></div>
+    </div>
+
+    <!-- Content (hidden until loaded) -->
+    <div id="mv-content" style="display:none;">
+
+      <!-- Match header -->
+      <div style="margin-bottom:24px;">
+        <div id="mv-status-badge" style="margin-bottom:10px;"></div>
+        <h1 id="mv-title"></h1>
+        <p id="mv-meta" style="color:var(--c-text-muted); font-size:14px;"></p>
+      </div>
+
+      <!-- Slots Card -->
+      <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; margin-bottom:20px;">
+
+        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:stretch;">
+          <!-- Team 1 -->
+          <div>
+            <div style="font-size:12px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; text-align:center;">Team 1</div>
+            <div id="mv-team1-slot1" class="mv-slot"></div>
+            <div id="mv-team1-slot2" class="mv-slot" style="margin-top:12px;"></div>
+          </div>
+          <!-- VS divider -->
+          <div style="display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:18px; font-weight:900; color:var(--c-text-muted); letter-spacing:1px; padding-top:24px;">VS</span>
+          </div>
+          <!-- Team 2 -->
+          <div>
+            <div style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; text-align:center;">Team 2</div>
+            <div id="mv-team2-slot1" class="mv-slot"></div>
+            <div id="mv-team2-slot2" class="mv-slot" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action area (join solo / join team / pending info) -->
+      <div id="mv-action-area" style="margin-bottom:20px;"></div>
+
+      <!-- Join Team Form (hidden by default) -->
+      <form id="mv-join-team-form" onsubmit="event.preventDefault(); MatchesController.submitTeamRequest()" style="display:none; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px;">
+        <div style="font-size:13px; font-weight:700; margin-bottom:14px;">Send Team Join Request</div>
+        <div class="form-group">
+          <label class="form-label">Partner Player Code</label>
+          <div style="position:relative;">
+            <input type="text" id="mv-partner-code-input" class="form-input" placeholder="e.g. a123" maxlength="10" />
+            
+            <!-- Stylish Partner Badge Overlay -->
+            <div id="mv-partner-badge" style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); border:1px solid var(--c-primary); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="mv-badge-code" style="font-weight:800; font-family:monospace; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;"></span>
+                <span style="color:var(--c-text-muted); font-size:10px;">•</span>
+                <span id="mv-badge-name" style="font-weight:600; color:#fff; font-size:14px;"></span>
+              </div>
+              <div id="mv-badge-clear" style="color:var(--c-text-muted); cursor:pointer; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--c-bg-secondary); font-size:12px; transition:color 0.2s;">
+                ✕
+              </div>
+            </div>
+          </div>
+          <span class="form-help" id="mv-partner-help">Your partner will receive a request to approve.</span>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button type="submit" class="btn btn-primary" style="flex:1; font-size:14px; padding:12px;">Send Request</button>
+          <button type="button" onclick="MatchesController.hideInvitePartner()" class="btn btn-secondary" style="flex:1; font-size:14px; padding:12px;">Cancel</button>
+
+        </div>
+      </form>
+
+      <!-- Waiting List -->
+      <div id="mv-waiting-section" style="display:none;">
+        <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px;">
+          <div style="font-size:11px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted); margin-bottom:14px;">Waiting List</div>
+        <div id="mv-waiting-list"></div>
+      </div>
+    </div>
+
+    <!-- Policy Violation Area (for late withdrawals, etc.) -->
+    <div id="mv-policy-area" style="margin-top:20px;"></div>
+
+    </div><!-- /mv-content -->
+  </div>
+
+  <!-- Phase 5: Full-Screen Match Chat Overlay -->
+  <div id="mv-chat-overlay" style="display:none; position:fixed; inset:0; background:var(--c-bg); z-index:2000; flex-direction:column; animation: chatSlideUp 0.3s ease-out; height:100dvh; align-items:center;">
+    
+    <!-- Chat Overlay Header -->
+    <div style="width:100%; border-bottom:1px solid var(--c-border); background:var(--c-bg-card);">
+      <div style="max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:16px 20px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div onclick="ChatController.close()" style="cursor:pointer; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:rgba(255,255,255,0.05); color:var(--c-text-muted); font-size:18px;">
+            ✕
+          </div>
+          <div>
+            <div id="mv-chat-title" style="font-size:16px; font-weight:800; color:var(--c-text);">Match Chat</div>
+            <div id="chat-online-indicator" style="font-size:11px; color:var(--c-primary); display:none;">
+              <span style="display:inline-block; width:6px; height:6px; background:var(--c-primary); border-radius:50%; margin-right:4px;"></span>Live
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:100%; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--c-border);">
+      <div id="chat-player-bar" style="max-width:900px; margin:0 auto; padding:12px 20px; display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none;">
+        <!-- Avatars will be injected here -->
+      </div>
+    </div>
+    
+    <!-- Inline Player Actions (Floating Overlay) -->
+    <div id="chat-player-actions-bar" style="display:none; position:absolute; top:139px; left:0; right:0; background:linear-gradient(to right, #111827, #1F2937); border-bottom:1px solid rgba(255,255,255,0.1); z-index:1000; box-shadow:0 10px 15px -3px rgba(0,0,0,0.3);">
+
+      <div style="max-width:900px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:15px; overflow-x:auto; scrollbar-width:none;">
+        <div id="chat-selected-player-name" style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; color:#fff;"></div>
+        <div id="chat-inline-actions" style="display:flex; align-items:center; gap:12px;"></div>
+        <div onclick="ChatController.closePlayerMenu()" style="margin-left:auto; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.05); font-size:12px; cursor:pointer; color:var(--c-text-muted); transition:background 0.2s;">✕</div>
+      </div>
+    </div>
+
+
+    <!-- Messages Container -->
+
+    <div id="chat-messages-container" style="width:100%; flex:1; overflow-y:auto; display:flex; flex-direction:column; align-items:center; scroll-behavior:smooth;">
+      <div id="chat-messages-inner"
+        style="width:100%; max-width:900px; padding:60px 20px 20px; display:flex; flex-direction:column; gap:0;">
+
+        <div id="chat-empty-state"
+ style="display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:13px; text-align:center; padding:40px 0; flex:1;">
+          No messages yet.<br>Be the first to say something! 🎾
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div style="width:100%; background:var(--c-bg-card); border-top:1px solid var(--c-border); padding-bottom:max(0px, env(safe-area-inset-bottom));">
+      <div style="max-width:900px; margin:0 auto; padding:16px 20px;">
+        <div style="display:flex; gap:10px; align-items:flex-end;">
+          <textarea
+            id="chat-input"
+            placeholder="Type a message…"
+            maxlength="500"
+            rows="1"
+            oninput="ChatController.autoResize(this)"
+            onkeydown="ChatController.handleKey(event)"
+            style="flex:1; background:var(--g-card); border:1px solid var(--c-border); border-radius:14px; padding:12px 16px; font-size:14px; color:var(--c-text); font-family:var(--font); resize:none; outline:none; line-height:1.4; max-height:100px; overflow:hidden; transition:border-color 0.2s;"
+          ></textarea>
+          <button
+            id="chat-send-btn"
+            onclick="ChatController.sendMessage()"
+            style="background:var(--g-primary); border:none; border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:18px; transition:opacity 0.2s;"
+          >➤</button>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </div>
+
+  <!-- Mobile-Friendly Player Menu (Bottom Sheet) -->
+  <div id="chat-sheet-overlay" onclick="ChatController.closePlayerMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:4000; backdrop-filter:blur(4px); transition:opacity 0.3s;"></div>
+  
+  <div id="chat-bottom-sheet" style="display:none; position:fixed; bottom:0; left:0; right:0; background:var(--c-bg-card); border-top:1px solid var(--c-border); border-radius:24px 24px 0 0; z-index:4001; padding:20px; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform:translateY(100%);">
+    <div style="width:40px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin:0 auto 20px;"></div>
+    <div id="chat-sheet-title" style="font-size:18px; font-weight:800; color:var(--c-text); margin-bottom:20px; text-align:center;">Player Name</div>
+    <div id="chat-sheet-options" style="display:flex; flex-direction:column; gap:8px;">
+        <!-- Options injected here -->
+    </div>
+    <div onclick="ChatController.closePlayerMenu()" style="margin-top:16px; padding:16px; text-align:center; font-weight:700; color:var(--c-text-muted); cursor:pointer;">Cancel</div>
+  </div>
+
+
+  <style>
+    @keyframes chatSlideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+    #chat-player-bar::-webkit-scrollbar {
+        display: none;
+    }
+    .chat-player-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        transition: border-color 0.2s, transform 0.2s;
+        cursor: pointer;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--g-card);
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--c-text);
+        position: relative;
+    }
+    .chat-player-avatar:hover {
+        border-color: var(--c-primary);
+        transform: scale(1.05);
+    }
+    .chat-sheet-item {
+        padding: 18px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--c-border);
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--c-text);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background 0.2s, transform 0.1s;
+    }
+    .chat-sheet-item:active {
+        transform: scale(0.98);
+        background: rgba(255,255,255,0.05);
+    }
+  </style>
+
+
+</div>
+
+

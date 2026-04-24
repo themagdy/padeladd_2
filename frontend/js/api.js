@@ -21,7 +21,27 @@ const API = {
                 console.error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
+            let result;
+            const text = await response.text();
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                console.error('JSON Parse Error for response:', text);
+                throw e; // Rethrow to be caught by the catch block below
+            }
+            
+            // Handle unauthorized globally
+            if (response.status === 401) {
+                Auth.clearAll();
+                // Avoid infinite redirect if already on login
+                if (!window.location.pathname.includes('/login')) {
+                    Router.navigate('/login');
+                }
+            }
+            
+            if (result) {
+                result.status = response.status;
+            }
             return result;
         } catch (error) {
             console.error('API request failed:', error);
@@ -29,7 +49,7 @@ const API = {
             return {
                 success: false,
                 message: 'Failed to process request. Please try again.',
-                data: null
+                error_details: error.message
             };
         }
     }

@@ -1,70 +1,89 @@
-<div class="page active" style="background:var(--c-bg); min-height:100vh; padding-bottom:100px;">
+<div class="page active" style="background:var(--c-bg);">
+
 
   <div style="width:100%; max-width:1200px; margin:0 auto; padding:0 20px;">
     
     <!-- HEADER -->
-    <div style="padding:40px 0 48px; border-bottom:1px solid var(--c-border);">
+    <div class="prof-header" style="padding:20px 0 48px; border-bottom:1px solid var(--c-border);">
       
-      <div style="display:flex; flex-wrap:wrap; align-items:start; justify-content:space-between; gap:32px; margin-bottom:40px;">
+      <div class="prof-header-top" style="display:flex; flex-wrap:wrap; align-items:start; justify-content:space-between; gap:32px; margin-bottom:40px;">
         
-        <div style="display:flex; align-items:flex-start; gap:32px; min-width:300px;">
+        <div class="v-main-header" style="display:grid; grid-template-areas: 'avatar names' 'avatar details'; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; align-items:start; column-gap:32px; row-gap:12px; min-width:300px;">
           <!-- Avatar -->
-          <div id="prof-avatar" style="width:140px; height:140px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:56px; font-weight:800; color:#fff; flex-shrink:0; border:2px solid var(--c-border); box-shadow:var(--shadow-lg);">?</div>
+          <div id="prof-avatar" class="v-avatar" style="grid-area:avatar; width:150px; height:150px; border-radius:50%; overflow:hidden; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; border:1px solid var(--c-border); box-shadow:var(--shadow-lg);">?</div>
           
-          <div style="min-width:0; padding-top:6px;">
-            <div style="margin-bottom:12px;">
-              <h1 id="prof-nickname" style="font-size:36px; font-weight:800; letter-spacing:-1px; margin-bottom:2px; color:#fff;">Loading...</h1>
-              <div id="prof-fullname" style="font-size:16px; font-weight:600; color:var(--c-text-muted); opacity:0.8;"></div>
+          <div class="v-names" style="grid-area:names; display:flex; flex-direction:column; gap:0; padding-top:6px;">
+            <h1 id="prof-nickname" class="v-nickname" style="font-weight:700; letter-spacing:-1px; margin:0 0 8px 0; color:#fff; line-height:1.1;">Loading...</h1>
+            <div id="prof-fullname" style="font-size:16px; font-weight:600; color:var(--c-text-muted); opacity:0.8; margin-bottom:10px; line-height:1.2;"></div>
+            <div id="prof-code" class="profile-code" style="display:none; align-items:center; width:fit-content; gap:8px; background:rgba(255,149,0,0.15); border:1px solid rgba(255,149,0,0.5); border-radius:var(--r-full); padding:6px 18px; font-size:16px; font-weight:700; letter-spacing:1.5px; color:var(--c-orange); text-transform:uppercase;"></div>
+          </div>
+
+          <div class="v-details" style="grid-area:details; display:flex; flex-direction:column; gap:12px;">
+            <div class="v-meta-wrapper" style="display:flex; flex-wrap:wrap; align-items:center; gap:16px;">
+              <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:16px; align-items:center;"></div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:12px;">
-              <div id="prof-code" class="profile-code" style="display:inline-flex; align-items:center; width:fit-content; gap:6px; background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.3); border-radius:var(--r-full); padding:4px 14px; font-size:11px; font-weight:800; letter-spacing:1px; color:var(--c-orange);"></div>
-              <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:16px;"></div>
-              <!-- Bio -->
-              <p id="prof-bio" style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px; margin-top:12px; font-style:italic;"></p>
-            </div>
+            <!-- Bio -->
+            <p id="prof-bio" style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px; font-style:italic;"></p>
           </div>
         </div>
         
-        <button id="prof-edit-btn" onclick="Router.navigate('/profile/edit')" class="btn" style="display:none; background:#293342; color:#fff; padding:12px 24px; font-weight:700; border-radius:12px; border:1px solid var(--c-border); flex-shrink:0;">Edit Profile</button>
+
       </div>
 
       <!-- Stats Grid (Dashboard style) -->
-      <div class="prof-stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; align-items:stretch;">
-        <div style="background:transparent; border:1px solid var(--c-border); border-radius:18px; padding:24px 22px; display:flex; flex-direction:column; justify-content:center;">
-          <div id="pv-rank" style="font-size:36px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:10px;">—</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text-dim); text-transform:uppercase; letter-spacing:0.5px;">Current Rank</div>
+      <div class="prof-stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:stretch;">
+        <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div id="pv-rank" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">—</div>
+            <div style="font-size:13px; font-weight:600; color:#fff;">Current Rank</div>
+          </div>
+          <div style="font-size:24px;">🏆</div>
         </div>
         
-        <div style="background:transparent; border:1px solid var(--c-border); border-radius:18px; padding:24px 22px; display:flex; flex-direction:column; justify-content:center;">
-          <div id="pv-points" style="font-size:36px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:10px;">0</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text-dim); text-transform:uppercase; letter-spacing:0.5px;">Points</div>
+        <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div id="pv-points" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+            <div style="font-size:13px; font-weight:600; color:#fff;">Points</div>
+          </div>
+          <div style="font-size:24px;">🪙</div>
         </div>
 
-        <div style="background:transparent; border:1px solid var(--c-border); border-radius:18px; padding:24px 22px; display:flex; flex-direction:column; justify-content:center;">
-          <div id="pv-matches" style="font-size:36px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:10px;">0</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text-dim); text-transform:uppercase; letter-spacing:0.5px;">Matches</div>
+        <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div id="pv-matches" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+            <div style="font-size:13px; font-weight:600; color:#fff;">Matches</div>
+          </div>
+          <div style="font-size:24px;">🎾</div>
         </div>
 
-        <div style="background:transparent; border:1px solid var(--c-border); border-radius:18px; padding:24px 22px; display:flex; flex-direction:column; justify-content:center;">
-          <div id="pv-winrate" style="font-size:36px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:10px;">0%</div>
-          <div style="font-size:14px; font-weight:600; color:var(--c-text-dim); text-transform:uppercase; letter-spacing:0.5px;">Win Rate</div>
+        <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div id="pv-winrate" style="font-size:32px; font-weight:800; color:var(--c-orange); line-height:1; margin-bottom:8px;">0%</div>
+            <div style="font-size:13px; font-weight:600; color:#fff;">Win Rate</div>
+          </div>
+          <div style="font-size:24px;">🎯</div>
         </div>
         
-        <!-- Call to action card -->
-        <div onclick="Router.navigate('/matches')" style="cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--g-primary); border-radius:18px; padding:24px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-           <span style="font-size:15px; font-weight:800; letter-spacing:1px; color:#fff;">READY TO PLAY 🎾</span>
+        <!-- Action Cards (Only shown to owner) -->
+        <div id="prof-action-cards" style="display:none; gap:12px; flex-direction:column;">
+            <div onclick="Router.navigate('/profile/edit')" style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--c-primary); border:1px solid transparent; border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+               <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:#fff;">Edit Profile</span>
+            </div>
+            <div onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:rgba(255,59,48,0.1); border:1px solid rgba(255,59,48,0.3); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+               <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:var(--c-red);">Sign out</span>
+            </div>
         </div>
       </div>
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="prof-content-grid" style="display:grid; grid-template-columns:1fr 340px; gap:60px; padding:60px 0;">
+    <div class="prof-content-grid" style="display:grid; grid-template-columns:1fr 340px; gap:60px; padding:60px 0 0 0;">
       
       <!-- LEFT: MATCH HISTORY -->
       <div>
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:32px;">
           <img src="assets/logo_ico.png" style="height:22px; width:auto;">
-          <span style="font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted);">Match History</span>
+          <span class="section-title">Match History</span>
         </div>
         <div id="pv-matches-list">
           <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
@@ -74,8 +93,8 @@
 
       <!-- RIGHT: ACHIEVEMENTS -->
       <div style="border-left:1px solid var(--c-border); padding-left:40px;">
-        <div style="font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted); margin-bottom:32px;">Achievements</div>
-        <div style="background:var(--c-bg-secondary); border:1px dashed var(--c-border); border-radius:20px; padding:60px 30px; text-align:center; color:var(--c-text-dim);">
+        <div class="section-title" style="margin-bottom:32px;">Achievements</div>
+        <div style="background:var(--c-bg-secondary); border:1px dashed var(--c-border); border-radius: var(--r-md); padding:60px 30px; text-align:center; color:var(--c-text-dim);">
           <div style="font-size:48px; margin-bottom:20px;">🏆</div>
           <div style="font-size:14px; font-weight:700; color:var(--c-text-muted); margin-bottom:8px;">Achievements Coming Soon</div>
           <div style="font-size:12px;">Complete matches to earn trophies and special badges!</div>
@@ -102,5 +121,46 @@
   .prof-stats-grid {
     grid-template-columns: 1fr 1fr !important;
   }
+  #prof-action-cards {
+    grid-column: 1 / -1 !important;
+    flex-direction: row !important;
+  }
+  #prof-action-cards .btn {
+    flex: 1 !important;
+  }
+  .v-avatar {
+    width: 100px !important;
+    height: 100px !important;
+    font-size: 36px !important;
+  }
+  .v-nickname {
+    font-size: 26px !important;
+  }
+  .v-main-header {
+    grid-template-areas: "avatar names" "details details" !important;
+    column-gap: 16px !important;
+    align-items: start !important;
+  }
+  .v-details {
+    margin-top: 12px !important;
+  }
+  .prof-header {
+    padding: 24px 0 32px !important;
+  }
+  .prof-header-top {
+    margin-bottom: 24px !important;
+  }
+  .prof-content-grid {
+    padding-top: 32px !important;
+  }
+}
+
+.v-avatar {
+  width: 140px;
+  height: 140px;
+  font-size: 56px;
+}
+.v-nickname {
+  font-size: 36px;
 }
 </style>

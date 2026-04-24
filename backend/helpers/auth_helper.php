@@ -40,7 +40,12 @@ function getAuthenticatedUser($pdo) {
         jsonResponse(false, 'Unauthorized. Token missing.', null, 401);
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE auth_token = ? AND status = 'active'");
+    $stmt = $pdo->prepare("
+        SELECT u.*, up.nickname 
+        FROM users u
+        LEFT JOIN user_profiles up ON u.id = up.user_id
+        WHERE u.auth_token = ? AND u.status = 'active'
+    ");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
 
@@ -50,4 +55,29 @@ function getAuthenticatedUser($pdo) {
     
     return $user;
 }
+function generateUniquePlayerCode($pdo) {
+    // Exclude confusing characters: 0, o, O, s, S, 5, i, 1, l
+    $letters = 'abcdefghjkmnpqrtuvwxyz'; // Excludes i, l, o, s
+    $digits  = '2346789';              // Excludes 0, 1, 5
+    
+    $checkCode = $pdo->prepare("SELECT id FROM user_profiles WHERE player_code = ?");
+    $attempts    = 0;
+    $maxAttempts = 1000;
+
+    do {
+        $letter = $letters[mt_rand(0, strlen($letters) - 1)];
+        $code   = $letter;
+        for ($i = 0; $i < 3; $i++) {
+            $code .= $digits[mt_rand(0, strlen($digits) - 1)];
+        }
+
+        $checkCode->execute([$code]);
+        if ($checkCode->rowCount() == 0) return $code;
+        
+        $attempts++;
+    } while($attempts < $maxAttempts);
+
+    return null;
+}
+
 ?>
