@@ -75,17 +75,36 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
         }
     }
 
-    // 3. Fetch all 4 players and their stats
+    // 3. Fetch all 4 confirmed players
     $playersStmt = $pdo->prepare("
-        SELECT mp.user_id, mp.team_no, ps.*
+        SELECT mp.user_id, mp.team_no
         FROM match_players mp
-        JOIN player_stats ps ON mp.user_id = ps.user_id
-        WHERE mp.match_id = ?
+        WHERE mp.match_id = ? AND mp.status = 'confirmed'
     ");
     $playersStmt->execute([$match_id]);
-    $players = $playersStmt->fetchAll(PDO::FETCH_ASSOC);
+    $participants = $playersStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if (count($players) < 4) throw new Exception("Match does not have 4 players with stats.");
+    if (count($participants) < 4) throw new Exception("Match does not have 4 confirmed players.");
+
+    // Fetch or create stats for each participant
+    $players = [];
+    foreach ($participants as $part) {
+        $psStmt = $pdo->prepare("SELECT * FROM player_stats WHERE user_id = ?");
+        $psStmt->execute([$part['user_id']]);
+        $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$ps) {
+            // Auto-create stats if missing
+            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id) VALUES (?)")->execute([$part['user_id']]);
+            $psStmt->execute([$part['user_id']]);
+            $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
+        }
+        
+        if ($ps) {
+            $ps['team_no'] = $part['team_no']; // Keep team_no from match_players
+            $players[] = $ps;
+        }
+    }
 
     // Group players by team
     $team1 = [];
