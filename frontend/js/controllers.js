@@ -4314,6 +4314,10 @@ const RankingController = {
 
     handleSearch: function(query) {
         const q = query.toLowerCase().trim();
+        
+        const clearBtn = document.getElementById('rank-search-clear');
+        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
         if (!q) {
             this.render(this._fullList);
             return;
@@ -4326,6 +4330,14 @@ const RankingController = {
             r.player_code.toLowerCase().includes(q)
         );
         this.render(filtered);
+    },
+
+    clearSearch: function() {
+        const input = document.getElementById('rank-search');
+        if (input) {
+            input.value = '';
+            this.handleSearch('');
+        }
     },
 
     render: function(list) {
