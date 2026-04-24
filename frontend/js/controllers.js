@@ -698,14 +698,19 @@ const ProfileViewController = {
         await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
 
         // Matches list
-        const matchPayload = params && params.id ? { user_id: params.id } : {};
+        const matchPayload = params && params.id ? { target_id: params.id } : {};
         const matchRes = await API.post('/matches/user', matchPayload);
         const listEl = document.getElementById('pv-matches-list');
         if (listEl) {
-            if (!matchRes || !matchRes.success || matchRes.data.matches.length === 0) {
-                listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No matches yet</h3><p>Create or join a match to start tracking results.</p></div>`;
+            // Filter: only completed matches (history)
+            const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
+            
+            if (historyMatches.length === 0) {
+                listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
             } else {
-                listEl.innerHTML = matchRes.data.matches.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
+                // Limit to latest 5
+                const latest = historyMatches.slice(0, 5);
+                listEl.innerHTML = latest.map(m => DashboardController.renderMatchCard(m, user.id)).join('');
             }
         }
     }

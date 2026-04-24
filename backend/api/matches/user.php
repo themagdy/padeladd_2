@@ -7,6 +7,8 @@ $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
+$target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
+
 // Fetch matches where user is a participant or has an active waiting list entry
 $stmt = $pdo->prepare("
     SELECT m.*
@@ -20,7 +22,7 @@ $stmt = $pdo->prepare("
     ORDER BY m.match_datetime DESC
     LIMIT 50
 ");
-$stmt->execute([$uid, $uid, $uid]);
+$stmt->execute([$target_id, $target_id, $target_id]);
 $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
