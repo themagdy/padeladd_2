@@ -22,8 +22,9 @@
 
       <!-- Search (Optional placeholder for now) -->
       <div style="position:relative; width:100%; max-width:300px;">
-        <input type="text" id="rank-search" placeholder="Search player..." oninput="RankingController.handleSearch(this.value)" style="width:100%; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 16px 12px 40px; color:#fff; font-size:14px;">
+        <input type="text" id="rank-search" placeholder="Search player..." oninput="RankingController.handleSearch(this.value)" style="width:100%; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 40px 12px 40px; color:#fff; font-size:14px;">
         <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5;">🔍</span>
+        <span id="rank-search-clear" onclick="RankingController.clearSearch()" style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; opacity:0.5; font-size:18px;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✕</span>
       </div>
     </div>
 
