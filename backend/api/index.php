@@ -173,6 +173,9 @@ try {
         case 'match/report':
             require __DIR__ . '/match/report.php';
             break;
+        case 'ranking/list':
+            require __DIR__ . '/ranking/list.php';
+            break;
 
         default:
             jsonResponse(false, 'Endpoint not found: ' . $endpoint, null, 404);
