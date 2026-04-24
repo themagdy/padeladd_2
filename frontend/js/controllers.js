@@ -4266,3 +4266,101 @@ const ScoringController = {
         }
     }
 };
+
+// -------------------------------------------------------
+//  RANKING PAGE CONTROLLER
+// -------------------------------------------------------
+const RankingController = {
+    _currentTab: 'male',
+    _fullList: [],
+
+    init: async function() {
+        await UI.syncNav();
+        this.loadData();
+    },
+
+    switchTab: function(gender) {
+        this._currentTab = gender;
+        
+        // Update UI buttons
+        const mBtn = document.getElementById('rank-tab-male');
+        const fBtn = document.getElementById('rank-tab-female');
+        if (mBtn && fBtn) {
+            mBtn.classList.toggle('active', gender === 'male');
+            fBtn.classList.toggle('active', gender === 'female');
+        }
+
+        this.loadData();
+    },
+
+    loadData: async function() {
+        const listEl = document.getElementById('ranking-full-list');
+        if (!listEl) return;
+
+        // Show skeletons while loading
+        listEl.innerHTML = '<div class="rank-row-skeleton"></div>'.repeat(8);
+
+        // Fetch larger list for the full page (limit 100)
+        const res = await API.post('/ranking/list', { gender: this._currentTab, limit: 100 });
+        
+        if (!res || !res.success) {
+            listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
+            return;
+        }
+
+        this._fullList = res.data.ranking;
+        this.render(this._fullList);
+    },
+
+    handleSearch: function(query) {
+        const q = query.toLowerCase().trim();
+        if (!q) {
+            this.render(this._fullList);
+            return;
+        }
+
+        const filtered = this._fullList.filter(r => 
+            r.nickname.toLowerCase().includes(q) || 
+            r.first_name.toLowerCase().includes(q) || 
+            r.last_name.toLowerCase().includes(q) ||
+            r.player_code.toLowerCase().includes(q)
+        );
+        this.render(filtered);
+    },
+
+    render: function(list) {
+        const listEl = document.getElementById('ranking-full-list');
+        if (!listEl) return;
+
+        if (list.length === 0) {
+            listEl.innerHTML = '<div style="padding:100px 20px; text-align:center; color:var(--c-text-muted);"><div style="font-size:40px; margin-bottom:16px;">🔍</div>No players found.</div>';
+            return;
+        }
+
+        let html = '';
+        list.forEach(r => {
+            const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
+            const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
+            
+            html += `
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-table-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'};">#${r.rank}</span>
+                    
+                    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                        <img src="${avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border);">
+                        <div style="min-width:0;">
+                            <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
+                            <div style="font-size:11px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">${r.player_code}</div>
+                        </div>
+                    </div>
+
+                    <span style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
+                    <span style="text-align:center; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
+                    <span style="text-align:right; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
+                    <span style="text-align:right; font-size:16px; font-weight:900; color:${pointsColor};">${r.points}</span>
+                </div>
+            `;
+        });
+        listEl.innerHTML = html;
+    }
+};

@@ -21,9 +21,8 @@ const Router = {
         '/matches/view/:id': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/view/:id/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/matches/open/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
-        '/matches/open/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) }
-
-
+        '/matches/open/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
+        '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() }
     },
     
     navDepth: 0,
