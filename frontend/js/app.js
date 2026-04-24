@@ -185,6 +185,7 @@ const ScoreUI = {
             const s1 = parseInt(approvedScore[`t1_set${i}`]);
             const s2 = parseInt(approvedScore[`t2_set${i}`]);
             if (isNaN(s1) || isNaN(s2)) continue;
+            if (i > 1 && s1 === 0 && s2 === 0) continue; // Skip 0-0 sets after the first one (not played)
             
             const winner = s1 > s2 ? 1 : (s2 > s1 ? 2 : 0);
             if (winner === 1) t1Sets++; else if (winner === 2) t2Sets++;
