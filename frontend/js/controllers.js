@@ -1604,19 +1604,13 @@ const MatchesController = {
         const result = await MatchesController.loadDetails({ match_id, match_code });
         if (result && result.id) match_id = result.id;
 
-        Toast.show('Debug: autoOpen=' + autoOpenChat + ', isChatAllowed=' + result?.isChatAllowed, 'success');
-        if (autoOpenChat && match_id && result?.isChatAllowed) {
+        if (autoOpenChat && match_id) {
             // Give the UI a tiny moment to settle then open chat
             setTimeout(() => {
                 if (typeof ChatController !== 'undefined') {
                     ChatController.open(match_id);
                 }
-            }, 100);
-        } else if (autoOpenChat && result && !result.isChatAllowed) {
-            Toast.show('You must be a participant to join the match chat', 'warning');
-            // Clean up the URL to match-view without /chat
-            const cleanPath = window.location.pathname.replace('/chat', '');
-            history.replaceState(history.state, '', cleanPath);
+            }, 200);
         }
 
 
