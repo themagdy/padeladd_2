@@ -4017,6 +4017,7 @@ const ScoringController = {
                 <div class="score-grid">
                     <div class="score-team">
                         <div class="score-team-name">Team A</div>
+                        <div id="team-a-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
                         <div class="score-inputs" id="t1-inputs">
                             ${this._renderSetInputs(1, 1)}
                             ${this._renderSetInputs(2, 1)}
@@ -4026,6 +4027,7 @@ const ScoringController = {
                     <div style="font-size:18px; font-weight:800; color:var(--c-text-dim); margin-top:28px;">VS</div>
                     <div class="score-team">
                         <div class="score-team-name">Team B</div>
+                        <div id="team-b-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
                         <div class="score-inputs" id="t2-inputs">
                             ${this._renderSetInputs(1, 2)}
                             ${this._renderSetInputs(2, 2)}
@@ -4051,6 +4053,25 @@ const ScoringController = {
             </div>
         `;
         document.body.appendChild(modal);
+        this._updateNicknames();
+    },
+
+    _updateNicknames: function() {
+        const teamA = document.getElementById('team-a-nicknames');
+        const teamB = document.getElementById('team-b-nicknames');
+        if (!teamA || !teamB) return;
+
+        const players = this._composition || MatchesController._currentMatchSlots.map(s => ({
+            user_id: parseInt(s.user_id),
+            team_no: parseInt(s.team_no),
+            name: s.nickname || s.first_name
+        }));
+
+        const nicksA = players.filter(p => p.team_no == 1).map(p => p.name).join(' / ');
+        const nicksB = players.filter(p => p.team_no == 2).map(p => p.name).join(' / ');
+
+        teamA.textContent = nicksA || 'Empty';
+        teamB.textContent = nicksB || 'Empty';
     },
 
     _renderSetInputs: function(set, team) {
@@ -4088,6 +4109,7 @@ const ScoringController = {
         } else {
             editor.style.display = 'none';
             this._composition = null;
+            this._updateNicknames();
         }
     },
 
@@ -4117,6 +4139,7 @@ const ScoringController = {
         const p = this._composition[idx];
         p.team_no = p.team_no == 1 ? 2 : 1;
         this._renderComposition();
+        this._updateNicknames();
     },
 
     closeModal: function() {
