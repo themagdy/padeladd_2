@@ -2134,9 +2134,15 @@ const MatchesController = {
 
         const wlSection = document.getElementById('mv-waiting-section');
         const wlList    = document.getElementById('mv-waiting-list');
-        const activeWl  = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
+        
+        // Show all active requests, PLUS any denied/cancelled ones IF they belong to the current user
+        const activeWl  = (waiting_list || []).filter(w => {
+            const isMine = parseInt(w.requester_id) === myUserId || parseInt(w.partner_id) === myUserId;
+            const isActive = ['pending', 'approved'].includes(w.request_status);
+            return isActive || (isMine && ['denied', 'cancelled'].includes(w.request_status));
+        });
 
-        const isWaitlisted = my_waitlist_entry || my_pending_request;
+        const isWaitlisted = my_waitlist_entry || my_pending_request || (activeWl.some(w => parseInt(w.requester_id) === myUserId || parseInt(w.partner_id) === myUserId));
         if ((is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
             wlSection.style.display = 'block';
             wlList.innerHTML = activeWl.map(w => {
@@ -2144,8 +2150,19 @@ const MatchesController = {
                 const reqName = w.req_nickname || w.req_first;
                 const parName = w.par_nickname || w.par_first;
                 const names   = isSolo ? reqName : `${reqName} & ${parName}`;
-                const status = w.request_status === 'pending' ? 'Waiting for partner approval' : 'In Queue';
-                const sClass = w.request_status === 'pending' ? 'badge-orange' : 'badge-primary';
+                let status = 'In Queue';
+                let sClass = 'badge-primary';
+                
+                if (w.request_status === 'pending') {
+                    status = 'Waiting for partner approval';
+                    sClass = 'badge-orange';
+                } else if (w.request_status === 'denied') {
+                    status = 'Denied';
+                    sClass = 'badge-red';
+                } else if (w.request_status === 'cancelled') {
+                    status = 'Cancelled';
+                    sClass = 'badge-muted';
+                }
                 
                 return `
                 <div class="wl-row" style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
