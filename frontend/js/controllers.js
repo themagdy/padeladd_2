@@ -1867,7 +1867,10 @@ const MatchesController = {
                 MatchesController.hideInvitePartner();
 
                 // ── Phase 7: Post-Match Scoring UI ────────────────────────
-                if (isPastMatch && match.status !== 'cancelled') {
+                // Only allow scoring if the match reached 'full' or 'completed' status.
+                // 'Incomplete' matches (past and still open) cannot be scored.
+                const canScore = match.status === 'full' || match.status === 'completed';
+                if (isPastMatch && match.status !== 'cancelled' && canScore) {
                     let scoringHtml = '';
                     
                     if ((scores || []).length > 0) {
