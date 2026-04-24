@@ -562,11 +562,49 @@ const DashboardController = {
         </div>`;
     },
 
-    renderRanking: function() {
+    renderRanking: async function() {
         const listEl = document.getElementById('dash-ranking-list');
         if (!listEl) return;
-        // Placeholder rows until Phase 8 leaderboard API
-        listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>Ranking coming soon</h3><p>Full leaderboard available in Phase 8.</p></div>`;
+        
+        // Use current tab gender
+        const gender = DashboardController._currentRankTab || 'male';
+
+        const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
+        if (!res || !res.success) {
+             listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
+             return;
+        }
+
+        const ranking = res.data.ranking;
+        if (ranking.length === 0) {
+            listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`;
+            return;
+        }
+
+        let html = '';
+        ranking.forEach(r => {
+            const trend = r.points_this_week;
+            const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
+            
+            const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
+            
+            html += `
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" style="display:grid; grid-template-columns:50px 1fr 60px 80px 50px; padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                    <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
+                    <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                        <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">
+                        <div style="min-width:0; overflow:hidden;">
+                            <div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
+                            <div style="font-size:10px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px;">${r.player_code}</div>
+                        </div>
+                    </div>
+                    <span style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text);">${r.age || '—'}</span>
+                    <span style="text-align:right; font-size:14px; font-weight:800; color:var(--c-primary);">${r.points}</span>
+                    <span style="text-align:right; font-size:12px; font-weight:700;">${trendHtml}</span>
+                </div>
+            `;
+        });
+        listEl.innerHTML = html;
     }
 };
 
