@@ -4081,3 +4081,9 @@ form {
     display: none !important;
   }
 }
+
+@media (max-width: 600px) {
+  .dash-action-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
