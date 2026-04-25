@@ -2942,24 +2942,24 @@ form {
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
-    padding: 20px 16px !important;
-    gap: 12px !important;
+    padding: 14px 12px !important;
+    gap: 10px !important;
     min-height: auto !important;
   }
 
   .mv-slot .slot-avatar {
-    width: 68px !important;
-    height: 68px !important;
-    margin: 0 0 4px 0 !important;
-    font-size: 20px !important;
-    border: 3px solid rgba(255,255,255,0.05);
+    width: 56px !important;
+    height: 56px !important;
+    margin: 0 0 2px 0 !important;
+    font-size: 18px !important;
+    border: 2px solid rgba(255,255,255,0.05);
   }
 
   .mv-slot .slot-info {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
   }
 
   .mv-slot .slot-row-top,
@@ -2971,7 +2971,7 @@ form {
   }
 
   .mv-slot .slot-name {
-    font-size: 15px !important;
+    font-size: 13px !important;
     font-weight: 800;
     text-align: left;
     margin: 0;
