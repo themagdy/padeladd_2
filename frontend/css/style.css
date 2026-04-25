@@ -2950,9 +2950,17 @@ form {
 
   .mv-slot .slot-row-top,
   .mv-slot .slot-row-bottom {
+    display: flex;
+    flex-direction: row;
     justify-content: center !important;
-    gap: 10px !important;
+    align-items: center !important;
+    gap: 8px !important;
     width: 100%;
+    margin-top: 4px;
+  }
+
+  .mv-slot .slot-row-top {
+    margin-top: 0;
   }
 
   .match-slots-grid {

@@ -1870,13 +1870,11 @@ const MatchesController = {
                     <div class="slot-info">
                         <div class="slot-row-top">
                             <div class="slot-name" title="${rawName}">${displayName}</div>
-                            ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}" style="margin:0;">${s.playing_side[0].toUpperCase()}</span>` : ''}
+                            ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
                         </div>
-                        <div class="slot-row-bottom" style="margin-top:6px;">
-                            <div style="display:flex; align-items:center; gap:6px;">
-                                ${s.player_code ? `<span class="slot-code" style="color:var(--c-orange); font-weight:800; font-family:monospace; background:rgba(247,148,29,0.12); padding:2px 8px; border-radius:6px; font-size:11px; margin:0;">${s.player_code}</span>` : ''}
-                                ${isMe ? '<span style="font-size:14px; margin-left:2px;">🫵</span>' : ''}
-                            </div>
+                        <div class="slot-row-bottom">
+                            ${s.player_code ? `<span class="slot-code" style="color:var(--c-orange); font-weight:800; font-family:monospace; background:rgba(247,148,29,0.12); padding:2px 8px; border-radius:6px; font-size:11px;">${s.player_code}</span>` : ''}
+                            ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
                             <span class="slot-points">${s.points || 50} pts</span>
                         </div>
                     </div>`;
