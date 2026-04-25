@@ -4140,3 +4140,21 @@ form {
     grid-column: span 2 !important;
   }
 }
+
+/* --- Mobile Grid Balancing --- */
+@media (max-width: 600px) {
+  .dash-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+  .dash-action-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .dash-actions-col {
+    padding: 0 !important;
+  }
+}
