@@ -4084,7 +4084,8 @@ form {
 
 @media (max-width: 600px) {
   .dash-action-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr 1fr !important; /* Keep side-by-side */
+    gap: 10px;
   }
 }
 
