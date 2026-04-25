@@ -2935,53 +2935,65 @@ form {
   }
 
   .mv-slot {
-    flex-direction: row !important;
-    text-align: left !important;
-    padding: 10px 12px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 20px 16px !important;
     gap: 12px !important;
-    align-items: flex-start !important;
-    justify-content: space-between !important;
     min-height: auto !important;
   }
 
   .mv-slot .slot-avatar {
-    margin: 0 !important;
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 13px !important;
+    width: 68px !important;
+    height: 68px !important;
+    margin: 0 0 4px 0 !important;
+    font-size: 20px !important;
+    border: 3px solid rgba(255,255,255,0.05);
   }
 
-  .mv-slot .slot-left {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 6px !important;
+  .mv-slot .slot-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .mv-slot .slot-row-top,
+  .mv-slot .slot-row-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
   .mv-slot .slot-name {
-    font-size: 13px;
-    font-weight: 700;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
+    font-size: 20px !important;
+    font-weight: 800;
+    text-align: left;
+    margin: 0;
+    max-width: 65%;
   }
 
   .mv-slot .slot-code {
-    font-size: 10px;
-    padding: 1px 6px !important;
+    font-size: 11px;
+    padding: 2px 8px !important;
+    background: rgba(247,148,29,0.1) !important;
+    border: 1px solid rgba(247,148,29,0.2);
+    border-radius: 8px;
+    color: var(--c-orange);
+    font-family: monospace;
+    font-weight: 800;
   }
 
   .mv-slot .slot-points {
-    font-size: 10px;
-    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--c-text-muted);
+    opacity: 0.8;
   }
 
-  .match-slots-grid {
-    grid-template-columns: 1fr 24px 1fr;
-  }
-
-  .mv-slot .slot-name {
-    font-size: 12px;
+  .mv-slot .slot-side-wrapper {
+    flex-shrink: 0;
   }
 }
 
