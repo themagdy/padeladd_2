@@ -229,7 +229,7 @@ const ScoreUI = {
             const p2 = teamPlayers[1] || { name: '—' };
             
             return `
-                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; margin-bottom:2px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.15)' : 'transparent'};">
+                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; margin-bottom:6px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.15)' : 'transparent'};">
                     <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
                         ${isWinner ? '<span style="color:var(--c-orange); font-size:11px; flex-shrink:0;">▶</span>' : '<span style="width:11px; flex-shrink:0;"></span>'}
                         <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">
@@ -273,9 +273,7 @@ const ScoreUI = {
                 ${headerHtml}
                 <div class="msc-body" style="padding: 0 ${showHeader ? '24px' : '20px'};">
                     ${renderTeamRow(team1, t1Winner)}
-                    <div style="margin-top:-2px;">
-                        ${renderTeamRow(team2, !t1Winner)}
-                    </div>
+                    ${renderTeamRow(team2, !t1Winner)}
                 </div>
             </div>
         `;
