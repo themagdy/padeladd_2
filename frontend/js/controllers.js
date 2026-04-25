@@ -1614,7 +1614,7 @@ const MatchesController = {
             `;
             
             return `
-                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:24px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                     <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
