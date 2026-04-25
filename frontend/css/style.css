@@ -2935,18 +2935,25 @@ form {
   }
 
   .mv-slot {
-    flex-direction: row !important;
-    text-align: left !important;
-    padding: 10px !important;
-    gap: 12px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 12px 10px !important;
+    gap: 8px !important;
     min-height: auto !important;
+  }
+
+  .mv-slot .slot-avatar {
+    margin: 0 auto;
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
   }
 
   .mv-slot .slot-info {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 4px;
   }
 
@@ -2954,7 +2961,7 @@ form {
   .mv-slot .slot-row-bottom {
     display: flex;
     flex-direction: row;
-    justify-content: space-between !important;
+    justify-content: center !important;
     align-items: center !important;
     gap: 8px !important;
     width: 100%;
@@ -2963,12 +2970,6 @@ form {
 
   .mv-slot .slot-row-top {
     margin-top: 0;
-  }
-
-  .mv-slot .slot-avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 12px;
   }
 
   .mv-slot .slot-name {
