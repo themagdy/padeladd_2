@@ -2935,32 +2935,40 @@ form {
   }
 
   .mv-slot {
-    flex-direction: column;
-    text-align: center;
-    padding: 12px 6px;
-    gap: 8px;
+    flex-direction: row !important;
+    text-align: left !important;
+    padding: 10px !important;
+    gap: 12px !important;
+    min-height: auto !important;
   }
 
   .mv-slot .slot-info {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    gap: 4px;
   }
 
   .mv-slot .slot-row-top,
   .mv-slot .slot-row-bottom {
     display: flex;
     flex-direction: row;
-    justify-content: center !important;
+    justify-content: space-between !important;
     align-items: center !important;
     gap: 8px !important;
     width: 100%;
-    margin-top: 4px;
+    margin-top: 0 !important;
   }
 
   .mv-slot .slot-row-top {
     margin-top: 0;
+  }
+
+  .mv-slot .slot-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
   }
 
   .match-slots-grid {
