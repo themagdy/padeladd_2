@@ -310,15 +310,10 @@ const StatsUI = {
         if (rcEl) {
             if (stats.ranking_change > 0) {
                 rcEl.innerHTML = `<span class="stat-trend up">${upIcon} ${stats.ranking_change} POSITIONS</span>`;
-                rcEl.style.color = ''; // Use CSS
             } else if (stats.ranking_change < 0) {
                 rcEl.innerHTML = `<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`;
-                rcEl.style.color = '';
-            } else if (stats.highest_ranking) {
-                rcEl.textContent = `${stats.highest_ranking} Highest rank`;
-                rcEl.style.color = 'var(--c-text-muted)';
             } else {
-                rcEl.textContent = '';
+                rcEl.innerHTML = `<span class="stat-trend" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:4px 8px; border-radius:4px; font-size:10px; font-weight:800;">STABLE RANK</span>`;
             }
         }
 
