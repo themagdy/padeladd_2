@@ -576,7 +576,10 @@ const DashboardController = {
                         <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">
                         <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
-                            <div style="font-size:10px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px;">${r.player_code}</div>
+                            <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
+                                <span class="slot-code" style="font-size:8px; padding:1px 4px !important; border-radius:4px; margin:0;">${r.player_code}</span>
+                                <span style="font-size:10px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
+                            </div>
                         </div>
                     </div>
                     <span style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
@@ -4438,7 +4441,10 @@ const RankingController = {
                         <img src="${avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border);">
                         <div style="min-width:0;">
                             <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
-                            <div style="font-size:11px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">${r.player_code}</div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
+                                <span class="slot-code" style="font-size:9px; padding:1px 5px !important; border-radius:4px; margin:0;">${r.player_code}</span>
+                                <span style="font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
+                            </div>
                         </div>
                     </div>
 
