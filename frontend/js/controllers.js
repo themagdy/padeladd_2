@@ -1863,6 +1863,7 @@ const MatchesController = {
                 const rawName  = s.nickname || s.first_name;
                 const displayName = (rawName.length > 12) ? rawName.substring(0, 10) + '..' : rawName;
 
+                el.innerHTML   = `
                     <div class="slot-left" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
                         <div class="slot-avatar">
                             ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
