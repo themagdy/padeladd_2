@@ -1,4 +1,4 @@
-<div class="page active" id="dashboard-page" style="background:var(--c-bg);">
+<div class="page active" id="dashboard-page" style="background:var(--c-bg); overflow-x:hidden;">
 
   <div style="width:100%; max-width:1200px; margin:0 auto; padding:0 20px;">
 
@@ -94,7 +94,7 @@
         </div>
 
         <!-- Table header -->
-        <div style="display:grid; grid-template-columns:50px 1fr 60px 80px 50px; padding:0 10px 14px; color:var(--c-text-muted); font-size:13px; font-weight:700; border-bottom:1px solid var(--c-border); margin-bottom:12px;">
+        <div class="rank-table-header" style="display:grid; grid-template-columns:40px 1fr 45px 70px 45px; padding:0 10px 14px; color:var(--c-text-muted); font-size:11px; font-weight:700; border-bottom:1px solid var(--c-border); margin-bottom:12px;">
           <span>Rank</span><span>Player</span><span style="text-align:center;">Age</span><span style="text-align:right;">Points</span><span style="text-align:right;">+/-</span>
         </div>
 
@@ -170,6 +170,22 @@
   .dash-main-grid {
     padding-top: 24px !important;
     padding-bottom: 24px !important;
+  }
+  .dash-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding-bottom: 80px !important;
+  }
+  .dash-footer .footer-bottom-text {
+    margin-left: 0 !important;
+    text-align: center;
+    margin-top: 10px;
+  }
+  .rank-table-header {
+    grid-template-columns: 35px 1fr 40px 60px 35px !important;
+    font-size: 10px !important;
+    padding: 0 5px 10px !important;
   }
 }
 </style>
