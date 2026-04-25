@@ -241,6 +241,11 @@ ol {
   color: var(--c-red);
   border-color: rgba(241, 90, 41, 0.2);
 }
+.stat-trend.neutral {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--c-text-muted);
+  border-color: rgba(255, 255, 255, 0.1);
+}
 
 @keyframes pageFadeIn {
   from {

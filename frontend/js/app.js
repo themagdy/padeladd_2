@@ -313,7 +313,7 @@ const StatsUI = {
             } else if (stats.ranking_change < 0) {
                 rcEl.innerHTML = `<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`;
             } else {
-                rcEl.innerHTML = `<span class="stat-trend" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:4px 8px; border-radius:4px; font-size:10px; font-weight:800;">STABLE RANK</span>`;
+                rcEl.innerHTML = `<span class="stat-trend neutral">STABLE RANK</span>`;
             }
         }
 
