@@ -2978,15 +2978,21 @@ form {
     max-width: 65%;
   }
 
+  .mv-slot .slot-row-bottom {
+    align-items: baseline !important;
+  }
+
   .mv-slot .slot-code {
     font-size: 10px;
-    padding: 1px 6px !important;
+    padding: 2px 6px !important;
     background: rgba(247,148,29,0.12) !important;
     border: none !important;
     border-radius: 6px;
     color: var(--c-orange);
     font-family: monospace;
     font-weight: 800;
+    margin: 0 !important;
+    line-height: 1;
   }
 
   .mv-slot .slot-points {
