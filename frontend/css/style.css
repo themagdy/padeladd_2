@@ -2971,6 +2971,25 @@ form {
     font-size: 12px;
   }
 
+  .mv-slot .slot-name {
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .mv-slot .slot-code {
+    font-size: 10px;
+    padding: 1px 6px !important;
+  }
+
+  .mv-slot .slot-points {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
   .match-slots-grid {
     grid-template-columns: 1fr 24px 1fr;
   }
