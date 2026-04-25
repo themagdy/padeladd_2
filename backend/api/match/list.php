@@ -77,15 +77,13 @@ if ($mode === 'play_upcoming') {
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE m.id IN (
             SELECT match_id FROM match_players WHERE user_id = ?
-            UNION
-            SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
         )
         AND m.status = 'completed'
         AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
-    $stmt->execute([$uid, $uid, $uid]);
+    $stmt->execute([$uid]);
 } elseif ($mode === 'mine_past') {
     $stmt = $pdo->prepare("
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
@@ -94,7 +92,6 @@ if ($mode === 'play_upcoming') {
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE (m.creator_id = ? 
                OR m.id IN (SELECT match_id FROM match_players WHERE user_id = ?)
-               OR m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status NOT IN ('denied', 'cancelled'))
         )
         AND (
             (m.status = 'cancelled') 
@@ -104,7 +101,7 @@ if ($mode === 'play_upcoming') {
         ORDER BY m.match_datetime DESC
         LIMIT 50
     ");
-    $stmt->execute([$uid, $uid, $uid, $uid]);
+    $stmt->execute([$uid, $uid]);
 } else {
     // Fallback empty but with correct structure
     $stmt = $pdo->prepare("
