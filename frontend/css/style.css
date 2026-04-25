@@ -3986,21 +3986,21 @@ form {
     color: var(--c-text);
     transform: rotate(90deg);
 }
-/* --- Premium VS Divider --- */
+/* --- Ultra-Premium Dark VS Divider --- */
 .match-vs-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: 180px; /* Ensures it spans the slot area */
+  height: 100%;
 }
 
 .match-vs-wrapper::before {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: -10px;
+  bottom: -10px;
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--c-border), transparent);
   left: 50%;
@@ -4011,28 +4011,39 @@ form {
 .match-vs-badge {
   position: relative;
   z-index: 2;
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
-  border: 1px solid rgba(255,255,255,0.8);
+  width: 42px;
+  height: 42px;
+  background: #0f172a; /* Deep Navy/Black */
+  border: 1px solid rgba(255,255,255,0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0f172a;
+  color: #fff;
   font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.5px;
+  font-weight: 950;
+  letter-spacing: 1px;
   box-shadow: 
-    0 4px 12px rgba(0,0,0,0.4),
-    inset 0 1px 1px rgba(255,255,255,0.5);
-  text-shadow: 0 0.5px 0 rgba(255,255,255,0.5);
+    0 10px 25px rgba(0,0,0,0.6),
+    0 0 15px rgba(247,148,29,0.15), /* Playful orange glow */
+    inset 0 1px 1px rgba(255,255,255,0.1);
   font-family: 'Inter', sans-serif;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.match-vs-badge:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 
+    0 12px 30px rgba(0,0,0,0.7),
+    0 0 20px rgba(247,148,29,0.25);
 }
 
 @media (max-width: 600px) {
   .match-vs-wrapper {
-    min-height: auto;
-    padding-top: 60px; /* Keep alignment for mobile stacked layout */
+    min-height: 40px;
+    padding: 10px 0;
+  }
+  .match-vs-wrapper::before {
+    display: none; /* Cleaner on mobile */
   }
 }
