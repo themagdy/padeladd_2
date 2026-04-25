@@ -63,13 +63,13 @@
             <div style="font-size:24px;">🔥</div>
           </button>
           <!-- Create / Join -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
-            <button onclick="Router.navigate('/matches/create')" class="btn" style="background:#293342; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
-              <span style="font-size:14px; font-weight:700;">Create</span>
+          <div class="dash-action-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
+            <button onclick="Router.navigate('/match/create')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border:1px solid var(--c-border); min-height:56px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:15px; font-weight:700;">Create</span>
               <span style="font-size:18px;">🎾</span>
             </button>
-            <button onclick="Router.navigate('/matches/join')" class="btn" style="background:#293342; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
-              <span style="font-size:14px; font-weight:700;">Join</span>
+            <button onclick="Router.navigate('/matches')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border:1px solid var(--c-border); min-height:56px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:15px; font-weight:700;">Join</span>
               <span style="font-size:18px;">🔍</span>
             </button>
           </div>
