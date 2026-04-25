@@ -96,8 +96,8 @@
         </div>
 
         <!-- Table header -->
-        <div class="rank-table-header" style="display:grid; grid-template-columns:40px 1fr 45px 70px 45px; padding:0 10px 14px; color:var(--c-text-muted); font-size:11px; font-weight:700; border-bottom:1px solid var(--c-border); margin-bottom:12px;">
-          <span>Rank</span><span>Player</span><span style="text-align:center;">Age</span><span style="text-align:right;">Points</span><span style="text-align:right;">+/-</span>
+        <div class="rank-grid-dash rank-table-header" style="padding:0 10px 14px; color:var(--c-text-muted); font-size:11px; font-weight:700; border-bottom:1px solid var(--c-border); margin-bottom:12px;">
+          <span>Rank</span><span>Player</span><span style="text-align:center;" class="hide-mobile">Age</span><span style="text-align:right;">Points</span><span style="text-align:right;" class="hide-mobile">+/-</span>
         </div>
 
         <!-- Ranking rows -->
@@ -183,11 +183,6 @@
     margin-left: 0 !important;
     text-align: center;
     margin-top: 10px;
-  }
-  .rank-table-header {
-    grid-template-columns: 35px 1fr 40px 60px 35px !important;
-    font-size: 10px !important;
-    padding: 0 5px 10px !important;
   }
 }
 </style>
