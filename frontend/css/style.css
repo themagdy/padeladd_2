@@ -4054,3 +4054,28 @@ form {
     display: none; /* Cleaner on mobile */
   }
 }
+
+/* --- Unified Ranking Grid System --- */
+.rank-grid-dash {
+  display: grid;
+  grid-template-columns: 45px 1fr 45px 70px 45px !important;
+  align-items: center;
+}
+
+.rank-grid-full {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px 80px 70px 70px !important;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .rank-grid-dash {
+    grid-template-columns: 40px 1fr 60px !important;
+  }
+  .rank-grid-full {
+    grid-template-columns: 40px 1fr 70px !important;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+}

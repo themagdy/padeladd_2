@@ -570,7 +570,7 @@ const DashboardController = {
             const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
             
             html += `
-                <div onclick="Router.navigate('/profile/view/${r.player_code}')" style="display:grid; grid-template-columns:50px 1fr 60px 80px 50px; padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="display:grid; grid-template-columns:50px 1fr 60px 80px 50px; padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                     <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">
@@ -4434,12 +4434,12 @@ const RankingController = {
             const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
             
             html += `
-                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-table-row" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                     <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'};">#${r.rank}</span>
                     
-                    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
-                        <img src="${avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border);">
-                        <div style="min-width:0;">
+                    <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
+                        <img src="${avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">
+                        <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
                                 <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:lowercase;">${r.player_code}</span>
@@ -4448,9 +4448,9 @@ const RankingController = {
                         </div>
                     </div>
 
-                    <span style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
-                    <span style="text-align:center; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
-                    <span style="text-align:right; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
+                    <span class="hide-mobile" style="text-align:right; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
                     <span style="text-align:right; font-size:16px; font-weight:900; color:${pointsColor};">${r.points}</span>
                 </div>
             `;
