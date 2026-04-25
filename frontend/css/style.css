@@ -4021,9 +4021,6 @@ form {
 
 .match-vs-badge:hover {
   transform: scale(1.1) rotate(5deg);
-  box-shadow: 
-    0 12px 30px rgba(0,0,0,0.7),
-    0 0 20px rgba(247,148,29,0.25);
 }
 
 @media (max-width: 600px) {
