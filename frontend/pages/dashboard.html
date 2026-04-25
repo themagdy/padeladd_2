@@ -55,21 +55,21 @@
         <!-- Right action column -->
         <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px; flex:1;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between; padding:18px 20px; min-height:80px; border:none; margin-bottom:4px;">
+          <button id="dash-upcoming-btn" onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between; flex:1; padding:0 20px;">
             <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
-              <div style="font-size:18px; font-weight:800; letter-spacing:-0.5px;">My Matches</div>
-              <div style="font-size:12px; opacity:0.8; font-weight:600;">View your schedule</div>
+              <div style="font-size:16px; font-weight:800;">My Matches</div>
+              <div style="font-size:11px; opacity:0.8; font-weight:600;">View your schedule</div>
             </div>
             <div style="font-size:24px;">🔥</div>
           </button>
           <!-- Create / Join -->
-          <div class="dash-action-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <button onclick="Router.navigate('/match/create')" class="btn" style="background:rgba(255,255,255,0.05); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px; border:1px solid rgba(255,255,255,0.1); min-height:50px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-              <span style="font-size:15px; font-weight:700;">Create Match</span>
+          <div class="dash-action-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
+            <button onclick="Router.navigate('/match/create')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border:1px solid var(--c-border); min-height:56px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:15px; font-weight:700;">Create</span>
               <span style="font-size:18px;">🎾</span>
             </button>
-            <button onclick="Router.navigate('/matches')" class="btn" style="background:rgba(255,255,255,0.05); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px; border:1px solid rgba(255,255,255,0.1); min-height:50px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-              <span style="font-size:15px; font-weight:700;">Join Match</span>
+            <button onclick="Router.navigate('/matches')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; border:1px solid var(--c-border); min-height:56px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+              <span style="font-size:15px; font-weight:700;">Join</span>
               <span style="font-size:18px;">🔍</span>
             </button>
           </div>
@@ -80,10 +80,10 @@
     <!-- ═══════════════════════════════════════════
          MAIN CONTENT: RANKING + LATEST MATCHES
     ═══════════════════════════════════════════ -->
-    <div class="dash-main-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:80px; padding:40px 0; align-items: stretch;">
+    <div class="dash-main-grid" style="padding:40px 0;">
 
       <!-- LEFT: RANKING -->
-      <div style="display:flex; flex-direction:column; border-right:1px solid var(--c-border); padding-right:40px; margin-right:-40px;">
+      <div class="dash-ranking-section">
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:24px;">
           <img src="assets/logo_ico.png" style="height:20px; width:auto;">
           <span class="section-title" style="font-size:12px;">Players Ranking</span>

@@ -4087,3 +4087,33 @@ form {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* --- Dashboard Responsive Layout --- */
+.dash-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: stretch;
+}
+
+.dash-ranking-section {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--c-border);
+  padding-right: 40px;
+  margin-right: -40px;
+}
+
+@media (max-width: 900px) {
+  .dash-main-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .dash-ranking-section {
+    border-right: none;
+    padding-right: 0;
+    margin-right: 0;
+    border-bottom: 1px solid var(--c-border);
+    padding-bottom: 40px;
+  }
+}
