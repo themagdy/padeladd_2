@@ -2951,6 +2951,12 @@ form {
     font-size: 13px !important;
   }
 
+  .mv-slot .slot-left {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
   .mv-slot .slot-name {
     font-size: 13px;
     font-weight: 700;
