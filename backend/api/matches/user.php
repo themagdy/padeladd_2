@@ -9,20 +9,30 @@ $uid = $user['id'];
 
 $target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
 
-// Fetch matches where user is a participant or has an active waiting list entry
+// Fetch matches where user is a participant OR an active waiting list entry (only for upcoming)
 $stmt = $pdo->prepare("
     SELECT m.*
     FROM matches m
-    WHERE m.id IN (
-        SELECT match_id FROM match_players WHERE user_id = ?
-        UNION
-        SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
+    WHERE (
+        -- Condition A: User was a confirmed participant (Always show)
+        m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1)
+        OR
+        -- Condition B: User is on waiting list (Only show if match is upcoming/open)
+        (
+            m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved'))
+            AND m.status NOT IN ('completed', 'cancelled')
+            AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 6 HOUR)
+        )
     )
     AND m.status != 'cancelled'
     ORDER BY m.match_datetime DESC
     LIMIT 50
 ");
-$stmt->execute([$target_id, $target_id, $target_id]);
+$stmt->execute([
+    ':uid1' => $target_id,
+    ':uid2' => $target_id,
+    ':uid3' => $target_id
+]);
 $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
