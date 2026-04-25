@@ -29,12 +29,12 @@
 
     <!-- Table Header Row -->
     <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px;">
-        <div class="rank-table-row header" style="display:grid; grid-template-columns:60px 1fr 60px 100px 80px 80px; padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
+        <div class="rank-grid-full rank-table-row header" style="padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
             <span>Rank</span>
             <span>Player</span>
-            <span style="text-align:center;">Age</span>
-            <span style="text-align:center;">Matches</span>
-            <span style="text-align:right;">Win Rate</span>
+            <span style="text-align:center;" class="hide-mobile">Age</span>
+            <span style="text-align:center;" class="hide-mobile">Matches</span>
+            <span style="text-align:right;" class="hide-mobile">Win Rate</span>
             <span style="text-align:right;">Points</span>
         </div>
     </div>
@@ -110,16 +110,5 @@
     0% { opacity: 0.5; }
     50% { opacity: 1; }
     100% { opacity: 0.5; }
-}
-
-@media (max-width: 600px) {
-    .rank-table-row {
-        grid-template-columns: 50px 1fr 80px !important;
-    }
-    .rank-table-row span:nth-child(3),
-    .rank-table-row span:nth-child(4),
-    .rank-table-row span:nth-child(5) {
-        display:none !important;
-    }
 }
 </style>
