@@ -14,3 +14,10 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Completely refactored Ranking page structure to optimize sticky positioning for filters and headers.
 - Fine-tuned sticky offsets to prevent header cropping on both mobile and desktop views.
 - Updated Dashboard "All Matches" navigation to directly target the "Completed" matches tab.
+323d7f8 - 2026-04-25 05:12:00 +0300
+- Excluded waiting-list-only entries from match history lists (Past/Completed) in dashboard and profile.
+- Implemented "Empty" label for teams with no players in match details.
+- Redesigned "VS" divider with custom gold-gradient SVG and premium styling.
+- Overhauled mobile match slots: centered avatars, row-aligned identity and stats, and optimized spacing.
+- Restored original orange-themed player code styling globally.
+- Fine-tuned mobile alignment (baseline) and compacted layout (reduced padding/font sizes).
