@@ -582,9 +582,9 @@ const DashboardController = {
                             </div>
                         </div>
                     </div>
-                    <span style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
                     <span style="text-align:right; font-size:14px; font-weight:800; color:#fff;">${r.points}</span>
-                    <span style="text-align:right; font-size:12px; font-weight:700;">${trendHtml}</span>
+                    <span class="hide-mobile" style="text-align:right; font-size:12px; font-weight:700;">${trendHtml}</span>
                 </div>
             `;
         });
