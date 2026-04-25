@@ -3991,16 +3991,16 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   position: relative;
-  padding-top: 48px; /* Align roughly with slot centers */
+  min-height: 180px; /* Ensures it spans the slot area */
 }
 
 .match-vs-wrapper::before {
   content: '';
   position: absolute;
-  top: 10px;
-  bottom: 10px;
+  top: 0;
+  bottom: 0;
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--c-border), transparent);
   left: 50%;
@@ -4011,25 +4011,28 @@ form {
 .match-vs-badge {
   position: relative;
   z-index: 2;
-  width: 32px;
-  height: 32px;
-  background: var(--g-primary);
-  border: 3px solid var(--c-bg);
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  border: 1px solid rgba(255,255,255,0.8);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 950;
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: 900;
   letter-spacing: 0.5px;
-  box-shadow: 0 4px 12px rgba(247, 148, 29, 0.3);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.4),
+    inset 0 1px 1px rgba(255,255,255,0.5);
+  text-shadow: 0 0.5px 0 rgba(255,255,255,0.5);
   font-family: 'Inter', sans-serif;
 }
 
 @media (max-width: 600px) {
   .match-vs-wrapper {
-    padding-top: 60px; /* Adjust for mobile stacked avatar */
+    min-height: auto;
+    padding-top: 60px; /* Keep alignment for mobile stacked layout */
   }
 }
