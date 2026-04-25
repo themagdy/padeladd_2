@@ -57,12 +57,12 @@
         <!-- Right action column -->
         <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px; flex:1;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between; flex:1; padding:0 20px;">
+          <button id="dash-upcoming-btn" onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')" class="btn" style="background:linear-gradient(135deg, #1b52ce, #0d3ba1); color:#fff; display:flex; align-items:center; justify-content:space-between; flex:1; padding:18px 24px; border-radius:var(--r-lg); border:none; box-shadow:0 8px 16px rgba(0,0,0,0.15); width:100%;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
             <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
-              <div style="font-size:16px; font-weight:800;">My Matches</div>
-              <div style="font-size:11px; opacity:0.8; font-weight:600;">View your schedule</div>
+              <div style="font-size:18px; font-weight:800; letter-spacing:-0.5px;">My Matches</div>
+              <div style="font-size:12px; opacity:0.9; font-weight:600;">View your schedule</div>
             </div>
-            <div style="font-size:24px;">🔥</div>
+            <div style="font-size:28px;">🔥</div>
           </button>
           <!-- Create / Join -->
           <div class="dash-action-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
