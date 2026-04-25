@@ -23,26 +23,34 @@
       <!-- Slots Card -->
       <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:20px; margin-bottom:20px;">
 
-        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:stretch;">
-          <!-- Team 1 -->
+        <!-- Team Headers -->
+        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; text-align:center; display:flex; flex-direction:column; gap:2px;">
+            <span>Team 1</span>
+            <span id="mv-team1-points" style="font-size:10px; opacity:0.6; font-weight:700;"></span>
+          </div>
+          <div></div>
+          <div style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px; text-align:center; display:flex; flex-direction:column; gap:2px;">
+            <span>Team 2</span>
+            <span id="mv-team2-points" style="font-size:10px; opacity:0.6; font-weight:700;"></span>
+          </div>
+        </div>
+
+        <!-- Team Slots & VS -->
+        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:center;">
+          <!-- Team 1 Slots -->
           <div>
-            <div style="font-size:12px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; text-align:center; display:flex; flex-direction:column; gap:2px;">
-              <span>Team 1</span>
-              <span id="mv-team1-points" style="font-size:10px; opacity:0.6; font-weight:700;"></span>
-            </div>
             <div id="mv-team1-slot1" class="mv-slot"></div>
             <div id="mv-team1-slot2" class="mv-slot" style="margin-top:12px;"></div>
           </div>
+          
           <!-- VS divider -->
           <div class="match-vs-wrapper">
             <div class="match-vs-badge">VS</div>
           </div>
-          <!-- Team 2 -->
+
+          <!-- Team 2 Slots -->
           <div>
-            <div style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; text-align:center; display:flex; flex-direction:column; gap:2px;">
-              <span>Team 2</span>
-              <span id="mv-team2-points" style="font-size:10px; opacity:0.6; font-weight:700;"></span>
-            </div>
             <div id="mv-team2-slot1" class="mv-slot"></div>
             <div id="mv-team2-slot2" class="mv-slot" style="margin-top:12px;"></div>
           </div>
