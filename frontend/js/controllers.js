@@ -570,7 +570,7 @@ const DashboardController = {
             const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
             
             html += `
-                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="display:grid; grid-template-columns:50px 1fr 60px 80px 50px; padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                     <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">
