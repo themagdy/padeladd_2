@@ -53,22 +53,24 @@
         </div>
 
         <!-- Right action column -->
-        <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:10px;">
+        <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px; flex:1;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between;">
-            <span style="display:flex; align-items:center; gap:10px;">
-              <span style="font-size:18px;">🔥</span>
-              <span style="font-size:14px;">My Matches</span>
-            </span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <button id="dash-upcoming-btn" onclick="Router.navigate('/matches')" class="btn btn-primary" style="display:flex; align-items:center; justify-content:space-between; flex:1; padding:0 20px;">
+            <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
+              <div style="font-size:16px; font-weight:800;">My Matches</div>
+              <div style="font-size:11px; opacity:0.8; font-weight:600;">View your schedule</div>
+            </div>
+            <div style="font-size:24px;">🔥</div>
           </button>
           <!-- Create / Join -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button onclick="Router.navigate('/matches/create')" class="btn" style="background:#293342; color:#fff;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
-              <span style="font-size:18px;">🎾</span> <span style="font-size:14px;">Create</span>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
+            <button onclick="Router.navigate('/matches/create')" class="btn" style="background:#293342; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
+              <span style="font-size:14px; font-weight:700;">Create</span>
+              <span style="font-size:18px;">🎾</span>
             </button>
-            <button onclick="Router.navigate('/matches/join')" class="btn" style="background:#293342; color:#fff;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
-              <span style="font-size:18px;">🔍</span> <span style="font-size:14px;">Join</span>
+            <button onclick="Router.navigate('/matches/join')" class="btn" style="background:#293342; color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 18px;" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='#293342'">
+              <span style="font-size:14px; font-weight:700;">Join</span>
+              <span style="font-size:18px;">🔍</span>
             </button>
           </div>
         </div>
