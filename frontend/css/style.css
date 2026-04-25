@@ -4118,3 +4118,25 @@ form {
     padding-bottom: 40px;
   }
 }
+
+/* --- Mobile Alignment Fixes --- */
+@media (max-width: 600px) {
+  .dash-welcome {
+    padding: 30px 0 20px !important;
+  }
+  .dash-hero {
+    text-align: left !important;
+    padding-left: 0 !important;
+  }
+  .dash-hero h1 {
+    font-size: 28px !important;
+    margin-bottom: 4px !important;
+  }
+  .dash-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .dash-actions-col {
+    grid-column: span 2 !important;
+  }
+}
