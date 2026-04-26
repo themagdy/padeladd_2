@@ -60,7 +60,7 @@ const ConfirmModal = {
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             const inputHtml = showInput ? `
-                <textarea id="gcm-input" placeholder="${inputPlaceholder}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:24px; resize:none; font-family:var(--font); outline:none;" rows="3"></textarea>
+                <textarea id="gcm-input" placeholder="${inputPlaceholder}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:24px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
             ` : '';
 
             const thirdBtnHtml = thirdText ? `
