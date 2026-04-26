@@ -103,8 +103,7 @@ const ConfirmModal = {
 
 
             // Disable scroll (Hardened for mobile)
-            document.documentElement.style.height = '100%';
-            document.body.style.height = '100%';
+            document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.style.touchAction = 'none';
 
@@ -124,8 +123,7 @@ const ConfirmModal = {
         if (!this._modal) return;
 
         // Restore scroll
-        document.documentElement.style.height = '';
-        document.body.style.height = '';
+        document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
         this._modal.ontouchmove = null;
