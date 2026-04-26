@@ -1822,7 +1822,7 @@ const MatchesController = {
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
                         <span>👤</span> Created by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
                     </div>
-                    <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:4px 10px; border-radius:8px; font-size:10px; cursor:pointer; font-weight:600; display:flex; align-items:center; gap:4px; transition:all 0.2s;">
+                    <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
                     </button>
                 </div>
@@ -1894,58 +1894,57 @@ const MatchesController = {
         // Action area
         const actionArea = document.getElementById('mv-action-area');
         if (actionArea) {
-                // Policy Violation Area (New persistent area)
+                // Unified Policy Violation Area
                 const lateWithdrawal = res.data.late_withdrawal;
                 const policyArea     = document.getElementById('mv-policy-area');
                 if (policyArea) {
-                    let newHtml = '';
-                    if (lateWithdrawal && match.status !== 'cancelled') {
+                    let combinedHtml = '';
+                    
+                    // Case 1: Late Withdrawal
+                    if (lateWithdrawal) {
                         const lwUser     = lateWithdrawal.nickname || `${lateWithdrawal.first_name} ${lateWithdrawal.last_name}`;
                         const lwCode     = lateWithdrawal.player_code || '';
                         const lwReason   = lateWithdrawal.event_data?.reason || '';
-                        
                         const profileUrl = `/p/${lwCode}`;
                         const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
-
                         const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
 
-                        newHtml = `
-                            <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:24px;">
+                        combinedHtml += `
+                            <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">⚠️</div>
-                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Late Withdrawal</div>
+                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Withdrawal)</div>
                                 </div>
-                                
                                 <div style="font-size:14px; line-height:1.4; color:var(--c-text);">
-                                    ${clickableUser}${codeTag} left the match.
-                                    ${lwReason ? `
-                                        <div style="margin-top:8px; margin-bottom:4px; padding-left:12px; border-left:2px solid rgba(255,59,48,0.2); font-style:italic; color:var(--c-text-muted); font-size:13px;">
-                                            "${lwReason}"
-                                        </div>` : ''}
+                                    ${clickableUser}${codeTag} left the match within the 6-hour policy.
+                                    ${lwReason ? `<div style="margin-top:8px; padding-left:12px; border-left:2px solid rgba(255,59,48,0.2); font-style:italic; color:var(--c-text-muted); font-size:13px;">"${lwReason}"</div>` : ''}
                                 </div>
-                                
-                                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">
-                                    Admins will investigate, user may face a ban.
-                                </div>
-
+                                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
                             </div>`;
                     }
-                    
-                    // Only update if changed to avoid flicker during polls
 
-                    if (policyArea.innerHTML !== newHtml) {
-                        policyArea.innerHTML = newHtml;
+                    // Case 2: Late Cancellation
+                    if (match.status === 'cancelled' && match.is_policy_violation) {
+                        combinedHtml += `
+                            <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
+                                <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                                    <div style="font-size:16px;">🚫</div>
+                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Cancellation)</div>
+                                </div>
+                                <div style="font-size:14px; line-height:1.4; color:var(--c-text);">
+                                    This match was cancelled within the 6-hour policy by the creator.
+                                </div>
+                                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
+                            </div>`;
+                    }
+
+                    if (policyArea.innerHTML !== combinedHtml) {
+                        policyArea.innerHTML = combinedHtml;
                     }
                 }
 
 
                 if (match.status === 'cancelled') {
-                    const violationHtml = match.is_policy_violation ? `
-                        <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,59,48,0.15); font-size:11px; font-weight:700; color:var(--c-red); line-height:1.4;">
-                            ⚠️ Policy Violation: Admins will investigate and the user may face a ban.
-                        </div>
-                    ` : '';
-
                     actionArea.innerHTML = `
                         <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
@@ -1954,7 +1953,6 @@ const MatchesController = {
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
-                                ${violationHtml}
                         </div>`;
                     if (content) content.style.display = 'block';
                     if (skeleton) skeleton.style.display = 'none';
@@ -4330,7 +4328,7 @@ const ScoringController = {
             title: targetUserId ? 'Report Player' : 'Report Match Issue',
             message: 'Please describe the issue you encountered.',
             showInput: true,
-            inputPlaceholder: 'Unfair behavior / Equipment issue...',
+            inputPlaceholder: 'Unfair behavior / App issue...',
             confirmText: 'Submit Report',
             type: 'warning'
         });
