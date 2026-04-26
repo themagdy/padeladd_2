@@ -230,6 +230,7 @@ ol {
   letter-spacing: 0.5px;
   border: 1px solid transparent;
   white-space: nowrap;
+  margin-top: 4px;
 }
 .stat-trend.up {
   background: rgba(0, 206, 0, 0.1);
