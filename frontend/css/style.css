@@ -247,6 +247,21 @@ ol {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+.dash-stat-card {
+  background: var(--g-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 20px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stat-trend.neutral {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--c-text-muted);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 @keyframes pageFadeIn {
   from {
     opacity: 0;
@@ -4142,6 +4157,14 @@ form {
     gap: 10px !important;
     margin: 0 !important;
     width: auto !important;
+  }
+  .dash-stat-card {
+    padding: 15px 10px !important;
+  }
+  .stat-trend {
+    padding: 2px 6px !important;
+    font-size: 9px !important;
+    gap: 3px !important;
   }
   .dash-action-grid {
     grid-template-columns: 1fr 1fr !important;
