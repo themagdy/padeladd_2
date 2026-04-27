@@ -2,13 +2,29 @@
 
   <!-- 1. Top Section (Non-sticky) -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:40px 20px 20px; display:block !important; overflow:visible !important;">
-    <div style="margin-bottom:20px;">
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+    <div style="margin-bottom:10px;">
+      <div class="ranking-header-top-row" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
         <img src="assets/logo_ico.png" style="height:24px; width:auto;">
         <span style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:2px;">Official Leaderboard</span>
       </div>
-      <h1 style="font-size:36px; font-weight:800; color:#fff; margin:0; line-height:1.1;">Players Ranking</h1>
-      <p style="color:var(--c-text-muted); font-size:16px; margin-top:-2px;">Best players in the community.</p>
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <h1 class="ranking-header-h1" style="font-size:36px; font-weight:800; color:#fff; margin:0; line-height:1.1;">Players Ranking</h1>
+        <div class="ranking-trophy-wrapper" style="position:relative; width:120px; height:120px; margin-top:-35px; display:flex; align-items:center; justify-content:center;">
+          <!-- Animated rotating ring -->
+          <div style="position:absolute; inset:0; border:2px dashed rgba(247,148,29,0.3); border-radius:50%; animation: trophySpin 15s linear infinite;"></div>
+          <!-- Inner glowing pulse -->
+          <div style="position:absolute; inset:15px; background:radial-gradient(circle, rgba(247,148,29,0.2) 0%, transparent 70%); border-radius:50%; animation: trophyPulse 3s ease-in-out infinite;"></div>
+          
+          <!-- Main trophy glass -->
+          <div class="ranking-trophy" style="width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; font-size: 52px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05); backdrop-filter: blur(15px); position: relative; z-index: 2;">
+            <span style="filter: drop-shadow(0 0 20px rgba(247,148,29,0.9));">🏆</span>
+            <!-- Shimmer sparks -->
+            <div style="position:absolute; top:10px; right:10px; font-size:12px; animation: trophyBlink 2s infinite;">✨</div>
+            <div style="position:absolute; bottom:15px; left:5px; font-size:10px; animation: trophyBlink 3s infinite 1s;">✨</div>
+          </div>
+        </div>
+      </div>
+      <p class="ranking-header-p" style="color:var(--c-text-muted); font-size:16px; margin-top:5px;">Best players in the community.</p>
     </div>
   </div>
 
@@ -128,5 +144,34 @@
     0% { opacity: 0.5; }
     50% { opacity: 1; }
     100% { opacity: 0.5; }
+}
+
+@keyframes trophySpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes trophyPulse {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.1); opacity: 0.7; }
+}
+@keyframes trophyFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes trophyBlink {
+    0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+@media (min-width: 769px) {
+    .ranking-header-top-row { margin-bottom: 0px !important; }
+    .ranking-header-h1 { line-height: 1.0 !important; margin-bottom: -20px !important; }
+    .ranking-header-p { margin-top: 0px !important; margin-bottom: 0px !important; }
+}
+
+@media (max-width: 768px) {
+    .ranking-trophy-wrapper {
+        display: none !important;
+    }
 }
 </style>
