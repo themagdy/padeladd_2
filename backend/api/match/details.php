@@ -151,11 +151,24 @@ $scoresStmt = $pdo->prepare("
     ORDER BY s.created_at ASC
 ");
 $scoresStmt->execute([$m['id']]);
-$scores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
+$rawScores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
 
-$disputesStmt = $pdo->prepare("SELECT * FROM disputes WHERE match_id = ?");
-$disputesStmt->execute([$m['id']]);
-$disputes = $disputesStmt->fetchAll(PDO::FETCH_ASSOC);
+// Is the current user a player in this match?
+$isPlayer = ($mySlotData !== null);
+
+$scores = [];
+foreach ($rawScores as $sc) {
+    if ($sc['status'] === 'approved' || $isPlayer) {
+        $scores[] = $sc;
+    }
+}
+
+$disputes = [];
+if ($isPlayer) {
+    $disputesStmt = $pdo->prepare("SELECT * FROM disputes WHERE match_id = ?");
+    $disputesStmt->execute([$m['id']]);
+    $disputes = $disputesStmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 jsonResponse(true, 'Match details loaded.', [
     'match' => [

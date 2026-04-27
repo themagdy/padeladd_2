@@ -1893,6 +1893,8 @@ const MatchesController = {
 
         // Action area
         const actionArea = document.getElementById('mv-action-area');
+        const chatArea   = document.getElementById('mv-chat-area');
+        if (chatArea) chatArea.innerHTML = '';
         if (actionArea) {
                 // Unified Policy Violation Area
                 const lateWithdrawal = res.data.late_withdrawal;
@@ -2225,10 +2227,11 @@ const MatchesController = {
 
                 // Phase 5: Chat access logic
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
-                isAuthorized = !!(user_in_match || my_waitlist_entry || my_pending_request || pending_for_me || is_creator);
+                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
+                isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
                 
-                // Allow chat access if authorized OR if the match is in the past (to see history)
-                if (isAuthorized || isPast) {
+                // Only allow chat access if player is in a slot or on the waiting list
+                if (isAuthorized) {
                     const unreadCount = res.data.unread_count || 0;
                     const badgeHtml = unreadCount > 0 ? `
                         <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
@@ -2236,14 +2239,14 @@ const MatchesController = {
                         </span>` : '';
 
                     const chatBtnHtml = `
-                        <div style="margin-top:12px;">
+                        <div style="margin-bottom:20px;">
                             <button onclick="ChatController.open(${match.id})" class="btn btn-secondary" style="width:100%; padding:14px; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:700; border-radius:var(--r-md); background:var(--c-bg-card); color:var(--c-text);">
                                 <span>💬</span> Match Chat
                                 ${badgeHtml}
                             </button>
                         </div>
                     `;
-                    actionArea.innerHTML += chatBtnHtml;
+                    if (chatArea) chatArea.innerHTML = chatBtnHtml;
                 }
             }
         }
@@ -2303,7 +2306,7 @@ const MatchesController = {
             ChatController.renderPlayerBar();
         }
 
-        return { id: parseInt(match.id), isAuthorized, isChatAllowed: (isAuthorized || isPast) };
+        return { id: parseInt(match.id), isAuthorized, isChatAllowed: isAuthorized };
     },
 
 
