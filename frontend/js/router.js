@@ -113,6 +113,9 @@ const Router = {
     },
     
     handleRoute: async function() {
+        // Scroll to top on every navigation
+        window.scrollTo(0, 0);
+
         // Stop any active polling from the previous page
         if (typeof PollManager !== 'undefined') PollManager.stop();
         if (typeof ChatController !== 'undefined') ChatController.stop();
@@ -198,15 +201,15 @@ const Router = {
                 if (!response.ok) throw new Error('Template not found');
                 const html = await response.text();
                 
-                // Done loading
-                if (loader) loader.style.display = 'none';
                 appDiv.innerHTML = html;
                 
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
-                    // slight timeout to ensure DOM is updated
-                    setTimeout(() => route.init(matchedParams), 0);
+                    await route.init(matchedParams);
                 }
+
+                // Done loading everything
+                if (loader) loader.style.display = 'none';
             } catch (err) {
                 console.error(err);
                 if (loader) loader.style.display = 'none';

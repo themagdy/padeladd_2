@@ -60,7 +60,7 @@ const UI = {
         const av = document.getElementById('nav-avatar');
         if (av) {
             if (profile && profile.profile_image) {
-                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}?v=${Date.now()}">`;
+                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}">`;
                 av.style.background = 'none';
             } else {
                 const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
@@ -654,7 +654,7 @@ const ProfileViewController = {
         const av = document.getElementById('prof-avatar');
         if (av) {
             if (profile && profile.profile_image) {
-                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}?v=${Date.now()}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
@@ -754,6 +754,10 @@ const ProfileViewController = {
                 listEl.innerHTML = html;
             }
         }
+
+        // Final reveal
+        const contentEl = document.getElementById('prof-view-content');
+        if (contentEl) contentEl.style.opacity = '1';
     }
 };
 
