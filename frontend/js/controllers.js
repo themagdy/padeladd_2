@@ -1577,7 +1577,8 @@ const MatchesController = {
         // Use specificScore if provided, otherwise fallback to finding one
         const approvedScore = specificScore || (m.scores || []).find(s => s.status === 'approved') || (m.scores && m.scores.length > 0 ? m.scores[0] : null);
         
-        const dt      = new Date(m.match_datetime);
+        const dateVal = m.match_datetime || m.scheduled_at;
+        const dt      = new Date(dateVal ? dateVal.replace(' ', 'T') : null);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
@@ -1607,7 +1608,8 @@ const MatchesController = {
         }
         
         const matchCode = m.match_code || `M-${m.id.toString().padStart(4, '0')}`;
-        const venueParts = (m.venue_name || 'Venue TBD').split('-');
+        const venueVal = m.venue_name || m.venue || 'Venue TBD';
+        const venueParts = venueVal.split('-');
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
