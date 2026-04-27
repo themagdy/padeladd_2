@@ -475,15 +475,26 @@ const DashboardController = {
         const uid = DashboardController._currentUser?.id;
         
         let html = '';
-        filtered.forEach(m => {
-            if (m.status === 'completed' && m.scores && m.scores.length > 0) {
-                m.scores.forEach(s => {
-                    html += DashboardController.renderMatchCard(m, uid, s);
-                });
-            } else {
+        if (DashboardController._currentMatchTab === 'completed') {
+            // Flatten all scores from all completed matches into a single list of cards
+            const allScoreCards = [];
+            filtered.forEach(m => {
+                if (m.scores && m.scores.length > 0) {
+                    m.scores.forEach(s => {
+                        allScoreCards.push(DashboardController.renderMatchCard(m, uid, s));
+                    });
+                } else {
+                    allScoreCards.push(DashboardController.renderMatchCard(m, uid));
+                }
+            });
+            // Show only the latest 4 scores
+            html = allScoreCards.slice(0, 4).join('');
+        } else {
+            // For upcoming, show everything
+            filtered.forEach(m => {
                 html += DashboardController.renderMatchCard(m, uid);
-            }
-        });
+            });
+        }
         listEl.innerHTML = html;
     },
 
