@@ -1,4 +1,4 @@
-<div class="page active" id="dashboard-page" style="background:var(--c-bg); overflow-x:hidden;">
+<div class="page active" id="dashboard-page" style="background:var(--c-bg); overflow-x:hidden; padding-bottom: 60px;">
 
   <div style="width:100%; max-width:1200px; margin:0 auto; padding:0 20px;">
 
@@ -139,7 +139,7 @@
     <!-- ═══════════════════════════════════════════
          FOOTER
     ═══════════════════════════════════════════ -->
-    <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 60px; gap:20px; border-top:1px solid var(--c-border);">
+    <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 20px; gap:20px; border-top:1px solid var(--c-border);">
       <button style="background:var(--g-card); border:1px solid var(--c-primary); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Report a problem</button>
       <button style="background:var(--g-card); border:1px solid var(--c-primary); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact Padeladd</button>
       <span class="footer-bottom-text" style="margin-left:auto; font-size:14px; color:var(--c-text-muted);">Check our <a href="#" style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of use</a></span>
@@ -150,7 +150,9 @@
 </div>
 
 <style>
+#dashboard-page { padding-bottom: 50px !important; }
 @media (max-width: 992px) {
+  #dashboard-page { padding-bottom: 50px !important; }
   .dash-stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
@@ -179,7 +181,7 @@
     flex-direction: column !important;
     align-items: center !important;
     gap: 12px !important;
-    padding-bottom: 80px !important;
+    padding-bottom: 20px !important;
   }
   .dash-footer .footer-bottom-text {
     margin-left: 0 !important;

@@ -3891,6 +3891,10 @@ form {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.dash-match-card:nth-child(even) {
+    background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%) !important;
+}
+
 .dash-match-card:hover {
     border-color: var(--c-orange) !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
