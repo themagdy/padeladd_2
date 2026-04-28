@@ -671,6 +671,20 @@ const ProfileViewController = {
             actionCards.style.display = res.data.is_self ? 'flex' : 'none';
         }
 
+        // Report player button (only for others)
+        const reportContainer = document.getElementById('prof-report-container');
+        if (reportContainer) {
+            if (!res.data.is_self) {
+                reportContainer.style.display = 'block';
+                const reportBtn = document.getElementById('prof-report-btn');
+                if (reportBtn) {
+                    reportBtn.onclick = () => ProfileController.reportPlayer(user.id);
+                }
+            } else {
+                reportContainer.style.display = 'none';
+            }
+        }
+
         // Names (Nickname + Full Name)
         const nickEl = document.getElementById('prof-nickname');
         if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
@@ -762,6 +776,27 @@ const ProfileViewController = {
 };
 
 const ProfileController = {
+
+    reportPlayer: async function(targetUserId) {
+        const reason = await ConfirmModal.show({
+            title: 'Report Player',
+            message: 'Please describe the issue you encountered with this player.',
+            showInput: true,
+            inputPlaceholder: 'Unfair behavior / Inappropriate conduct...',
+            confirmText: 'Submit Report',
+            type: 'warning'
+        });
+
+        if (!reason) return;
+
+        const res = await API.post('/profile/report', { target_user_id: targetUserId, reason });
+        if (res && res.success) {
+            Toast.show('Report submitted successfully.', 'success');
+        } else {
+            Toast.show(res ? res.message : 'Report failed', 'error');
+        }
+    },
+
     _cropper: null,
 
     cancelCrop: function() {
