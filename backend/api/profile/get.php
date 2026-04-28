@@ -85,6 +85,7 @@ jsonResponse(true, 'Profile loaded.', [
         'profile_image' => $profile['profile_image'],
         'age'           => $age,
         'date_of_birth' => $profile['date_of_birth'],
+        'level'         => $profile['level'],
     ] : null,
     'stats' => $stats ? [
         'points'           => (int)$stats['points'],

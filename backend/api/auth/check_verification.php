@@ -29,9 +29,10 @@ if ($emailV && $phoneV) {
 }
 
 // Check if profile exists
-$stmtProf = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
+$stmtProf = $pdo->prepare("SELECT id, level FROM user_profiles WHERE user_id = ?");
 $stmtProf->execute([$userId]);
-$hasProfile = $stmtProf->rowCount() > 0;
+$profData = $stmtProf->fetch();
+$hasProfile = $profData !== false && !empty($profData['level']);
 
 jsonResponse(true, 'Status retrieved.', [
     'email_verified' => $emailV,

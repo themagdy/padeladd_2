@@ -103,3 +103,169 @@
         <button id="edit-profile-submit" type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Profile & Start Playing</button>
     </form>
 </div>
+
+<!-- Level Selection Modal (Hidden by default) -->
+<div id="level-selection-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; backdrop-filter:blur(12px); align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--c-bg); width:100%; max-width:480px; border-radius:24px; border:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; max-height:85vh; box-shadow:0 24px 48px rgba(0,0,0,0.4);">
+        
+        <div style="padding:20px 32px 16px; display:flex; align-items:center; gap:14px; position:sticky; top:0; background:var(--c-bg); border-radius:24px 24px 0 0; z-index:10; border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div style="width:38px; height:38px; background:linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.05)); border:1px solid rgba(14, 165, 233, 0.2); color:var(--c-primary); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1); flex-shrink:0;">🎾</div>
+            <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0; letter-spacing:-0.3px;">Choose Your Level</h2>
+        </div>
+
+        <div class="custom-scroll" style="padding:16px 32px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px;">
+            <!-- Level Options -->
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Beginner" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Beginner</span>
+                        <span class="level-title-ar" dir="rtl">مبتدئ</span>
+                    </div>
+                    <div class="level-desc">New to racket sports.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Initiation Intermediate" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Initiation Intermediate</span>
+                        <span class="level-title-ar" dir="rtl">مبتدئ متوسط</span>
+                    </div>
+                    <div class="level-desc">Gaining experience and learning technique.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Intermediate" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Intermediate</span>
+                        <span class="level-title-ar" dir="rtl">متوسط</span>
+                    </div>
+                    <div class="level-desc">Developing tactics and consistency.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Intermediate High" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Intermediate High</span>
+                        <span class="level-title-ar" dir="rtl">متوسط مرتفع</span>
+                    </div>
+                    <div class="level-desc">Confident with established strategies.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Advanced" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Advanced</span>
+                        <span class="level-title-ar" dir="rtl">متقدم</span>
+                    </div>
+                    <div class="level-desc">Skilled in transitioning between attack and defense.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Competition" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Competition</span>
+                        <span class="level-title-ar" dir="rtl">تنافسي</span>
+                    </div>
+                    <div class="level-desc">High-level tournament players.</div>
+                </div>
+            </label>
+            <label class="level-option">
+                <input type="radio" name="player_level" value="Professional" onchange="document.getElementById('level-selection-submit').disabled = false; document.getElementById('level-selection-submit').classList.add('active');">
+                <div class="level-content">
+                    <div class="level-header">
+                        <span class="level-title-en">Professional</span>
+                        <span class="level-title-ar" dir="rtl">محترف</span>
+                    </div>
+                    <div class="level-desc">Top-tier professional players.</div>
+                </div>
+            </label>
+        </div>
+
+        <div style="padding:24px 32px 32px; position:sticky; bottom:0; background:linear-gradient(to top, var(--c-bg) 80%, transparent); border-radius:0 0 24px 24px; z-index:10;">
+            <button id="level-selection-submit" type="button" onclick="ProfileController.submitLevel()" class="btn btn-primary" style="width:100%; font-size:16px; padding:16px; border-radius:14px; opacity:0.5; transition:all 0.3s;" disabled>Save & Continue</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.level-option {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255,255,255,0.02);
+    position: relative;
+}
+.level-option:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.1);
+}
+.level-option input[type="radio"] {
+    display: none;
+}
+.level-content {
+    flex: 1;
+}
+.level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.level-title-en {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    transition: color 0.2s;
+}
+.level-title-ar {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--c-text-muted);
+    transition: color 0.2s;
+}
+.level-desc {
+    font-size: 13px;
+    color: var(--c-text-muted);
+    line-height: 1.4;
+}
+
+/* Checked State */
+.level-option:has(input:checked) {
+    border-color: var(--c-primary) !important;
+    background: rgba(14, 165, 233, 0.08) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+}
+.level-option:has(input:checked) .level-title-en,
+.level-option:has(input:checked) .level-title-ar {
+    color: var(--c-primary);
+}
+
+/* Button Active State */
+#level-selection-submit.active {
+    opacity: 1 !important;
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+}
+
+/* Custom Scrollbar for Modal */
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+</style>
