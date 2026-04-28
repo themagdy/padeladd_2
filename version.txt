@@ -21,3 +21,11 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Overhauled mobile match slots: centered avatars, row-aligned identity and stats, and optimized spacing.
 - Restored original orange-themed player code styling globally.
 - Fine-tuned mobile alignment (baseline) and compacted layout (reduced padding/font sizes).
+77a3d55 - 2026-04-28 19:58:00 +0300
+- Enhanced Profile Reporting UI to mirror existing app aesthetics.
+- Added backend endpoint (report.php) for processing player reports.
+
+db3d4e7 - 2026-04-29 00:48:00 +0300
+- Added a bilingual withdrawal warning message to the match details page.
+- Implemented a fully responsive warning layout (side-by-side desktop, vertically stacked with divider on mobile).
+- Repositioned the warning to display immediately before the join action buttons.
