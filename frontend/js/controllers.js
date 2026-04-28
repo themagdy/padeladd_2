@@ -911,6 +911,15 @@ const ProfileController = {
                     if (form.location && p.location) form.location.value = p.location;
                     if (form.bio && p.bio) form.bio.value = p.bio;
                     
+                    if (!p.level) {
+                        const modal = document.getElementById('level-selection-modal');
+                        if (modal) {
+                            modal.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                            document.documentElement.style.overflow = 'hidden';
+                        }
+                    }
+                    
                     if (p.date_of_birth) {
                         const parts = p.date_of_birth.split('-');
                         if (parts.length === 3) {
@@ -1058,7 +1067,14 @@ const ProfileController = {
             const res = await API.post('/profile/update', payload);
             if (res && res.success) {
                 Auth.setHasProfile(true);
-                if (isExisting) {
+                if (res.data && res.data.is_new_profile) {
+                    const modal = document.getElementById('level-selection-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                        document.documentElement.style.overflow = 'hidden';
+                    }
+                } else if (isExisting) {
                     Router.navigate('/profile/view');
                 } else {
                     Router.navigate('/dashboard');
@@ -1067,6 +1083,25 @@ const ProfileController = {
                 Toast.show(res ? res.message : 'Failed to save profile');
             }
         });
+    },
+
+    submitLevel: async function() {
+        const selected = document.querySelector('input[name="player_level"]:checked');
+        if (!selected) return;
+        const level = selected.value;
+        const btn = document.getElementById('level-selection-submit');
+        if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+        const res = await API.post('/profile/set_level', { level });
+        if (res && res.success) {
+            document.getElementById('level-selection-modal').style.display = 'none';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            Router.navigate('/dashboard');
+        } else {
+            Toast.show(res ? res.message : 'Failed to save level');
+            if (btn) { btn.disabled = false; btn.textContent = 'Complete Profile'; }
+        }
     }
 };
 
@@ -4483,15 +4518,19 @@ const RankingController = {
 
         let html = '';
         list.forEach(r => {
-            const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
             const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
+            const initials = (r.first_name[0] + r.last_name[0]).toUpperCase();
+            
+            const avatarHtml = r.profile_image 
+                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
+                : `<div style="width:40px; height:40px; border-radius:50%; border:2px solid var(--c-border); flex-shrink:0; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--c-text-muted);">${initials}</div>`;
             
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                     <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'};">#${r.rank}</span>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
-                        <img src="${avatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">
+                        ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">

@@ -26,7 +26,7 @@ if (empty($nickname)) {
 }
 
 // Check if a profile already exists
-$stmtProf = $pdo->prepare("SELECT player_code FROM user_profiles WHERE user_id = ?");
+$stmtProf = $pdo->prepare("SELECT player_code, level FROM user_profiles WHERE user_id = ?");
 $stmtProf->execute([$user['id']]);
 $existingProfile = $stmtProf->fetch();
 $hasProfile = $existingProfile !== false;
@@ -35,7 +35,16 @@ if ($hasProfile) {
     // Update
     $update = $pdo->prepare("UPDATE user_profiles SET date_of_birth=?, gender=?, playing_side=?, nickname=?, location=?, bio=? WHERE user_id=?");
     $update->execute([$dob, $gender, $playingSide, $nickname, $location, $bio, $user['id']]);
-    jsonResponse(true, 'Profile updated successfully.', ['player_code' => $existingProfile['player_code']]);
+    
+    $isMissingLevel = empty($existingProfile['level']);
+    
+    // Give them their base points so they appear on leaderboards
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$user['id']]);
+
+    jsonResponse(true, 'Profile updated successfully.', [
+        'player_code' => $existingProfile['player_code'],
+        'is_new_profile' => $isMissingLevel
+    ]);
 } else {
     // Insert new profile
     $playerCode = generateUniquePlayerCode($pdo);
@@ -45,6 +54,10 @@ if ($hasProfile) {
 
     $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_side, nickname, location, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $location, $bio, $playerCode]);
-    jsonResponse(true, 'Profile created successfully.', ['player_code' => $playerCode]);
+    
+    // Give them their base points so they appear on leaderboards
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$user['id']]);
+
+    jsonResponse(true, 'Profile created successfully.', ['player_code' => $playerCode, 'is_new_profile' => true]);
 }
 ?>

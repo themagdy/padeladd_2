@@ -94,8 +94,19 @@ if ($oldImage) {
 
 // Update DB
 $relativePath = 'uploads/avatars/' . $filename;
-$update = $pdo->prepare("UPDATE user_profiles SET profile_image = ? WHERE user_id = ?");
-$update->execute([$relativePath, $user['id']]);
+
+// Check if profile exists
+$stmtProf = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
+$stmtProf->execute([$user['id']]);
+if ($stmtProf->rowCount() > 0) {
+    $update = $pdo->prepare("UPDATE user_profiles SET profile_image = ? WHERE user_id = ?");
+    $update->execute([$relativePath, $user['id']]);
+} else {
+    // Create skeleton profile so the image is saved
+    $playerCode = generateUniquePlayerCode($pdo);
+    $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, player_code) VALUES (?, ?, ?)");
+    $insert->execute([$user['id'], $relativePath, $playerCode]);
+}
 
 jsonResponse(true, 'Image uploaded successfully.', ['profile_image' => $relativePath]);
 ?>

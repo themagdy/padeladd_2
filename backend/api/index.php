@@ -73,6 +73,9 @@ try {
         case 'profile/update':
             require __DIR__ . '/profile/update.php';
             break;
+        case 'profile/set_level':
+            require __DIR__ . '/profile/set_level.php';
+            break;
         case 'profile/get':
             require __DIR__ . '/profile/get.php';
             break;
