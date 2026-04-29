@@ -514,8 +514,17 @@ const DashboardController = {
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
             
             const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
-            const isToday = dateObj.toDateString() === new Date().toDateString();
-            const dayStr = isToday ? 'Today' : dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            const now = new Date();
+            const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
+            
+            let dayStr;
+            if (dateObj.toDateString() === now.toDateString()) {
+                dayStr = 'Today';
+            } else if (diffDays < 7) {
+                dayStr = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            } else {
+                dayStr = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+            }
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
             
             const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
@@ -1785,8 +1794,17 @@ const MatchesController = {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, allPlayers, false);
             
-            const isToday = dt.toDateString() === new Date().toDateString();
-            const dayStr = isToday ? 'Today' : dt.toLocaleDateString('en-US', { weekday: 'long' });
+            const now = new Date();
+            const diffDays = Math.floor((now - dt) / (1000 * 60 * 60 * 24));
+            
+            let dayStr;
+            if (dt.toDateString() === now.toDateString()) {
+                dayStr = 'Today';
+            } else if (diffDays < 7) {
+                dayStr = dt.toLocaleDateString('en-US', { weekday: 'long' });
+            } else {
+                dayStr = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+            }
             
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between;">
