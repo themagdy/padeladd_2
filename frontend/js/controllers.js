@@ -2135,8 +2135,10 @@ const MatchesController = {
                 const displayName = (rawName.length > 12) ? rawName.substring(0, 10) + '..' : rawName;
 
                 el.innerHTML   = `
-                    <div class="slot-avatar">
-                        ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                    <div class="slot-avatar-wrapper" style="position:relative;">
+                        <div class="slot-avatar">
+                            ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        </div>
                         ${s.playing_side ? `<span class="side-indicator-floating ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
                     </div>
                     <div class="slot-info">
