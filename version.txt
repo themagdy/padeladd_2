@@ -50,5 +50,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Grouped Competition and Gender badges in Match Details to ensure they stay on the same line on mobile.
 - Implemented strict Skill Level enforcement: users can no longer access dashboard/profile without selecting a level.
 - Enhanced Router protection to check for both hasProfile and hasLevel flags.
+- Backed up the complete database schema to database_schema.sql for repository persistence.
+- Smart Date Display: Match cards now show the specific date (e.g., 26 Mar) for matches older than 7 days, while keeping relative days (Today/Thursday) for recent games.
 
 
