@@ -3012,6 +3012,22 @@ form {
   .mv-slot .slot-side-wrapper {
     flex-shrink: 0;
   }
+
+  /* Floating Side Indicator on Mobile Avatar */
+  .mv-slot {
+    position: relative;
+  }
+
+  .mv-slot .side-indicator-mini {
+    position: absolute !important;
+    top: 14px;
+    right: calc(50% - 30px); /* Positioned relative to the 56px centered avatar */
+    z-index: 10;
+    margin: 0 !important;
+    border: 2px solid var(--c-bg-secondary);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    pointer-events: none;
+  }
 }
 
 /* -------------------------------------------------------
