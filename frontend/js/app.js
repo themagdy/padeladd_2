@@ -232,24 +232,24 @@ const ScoreUI = {
             const p2 = teamPlayers[1] || { name: '—' };
             
             return `
-                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:12px; margin-bottom:6px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.15)' : 'transparent'};">
+                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.1)' : 'transparent'};">
                     <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
-                        ${isWinner ? '<span style="color:var(--c-orange); font-size:11px; flex-shrink:0;">▶</span>' : '<span style="width:11px; flex-shrink:0;"></span>'}
+                        ${isWinner ? '<span style="color:var(--c-orange); font-size:10px; flex-shrink:0;">▶</span>' : '<span style="width:10px; flex-shrink:0;"></span>'}
                         <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">
                             <div style="display:flex; align-items:center; gap:4px; min-width:0;">
-                                <span style="font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p1.name}</span>
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:6px; color:var(--c-text-muted); text-transform:lowercase; flex-shrink:0;">${p1.code}</span>
+                                <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p1.name}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p1.code}</span>
                             </div>
                             <span style="color:var(--c-text-dim); font-size:10px;">/</span>
                             <div style="display:flex; align-items:center; gap:4px; min-width:0;">
-                                <span style="font-size:14px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p2.name}</span>
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:6px; color:var(--c-text-muted); text-transform:lowercase; flex-shrink:0;">${p2.code}</span>
+                                <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p2.name}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p2.code}</span>
                             </div>
                         </div>
                     </div>
-                    <div style="display:flex; gap:8px; flex-shrink:0;">
+                    <div style="display:flex; gap:10px; flex-shrink:0; margin-left:10px;">
                         ${sets.map(s => `
-                            <span style="font-size:18px; font-weight:800; color:${s.winner === (teamPlayers === team1 ? 1 : 2) ? 'var(--c-orange)' : '#fff'}; width:16px; text-align:center;">
+                            <span style="font-size:15px; font-weight:800; color:${s.winner === (teamPlayers === team1 ? 1 : 2) ? 'var(--c-orange)' : '#fff'}; width:14px; text-align:center;">
                                 ${(teamPlayers === team1) ? s.s1 : s.s2}
                             </span>
                         `).join('')}
