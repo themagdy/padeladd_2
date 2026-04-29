@@ -2141,12 +2141,15 @@ const MatchesController = {
                     <div class="slot-info">
                         <div class="slot-row-top">
                             <div class="slot-name" title="${rawName}">${displayName}</div>
-                            ${isMe ? '<span style="font-size:14px; margin-left:4px;">🫵</span>' : ''}
+                            <div style="display:flex; align-items:center; gap:4px;">
+                                ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
+                                ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side} hidden-mobile">${s.playing_side[0].toUpperCase()}</span>` : ''}
+                            </div>
                         </div>
                         <div class="slot-row-bottom">
                             <div style="display:flex; align-items:center; gap:6px;">
                                 ${s.player_code ? `<span class="slot-code">${s.player_code}</span>` : ''}
-                                ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
+                                ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side} hidden-desktop">${s.playing_side[0].toUpperCase()}</span>` : ''}
                             </div>
                             <span class="slot-points">${s.points || 50} pts</span>
                         </div>
