@@ -596,13 +596,17 @@ const DashboardController = {
             const trend = r.points_this_week;
             const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
             
-            const avatar = r.profile_image ? `${CONFIG.ASSET_BASE}/${r.profile_image}` : 'assets/default_avatar.png';
+            const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
+            const fallbackHtml = `<div style='width:32px; height:32px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; border:1px solid rgba(255,255,255,0.1); flex-shrink:0;'>${initials}</div>`;
+            const avatarHtml = r.profile_image 
+                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">`
+                : fallbackHtml;
             
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                     <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                        <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">
+                        ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
@@ -4645,11 +4649,12 @@ const RankingController = {
         let html = '';
         list.forEach(r => {
             const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
-            const initials = (r.first_name[0] + r.last_name[0]).toUpperCase();
+            const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
+            const fallbackHtml = `<div style='width:40px; height:40px; border-radius:50%; border:2px solid var(--c-border); flex-shrink:0; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff;'>${initials}</div>`;
             
             const avatarHtml = r.profile_image 
-                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
-                : `<div style="width:40px; height:40px; border-radius:50%; border:2px solid var(--c-border); flex-shrink:0; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:var(--c-text-muted);">${initials}</div>`;
+                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
+                : fallbackHtml;
             
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
