@@ -2822,7 +2822,7 @@ form {
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 68px;
+  height: 70px;
   transition: border-color var(--t-fast), background var(--t-fast);
 }
 
@@ -2857,11 +2857,9 @@ form {
   justify-content: center;
   font-size: 14px;
   font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
   overflow: hidden;
-}
-
-.side-indicator-floating {
-  display: none; /* Hidden by default (Desktop) */
 }
 
 .mv-slot .slot-info {
@@ -2953,7 +2951,7 @@ form {
     text-align: center !important;
     padding: 14px 12px !important;
     gap: 10px !important;
-    min-height: 120px !important;
+    height: 140px !important;
   }
 
   .mv-slot .slot-avatar {
@@ -3012,20 +3010,7 @@ form {
   }
 
   .mv-slot .slot-side-wrapper {
-    display: none !important;
-  }
-
-  .side-indicator-floating {
-    display: flex;
-    position: absolute;
-    bottom: -6px;
-    right: -6px;
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
-    border: 2px solid var(--c-bg-card); 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    z-index: 5;
+    flex-shrink: 0;
   }
 }
 
@@ -3525,29 +3510,25 @@ form {
 /* -------------------------------------------------------
    [34] PLAYER SIDE INDICATORS
    ------------------------------------------------------- */
-.side-indicator-mini,
-.side-indicator-floating {
+.side-indicator-mini {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
-  font-size: 10px;
-  font-weight: 900;
+  font-size: 9px;
+  font-weight: 800;
+  margin-left: 4px;
+  background: var(--c-bg-secondary);
   color: #fff;
-  text-transform: uppercase;
+  vertical-align: middle;
   transition: var(--t-fast);
 }
 
-.side-indicator-mini.left,
-.side-indicator-floating.left { background: #3498db; }
-.side-indicator-mini.right,
-.side-indicator-floating.right { background: #1D8348; }
-.side-indicator-mini.flexible,
-.side-indicator-mini.flex,
-.side-indicator-floating.flexible,
-.side-indicator-floating.flex { background: #f1c40f; color: #000; }
+.side-indicator-mini.left     { background: #3498db; }
+.side-indicator-mini.right    { background: #1D8348; }
+.side-indicator-mini.flexible { background: #f1c40f; color: #000; }
 
 .side-badge-abs {
   position: absolute;
