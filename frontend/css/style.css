@@ -2182,9 +2182,16 @@ form {
   background: var(--c-bg);
 }
 
+.hidden-desktop {
+  display: none !important;
+}
+
 @media (max-width: 1024px) {
   .hidden-mobile {
     display: none !important;
+  }
+  .hidden-desktop {
+    display: inline-flex !important;
   }
 
   /* Mobile Home / Login Layout */
