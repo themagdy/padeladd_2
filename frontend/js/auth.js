@@ -22,8 +22,15 @@ const Auth = {
     setHasProfile: function(val) {
         localStorage.setItem('has_profile', val ? 'true' : 'false');
     },
+    hasLevel: function() {
+        return localStorage.getItem('has_level') === 'true';
+    },
+    setHasLevel: function(val) {
+        localStorage.setItem('has_level', val ? 'true' : 'false');
+    },
     clearAll: function() {
         this.clearToken();
         localStorage.removeItem('has_profile');
+        localStorage.removeItem('has_level');
     }
 };

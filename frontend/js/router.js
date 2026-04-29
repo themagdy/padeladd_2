@@ -151,7 +151,7 @@ const Router = {
 
         // If authenticated, don't allow hitting /login or /register
         if (Auth.isAuthenticated() && (path === '/login' || path === '/register' || path === '/')) {
-             if (Auth.hasProfile()) {
+             if (Auth.hasProfile() && Auth.hasLevel()) {
                  this.navigate('/dashboard');
                  return;
              }
@@ -159,8 +159,8 @@ const Router = {
 
         const isPublicVanity = path.startsWith('/p/') || path.startsWith('/profile/view/');
 
-        // Force profile completion if authenticated but no profile
-        if (Auth.isAuthenticated() && !Auth.hasProfile() && path !== '/profile/edit' && path !== '/verify' && !isPublicVanity) {
+        // Force profile completion if authenticated but no profile OR no level
+        if (Auth.isAuthenticated() && (!Auth.hasProfile() || !Auth.hasLevel()) && path !== '/profile/edit' && path !== '/verify' && !isPublicVanity) {
              this.navigate('/profile/edit');
              return;
         }

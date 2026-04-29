@@ -101,6 +101,8 @@ const AuthController = {
             if (res && res.success) {
                 Auth.setToken(res.data.token);
                 Auth.setHasProfile(res.data.has_profile);
+                Auth.setHasLevel(res.data.has_profile); // If has_profile is true, they have a level
+                
                 if (res.data.has_profile) {
                     Router.navigate('/dashboard');
                 } else {
@@ -120,7 +122,7 @@ const AuthController = {
 
     initRegister: function() {
         if (Auth.isAuthenticated()) {
-            if (Auth.hasProfile()) Router.navigate('/dashboard');
+            if (Auth.hasProfile() && Auth.hasLevel()) Router.navigate('/dashboard');
             else Router.navigate('/profile/edit');
             return;
         }
@@ -206,7 +208,7 @@ const AuthController = {
                 
                 // Auto-advance so they don't get stuck verifying again
                 setTimeout(() => {
-                    if (Auth.hasProfile()) {
+                    if (Auth.hasProfile() && Auth.hasLevel()) {
                         Router.navigate('/dashboard');
                     } else {
                         Router.navigate('/profile/edit');
@@ -225,13 +227,18 @@ const AuthController = {
                  }
                  if (res.data.fully_verified || (isEmailVerified && isPhoneVerified)) {
                     Auth.setHasProfile(res.data.has_profile);
+                    Auth.setHasLevel(res.data.has_profile);
                  }
                  updateUI();
              }
         };
 
         if (!userId) {
-            if (Auth.isAuthenticated()) { Router.navigate('/dashboard'); return; }
+            if (Auth.isAuthenticated()) { 
+                if (Auth.hasProfile() && Auth.hasLevel()) Router.navigate('/dashboard');
+                else Router.navigate('/profile/edit');
+                return; 
+            }
             Router.navigate('/login'); return;
         }
 
@@ -270,6 +277,7 @@ const AuthController = {
                     }
                     if (res.data.fully_verified) {
                         Auth.setHasProfile(res.data.has_profile);
+                        Auth.setHasLevel(res.data.has_profile);
                     }
                     updateUI();
                 } else {
@@ -303,6 +311,7 @@ const AuthController = {
             }
             if (res.data.fully_verified) {
                 Auth.setHasProfile(res.data.has_profile);
+                Auth.setHasLevel(res.data.has_profile);
             }
             const badge = document.getElementById('email-status-badge');
             const msg = document.getElementById('email-verified-msg');
@@ -911,6 +920,9 @@ const ProfileController = {
                     if (form.location && p.location) form.location.value = p.location;
                     if (form.bio && p.bio) form.bio.value = p.bio;
                     
+                    Auth.setHasProfile(true); // They have a profile row
+                    Auth.setHasLevel(!!p.level);
+
                     if (!p.level) {
                         const modal = document.getElementById('level-selection-modal');
                         if (modal) {
@@ -1067,6 +1079,8 @@ const ProfileController = {
             const res = await API.post('/profile/update', payload);
             if (res && res.success) {
                 Auth.setHasProfile(true);
+                // Important: Don't set hasLevel(true) here yet!
+                
                 if (res.data && res.data.is_new_profile) {
                     const modal = document.getElementById('level-selection-modal');
                     if (modal) {
@@ -1075,8 +1089,10 @@ const ProfileController = {
                         document.documentElement.style.overflow = 'hidden';
                     }
                 } else if (isExisting) {
+                    Auth.setHasLevel(true); // Existing profile means they already have a level (or we are just editing)
                     Router.navigate('/profile/view');
                 } else {
+                    // This case shouldn't normally happen for new profiles without level
                     Router.navigate('/dashboard');
                 }
             } else {
@@ -1094,6 +1110,7 @@ const ProfileController = {
 
         const res = await API.post('/profile/set_level', { level });
         if (res && res.success) {
+            Auth.setHasLevel(true);
             document.getElementById('level-selection-modal').style.display = 'none';
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
