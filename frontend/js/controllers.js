@@ -1200,16 +1200,22 @@ const MatchesController = {
                 
                 if (q.length < 1) {
                     venueDrop.style.display = 'none';
+                    const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
+                    if (addBtnWrap) addBtnWrap.style.display = 'none';
                     return;
                 }
 
                 venueTimeout = setTimeout(async () => {
                     const res = await API.post('/match/venues', { q: q });
+                    const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
+
                     if (res && res.success && res.data.venues.length > 0) {
                         venueDrop.innerHTML = res.data.venues.map(v => `<li>${v}</li>`).join('');
                         venueDrop.style.display = 'block';
+                        if (addBtnWrap) addBtnWrap.style.display = 'none';
                     } else {
                         venueDrop.style.display = 'none';
+                        if (addBtnWrap) addBtnWrap.style.display = 'block';
                     }
                 }, 300);
 
@@ -1227,6 +1233,9 @@ const MatchesController = {
                     
                     const dbFlag = document.getElementById('cm-venue-is-db');
                     if (dbFlag) dbFlag.value = '1';
+
+                    const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
+                    if (addBtnWrap) addBtnWrap.style.display = 'none';
                 }
             });
 

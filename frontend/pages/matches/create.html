@@ -29,8 +29,10 @@
       <input type="hidden" id="cm-venue-is-db" value="0">
     </div>
 
-    <div style="margin-bottom:24px; padding-left:4px;">
-      <span id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="color:var(--c-primary); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; opacity:0.8; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">Add a Venue / Club</span>
+    <div id="cm-add-venue-wrapper" style="margin-bottom:24px; display:none;">
+      <button type="button" id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="background:rgba(255,255,255,0.05); color:var(--c-primary); border:1.5px solid var(--c-primary); border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(52,152,219,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+        <span style="font-size:16px; font-weight:400;">+</span> Add a Venue / Club
+      </button>
     </div>
 
 
