@@ -1,5 +1,5 @@
 const Toast = {
-    show: function(message, type = 'info') {
+    show: function(message, type = 'info', duration = 4000) {
         // Create container if not exists
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -20,16 +20,21 @@ const Toast = {
         toast.innerHTML = `
             <span class="toast-icon">${icon}</span>
             <span class="toast-message">${message}</span>
+            <span class="toast-close" style="margin-left:12px; cursor:pointer; opacity:0.6; font-weight:900; font-size:12px;" onclick="this.parentElement.remove()">✕</span>
         `;
 
         container.appendChild(toast);
 
-        // Auto-remove after 4s
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(-20px)';
-            setTimeout(() => toast.remove(), 300);
-        }, 4000);
+        // Auto-remove after specified duration
+        if (duration > 0) {
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 300);
+                }
+            }, duration);
+        }
     }
 };
 

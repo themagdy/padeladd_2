@@ -30,7 +30,7 @@ function getMatchSlots(PDO $pdo, int $match_id): array {
 
 if ($mode === 'play_upcoming') {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -42,7 +42,7 @@ if ($mode === 'play_upcoming') {
     $stmt->execute();
 } elseif ($mode === 'play_past') {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -54,7 +54,7 @@ if ($mode === 'play_upcoming') {
     $stmt->execute();
 } elseif ($mode === 'mine_upcoming') {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -71,7 +71,7 @@ if ($mode === 'play_upcoming') {
     $stmt->execute([$uid, $uid, $uid]);
 } elseif ($mode === 'mine_completed') {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -86,7 +86,7 @@ if ($mode === 'play_upcoming') {
     $stmt->execute([$uid]);
 } elseif ($mode === 'mine_past') {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -105,7 +105,7 @@ if ($mode === 'play_upcoming') {
 } else {
     // Fallback empty but with correct structure
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -194,8 +194,11 @@ foreach ($matches as $m) {
         'match_datetime'       => $m['match_datetime'],
         'status'               => $m['status'],
         'created_with_partner' => (bool)$m['created_with_partner'],
+        'gender_type'          => $m['gender_type'],
+        'match_type'           => $m['match_type'],
         'creator_name'         => trim($m['creator_first'] . ' ' . $m['creator_last']),
         'creator_nickname'     => $m['creator_nickname'] ?? null,
+        'creator_gender'       => $m['creator_gender'] ?? 'male',
         'slots_confirmed'      => $confirmedCount,
         'slots_total'          => 4,
         'slots'                => $slotsArray,
