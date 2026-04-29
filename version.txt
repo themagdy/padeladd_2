@@ -52,6 +52,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Enhanced Router protection to check for both hasProfile and hasLevel flags.
 - Backed up the complete database schema to database_schema.sql for repository persistence.
 - Smart Date Display: Match cards now show the specific date (e.g., 26 Mar) for matches older than 7 days, while keeping relative days (Today/Thursday) for recent games.
+22841c6 - 2026-04-29 21:22:00 +0300
 - Simplified Play Filters: Combined Match Type and Gender toggles into a single row, removed labels, and moved filtering logic to the server-side for more robust data retrieval.
 - Filter UI Refinement: Shortened labels to 'Males'/'Females', optimized mobile spacing with a 20px gap, and implemented dynamic gender-aware labeling.
 - Database Synchronization: Updated all upcoming matches to new standard defaults (Competition & Same Gender) to ensure visibility with active filters.
