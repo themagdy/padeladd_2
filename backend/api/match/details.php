@@ -17,7 +17,7 @@ if ($match_id <= 0 && $match_code === '') {
 // Fetch match
 if ($match_id > 0) {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -26,7 +26,7 @@ if ($match_id > 0) {
     $stmt->execute([$match_id]);
 } else {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
@@ -179,9 +179,12 @@ jsonResponse(true, 'Match details loaded.', [
         'match_datetime'       => $m['match_datetime'],
         'status'               => $m['status'],
         'created_with_partner' => (bool)$m['created_with_partner'],
+        'gender_type'          => $m['gender_type'],
+        'match_type'           => $m['match_type'],
         'creator_id'           => (int)$m['creator_id'],
         'creator_name'         => trim($m['creator_first'] . ' ' . $m['creator_last']),
         'creator_nickname'     => $m['creator_nickname'] ?? null,
+        'creator_gender'       => $m['creator_gender'] ?? 'male',
         'cancellation_reason'  => $m['cancellation_reason'] ?? null,
         'is_policy_violation'  => (bool)($m['is_policy_violation'] ?? 0),
     ],

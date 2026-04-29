@@ -29,3 +29,15 @@ db3d4e7 - 2026-04-29 00:48:00 +0300
 - Added a bilingual withdrawal warning message to the match details page.
 - Implemented a fully responsive warning layout (side-by-side desktop, vertically stacked with divider on mobile).
 - Repositioned the warning to display immediately before the join action buttons.
+
+f9e2b8a - 2026-04-29 03:12:00 +0300
+- Implemented match creation toggles for Match Type (Friendly/Competition) and Gender (Open/Restricted).
+- Added dynamic "Males/Females Only" and "Competition" badges to match cards and details pages.
+- Updated UI defaults to prioritize "Competition" and gender-specific matches.
+- Enhanced toggle design with primary blue highlights for active selections.
+- Renamed "Competitive" to "Competition" globally across UI, API, and Database schema.
+- Fixed profile picture persistence during initial registration.
+- Resolved leaderboard visibility issues for newly registered players.
+- Added information "i" icon to Match Type with a detailed explanation of ranking impacts.
+
+

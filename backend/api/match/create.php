@@ -14,6 +14,11 @@ $match_datetime       = trim($data['match_datetime'] ?? '');
 $created_with_partner = !empty($data['partner_player_code']) ? 1 : 0;
 $partner_code         = trim($data['partner_player_code'] ?? '');
 $duration_minutes     = (int)($data['duration_minutes'] ?? 90);
+$gender_type          = trim($data['gender_type'] ?? 'same_gender');
+$match_type           = trim($data['match_type'] ?? 'competition');
+
+if (!in_array($gender_type, ['open', 'same_gender'])) $gender_type = 'same_gender';
+if (!in_array($match_type, ['friendly', 'competition'])) $match_type = 'competition';
 // Fetch creator's side from profile
 $ups = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
 $ups->execute([$uid]);
@@ -73,10 +78,10 @@ try {
 
     // Insert match
     $stmt = $pdo->prepare("
-        INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code, gender_type, match_type)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    $stmt->execute([$uid, $venue_name, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code]);
+    $stmt->execute([$uid, $venue_name, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code, $gender_type, $match_type]);
 
     $match_id = (int)$pdo->lastInsertId();
 

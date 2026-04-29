@@ -1120,6 +1120,12 @@ const MatchesController = {
     initCreate: function() {
         UI.syncNav();
 
+        const genderBtn = document.getElementById('cm-gender-restricted-btn');
+        if (genderBtn && DashboardController._currentUser) {
+            const isFemale = DashboardController._currentUser.gender === 'female';
+            genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
+        }
+
         const dateScroller = document.getElementById('cm-date-scroller');
         const timeScroller = document.getElementById('cm-time-scroller');
         const dateInput    = document.getElementById('cm-date');
@@ -1321,7 +1327,9 @@ const MatchesController = {
                 venue_name:       venue,
                 court_name:       form.court_name.value.trim(),
                 match_datetime:   combined,
-                duration_minutes: parseInt(form.duration_minutes.value) || 90
+                duration_minutes: parseInt(form.duration_minutes.value) || 90,
+                gender_type:      form.gender_type.value,
+                match_type:       form.match_type.value
             };
 
             if (MatchesController._partnerEnabled) {
@@ -1353,6 +1361,24 @@ const MatchesController = {
                 Toast.show(res ? res.message : 'Failed to create match', 'error');
             }
         });
+    },
+
+    setToggle: function(fieldName, btn) {
+        document.getElementById('cm-' + fieldName.replace('_', '-')).value = btn.dataset.val;
+        const container = btn.parentElement;
+        const buttons = container.querySelectorAll('button');
+        buttons.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'transparent';
+            b.style.color = 'var(--c-text-muted)';
+        });
+        btn.classList.add('active');
+        btn.style.background = 'var(--c-primary)';
+        btn.style.color = '#fff';
+    },
+
+    showMatchTypeInfo: function() {
+        Toast.show("Competition matches affect your points and ranking; friendly matches do not.", "info", 6000);
     },
 
     _selectPill: function(el, inputId) {
@@ -1686,6 +1712,16 @@ const MatchesController = {
         const venueParts = venueVal.split('-');
         const mainTitle = venueParts[0].trim();
         const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
+        
+        let typeBadges = '';
+        if (m.match_type === 'competition') {
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
+        }
+        if (m.gender_type === 'same_gender') {
+            const genderStr = (m.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
+            const genderIcon = (m.creator_gender || 'male') === 'female' ? '👩' : '👨';
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27,82,206,0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
+        }
 
         const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
 
@@ -1698,8 +1734,9 @@ const MatchesController = {
             const dayStr = isToday ? 'Today' : dt.toLocaleDateString('en-US', { weekday: 'long' });
             
             const dashHeader = `
-                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
-                    ${mainTitle} &nbsp;·&nbsp; ${dayStr}
+                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between;">
+                    <span>${mainTitle} &nbsp;·&nbsp; ${dayStr}</span>
+                    <div style="text-transform:none;">${typeBadges}</div>
                 </div>
             `;
             
@@ -1728,6 +1765,7 @@ const MatchesController = {
                   <span>🗓 ${dateStr}</span>
                   <span>⏰ ${timeStr}</span>
                </div>
+               ${typeBadges ? `<div style="margin-top:8px;">${typeBadges}</div>` : ''}
             </div>
             <div style="text-align:right; flex-shrink:0;">
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
@@ -1881,10 +1919,21 @@ const MatchesController = {
             const mainTitle = venueParts[0].trim();
             const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
+            let typeBadges = '';
+            if (match.match_type === 'competition') {
+                typeBadges += `<span class="status-badge-pill" style="background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
+            }
+            if (match.gender_type === 'same_gender') {
+                const genderStr = (match.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
+                const genderIcon = (match.creator_gender || 'male') === 'female' ? '👩' : '👨';
+                typeBadges += `<span class="status-badge-pill" style="background:rgba(27,82,206,0.1); color:var(--c-primary);">${genderIcon} ${genderStr}</span>`;
+            }
+
             titleEl.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                     <span class="match-code-badge">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
+                    ${typeBadges}
                 </div>
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2;">
                     ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: var(--c-text-muted); opacity: 0.7;">${subTitle}</span>` : ''}
