@@ -1672,12 +1672,7 @@ const MatchesController = {
             if (MatchesController._currentFilter !== 'all') {
                 matches = matches.filter(m => {
                     if (MatchesController._currentFilter === 'joined') return m.user_in_match;
-                    if (MatchesController._currentFilter === 'waiting') return m.user_is_waiting;
-                    if (MatchesController._currentFilter === 'on_hold') return m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester);
-                    return true;
-                });
-            }
-        } else if (MatchesController._currentTab === 'play_upcoming') {
+                    if (MatchesController._currentFi        } else if (MatchesController._currentTab === 'play_upcoming') {
             const gFilter = MatchesController._currentGenderFilter;
             const tFilter = MatchesController._currentTypeFilter;
 
@@ -1691,17 +1686,29 @@ const MatchesController = {
             `;
 
             const filterBar = `
-                <div style="margin-bottom:20px; display:flex; flex-direction:column; gap:10px;">
-                    <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
-                        <button onclick="MatchesController.setPlayFilter('gender', 'all')" style="${getBtnStyle(gFilter === 'all')}">All Genders</button>
+                <div style="max-width:440px; margin:0 auto 30px; display:flex; flex-direction:column; gap:20px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">Gender</label>
+                      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+                        <button onclick="MatchesController.setPlayFilter('gender', 'all')" style="${getBtnStyle(gFilter === 'all')}">All</button>
                         <button onclick="MatchesController.setPlayFilter('gender', 'male')" style="${getBtnStyle(gFilter === 'male')}">Males</button>
                         <button onclick="MatchesController.setPlayFilter('gender', 'female')" style="${getBtnStyle(gFilter === 'female')}">Females</button>
                         <button onclick="MatchesController.setPlayFilter('gender', 'open')" style="${getBtnStyle(gFilter === 'open')}">Mixed</button>
+                      </div>
                     </div>
-                    <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
-                        <button onclick="MatchesController.setPlayFilter('type', 'all')" style="${getBtnStyle(tFilter === 'all')}">All Types</button>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                      <label class="form-label">Match Type</label>
+                      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+                        <button onclick="MatchesController.setPlayFilter('type', 'all')" style="${getBtnStyle(tFilter === 'all')}">All</button>
                         <button onclick="MatchesController.setPlayFilter('type', 'competition')" style="${getBtnStyle(tFilter === 'competition')}">Competition</button>
                         <button onclick="MatchesController.setPlayFilter('type', 'friendly')" style="${getBtnStyle(tFilter === 'friendly')}">Friendly</button>
+                      </div>
+                    </div>
+                </div>
+            `;
+            
+            list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';ler.setPlayFilter('type', 'friendly')" style="${getBtnStyle(tFilter === 'friendly')}">Friendly</button>
                     </div>
                 </div>
             `;
