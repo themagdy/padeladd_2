@@ -4716,7 +4716,7 @@ const RankingController = {
                         <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:lowercase;">${r.player_code}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:uppercase;">${r.player_code}</span>
                                 <span style="font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
                             </div>
                         </div>
