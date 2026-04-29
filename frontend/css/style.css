@@ -2860,42 +2860,6 @@ form {
   overflow: hidden;
 }
 
-.side-indicator-mini,
-.side-indicator-floating {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 10px;
-  font-weight: 900;
-  color: #fff;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-
-.side-indicator-mini.left,
-.side-indicator-floating.left {
-  background: var(--c-primary);
-  box-shadow: 0 0 10px rgba(27, 82, 206, 0.4);
-}
-
-.side-indicator-mini.right,
-.side-indicator-floating.right {
-  background: var(--c-orange);
-  box-shadow: 0 0 10px rgba(247, 148, 29, 0.4);
-}
-
-.side-indicator-mini.flexible,
-.side-indicator-mini.flex,
-.side-indicator-floating.flexible,
-.side-indicator-floating.flex {
-  background: #f1c40f;
-  color: #000;
-  box-shadow: 0 0 10px rgba(241, 196, 15, 0.4);
-}
-
 .side-indicator-floating {
   display: none; /* Hidden by default (Desktop) */
 }
@@ -3054,12 +3018,13 @@ form {
   .side-indicator-floating {
     display: flex;
     position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 20px;
-    height: 20px;
-    font-size: 11px;
-    border: 2px solid var(--c-bg-card); /* Matches slot background */
+    bottom: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    border: 2px solid var(--c-bg-card); 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     z-index: 5;
   }
 }
@@ -3560,25 +3525,29 @@ form {
 /* -------------------------------------------------------
    [34] PLAYER SIDE INDICATORS
    ------------------------------------------------------- */
-.side-indicator-mini {
+.side-indicator-mini,
+.side-indicator-floating {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 4px;
-  font-size: 9px;
-  font-weight: 800;
-  margin-left: 4px;
-  background: var(--c-bg-secondary);
+  font-size: 10px;
+  font-weight: 900;
   color: #fff;
-  vertical-align: middle;
+  text-transform: uppercase;
   transition: var(--t-fast);
 }
 
-.side-indicator-mini.left     { background: #3498db; }
-.side-indicator-mini.right    { background: #1D8348; }
-.side-indicator-mini.flexible { background: #f1c40f; color: #000; }
+.side-indicator-mini.left,
+.side-indicator-floating.left { background: #3498db; }
+.side-indicator-mini.right,
+.side-indicator-floating.right { background: #1D8348; }
+.side-indicator-mini.flexible,
+.side-indicator-mini.flex,
+.side-indicator-floating.flexible,
+.side-indicator-floating.flex { background: #f1c40f; color: #000; }
 
 .side-badge-abs {
   position: absolute;
