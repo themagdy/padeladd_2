@@ -2132,7 +2132,7 @@ const MatchesController = {
                     el.onclick = null;
                 }
                 const rawName  = s.nickname || s.first_name;
-                const displayName = (rawName.length > 12) ? rawName.substring(0, 10) + '..' : rawName;
+                const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
                 el.innerHTML   = `
                     <div class="slot-avatar">
