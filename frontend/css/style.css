@@ -2956,9 +2956,9 @@ form {
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
-    padding: 14px 12px !important;
-    gap: 10px !important;
-    min-height: 120px !important;
+    padding: 12px 6px !important;
+    gap: 8px !important;
+    min-height: 110px !important;
   }
 
   .mv-slot .slot-avatar {
