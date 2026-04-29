@@ -1958,13 +1958,17 @@ const MatchesController = {
             const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
             let typeBadges = '';
-            if (match.match_type === 'competition') {
-                typeBadges += `<span class="status-badge-pill" style="background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
-            }
-            if (match.gender_type === 'same_gender') {
-                const genderStr = (match.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
-                const genderIcon = (match.creator_gender || 'male') === 'female' ? '👩' : '👨';
-                typeBadges += `<span class="status-badge-pill" style="background:rgba(27,82,206,0.1); color:var(--c-primary);">${genderIcon} ${genderStr}</span>`;
+            if (match.match_type === 'competition' || match.gender_type === 'same_gender') {
+                typeBadges = `<div style="display:flex; align-items:center; gap:8px;">`;
+                if (match.match_type === 'competition') {
+                    typeBadges += `<span class="status-badge-pill" style="background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
+                }
+                if (match.gender_type === 'same_gender') {
+                    const genderStr = (match.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
+                    const genderIcon = (match.creator_gender || 'male') === 'female' ? '👩' : '👨';
+                    typeBadges += `<span class="status-badge-pill" style="background:rgba(27,82,206,0.1); color:var(--c-primary);">${genderIcon} ${genderStr}</span>`;
+                }
+                typeBadges += `</div>`;
             }
 
             titleEl.innerHTML = `
