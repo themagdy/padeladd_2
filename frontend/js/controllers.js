@@ -1400,8 +1400,9 @@ const MatchesController = {
             inputPlaceholder: 'Venue Name, City',
             type: 'info'
         }).then(res => {
-            if (res && res.confirmed && res.inputValue.trim()) {
-                const venueName = res.inputValue.trim();
+            // 'res' is the string input if confirmed, or false/null if cancelled
+            if (res && typeof res === 'string' && res.trim()) {
+                const venueName = res.trim();
                 API.post('/match/request_venue', { venue_name: venueName }).then(response => {
                     Toast.show("Our team will review and add this venue shortly. Stay tuned!", "success", 6000);
                 });
