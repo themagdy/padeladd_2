@@ -2132,7 +2132,7 @@ const MatchesController = {
                     el.onclick = null;
                 }
                 const rawName  = s.nickname || s.first_name;
-                const displayName = (rawName.length > 12) ? rawName.substring(0, 10) + '..' : rawName;
+                const displayName = (rawName.length > 20) ? rawName.substring(0, 18) + '..' : rawName;
 
                 el.innerHTML   = `
                     <div class="slot-avatar">
@@ -2141,13 +2141,13 @@ const MatchesController = {
                     <div class="slot-info">
                         <div class="slot-row-top">
                             <div class="slot-name" title="${rawName}">${displayName}</div>
-                            <div class="slot-side-wrapper" style="display:flex; align-items:center; gap:6px;">
-                                ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
-                                ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
-                            </div>
+                            ${isMe ? '<span style="font-size:14px; margin-left:4px;">🫵</span>' : ''}
                         </div>
                         <div class="slot-row-bottom">
-                            ${s.player_code ? `<span class="slot-code">${s.player_code}</span>` : '<span></span>'}
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                ${s.player_code ? `<span class="slot-code">${s.player_code}</span>` : ''}
+                                ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
+                            </div>
                             <span class="slot-points">${s.points || 50} pts</span>
                         </div>
                     </div>`;
