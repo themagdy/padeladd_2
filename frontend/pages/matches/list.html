@@ -18,17 +18,17 @@
     
     <!-- Play Filters (Visible only in Play > Upcoming) -->
     <div id="ml-play-filters" style="display:none; margin-bottom:24px; animation:fadeIn 0.3s ease-out;">
-      <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:10px;">
+      <div style="display:flex; gap:12px; align-items:center;">
         <!-- Match Type Toggle -->
-        <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
-          <button type="button" class="ml-type-filter-btn" data-val="friendly" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:12px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
-          <button type="button" class="ml-type-filter-btn active" data-val="competition" style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
+        <div style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+          <button type="button" class="ml-type-filter-btn" data-val="friendly" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
+          <button type="button" class="ml-type-filter-btn active" data-val="competition" style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
         </div>
 
         <!-- Gender Toggle -->
-        <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
-          <button type="button" class="ml-gender-filter-btn" data-val="open" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:12px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'open', this)">Open</button>
-          <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active" data-val="same_gender" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:12px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Only</button>
+        <div style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+          <button type="button" class="ml-gender-filter-btn" data-val="open" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'open', this)">Open</button>
+          <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active" data-val="same_gender" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Only</button>
         </div>
       </div>
     </div>
