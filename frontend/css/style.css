@@ -3020,13 +3020,17 @@ form {
 
   .mv-slot .side-indicator-mini {
     position: absolute !important;
-    top: 14px;
-    right: calc(50% - 30px); /* Positioned relative to the 56px centered avatar */
+    top: 10px;
+    right: calc(50% - 34px); /* Adjusted for larger size */
     z-index: 10;
     margin: 0 !important;
     border: 2px solid var(--c-bg-secondary);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: none !important;
     pointer-events: none;
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
   }
 }
 
