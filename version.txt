@@ -42,5 +42,8 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Enhanced global Toast system with 6-second duration and manual "✕" dismiss button.
 - Cleaned up Match Type help icon styling and alignment.
 - Removed match M-M163 from database.
+- Implemented strict "Venue / Club" validation: matches can only be created at official venues.
+- Added a "Add a Venue / Club" feature with a dedicated backend request system.
+- Polished the venue request flow with a popup and professional admin review feedback.
 
 

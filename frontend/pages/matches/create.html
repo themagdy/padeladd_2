@@ -12,20 +12,25 @@
 
   <form id="create-match-form" novalidate>
 
-    <!-- Venue Name -->
-    <div class="form-group" style="position:relative;">
+    <div class="form-group" style="position:relative; margin-bottom:12px;">
       <label class="form-label" for="cm-venue">Venue / Club *</label>
       <input
         type="text"
         name="venue_name"
         id="cm-venue"
         class="form-input"
-        placeholder="e.g. Cairo Padel Club"
+        placeholder="Select from list..."
         maxlength="255"
         autocomplete="off"
       >
       <!-- Autocomplete Dropdown -->
       <ul id="cm-venue-dropdown" class="autocomplete-dropdown" style="display:none;"></ul>
+      
+      <input type="hidden" id="cm-venue-is-db" value="0">
+    </div>
+
+    <div style="margin-bottom:24px; padding-left:4px;">
+      <span id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="color:var(--c-primary); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; opacity:0.8; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">Add a Venue / Club</span>
     </div>
 
 

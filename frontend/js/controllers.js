@@ -1212,16 +1212,21 @@ const MatchesController = {
                         venueDrop.style.display = 'none';
                     }
                 }, 300);
+
+                // Reset DB flag on input
+                const dbFlag = document.getElementById('cm-venue-is-db');
+                if (dbFlag) dbFlag.value = '0';
             });
 
             // Handle selection
             venueDrop.addEventListener('click', (e) => {
                 if (e.target.tagName === 'LI') {
                     const fullText = e.target.textContent;
-                    const courtInput = document.getElementById('cm-court');
-                    
                     venueInput.value = fullText;
                     venueDrop.style.display = 'none';
+                    
+                    const dbFlag = document.getElementById('cm-venue-is-db');
+                    if (dbFlag) dbFlag.value = '1';
                 }
             });
 
@@ -1304,8 +1309,13 @@ const MatchesController = {
             const court    = form.court_name.value.trim();
             const dateVal  = dateInput ? dateInput.value : '';
             const timeVal  = timeInput ? timeInput.value : '';
+            const isDbVenue = document.getElementById('cm-venue-is-db')?.value === '1';
 
             if (!venue) { UI.showError('venue_name', 'Venue name is required', form); return; }
+            if (!isDbVenue) {
+                UI.showError('venue_name', 'Please select a venue from the official list or add a new one.', form);
+                return;
+            }
             if (!court) { UI.showError('court_name', 'Court name or number is required', form); return; }
 
             if (!dateVal) { UI.showError('date', 'Please select a date', form); return; }
@@ -1379,6 +1389,24 @@ const MatchesController = {
 
     showMatchTypeInfo: function() {
         Toast.show("Competition matches affect your points and ranking; friendly matches do not.", "info", 6000);
+    },
+
+    showVenueRequest: function() {
+        ConfirmModal.show({
+            title: 'Add a New Venue',
+            message: 'Enter the name and location of the venue you would like to add.',
+            confirmText: 'Submit Request',
+            showInput: true,
+            inputPlaceholder: 'Venue Name, City',
+            type: 'info'
+        }).then(res => {
+            if (res && res.confirmed && res.inputValue.trim()) {
+                const venueName = res.inputValue.trim();
+                API.post('/match/request_venue', { venue_name: venueName }).then(response => {
+                    Toast.show("Our team will review and add this venue shortly. Stay tuned!", "success", 6000);
+                });
+            }
+        });
     },
 
     _selectPill: function(el, inputId) {
