@@ -55,5 +55,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Simplified Play Filters: Combined Match Type and Gender toggles into a single row, removed labels, and moved filtering logic to the server-side for more robust data retrieval.
 - Filter UI Refinement: Shortened labels to 'Males'/'Females', optimized mobile spacing with a 20px gap, and implemented dynamic gender-aware labeling.
 - Database Synchronization: Updated all upcoming matches to new standard defaults (Competition & Same Gender) to ensure visibility with active filters.
+- Player Slot Optimization: Standardized slot heights (140px on mobile, 70px on desktop) for perfect grid alignment between filled and empty states.
+- Mobile UI Polish: Moved player side indicators (R/L/F) to float over avatars on mobile, freeing up horizontal space for longer player names and nicknames.
 
 
