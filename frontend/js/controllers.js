@@ -1558,7 +1558,7 @@ const MatchesController = {
             const res = await API.post('/profile/get', {});
             if (res && res.success) {
                 const gender = res.data.profile?.gender || 'male';
-                const label = gender === 'female' ? 'Females Only' : 'Males Only';
+                const label = gender === 'female' ? 'Females' : 'Males';
                 const btn = document.getElementById('ml-gender-restricted-filter-btn');
                 if (btn) btn.textContent = label;
             }
