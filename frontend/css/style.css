@@ -2182,16 +2182,9 @@ form {
   background: var(--c-bg);
 }
 
-.hidden-desktop {
-  display: none !important;
-}
-
 @media (max-width: 1024px) {
   .hidden-mobile {
     display: none !important;
-  }
-  .hidden-desktop {
-    display: inline-flex !important;
   }
 
   /* Mobile Home / Login Layout */
@@ -2855,6 +2848,7 @@ form {
 }
 
 .mv-slot .slot-avatar {
+  position: relative;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -2867,6 +2861,22 @@ form {
   color: #fff;
   flex-shrink: 0;
   overflow: hidden;
+}
+
+.slot-level-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--c-primary);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 5px;
+  border-radius: 6px;
+  border: 2px solid var(--c-bg-secondary);
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  text-transform: uppercase;
 }
 
 .mv-slot .slot-info {
@@ -2956,9 +2966,9 @@ form {
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
-    padding: 12px 6px !important;
-    gap: 8px !important;
-    min-height: 110px !important;
+    padding: 14px 12px !important;
+    gap: 10px !important;
+    min-height: 120px !important;
   }
 
   .mv-slot .slot-avatar {
@@ -2967,6 +2977,16 @@ form {
     margin: 0 0 2px 0 !important;
     font-size: 18px !important;
     border: 2px solid rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .mv-slot .slot-level-badge {
+    bottom: -2px;
+    right: -2px;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 8px;
+    border-width: 2.5px;
   }
 
   .mv-slot .slot-info {

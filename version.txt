@@ -55,6 +55,5 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Simplified Play Filters: Combined Match Type and Gender toggles into a single row, removed labels, and moved filtering logic to the server-side for more robust data retrieval.
 - Filter UI Refinement: Shortened labels to 'Males'/'Females', optimized mobile spacing with a 20px gap, and implemented dynamic gender-aware labeling.
 - Database Synchronization: Updated all upcoming matches to new standard defaults (Competition & Same Gender) to ensure visibility with active filters.
-- Match Details Optimization: Responsively moved player side indicator (L/R) beside the player code on mobile only, while keeping it in the top row on desktop. Increased name character limit to 20 for better visibility.
 
 
