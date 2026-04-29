@@ -2137,7 +2137,7 @@ const MatchesController = {
                 el.innerHTML   = `
                     <div class="slot-avatar">
                         ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
-                        ${s.level ? `<span class="slot-level-badge">${s.level}</span>` : ''}
+                        ${s.playing_side ? `<span class="side-indicator-floating ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">
