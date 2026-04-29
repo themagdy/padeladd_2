@@ -64,4 +64,9 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Dashboard Layout Refinement: Unified and compacted the match score templates for a cleaner look.
 - Dashboard UX: Increased spacing between match cards to 29px for better readability and a premium feel.
 
+56e896d - 2026-04-30 02:45:00 +0300
+- UI Consistency: Increased player code font sizes across match scores and ranking tables for improved legibility.
+- Ranking Header Polish: Removed bottom margin from the "Official Leaderboard" logo row to tighten the layout.
+- Platform Standardization: Completed the migration to capitalized player codes (e.g., A123) across Database, API, and UI.
+
 
