@@ -29,17 +29,32 @@ function getMatchSlots(PDO $pdo, int $match_id): array {
 }
 
 if ($mode === 'play_upcoming') {
-    $stmt = $pdo->prepare("
+    $filterType = $data['match_type'] ?? 'all';
+    $filterGender = $data['gender_type'] ?? 'all';
+
+    $sql = "
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE m.status IN ('open', 'full')
           AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 6 HOUR)
-        ORDER BY m.match_datetime ASC
-        LIMIT 50
-    ");
-    $stmt->execute();
+    ";
+
+    $params = [];
+    if ($filterType !== 'all') {
+        $sql .= " AND m.match_type = :match_type";
+        $params[':match_type'] = $filterType;
+    }
+    if ($filterGender !== 'all') {
+        $sql .= " AND m.gender_type = :gender_type";
+        $params[':gender_type'] = $filterGender;
+    }
+
+    $sql .= " ORDER BY m.match_datetime ASC LIMIT 50";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
 } elseif ($mode === 'play_past') {
     $stmt = $pdo->prepare("
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender

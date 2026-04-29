@@ -1619,7 +1619,11 @@ const MatchesController = {
         if (!isSilent && list)     list.style.display = 'none';
 
         let endpoint = '/match/list';
-        let payload  = { mode: MatchesController._currentTab };
+        let payload  = { 
+            mode: MatchesController._currentTab,
+            match_type: MatchesController._playFilterType,
+            gender_type: MatchesController._playFilterGender
+        };
 
         // ONLY use /matches/user for 'Completed' tabs (mine_completed and play_past) to get scores
         // Revert 'mine_past' to original /match/list to show teams instead of scores
@@ -1650,15 +1654,6 @@ const MatchesController = {
 
         let matches = res.data.matches;
 
-        // Apply Play Filters (if applicable)
-        if (MatchesController._currentTab === 'play_upcoming') {
-            if (MatchesController._playFilterType !== 'all') {
-                matches = matches.filter(m => m.match_type === MatchesController._playFilterType);
-            }
-            if (MatchesController._playFilterGender !== 'all') {
-                matches = matches.filter(m => m.gender_type === MatchesController._playFilterGender);
-            }
-        }
 
         // If we used /matches/user, filter for completed only
         if (endpoint === '/matches/user') {
