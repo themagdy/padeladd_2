@@ -1487,6 +1487,9 @@ const MatchesController = {
         
         MatchesController._currentTab = savedTab || defaultSubTab;
         MatchesController._lastMode = mode;
+        MatchesController._currentFilter = MatchesController._currentFilter || 'all';
+        MatchesController._currentGenderFilter = MatchesController._currentGenderFilter || 'all';
+        MatchesController._currentTypeFilter = MatchesController._currentTypeFilter || 'all';
 
         await UI.syncNav();
         const skeleton = document.getElementById('ml-skeleton');
@@ -1641,7 +1644,7 @@ const MatchesController = {
             return;
         }
 
-        // Inject Filter Bar if in mine_upcoming
+        // Inject Filter Bar if in mine_upcoming or play_upcoming
         if (MatchesController._currentTab === 'mine_upcoming') {
             const counts = {
                 all:     matches.length,
@@ -1650,53 +1653,71 @@ const MatchesController = {
                 on_hold: matches.filter(m => m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester)).length
             };
 
-            // Count how many specific categories have matches
             const activeCats = ['joined', 'waiting', 'on_hold'].filter(k => counts[k] > 0);
-
             let filterBar = '';
             if (activeCats.length >= 2) {
                 filterBar = `
-                <div class="status-filter-bar">
-                    <button onclick="MatchesController.setFilter('all')" class="status-filter-btn ${MatchesController._currentFilter === 'all' ? 'active' : ''}">All matches (${counts.all})</button>
+                <div class="status-filter-bar" style="padding-top:0; margin-bottom:12px;">
+                    <button onclick="MatchesController.setFilter('all')" class="status-filter-btn ${MatchesController._currentFilter === 'all' ? 'active' : ''}">All (${counts.all})</button>
                     ${counts.joined > 0 ? `<button onclick="MatchesController.setFilter('joined')" class="status-filter-btn ${MatchesController._currentFilter === 'joined' ? 'active' : ''}">Joined (${counts.joined})</button>` : ''}
                     ${counts.waiting > 0 ? `<button onclick="MatchesController.setFilter('waiting')" class="status-filter-btn ${MatchesController._currentFilter === 'waiting' ? 'active' : ''}">Waiting (${counts.waiting})</button>` : ''}
                     ${counts.on_hold > 0 ? `<button onclick="MatchesController.setFilter('on_hold')" class="status-filter-btn ${MatchesController._currentFilter === 'on_hold' ? 'active' : ''}">On hold (${counts.on_hold})</button>` : ''}
                 </div>`;
             } else {
-                // Only 0 or 1 category, so reset filter to all and hide bar
                 MatchesController._currentFilter = 'all';
             }
 
             list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
-
             
-            // Filter logic
             if (MatchesController._currentFilter !== 'all') {
                 matches = matches.filter(m => {
                     if (MatchesController._currentFilter === 'joined') return m.user_in_match;
                     if (MatchesController._currentFilter === 'waiting') return m.user_is_waiting;
-                    if (MatchesController._currentFilter === 'on_hold') {
-                        return m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester);
-                    }
+                    if (MatchesController._currentFilter === 'on_hold') return m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester);
                     return true;
                 });
             }
+        } else if (MatchesController._currentTab === 'play_upcoming') {
+            const gFilter = MatchesController._currentGenderFilter;
+            const tFilter = MatchesController._currentTypeFilter;
+
+            const filterBar = `
+                <div class="status-filter-bar" style="padding-top:0; margin-bottom:12px; gap:8px; flex-wrap:wrap;">
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="MatchesController.setPlayFilter('gender', 'all')" class="status-filter-btn ${gFilter === 'all' ? 'active' : ''}">All Gender</button>
+                        <button onclick="MatchesController.setPlayFilter('gender', 'male')" class="status-filter-btn ${gFilter === 'male' ? 'active' : ''}">Males Only</button>
+                        <button onclick="MatchesController.setPlayFilter('gender', 'female')" class="status-filter-btn ${gFilter === 'female' ? 'active' : ''}">Females Only</button>
+                        <button onclick="MatchesController.setPlayFilter('gender', 'open')" class="status-filter-btn ${gFilter === 'open' ? 'active' : ''}">Open (Mixed)</button>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button onclick="MatchesController.setPlayFilter('type', 'all')" class="status-filter-btn ${tFilter === 'all' ? 'active' : ''}">All Types</button>
+                        <button onclick="MatchesController.setPlayFilter('type', 'competition')" class="status-filter-btn ${tFilter === 'competition' ? 'active' : ''}">🏆 Competition</button>
+                        <button onclick="MatchesController.setPlayFilter('type', 'friendly')" class="status-filter-btn ${tFilter === 'friendly' ? 'active' : ''}">Friendly</button>
+                    </div>
+                </div>
+            `;
             
-            const resultsContainer = document.getElementById('ml-filtered-results');
-            if (matches.length === 0) {
-                resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
-            } else {
-                let html = '';
-                matches.forEach(m => {
-                    const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
-                    if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
-                        m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
-                    } else {
-                        html += MatchesController.renderMatchCard(m);
-                    }
+            list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
+            
+            // Apply Filters
+            if (gFilter !== 'all') {
+                matches = matches.filter(m => {
+                    if (gFilter === 'male') return m.gender_type === 'same_gender' && m.creator_gender === 'male';
+                    if (gFilter === 'female') return m.gender_type === 'same_gender' && m.creator_gender === 'female';
+                    if (gFilter === 'open') return m.gender_type === 'open';
+                    return true;
                 });
-                resultsContainer.innerHTML = html;
             }
+            if (tFilter !== 'all') {
+                matches = matches.filter(m => m.match_type === tFilter);
+            }
+        } else {
+            list.innerHTML = '<div id="ml-filtered-results"></div>';
+        }
+
+        const resultsContainer = document.getElementById('ml-filtered-results') || list;
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px; text-align:center; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px dashed var(--c-border);"><div class="empty-icon">🔍</div><h3 style="font-size:16px; font-weight:700; margin-bottom:4px; color:var(--c-text);">No matches found</h3><p style="color:var(--c-text-muted); font-size:13px; max-width:220px; margin:0 auto; line-height:1.4;">Try adjusting your filters to see more games.</p></div>`;
         } else {
             let html = '';
             matches.forEach(m => {
@@ -1707,13 +1728,19 @@ const MatchesController = {
                     html += MatchesController.renderMatchCard(m);
                 }
             });
-            list.innerHTML = html;
+            resultsContainer.innerHTML = html;
         }
     },
 
     setFilter: function(filter) {
         MatchesController._currentFilter = filter;
         MatchesController.loadList(true); // Silent refresh
+    },
+
+    setPlayFilter: function(type, val) {
+        if (type === 'gender') MatchesController._currentGenderFilter = val;
+        if (type === 'type') MatchesController._currentTypeFilter = val;
+        MatchesController.loadList(true);
     },
 
     renderMiniSlot: function(m, team, slot) {
