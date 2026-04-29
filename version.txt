@@ -48,5 +48,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Fixed API routing for venue requests and profile reports by registering endpoints in index.php.
 - Polished the venue request flow with a premium outline button design and admin review feedback.
 - Grouped Competition and Gender badges in Match Details to ensure they stay on the same line on mobile.
+- Implemented strict Skill Level enforcement: users can no longer access dashboard/profile without selecting a level.
+- Enhanced Router protection to check for both hasProfile and hasLevel flags.
 
 
