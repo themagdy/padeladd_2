@@ -101,6 +101,9 @@ try {
         case 'match/venues':
             require __DIR__ . '/match/venues.php';
             break;
+        case 'match/request_venue':
+            require __DIR__ . '/match/request_venue.php';
+            break;
         case 'match/create':
             require __DIR__ . '/match/create.php';
             break;
@@ -179,6 +182,9 @@ try {
             break;
         case 'match/report':
             require __DIR__ . '/match/report.php';
+            break;
+        case 'profile/report':
+            require __DIR__ . '/profile/report.php';
             break;
         case 'ranking/list':
             require __DIR__ . '/ranking/list.php';
