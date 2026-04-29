@@ -57,7 +57,7 @@ function getAuthenticatedUser($pdo) {
 }
 function generateUniquePlayerCode($pdo) {
     // Exclude confusing characters: 0, o, O, s, S, 5, i, 1, l
-    $letters = 'abcdefghjkmnpqrtuvwxyz'; // Excludes i, l, o, s
+    $letters = 'ABCDEFGHJKMNPQRTUVWXYZ'; // Excludes I, L, O, S
     $digits  = '2346789';              // Excludes 0, 1, 5
     
     $checkCode = $pdo->prepare("SELECT id FROM user_profiles WHERE player_code = ?");
@@ -66,7 +66,7 @@ function generateUniquePlayerCode($pdo) {
 
     do {
         $letter = $letters[mt_rand(0, strlen($letters) - 1)];
-        $code   = $letter;
+        $code   = strtoupper($letter);
         for ($i = 0; $i < 3; $i++) {
             $code .= $digits[mt_rand(0, strlen($digits) - 1)];
         }

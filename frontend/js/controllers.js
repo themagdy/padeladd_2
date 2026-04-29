@@ -610,7 +610,7 @@ const DashboardController = {
                         <div style="min-width:0; overflow:hidden;">
                             <div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:lowercase;">${r.player_code}</span>
+                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:uppercase;">${r.player_code}</span>
                                 <span style="font-size:10px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
                             </div>
                         </div>
@@ -4675,7 +4675,7 @@ const RankingController = {
             r.nickname.toLowerCase().includes(q) || 
             r.first_name.toLowerCase().includes(q) || 
             r.last_name.toLowerCase().includes(q) ||
-            r.player_code.toLowerCase().includes(q)
+            r.player_code.toUpperCase().includes(q.toUpperCase())
         );
         this.render(filtered);
     },
