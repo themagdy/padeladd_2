@@ -38,6 +38,9 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Renamed "Competitive" to "Competition" globally across UI, API, and Database schema.
 - Fixed profile picture persistence during initial registration.
 - Resolved leaderboard visibility issues for newly registered players.
-- Added information "i" icon to Match Type with a detailed explanation of ranking impacts.
+- Added warning ⚠️ icon to Match Type with a detailed explanation of ranking impacts.
+- Enhanced global Toast system with 6-second duration and manual "✕" dismiss button.
+- Cleaned up Match Type help icon styling and alignment.
+- Removed match M-M163 from database.
 
 
