@@ -535,7 +535,7 @@ const DashboardController = {
             `;
             
             return `
-                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:18px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:22px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                 </div>
