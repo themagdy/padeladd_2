@@ -44,6 +44,8 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Removed match M-M163 from database.
 - Implemented strict "Venue / Club" validation: matches can only be created at official venues.
 - Added a "Add a Venue / Club" feature with a dedicated backend request system.
-- Polished the venue request flow with a popup and professional admin review feedback.
+- Optimized "Add Venue" button visibility: only appears when search returns zero results.
+- Fixed API routing for venue requests and profile reports by registering endpoints in index.php.
+- Polished the venue request flow with a premium outline button design and admin review feedback.
 
 
