@@ -238,12 +238,12 @@ const ScoreUI = {
                         <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">
                             <div style="display:flex; align-items:center; gap:4px; min-width:0;">
                                 <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p1.name}</span>
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p1.code}</span>
+                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p1.code}</span>
                             </div>
                             <span style="color:var(--c-text-dim); font-size:10px;">/</span>
                             <div style="display:flex; align-items:center; gap:4px; min-width:0;">
                                 <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p2.name}</span>
-                                <span style="font-size:8px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p2.code}</span>
+                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p2.code}</span>
                             </div>
                         </div>
                     </div>
