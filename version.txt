@@ -58,5 +58,6 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Database Synchronization: Updated all upcoming matches to new standard defaults (Competition & Same Gender) to ensure visibility with active filters.
 - Player Slot Optimization: Standardized slot heights (140px on mobile, 70px on desktop) for perfect grid alignment between filled and empty states.
 - Mobile UI Polish: Moved player side indicators (R/L/F) to float over avatars on mobile, freeing up horizontal space for longer player names and nicknames.
+- Data Integrity: Capitalized first letters of all player codes in the database and updated both backend and frontend to enforce uppercase codes (e.g., A123) for better visibility.
 
 

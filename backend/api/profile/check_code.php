@@ -6,7 +6,7 @@
 $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 
-$code = trim($data['code'] ?? '');
+$code = strtoupper(trim($data['code'] ?? ''));
 
 if ($code === '') {
     jsonResponse(false, 'Player code is required.', null, 400);

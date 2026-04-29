@@ -9,7 +9,7 @@ $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
 
 $match_id     = (int)($data['match_id'] ?? 0);
-$partner_code = trim($data['partner_player_code'] ?? '');
+$partner_code = strtoupper(trim($data["partner_player_code"] ?? ""));
 
 if ($match_id <= 0) {
     jsonResponse(false, 'match_id is required.', null, 422);

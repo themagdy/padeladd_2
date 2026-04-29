@@ -4,7 +4,7 @@ $user = getAuthenticatedUser($pdo);
 
 // Logic: If target_id or player_code is provided, fetch THAT user. Otherwise, fetch self.
 $targetId = $data['target_id'] ?? null;
-$playerCode = $data['player_code'] ?? null;
+$playerCode = isset($data['player_code']) ? strtoupper(trim($data['player_code'])) : null;
 
 if ($playerCode) {
     // Find user by player_code
