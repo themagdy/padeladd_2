@@ -22,7 +22,8 @@ const Router = {
         '/matches/view/:id/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/matches/open/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/open/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
-        '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() }
+        '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
+        '/rules': { template: 'frontend/pages/rules.html', init: () => {} }
     },
     
     navDepth: 0,
@@ -247,7 +248,7 @@ const Router = {
         const isAuthPage = authRoutes.includes(nPath) || nPath === '/';
 
         // Pages that need the unified back bar
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
         const isDynamicBackBar = nPath.startsWith('/matches/view/') || 
                                  nPath.startsWith('/matches/open/') || 
                                  nPath.startsWith('/p/') || 
