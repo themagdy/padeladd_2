@@ -3,7 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <base href="/padeladd4/">
+    <script>
+        // Dynamic base href detection
+        (function() {
+            var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            var base = document.createElement('base');
+            // If on mobile (Capacitor), base is ./
+            // If on local MAMP, base is /padeladd4/
+            // If on live server, base is /pl/
+            if (typeof window.Capacitor !== 'undefined' || window.location.protocol === 'capacitor:') {
+                base.href = './';
+            } else {
+                base.href = isLocal ? '/padeladd4/' : '/pl/';
+            }
+            document.head.appendChild(base);
+        })();
+    </script>
     <title>Padeladd</title>
     <link rel="icon" type="image/png" href="assets/logo_ico.png">
     <!-- Priority: UI Rules - Clean, modern, minimal UI, Mobile-first -->
