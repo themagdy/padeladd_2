@@ -1897,7 +1897,10 @@ const MatchesController = {
             </div>
             <div style="text-align:right; flex-shrink:0;">
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
-               <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
+               <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600; display:flex; align-items:center; gap:4px;">
+                  By ${m.creator_nickname || m.creator_name}
+                  ${m.creator_code ? `<span style="font-size:9px; background:rgba(255,255,255,0.06); padding:1px 4px; border-radius:3px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace;">${m.creator_code}</span>` : ''}
+               </div>
             </div>
           </div>
 
