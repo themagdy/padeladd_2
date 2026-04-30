@@ -19,11 +19,17 @@ $match_type           = trim($data['match_type'] ?? 'competition');
 
 if (!in_array($gender_type, ['open', 'same_gender'])) $gender_type = 'same_gender';
 if (!in_array($match_type, ['friendly', 'competition'])) $match_type = 'competition';
-// Fetch creator's side from profile
-$ups = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
+// Fetch creator's side and points
+$ups = $pdo->prepare("SELECT up.playing_side, COALESCE(ps.points, 100) AS points FROM user_profiles up LEFT JOIN player_stats ps ON up.user_id = ps.user_id WHERE up.user_id = ?");
 $ups->execute([$uid]);
 $upRow = $ups->fetch();
-$creator_side = $upRow ? $upRow['playing_side'] : 'flexible';
+$creator_side   = $upRow ? $upRow['playing_side'] : 'flexible';
+$creator_points = $upRow ? (int)$upRow['points'] : 100;
+
+// Compute locked eligibility range
+$elig_range  = ($match_type === 'competition') ? 100 : 300;
+$eligible_min = max(0, $creator_points - $elig_range);
+$eligible_max = $creator_points + $elig_range;
 
 // --- Validation ---
 
@@ -76,12 +82,12 @@ try {
 
     $matchStatus = $created_with_partner ? 'on_hold' : 'open';
 
-    // Insert match
+    // Insert match with locked eligibility range
     $stmt = $pdo->prepare("
-        INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code, gender_type, match_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code, gender_type, match_type, eligible_min, eligible_max)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    $stmt->execute([$uid, $venue_name, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code, $gender_type, $match_type]);
+    $stmt->execute([$uid, $venue_name, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code, $gender_type, $match_type, $eligible_min, $eligible_max]);
 
     $match_id = (int)$pdo->lastInsertId();
 
@@ -92,8 +98,8 @@ try {
     ");
     $ins->execute([$match_id, $uid, $creator_side]);
 
-    // Ensure creator has a player_stats row (starting points = 50 per brief)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$uid]);
+    // Ensure creator has a player_stats row (starting points = 100 for beginners)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$uid]);
 
     // Partner -> Send invite to waiting_list instead of confirming directly
     if ($partner_id !== null) {

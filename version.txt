@@ -69,4 +69,15 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Ranking Header Polish: Removed bottom margin from the "Official Leaderboard" logo row to tighten the layout.
 - Platform Standardization: Completed the migration to capitalized player codes (e.g., A123) across Database, API, and UI.
 
+[MAJOR] scoring_v2 - 2026-04-30 03:14:00 +0300
+- Starting Points: Reset all players based on skill level (Beginner 100 → Professional 1000). Removed the broken flat-50 default.
+- New Scoring Formula: Replaced the old 6-factor multiplicative formula with the approved brief: base (±4) + strength_adj (0-3 steps) + heavy_modifier (±1 if game diff ≥7 in 2-set match), multiplied by new_player_factor (1.5x/1.2x/1.0x) and integrity_factor (1.0→0.3), then rounded and clamped to ±15.
+- Points Floor: Added max(0, points + change) — points can never go below 0.
+- Eligibility System: Match now stores eligible_min/eligible_max at creation time (creator ±100 for competition, ±300 for friendly). Joining is blocked instantly if player is out of range.
+- Friendly Matches: No points awarded. Team avg diff capped at 300 — hard block on full-match formation.
+- Auto-Confirm: New cron script sends 12h reminder notifications then auto-approves pending scores after 24h.
+- Match Listing: Browse view now returns player_eligible, match_label (Eligible/Friendly/Not Eligible), and sort_key. Results ordered: eligible competition → friendly → not eligible.
+- Level Assignment: set_level.php now sets correct starting points on first level selection. Won't overwrite earned points after competition matches.
+- DB Migration: Added eligible_min, eligible_max to matches; reminder_sent to scores; backfilled all existing matches.
+
 
