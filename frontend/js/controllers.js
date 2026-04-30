@@ -2030,6 +2030,13 @@ const MatchesController = {
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
+        // Hide withdrawal warning for past matches
+        const withdrawalWarning = document.querySelector('.mv-withdrawal-warning');
+        if (withdrawalWarning) {
+            const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
+            withdrawalWarning.style.display = isMatchPast ? 'none' : 'flex';
+        }
+
         const statusBadgeContainer = document.getElementById('mv-status-badge');
         
         const titleEl = document.getElementById('mv-title');
