@@ -1909,7 +1909,7 @@ const MatchesController = {
              </div>
              <div style="width:1px; height:40px; background:rgba(255,255,255,0.05);"></div>
              <div>
-                <div style="font-size:10px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 2</div>
+                <div style="font-size:10px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 2</div>
                 ${MatchesController.renderMiniSlot(m, 2, 1)}
                 ${MatchesController.renderMiniSlot(m, 2, 2)}
              </div>
@@ -2117,9 +2117,9 @@ const MatchesController = {
         const team2Sum = getTeamSum(2);
 
         const t1p = document.getElementById('mv-team1-points');
-        if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'Empty';
+        if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY';
         const t2p = document.getElementById('mv-team2-points');
-        if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'Empty';
+        if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
 
         // Render slot elements
         [[1,1],[1,2],[2,1],[2,2]].forEach(([team, slot]) => {
