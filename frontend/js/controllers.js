@@ -535,7 +535,7 @@ const DashboardController = {
             `;
             
             return `
-                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:29px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/open/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:29px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                 </div>
@@ -559,7 +559,7 @@ const DashboardController = {
         };
 
         return `
-        <div onclick="Router.navigate('/matches/view/${m.id}')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
+        <div onclick="Router.navigate('/matches/open/${m.match_code}')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
             <div style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
@@ -1407,7 +1407,7 @@ const MatchesController = {
 
             if (res && res.success) {
                 Toast.show('Match created!', 'success');
-                Router.navigate('/matches/view/' + res.data.match_id, true, true);
+                Router.navigate('/matches/open/' + res.data.match_code, true, true);
             } else {
                 Toast.show(res ? res.message : 'Failed to create match', 'error');
             }
@@ -1869,7 +1869,7 @@ const MatchesController = {
             `;
             
             return `
-                <div onclick="Router.navigate('/matches/view/${m.id}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/open/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                     <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
@@ -4163,12 +4163,7 @@ const NotificationsController = {
         this.close();
 
         // 3. Navigate based on type
-        let navPath = '';
-        if (n.match_code) {
-            navPath = `/matches/open/${n.match_code}`;
-        } else {
-            navPath = `/matches/view/${n.reference_id}`;
-        }
+        let navPath = n.match_code ? `/matches/open/${n.match_code}` : `/matches/view/${n.reference_id}`;
         
         switch (n.type) {
             case 'match_joined':

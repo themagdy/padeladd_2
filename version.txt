@@ -101,4 +101,8 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Scoring API: Removed restriction blocking multiple pending scores from the same user. This allows reporting multiple separate match results within a single long booking session (up to the limit of 5).
 - Ranking UI: Refined Team 2 styling to use white labels and capitalized "EMPTY" status for better visual consistency.
 
+0a023f3 - 2026-04-30 06:23:00 +0300
+- Match URLs: Standardized all match links to use the vanity `/matches/open/:matchCode` format (e.g., /matches/open/M-D587) instead of numeric IDs.
+- Notifications: Updated notification navigation to prioritize match codes for consistent user experience.
+
 

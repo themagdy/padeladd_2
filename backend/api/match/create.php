@@ -115,7 +115,7 @@ try {
     }
 
     $pdo->commit();
-    jsonResponse(true, 'Match created successfully.', ['match_id' => $match_id]);
+    jsonResponse(true, 'Match created successfully.', ['match_id' => $match_id, 'match_code' => $match_code]);
 
 } catch (Exception $e) {
     $pdo->rollBack();
