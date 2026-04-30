@@ -38,9 +38,9 @@ foreach ($rows as $r) {
 
 echo "Matches to process: " . implode(', ', array_map(fn($mid) => "#$mid (score #{$matchScoreMap[$mid]})", array_keys($matchScoreMap))) . "\n\n";
 
-// ── Reset rank_points to 0 for all players ───────────────────────────────
-$pdo->exec("UPDATE player_stats SET rank_points = 0");
-echo "✅ Reset all rank_points to 0.\n\n";
+// ── Reset competitive stats for all players ───────────────────────────────
+$pdo->exec("UPDATE player_stats SET rank_points = 50, matches_played = 0, matches_won = 0, matches_lost = 0, win_rate = 0, streak = 0");
+echo "✅ Reset all competitive stats (rank_points=50, matches=0).\n\n";
 
 // ── Convert matches to competition ───────────────────────────────────────
 $matchIds = array_keys($matchScoreMap);
