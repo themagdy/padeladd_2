@@ -86,12 +86,7 @@ if ((int)$countStmt->fetchColumn() >= 5) {
     jsonResponse(false, 'Maximum of 5 match results allowed per session.', null, 400);
 }
 
-// 4. Check if there's already a PENDING score from the same user to avoid duplicates
-$checkPending = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND submitted_by_user_id = ? AND status = 'pending'");
-$checkPending->execute([$match_id, $uid]);
-if ($checkPending->fetch()) {
-    jsonResponse(false, 'You already have a pending score submission for this match.', null, 400);
-}
+// (Check removed to allow multiple match results in one session as per the "Max 5" rule)
 
 // 5. Insert score
 $pdo->beginTransaction();

@@ -15,34 +15,44 @@ $pdo = getDB();
 
 echo "=== Backfill Competition Matches ===\n\n";
 
+// ── Match → canonical score ID mapping ───────────────────────────────────
+// We pick the score with composition_json if available, else the last approved one.
+$matchScoreMap = [];
+
 $s = $pdo->query("
     SELECT s.id, s.match_id, s.composition_json
     FROM scores s
     JOIN matches m ON m.id = s.match_id
     WHERE m.status = 'completed' AND s.status = 'approved'
-    ORDER BY s.match_id, s.id ASC
+    ORDER BY s.match_id, s.id DESC
 ");
 $rows = $s->fetchAll(PDO::FETCH_ASSOC);
 
-echo "Scores to process: " . implode(', ', array_map(fn($r) => "#{$r['id']} (Match #{$r['match_id']})", $rows)) . "\n\n";
+foreach ($rows as $r) {
+    $mid = (int)$r['match_id'];
+    // Prefer score with composition_json; if we already have one with comp, keep it
+    if (!isset($matchScoreMap[$mid]) || !empty($r['composition_json'])) {
+        $matchScoreMap[$mid] = (int)$r['id'];
+    }
+}
 
-// ── Reset competitive stats for all players ───────────────────────────────
-$pdo->exec("UPDATE player_stats SET rank_points = 50, matches_played = 0, matches_won = 0, matches_lost = 0, win_rate = 0, streak = 0");
-echo "✅ Reset all competitive stats (rank_points=50, matches=0).\n\n";
+echo "Matches to process: " . implode(', ', array_map(fn($mid) => "#$mid (score #{$matchScoreMap[$mid]})", array_keys($matchScoreMap))) . "\n\n";
+
+// ── Reset rank_points to 0 for all players ───────────────────────────────
+$pdo->exec("UPDATE player_stats SET rank_points = 0");
+echo "✅ Reset all rank_points to 0.\n\n";
 
 // ── Convert matches to competition ───────────────────────────────────────
-$matchIds = array_unique(array_map(fn($r) => $r['match_id'], $rows));
+$matchIds = array_keys($matchScoreMap);
 if (!empty($matchIds)) {
     $ph = implode(',', $matchIds);
     $pdo->exec("UPDATE matches SET match_type = 'competition' WHERE id IN ($ph)");
     echo "✅ Converted matches [" . implode(', ', $matchIds) . "] to competition.\n\n";
 }
 
-// ── Run calculateRankingUpdates per score ─────────────────────────────────
-foreach ($rows as $r) {
-    $match_id = (int)$r['match_id'];
-    $score_id = (int)$r['id'];
-    echo "--- Processing Score #{$score_id} (Match #{$match_id}) ---\n";
+// ── Run calculateRankingUpdates per match ─────────────────────────────────
+foreach ($matchScoreMap as $match_id => $score_id) {
+    echo "--- Processing Match #{$match_id} with Score #{$score_id} ---\n";
 
     // Re-open match status so calculateRankingUpdates can mark it completed
     $pdo->prepare("UPDATE matches SET status = 'completed' WHERE id = ?")->execute([$match_id]);
