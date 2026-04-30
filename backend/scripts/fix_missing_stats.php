@@ -16,7 +16,7 @@ try {
     
     $count = 0;
     if (!empty($missingUsers)) {
-        $insert = $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)");
+        $insert = $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)");
         
         foreach ($missingUsers as $userId) {
             $insert->execute([$userId]);

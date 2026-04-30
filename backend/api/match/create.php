@@ -99,7 +99,7 @@ try {
     $ins->execute([$match_id, $uid, $creator_side]);
 
     // Ensure creator has a player_stats row (starting points = 100 for beginners)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$uid]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$uid]);
 
     // Partner -> Send invite to waiting_list instead of confirming directly
     if ($partner_id !== null) {

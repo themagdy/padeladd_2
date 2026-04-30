@@ -198,7 +198,7 @@ try {
     ")->execute([$match_id, $uid, $uid]);
 
     // Ensure player_stats row (starting points = 100 for beginners)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$uid]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$uid]);
 
     // Check if match is now full
     if (count($occupied) + 1 >= 4) {
