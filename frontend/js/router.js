@@ -98,7 +98,7 @@ const Router = {
                 return;
             }
 
-            const isMatchDetail = path.includes('/matches/view') || path.includes('/matches/open');
+            const isMatchDetail = path.startsWith('/matches/M-') || path.includes('/matches/view');
 
             if (isMatchDetail) {
                 // If they landed on a match detail directly, go to matches list
@@ -247,8 +247,7 @@ const Router = {
 
         // Pages that need the unified back bar
         const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
-        const isDynamicBackBar = nPath.startsWith('/matches/view/') || 
-                                 nPath.startsWith('/matches/open/') || 
+        const isDynamicBackBar = nPath.startsWith('/matches/M-') || 
                                  nPath.startsWith('/p/') || 
                                  (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
                                  
@@ -262,7 +261,7 @@ const Router = {
             if (tbarInner) {
                 if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
                     tbarInner.style.maxWidth = '1200px';
-                } else if (path.startsWith('/matches/view/') || path.startsWith('/matches/open/')) {
+                } else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) {
                     tbarInner.style.maxWidth = '900px';
                 } else {
                     tbarInner.style.maxWidth = '480px';
