@@ -106,4 +106,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Notifications: Updated notification navigation to support the simplified match code format.
 - Router: Refined back button and header logic to properly recognize and support the new vanity URL structure.
 
+25d346d - 2026-04-30 19:51:00 +0300
+- Mobile: Synchronized latest frontend assets and verified GitHub Actions build workflow.
+
 
