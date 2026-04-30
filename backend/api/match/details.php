@@ -184,6 +184,7 @@ jsonResponse(true, 'Match details loaded.', [
         'creator_id'           => (int)$m['creator_id'],
         'creator_name'         => trim($m['creator_first'] . ' ' . $m['creator_last']),
         'creator_nickname'     => $m['creator_nickname'] ?? null,
+        'creator_code'         => $m['creator_code'] ?? null,
         'creator_gender'       => $m['creator_gender'] ?? 'male',
         'cancellation_reason'  => $m['cancellation_reason'] ?? null,
         'is_policy_violation'  => (bool)($m['is_policy_violation'] ?? 0),
