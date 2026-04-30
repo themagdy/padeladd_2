@@ -4,6 +4,12 @@ ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 ini_set('log_errors', 1);
 
+// Hidden Debug Mode: If ?debug=1 is in the URL, show errors (for live troubleshooting)
+if (isset($_GET['debug']) && $_GET['debug'] === '1') {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+}
+
 header('Content-Type: application/json');
 date_default_timezone_set('Africa/Cairo');
 
