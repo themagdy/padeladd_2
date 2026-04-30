@@ -91,4 +91,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 62079ac - 2026-04-30 05:25:00 +0300
 - Ranking UI: Increased vertical spacing between "Official Leaderboard" tag and "Players Ranking" title on mobile to improve legibility.
 
+09fd103 - 2026-04-30 05:35:00 +0300
+- Match Details UI: Now displays the creator's player code beside their name for easier identification and invitation.
+
 
