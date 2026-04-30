@@ -200,7 +200,8 @@ DROP TABLE IF EXISTS `player_stats`;
 CREATE TABLE `player_stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `points` int(11) DEFAULT '50',
+  `points` int(11) DEFAULT '100' COMMENT 'Level-based eligibility points',
+  `rank_points` int(11) DEFAULT '50' COMMENT 'Competitive merit points',
   `matches_played` int(11) DEFAULT '0',
   `matches_won` int(11) DEFAULT '0',
   `matches_lost` int(11) DEFAULT '0',
@@ -214,7 +215,7 @@ CREATE TABLE `player_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   CONSTRAINT `player_stats_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table structure for table `profile_reports`
 DROP TABLE IF EXISTS `profile_reports`;
