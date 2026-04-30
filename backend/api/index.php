@@ -11,6 +11,9 @@ if (isset($_GET['debug']) && $_GET['debug'] === '1') {
 }
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 date_default_timezone_set('Africa/Cairo');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
