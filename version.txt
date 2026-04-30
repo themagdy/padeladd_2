@@ -94,4 +94,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 09fd103 - 2026-04-30 05:35:00 +0300
 - Match Details UI: Now displays the creator's player code beside their name for easier identification and invitation.
 
+f8a2b3c - 2026-04-30 05:40:00 +0300
+- Ranking Logic: Excluded players with 0 matches played from the leaderboard to keep the ranking focused on active participants.
+
 
