@@ -2095,7 +2095,9 @@ const MatchesController = {
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
-                        <span>👤</span> Created by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
+                        <span>👤</span> Created by 
+                        <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
+                        ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
                     </div>
                     <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
