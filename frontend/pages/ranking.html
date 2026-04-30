@@ -3,7 +3,7 @@
   <!-- 1. Top Section (Non-sticky) -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:40px 20px 20px; display:block !important; overflow:visible !important;">
     <div style="margin-bottom:10px;">
-      <div class="ranking-header-top-row" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+      <div class="ranking-header-top-row" style="display:flex; align-items:center; gap:10px;">
         <img src="assets/logo_ico.png" style="height:24px; width:auto;">
         <span style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:2px;">Official Leaderboard</span>
       </div>
@@ -165,12 +165,14 @@
 }
 
 @media (min-width: 769px) {
-    .ranking-header-top-row { margin-bottom: 0px !important; }
-    .ranking-header-h1 { line-height: 1.0 !important; margin-bottom: -20px !important; }
-    .ranking-header-p { margin-top: 0px !important; margin-bottom: 0px !important; }
+    .ranking-header-top-row { margin-bottom: -4px !important; }
+    .ranking-header-h1 { line-height: 1.0 !important; margin-bottom: -10px !important; }
+    .ranking-header-p { margin-top: -5px !important; margin-bottom: 0px !important; }
 }
 
 @media (max-width: 768px) {
+    .ranking-header-top-row { margin-bottom: 12px !important; }
+    .ranking-header-h1 { line-height: 1.2 !important; }
     .ranking-trophy-wrapper {
         display: none !important;
     }
