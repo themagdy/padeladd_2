@@ -49,20 +49,20 @@ if ($stats && $stats['matches_played'] > 0) {
     $winRate = intval(($stats['matches_won'] * 100) / $stats['matches_played']);
 }
 
-// Calculate rank on the fly (relative to others of the same gender)
-$currentRanking = $stats['ranking'];
+// Calculate rank on the fly using rank_points (competition merit only)
+$currentRanking = null;
+$rankingChange  = null;
 if ($profile && $stats) {
     $gender = $profile['gender'] ?? 'male';
     $rankStmt = $pdo->prepare("
-        SELECT COUNT(*) + 1 
+        SELECT COUNT(*) + 1
         FROM player_stats ps
         JOIN user_profiles up ON ps.user_id = up.user_id
-        WHERE up.gender = ? AND (ps.points > ? OR (ps.points = ? AND ps.matches_played > ?))
+        WHERE up.gender = ? AND ps.rank_points > ?
     ");
-    $rankStmt->execute([$gender, $stats['points'], $stats['points'], $stats['matches_played']]);
+    $rankStmt->execute([$gender, (int)($stats['rank_points'] ?? 0)]);
     $currentRanking = (int)$rankStmt->fetchColumn();
-    $rankingChange = null;
-    if ($stats && $stats['previous_ranking'] && $currentRanking) {
+    if ($stats['previous_ranking'] && $currentRanking) {
         $rankingChange = $stats['previous_ranking'] - $currentRanking;
     }
 }
@@ -88,7 +88,8 @@ jsonResponse(true, 'Profile loaded.', [
         'level'         => $profile['level'],
     ] : null,
     'stats' => $stats ? [
-        'points'           => (int)$stats['points'],
+        'points'           => (int)($stats['rank_points'] ?? 0),  // competition points for display
+        'eligibility_pts'  => (int)$stats['points'],              // level-based points (internal, for eligibility)
         'matches_played'   => (int)$stats['matches_played'],
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
@@ -98,7 +99,7 @@ jsonResponse(true, 'Profile loaded.', [
         'points_this_week' => (int)$stats['points_this_week'],
         'win_rate'         => $winRate,
     ] : [
-        'points' => 0, 'matches_played' => 0, 'matches_won' => 0,
+        'points' => 0, 'eligibility_pts' => 0, 'matches_played' => 0, 'matches_won' => 0,
         'matches_lost' => 0, 'ranking' => null, 'ranking_change' => null, 'highest_ranking' => null,
         'points_this_week' => 0, 'win_rate' => 0
     ],

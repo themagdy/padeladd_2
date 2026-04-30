@@ -12,7 +12,8 @@ if ($stats && $stats['matches_played'] > 0) {
 }
 
 jsonResponse(true, 'Stats loaded.', [
-    'points'           => $stats ? (int)$stats['points'] : 50,
+    'points'           => $stats ? (int)($stats['rank_points'] ?? 0) : 0, // competition points (display/ranking)
+    'eligibility_pts'  => $stats ? (int)$stats['points'] : 100,           // level-based points (eligibility only)
     'matches_played'   => $stats ? (int)$stats['matches_played'] : 0,
     'matches_won'      => $stats ? (int)$stats['matches_won'] : 0,
     'matches_lost'     => $stats ? (int)$stats['matches_lost'] : 0,
