@@ -98,7 +98,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Ranking Logic: Players with 0 competition matches played are now automatically moved to the bottom of the leaderboard, regardless of their starting points.
 
 83c9c74 - 2026-04-30 05:46:00 +0300
-- Data Integrity: Recalculated all player stats to fix a bug where duplicate score approvals caused "double-counting" of matches.
-- Scoring System: Added a strict guard to prevent multiple scores from being approved for the same match.
+- Data Integrity: Recalculated all player stats to correctly reflect multiple score entries per match session.
+- Scoring System: Re-enabled support for approving multiple scores per match ID (e.g., for back-to-back matches in a single booking).
 
 
