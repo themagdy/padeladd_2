@@ -83,4 +83,9 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 ea4df74 - 2026-04-30 04:49:00 +0300
 - Match Detail UI: Hidden the withdrawal policy warning message for past, completed, and cancelled matches to keep the focus on current game information.
 
+ed705eb - 2026-04-30 05:22:00 +0300
+- Match UX: Added a dedicated "Rules" button in the Play section for quick access to scoring and eligibility guidelines.
+- Rules Page: Created a premium, bilingual informational page summarizing competition rules, point formulas, and confirmation flows.
+- Navigation: Integrated Rules page into the router and updated ranking page footers to link to the new centralized documentation.
+
 

@@ -1,0 +1,90 @@
+<div class="page active" id="rules-page" style="background:var(--c-bg);">
+  <div style="width:100%; max-width:800px; margin:0 auto; padding:40px 20px 80px;">
+    
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:48px;">
+      <div style="font-size:48px; margin-bottom:16px;">📜</div>
+      <h1 style="font-size:36px; font-weight:800; color:#fff; margin-bottom:8px;">PadelAdd Rules</h1>
+      <p style="color:var(--c-text-muted); font-size:16px;">How scoring, ranking, and eligibility work.</p>
+    </div>
+
+    <!-- 1. Match Types -->
+    <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px; margin-bottom:24px;">
+      <h2 style="font-size:20px; font-weight:800; color:var(--c-primary); margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+        <span>🏆</span> Match Types
+      </h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:var(--r-md); border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight:800; font-size:14px; margin-bottom:8px; color:var(--c-orange);">Competition</div>
+          <p style="font-size:13px; color:var(--c-text-muted); line-height:1.5;">Affects points and ranking. Restricted to players within <strong>±100 pts</strong> of the creator.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:var(--r-md); border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-weight:800; font-size:14px; margin-bottom:8px; color:var(--c-primary);">Friendly</div>
+          <p style="font-size:13px; color:var(--c-text-muted); line-height:1.5;">Does not affect ranking. Open to players within <strong>±300 pts</strong> of the creator.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Points Formula -->
+    <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px; margin-bottom:24px;">
+      <h2 style="font-size:20px; font-weight:800; color:var(--c-primary); margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+        <span>🧮</span> Scoring Formula
+      </h2>
+      <p style="font-size:14px; color:var(--c-text-muted); line-height:1.6; margin-bottom:20px;">
+        Points are awarded based on match results, team strength difference, and win intensity.
+      </p>
+      
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.02); border-radius:10px;">
+          <span style="font-weight:700; font-size:14px;">Base Result</span>
+          <span style="color:var(--c-primary); font-weight:800;">±4 pts</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.02); border-radius:10px;">
+          <span style="font-weight:700; font-size:14px;">Strength Adjustment</span>
+          <span style="color:var(--c-primary); font-weight:800;">0 to ±3 pts</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.02); border-radius:10px;">
+          <span style="font-weight:700; font-size:14px;">Heavy Win (Game diff ≥7)</span>
+          <span style="color:var(--c-primary); font-weight:800;">±1 pt</span>
+        </div>
+      </div>
+      
+      <div style="margin-top:20px; padding:16px; background:rgba(27, 82, 206, 0.05); border:1px solid rgba(27, 82, 206, 0.1); border-radius:12px;">
+        <div style="font-size:12px; font-weight:800; color:var(--c-primary); text-transform:uppercase; margin-bottom:8px;">Multipliers</div>
+        <ul style="margin:0; padding-left:20px; font-size:13px; color:var(--c-text-muted); line-height:1.6;">
+          <li><strong>New Player (0-15 matches):</strong> Multiplier of 1.5x to 1.2x</li>
+          <li><strong>Integrity Factor:</strong> Points can be reduced if playing the same opponents too often.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. Result Confirmation -->
+    <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px; margin-bottom:24px;">
+      <h2 style="font-size:20px; font-weight:800; color:var(--c-primary); margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+        <span>✅</span> Result Confirmation
+      </h2>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; gap:16px;">
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--c-primary); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:800; font-size:14px;">1</div>
+          <div>
+            <div style="font-weight:700; font-size:15px; margin-bottom:4px;">Winning team submits score</div>
+            <p style="font-size:13px; color:var(--c-text-muted);">After the match ends, the winning team records the score.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:16px;">
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--c-primary); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:800; font-size:14px;">2</div>
+          <div>
+            <div style="font-weight:700; font-size:15px; margin-bottom:4px;">24-hour verification window</div>
+            <p style="font-size:13px; color:var(--c-text-muted);">Opponents have 24 hours to confirm or dispute. No action results in auto-confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back Button -->
+    <div style="text-align:center;">
+      <button onclick="Router.back()" class="btn btn-secondary" style="width:auto; padding:12px 40px; font-size:14px;">Back to Matches</button>
+    </div>
+
+  </div>
+</div>
