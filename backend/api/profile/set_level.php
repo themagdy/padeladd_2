@@ -34,15 +34,15 @@ $compPlayed->execute([$user['id']]);
 $hasPlayed = (int)$compPlayed->fetchColumn() > 0;
 
 if (!$hasPlayed) {
-    // No competition history — safe to set/reset starting points
+    // No competition history — safe to set/reset starting eligibility points; always init rank_points = 50
     $pdo->prepare("
-        INSERT INTO player_stats (user_id, points)
-        VALUES (?, ?)
-        ON DUPLICATE KEY UPDATE points = VALUES(points)
+        INSERT INTO player_stats (user_id, points, rank_points)
+        VALUES (?, ?, 50)
+        ON DUPLICATE KEY UPDATE points = VALUES(points), rank_points = IF(rank_points = 0, 50, rank_points)
     ")->execute([$user['id'], $startPoints]);
 } else {
     // Has played — just ensure a stats row exists, don't overwrite earned points
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, ?)")
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, ?, 50)")
         ->execute([$user['id'], $startPoints]);
 }
 

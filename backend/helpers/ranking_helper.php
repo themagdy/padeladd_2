@@ -234,7 +234,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
         $psStmt->execute([$part['user_id']]);
         $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         if (!$ps) {
-            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$part['user_id']]);
+            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$part['user_id']]);
             $psStmt->execute([$part['user_id']]);
             $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         }
