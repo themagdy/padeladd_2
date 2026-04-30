@@ -101,9 +101,9 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Scoring API: Removed restriction blocking multiple pending scores from the same user. This allows reporting multiple separate match results within a single long booking session (up to the limit of 5).
 - Ranking UI: Refined Team 2 styling to use white labels and capitalized "EMPTY" status for better visual consistency.
 
-0a023f3 - 2026-04-30 06:23:00 +0300
-- Match URLs: Standardized all match links to use the vanity `/matches/:matchCode` format (e.g., /matches/M-D587) for a cleaner appearance.
-- Notifications: Updated notification navigation to prioritize simplified match codes.
-- Router: Refined back button logic to ensure the "Match Details" back bar remains visible and functional with the new URL structure.
+0a023f3 - 2026-04-30 06:28:00 +0300
+- Match URLs: Standardized all match links to use the cleaner `/matches/:matchCode` format (e.g., /matches/M-D587) by removing the redundant "open" segment.
+- Notifications: Updated notification navigation to support the simplified match code format.
+- Router: Refined back button and header logic to properly recognize and support the new vanity URL structure.
 
 
