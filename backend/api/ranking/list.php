@@ -28,8 +28,8 @@ $stmt = $pdo->prepare("
     FROM player_stats ps
     JOIN users u ON ps.user_id = u.id
     JOIN user_profiles up ON ps.user_id = up.user_id
-    WHERE up.gender = ? AND ps.matches_played > 0
-    ORDER BY ps.rank_points DESC, ps.matches_played DESC
+    WHERE up.gender = ?
+    ORDER BY (ps.matches_played > 0) DESC, ps.rank_points DESC, ps.matches_played DESC
     LIMIT ?
 ");
 
