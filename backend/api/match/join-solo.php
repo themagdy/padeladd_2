@@ -135,41 +135,49 @@ try {
     // Use overrides if provided
     $user_side = $data['playing_side'] ?? $profile_side;
 
-    // ── Eligibility Check (per brief: points_integrity.md) ─────────────────
-    // Only enforce when this join would complete both teams (4 players total).
-    // Build projected team compositions with the joining player included.
-    if (count($occupied) + 1 === 4) {
-        // Get stats for all current players
-        $currentIds = array_column($occupied, 'user_id');
-        $allCheckIds = array_merge($currentIds, [$uid]);
-        $phStr = implode(',', array_fill(0, count($allCheckIds), '?'));
-        $statsStmt = $pdo->prepare("SELECT user_id, points, matches_played FROM player_stats WHERE user_id IN ($phStr)");
-        $statsStmt->execute($allCheckIds);
-        $statsMap = [];
-        foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-            $statsMap[(int)$r['user_id']] = ['points' => (int)$r['points'], 'matches_played' => (int)$r['matches_played']];
-        }
-        // Default to starting values if no stats yet
-        foreach ($allCheckIds as $pid) {
-            if (!isset($statsMap[$pid])) $statsMap[$pid] = ['points' => 50, 'matches_played' => 0];
-        }
+    // ── Eligibility Check ────────────────────────────────────────────────
+    // Fetch match eligibility range (locked at creation)
+    $eligMin = (int)$match['eligible_min'];
+    $eligMax = (int)$match['eligible_max'];
 
-        // Build projected teams (include joining player in their target slot)
-        $projectedPlayers = array_merge($occupied, [['user_id' => $uid, 'team_no' => $targetTeam, 'slot_no' => $targetSlot]]);
-        $projT1 = array_values(array_filter($projectedPlayers, fn($p) => (int)$p['team_no'] === 1));
-        $projT2 = array_values(array_filter($projectedPlayers, fn($p) => (int)$p['team_no'] === 2));
+    // Get joining player's points
+    $ptsStmt = $pdo->prepare("SELECT COALESCE(points, 100) AS points FROM player_stats WHERE user_id = ?");
+    $ptsStmt->execute([$uid]);
+    $joinerPts = (int)($ptsStmt->fetchColumn() ?: 100);
 
-        if (count($projT1) === 2 && count($projT2) === 2) {
-            $eligResult = checkTeamEligibility(
-                array_map(fn($p) => $statsMap[(int)$p['user_id']], $projT1),
-                array_map(fn($p) => $statsMap[(int)$p['user_id']], $projT2)
-            );
-            if (!$eligResult['eligible']) {
+    if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
+        $pdo->rollBack();
+        jsonResponse(false, "You are not eligible for this match. Your points ({$joinerPts}) must be between {$eligMin} and {$eligMax}.", [
+            'eligibility_failed' => true,
+            'your_points'   => $joinerPts,
+            'eligible_min'  => $eligMin,
+            'eligible_max'  => $eligMax,
+        ], 422);
+    }
+
+    // Friendly match only: when this join makes the match full, check team avg diff <= 300
+    if ($match['match_type'] === 'friendly' && count($occupied) + 1 === 4) {
+        $allIds = array_merge(array_column($occupied, 'user_id'), [$uid]);
+        $ph = implode(',', array_fill(0, count($allIds), '?'));
+        $ptsSt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN ($ph)");
+        $ptsSt->execute($allIds);
+        $ptsMap = [];
+        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
+        foreach ($allIds as $pid) { if (!isset($ptsMap[$pid])) $ptsMap[$pid] = 100; }
+
+        $proj = array_merge($occupied, [['user_id' => $uid, 'team_no' => $targetTeam]]);
+        $t1pts = array_map(fn($p) => $ptsMap[(int)$p['user_id']], array_filter($proj, fn($p) => (int)$p['team_no'] === 1));
+        $t2pts = array_map(fn($p) => $ptsMap[(int)$p['user_id']], array_filter($proj, fn($p) => (int)$p['team_no'] === 2));
+
+        if (count($t1pts) === 2 && count($t2pts) === 2) {
+            $avgA = array_sum($t1pts) / 2;
+            $avgB = array_sum($t2pts) / 2;
+            $teamDiff = abs($avgA - $avgB);
+            if ($teamDiff > 300) {
                 $pdo->rollBack();
-                jsonResponse(false, 'Teams are too mismatched for a fair game. Your skill gap is ' . $eligResult['gap'] . ' (tolerance: ' . $eligResult['tolerance'] . '). Consider joining the waitlist instead.', [
+                jsonResponse(false, "Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 300). Try a different slot.", [
                     'eligibility_failed' => true,
-                    'gap'        => $eligResult['gap'],
-                    'tolerance'  => $eligResult['tolerance'],
+                    'team_diff' => round($teamDiff),
                 ], 422);
             }
         }
@@ -189,8 +197,8 @@ try {
         WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
     ")->execute([$match_id, $uid, $uid]);
 
-    // Ensure player_stats row (starting points = 50 per brief)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$uid]);
+    // Ensure player_stats row (starting points = 100 for beginners)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$uid]);
 
     // Check if match is now full
     if (count($occupied) + 1 >= 4) {

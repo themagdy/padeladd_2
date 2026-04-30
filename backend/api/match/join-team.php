@@ -75,6 +75,35 @@ if ($wlCheck->fetch()) {
     jsonResponse(false, 'You already have a pending invitation for this match. Cancel it before inviting someone else.', null, 409);
 }
 
+// ── Eligibility range check (both players must be in range) ──────────────
+$eligMin = (int)$match['eligible_min'];
+$eligMax = (int)$match['eligible_max'];
+
+$ptsStmt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN (?, ?)");
+$ptsStmt->execute([$uid, $partner_id]);
+$ptsMap = [];
+foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
+$myPts      = $ptsMap[$uid]        ?? 100;
+$partnerPts = $ptsMap[$partner_id] ?? 100;
+
+if ($myPts < $eligMin || $myPts > $eligMax) {
+    jsonResponse(false, "You are not eligible for this match. Your points ({$myPts}) must be between {$eligMin} and {$eligMax}.", [
+        'eligibility_failed' => true,
+        'your_points' => $myPts,
+        'eligible_min' => $eligMin,
+        'eligible_max' => $eligMax,
+    ], 422);
+}
+if ($partnerPts < $eligMin || $partnerPts > $eligMax) {
+    jsonResponse(false, "Your partner is not eligible for this match. Their points ({$partnerPts}) must be between {$eligMin} and {$eligMax}.", [
+        'eligibility_failed' => true,
+        'partner_points' => $partnerPts,
+        'eligible_min' => $eligMin,
+        'eligible_max' => $eligMax,
+    ], 422);
+}
+
+
 // Check partner has not blocked requester
 $blkCheck = $pdo->prepare("
     SELECT block_count FROM blocked_partner_requests

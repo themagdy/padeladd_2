@@ -1,55 +1,141 @@
 <?php
 /**
  * ranking_helper.php
- * Implements the Phase 7 integer-only ranking logic.
+ * Padeladd Scoring v2 — implements the approved brief.
+ * Competition matches only. Integer arithmetic throughout.
  */
 
-const RANK_SCALE = 1000000000000;
+
+// ── Level → Starting Points map ───────────────────────────────────────────
+const LEVEL_POINTS = [
+    'beginner'                => 100,
+    'initiation_intermediate' => 250,
+    'intermediate'            => 400,
+    'intermediate_high'       => 550,
+    'advanced'                => 700,
+    'competition'             => 850,
+    'professional'            => 1000,
+];
 
 /**
- * Calculate a single player's match score (integer-only, per brief).
- * Confidence_i = min(100, 5 * M_i)
- * PlayerMatchScore_i = floor((P_i * (300 + Confidence_i)) / 400)
+ * Starting points for a given level string.
  */
-function getPlayerMatchScore(int $points, int $matches_played): int {
-    $confidence = min(100, 5 * $matches_played);
-    return intdiv($points * (300 + $confidence), 400);
+function getStartingPoints(string $level): int {
+    $key = strtolower(str_replace(' ', '_', trim($level)));
+    return LEVEL_POINTS[$key] ?? 100;
 }
 
+
+// ── Strength Difference Adjustment ────────────────────────────────────────
 /**
- * Check if two teams are eligible to play each other (per brief).
- * TeamMatchScore = floor((score_p1 + score_p2) / 2)
- * Eligible if: abs(A - B) <= 8 + floor((max(A,B) * 15) / 100)
+ * Returns the absolute adjustment value (0–3) based on team avg diff.
+ * Direction is applied by the caller (+ for upset winner, - for expected winner).
+ */
+function getStrengthAdj(int $diff): int {
+    if ($diff <= 50)  return 0;
+    if ($diff <= 100) return 1;
+    if ($diff <= 200) return 2;
+    return 3;
+}
+
+
+// ── Heavy Win/Loss Modifier ────────────────────────────────────────────────
+/**
+ * Returns the modifier for the winner (+1) and loser (-1) or 0.
+ * Never applies in a 3-set match.
+ * Applies if total game diff across played sets >= 7.
  *
- * $teamA / $teamB: arrays of ['points' => int, 'matches_played' => int]
- * Returns: ['eligible' => bool, 'gap' => int, 'tolerance' => int, 'team_a_score' => int, 'team_b_score' => int]
+ * $sets: array of ['w' => int, 'l' => int] — winner/loser games per set
+ * Returns: int (0, 1) — winner gets +value, loser gets -value
  */
-function checkTeamEligibility(array $teamA, array $teamB): array {
-    $scoreA = intdiv(
-        getPlayerMatchScore($teamA[0]['points'], $teamA[0]['matches_played']) +
-        getPlayerMatchScore($teamA[1]['points'], $teamA[1]['matches_played']),
-        2
-    );
-    $scoreB = intdiv(
-        getPlayerMatchScore($teamB[0]['points'], $teamB[0]['matches_played']) +
-        getPlayerMatchScore($teamB[1]['points'], $teamB[1]['matches_played']),
-        2
-    );
-    $gap       = abs($scoreA - $scoreB);
-    $tolerance = 8 + intdiv(max($scoreA, $scoreB) * 15, 100);
-    return [
-        'eligible'     => $gap <= $tolerance,
-        'gap'          => $gap,
-        'tolerance'    => $tolerance,
-        'team_a_score' => $scoreA,
-        'team_b_score' => $scoreB,
-    ];
+function getHeavyModifier(array $sets, bool $wentToThree): int {
+    if ($wentToThree) return 0;
+    $totalDiff = 0;
+    foreach ($sets as $s) {
+        $totalDiff += abs($s['w'] - $s['l']);
+    }
+    return ($totalDiff >= 7) ? 1 : 0;
 }
 
 
-function getLiveRank(PDO $pdo, int $user_id) {
+// ── New Player Factor ─────────────────────────────────────────────────────
+/**
+ * Returns the new player factor (as tenths integer, so 15 = 1.5x) for a player.
+ * Based only on confirmed competition matches played.
+ * We return as a float to use in the round() step.
+ */
+function getNewPlayerFactor(PDO $pdo, int $user_id): float {
     $stmt = $pdo->prepare("
-        SELECT ps.points, ps.matches_played, up.gender
+        SELECT COUNT(DISTINCT mp.match_id) AS c
+        FROM match_players mp
+        JOIN matches m ON m.id = mp.match_id
+        WHERE mp.user_id = ?
+          AND mp.status = 'confirmed'
+          AND m.match_type = 'competition'
+          AND m.status = 'completed'
+    ");
+    $stmt->execute([$user_id]);
+    $count = (int)$stmt->fetchColumn();
+
+    if ($count <= 5)  return 1.5;
+    if ($count <= 15) return 1.2;
+    return 1.0;
+}
+
+
+// ── Integrity Factor ──────────────────────────────────────────────────────
+/**
+ * Returns the integrity factor (float) for a player in a given match.
+ * Based on how many times this player has faced the same opponents in the last 30 days.
+ *
+ * 0.0 reserved for admin use (completely fake match).
+ * Counts completed matches against the same opponents within 30 days.
+ */
+function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float {
+    // Get opponent IDs (opposing team)
+    $myTeamStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
+    $myTeamStmt->execute([$match_id, $user_id]);
+    $myTeam = $myTeamStmt->fetchColumn();
+
+    if (!$myTeam) return 1.0;
+
+    $oppStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND team_no != ? AND status = 'confirmed'");
+    $oppStmt->execute([$match_id, $myTeam]);
+    $opponents = $oppStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    if (count($opponents) < 2) return 1.0;
+
+    // Count unique completed competition matches against these opponents in last 30 days
+    $count = 0;
+    foreach ($opponents as $opp_id) {
+        $checkStmt = $pdo->prepare("
+            SELECT COUNT(DISTINCT m.id)
+            FROM matches m
+            JOIN match_players mp1 ON m.id = mp1.match_id
+            JOIN match_players mp2 ON m.id = mp2.match_id
+            WHERE m.status = 'completed'
+              AND m.match_type = 'competition'
+              AND m.id != ?
+              AND mp1.user_id = ?
+              AND mp2.user_id = ?
+              AND mp1.team_no != mp2.team_no
+              AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ");
+        $checkStmt->execute([$match_id, $user_id, $opp_id]);
+        $count = max($count, (int)$checkStmt->fetchColumn());
+    }
+
+    if ($count < 2)  return 1.0;
+    if ($count == 2) return 0.7;
+    if ($count == 3) return 0.5;
+    return 0.3;
+}
+
+
+// ── Live Rank ─────────────────────────────────────────────────────────────
+function getLiveRank(PDO $pdo, int $user_id): ?int {
+    $stmt = $pdo->prepare("
+        SELECT ps.points, up.gender
         FROM player_stats ps
         JOIN user_profiles up ON ps.user_id = up.user_id
         WHERE ps.user_id = ?
@@ -69,56 +155,67 @@ function getLiveRank(PDO $pdo, int $user_id) {
 }
 
 
-function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
-    // 1. Fetch score and determine winner
+// ── Main Ranking Update ────────────────────────────────────────────────────
+/**
+ * Calculates and applies point changes after a competition score is approved.
+ * Friendly matches: returns empty array immediately (no points).
+ *
+ * Returns array of player update data for the API response.
+ */
+function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array {
+
+    // Guard: competition matches only
+    $matchStmt = $pdo->prepare("SELECT match_type FROM matches WHERE id = ?");
+    $matchStmt->execute([$match_id]);
+    $matchRow = $matchStmt->fetch();
+    if (!$matchRow || $matchRow['match_type'] !== 'competition') {
+        // Mark match completed, no points
+        $pdo->prepare("UPDATE matches SET status = 'completed' WHERE id = ?")->execute([$match_id]);
+        return [];
+    }
+
+    // ── 1. Fetch score ────────────────────────────────────────────────────
     $scoreStmt = $pdo->prepare("SELECT * FROM scores WHERE id = ?");
     $scoreStmt->execute([$score_id]);
     $score = $scoreStmt->fetch();
-
     if (!$score) throw new Exception("Score record not found.");
 
-    // Calculate sets won
-    $t1_sets = 0;
-    $t2_sets = 0;
-    $t1_games = 0;
-    $t2_games = 0;
-
+    // ── 2. Parse sets ─────────────────────────────────────────────────────
+    $sets = [];
+    $t1Sets = 0; $t2Sets = 0;
     for ($i = 1; $i <= 3; $i++) {
         $g1 = (int)$score["t1_set$i"];
         $g2 = (int)$score["t2_set$i"];
+        if ($g1 === 0 && $g2 === 0 && $i > 1) continue;
         if ($g1 === 0 && $g2 === 0) continue;
-        
-        $t1_games += $g1;
-        $t2_games += $g2;
-        if ($g1 > $g2) $t1_sets++;
-        else if ($g2 > $g1) $t2_sets++;
+        if ($g1 > $g2) $t1Sets++; else if ($g2 > $g1) $t2Sets++;
+        $sets[] = ['g1' => $g1, 'g2' => $g2];
     }
 
-    $winner_team = ($t1_sets > $t2_sets) ? 1 : 2;
-    $loser_team = ($winner_team === 1) ? 2 : 1;
-    $losing_games = ($winner_team === 1) ? $t2_games : $t1_games;
+    $winner_team = ($t1Sets > $t2Sets) ? 1 : 2;
+    $loser_team  = ($winner_team === 1) ? 2 : 1;
+    $wentToThree = count($sets) === 3;
 
-    // Heavy loss flag H
-    // H = 1 if the losing team won 2 or fewer total games across the entire match (per brief)
-    // e.g. 6-0, 6-1, 6-2 in a 1-set match → H=1; in multi-set: total loser games summed
-    $H = ($losing_games <= 2) ? 1 : 0;
+    // Build sets in winner/loser perspective for heavy modifier
+    $setsForHeavy = array_map(fn($s) => [
+        'w' => $winner_team === 1 ? $s['g1'] : $s['g2'],
+        'l' => $winner_team === 1 ? $s['g2'] : $s['g1'],
+    ], $sets);
 
-    // 2. Determine player composition
-    // Check if score has a custom composition
-    $composition = null;
+    $heavyMod = getHeavyModifier($setsForHeavy, $wentToThree);
+
+    // ── 3. Handle composition ─────────────────────────────────────────────
     if (!empty($score['composition_json'])) {
         $composition = json_decode($score['composition_json'], true);
-    }
-
-    if ($composition) {
-        // Update match_players to reflect actual teams from the submitted composition
-        foreach ($composition as $c) {
-            $upd = $pdo->prepare("UPDATE match_players SET team_no = ?, slot_no = ? WHERE match_id = ? AND user_id = ?");
-            $upd->execute([$c['team_no'], $c['slot_no'], $match_id, $c['user_id']]);
+        if ($composition) {
+            foreach ($composition as $c) {
+                $pdo->prepare("UPDATE match_players SET team_no = ?, slot_no = ? WHERE match_id = ? AND user_id = ?")
+                    ->execute([$c['team_no'], $c['slot_no'], $match_id, $c['user_id']]);
+            }
         }
     }
 
-    // 3. Fetch all 4 confirmed players
+    // ── 4. Fetch all 4 confirmed players ──────────────────────────────────
     $playersStmt = $pdo->prepare("
         SELECT mp.user_id, mp.team_no
         FROM match_players mp
@@ -129,192 +226,123 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id) {
 
     if (count($participants) < 4) throw new Exception("Match does not have 4 confirmed players.");
 
-    // Fetch or create stats for each participant
+    // Fetch stats
     $players = [];
     foreach ($participants as $part) {
         $psStmt = $pdo->prepare("SELECT * FROM player_stats WHERE user_id = ?");
         $psStmt->execute([$part['user_id']]);
         $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
-        
         if (!$ps) {
-            // Auto-create stats at starting points (50 per brief)
-            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 50)")->execute([$part['user_id']]);
+            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points) VALUES (?, 100)")->execute([$part['user_id']]);
             $psStmt->execute([$part['user_id']]);
             $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         }
-        
-        if ($ps) {
-            $ps['team_no'] = $part['team_no']; // Keep team_no from match_players
-            $players[] = $ps;
-        }
+        $ps['team_no'] = $part['team_no'];
+        $players[] = $ps;
     }
 
-    // Group players by team
-    $team1 = [];
-    $team2 = [];
-    foreach ($players as $p) {
-        if ($p['team_no'] == 1) $team1[] = $p;
-        else $team2[] = $p;
-    }
-
+    // Group by team
+    $team1 = array_values(array_filter($players, fn($p) => $p['team_no'] == 1));
+    $team2 = array_values(array_filter($players, fn($p) => $p['team_no'] == 2));
     if (count($team1) !== 2 || count($team2) !== 2) {
-         throw new Exception("Invalid team composition (Team 1: " . count($team1) . ", Team 2: " . count($team2) . ")");
+        throw new Exception("Invalid team composition.");
     }
 
-    // 4. Team-level values
-    $TA = (int)floor(($team1[0]['points'] + $team1[1]['points']) / 2);
-    $TB = (int)floor(($team2[0]['points'] + $team2[1]['points']) / 2);
-    $D = abs($TA - $TB);
+    // ── 5. Team averages & strength adjustment ────────────────────────────
+    $teamAvgA = (int)floor(($team1[0]['points'] + $team1[1]['points']) / 2);
+    $teamAvgB = (int)floor(($team2[0]['points'] + $team2[1]['points']) / 2);
+    $diff      = abs($teamAvgA - $teamAvgB);
+    $adj       = getStrengthAdj($diff);
 
-    // Match Factors
-    $MatchFactorWin = 100;
-    $MatchFactorLoss = 100;
+    // Which team is higher rated?
+    $higherTeam = ($teamAvgA >= $teamAvgB) ? 1 : 2;
+    $lowerWon   = ($winner_team !== $higherTeam); // upset?
 
-    $higher_rated_team = ($TA >= $TB) ? 1 : 2;
-
-    if ($winner_team !== $higher_rated_team) {
-        // Lower-rated team wins
-        $MatchFactorWin = min(250, 100 + 5 * $D);
-        $MatchFactorLoss = min(250, 100 + 5 * $D); // Higher-rated team loses
-    } else {
-        // Higher-rated team wins
-        $MatchFactorWin = max(60, 100 - 2 * $D);
-        $MatchFactorLoss = max(60, 100 - 2 * $D); // Lower-rated team loses
-    }
-
-    $HeavyWinFactor = 100 + 10 * $H;
-    $HeavyLossFactor = 100 + 25 * $H;
-
-    // 5. Loop through each player to calculate their individual Delta
+    // ── 6. Per-player delta ───────────────────────────────────────────────
     foreach ($players as &$p) {
         $isWinner = ($p['team_no'] == $winner_team);
-        
-        // Player stats
-        $WR = $p['win_rate'];
-        $ST = $p['streak'];
-        $M  = $p['matches_played'];
 
-        // WRFactor
-        $WRFactor = min(120, max(80, 100 + (50 - $WR)));
-
-        // StreakFactor
-        if ($isWinner) {
-            $StreakFactor = min(120, max(85, 100 - 4 * $ST));
+        // Strength adj direction
+        if ($lowerWon) {
+            $strengthAdj = $isWinner ? +$adj : -$adj;  // upset: winner gets bonus, loser penalised extra
         } else {
-            $StreakFactor = min(120, max(85, 100 + 4 * $ST));
+            $strengthAdj = $isWinner ? -$adj : +$adj;  // expected: winner gets less, loser loses less
         }
 
-        // NewFactor
-        $NewFactor = max(100, 220 - 6 * $M);
+        // Base + adj + heavy
+        $base    = $isWinner ? +4 : -4;
+        $heavy   = $isWinner ? +$heavyMod : -$heavyMod;
+        $subtotal = $base + $strengthAdj + $heavy;
 
-        // IntegrityFactor (Anti-farming)
-        $IntegrityFactor = calculateIntegrityFactor($pdo, $p['user_id'], $match_id);
+        // Factors
+        $newFactor    = getNewPlayerFactor($pdo, $p['user_id']);
+        $integrityFac = getIntegrityFactor($pdo, $p['user_id'], $match_id);
 
-        // Final Delta
-        if ($isWinner) {
-            $delta = (int)floor((8 * $MatchFactorWin * $HeavyWinFactor * $WRFactor * $StreakFactor * $NewFactor * $IntegrityFactor) / RANK_SCALE);
-            $p['new_points'] = $p['points'] + $delta;
-            $p['delta'] = $delta;
-            $p['won'] = true;
-        } else {
-            $delta = (int)floor((6 * $MatchFactorLoss * $HeavyLossFactor * $WRFactor * $StreakFactor * $NewFactor * $IntegrityFactor) / RANK_SCALE);
-            $p['new_points'] = $p['points'] - $delta;
-            $p['delta'] = -$delta;
-            $p['won'] = false;
+        // Skip if integrity too low
+        if ($integrityFac < 0.5) {
+            $p['delta']      = 0;
+            $p['new_points'] = $p['points'];
+            $p['won']        = $isWinner;
+            $p['skipped']    = true;
+            continue;
         }
-        
-        // Track current rank as previous before updating
-        $p['old_rank'] = getLiveRank($pdo, $p['user_id']);
+
+        $change = (int)round($subtotal * $newFactor * $integrityFac);
+        $change = max(-15, min(15, $change)); // clamp ±15
+        $newPts = max(0, $p['points'] + $change); // floor at 0
+
+        $p['delta']      = $change;
+        $p['new_points'] = $newPts;
+        $p['won']        = $isWinner;
+        $p['skipped']    = false;
+        $p['old_rank']   = getLiveRank($pdo, $p['user_id']);
     }
+    unset($p);
 
-
-    // 6. Update database for each player
+    // ── 7. Update DB ──────────────────────────────────────────────────────
     foreach ($players as $p) {
         $new_matches = $p['matches_played'] + 1;
-        $new_wins = $p['matches_won'] + ($p['won'] ? 1 : 0);
-        $new_losses = $p['matches_lost'] + ($p['won'] ? 0 : 1);
-        $new_win_rate = (int)floor(($new_wins * 100) / $new_matches);
-        
-        // Streak update
-        if ($p['won']) {
-            $new_streak = ($p['streak'] >= 0) ? ($p['streak'] + 1) : 1;
-        } else {
-            $new_streak = ($p['streak'] <= 0) ? ($p['streak'] - 1) : -1;
-        }
+        $new_wins    = $p['matches_won']  + ($p['won'] ? 1 : 0);
+        $new_losses  = $p['matches_lost'] + ($p['won'] ? 0 : 1);
+        $new_wr      = (int)floor(($new_wins * 100) / $new_matches);
+        $new_streak  = $p['won']
+            ? (($p['streak'] >= 0) ? $p['streak'] + 1 : 1)
+            : (($p['streak'] <= 0) ? $p['streak'] - 1 : -1);
 
-        $upd = $pdo->prepare("
-            UPDATE player_stats 
-            SET points = ?, 
-                matches_played = ?, 
-                matches_won = ?, 
-                matches_lost = ?, 
-                win_rate = ?, 
-                streak = ?,
-                points_this_week = points_this_week + ?,
-                previous_ranking = ?,
-                updated_at = NOW()
+        $pdo->prepare("
+            UPDATE player_stats
+            SET points            = ?,
+                matches_played    = ?,
+                matches_won       = ?,
+                matches_lost      = ?,
+                win_rate          = ?,
+                streak            = ?,
+                points_this_week  = points_this_week + ?,
+                previous_ranking  = ?,
+                updated_at        = NOW()
             WHERE user_id = ?
-        ");
-        $upd->execute([
+        ")->execute([
             $p['new_points'],
             $new_matches,
             $new_wins,
             $new_losses,
-            $new_win_rate,
+            $new_wr,
             $new_streak,
             $p['delta'],
-            $p['old_rank'],
-            $p['user_id']
+            $p['old_rank'] ?? null,
+            $p['user_id'],
         ]);
 
-        // Update highest ranking if reached a new peak
+        // Track highest ranking
         $newRank = getLiveRank($pdo, $p['user_id']);
-        if ($newRank && ($p['highest_ranking'] === null || $newRank < $p['highest_ranking'])) {
+        if ($newRank !== null && ($p['highest_ranking'] === null || $newRank < (int)$p['highest_ranking'])) {
             $pdo->prepare("UPDATE player_stats SET highest_ranking = ? WHERE user_id = ?")
                 ->execute([$newRank, $p['user_id']]);
         }
     }
 
-    // Mark match as completed
-    $mUpd = $pdo->prepare("UPDATE matches SET status = 'completed' WHERE id = ?");
-    $mUpd->execute([$match_id]);
+    // ── 8. Mark match completed ───────────────────────────────────────────
+    $pdo->prepare("UPDATE matches SET status = 'completed' WHERE id = ?")->execute([$match_id]);
 
     return $players;
-}
-
-function calculateIntegrityFactor(PDO $pdo, int $user_id, int $match_id): int {
-    // Fetch opponents for this user in this match
-    $stmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
-    $stmt->execute([$match_id, $user_id]);
-    $myTeam = $stmt->fetchColumn();
-    
-    $oppStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND team_no != ?");
-    $oppStmt->execute([$match_id, $myTeam]);
-    $opponents = $oppStmt->fetchAll(PDO::FETCH_COLUMN);
-
-    if (count($opponents) < 2) return 100;
-
-    // Count matches against these opponents in the last 30 days
-    $count = 0;
-    foreach ($opponents as $opp_id) {
-        $checkStmt = $pdo->prepare("
-            SELECT COUNT(DISTINCT m.id)
-            FROM matches m
-            JOIN match_players mp1 ON m.id = mp1.match_id
-            JOIN match_players mp2 ON m.id = mp2.match_id
-            WHERE m.status = 'completed'
-              AND m.id != ?
-              AND mp1.user_id = ?
-              AND mp2.user_id = ?
-              AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        ");
-        $checkStmt->execute([$match_id, $user_id, $opp_id]);
-        $count = max($count, (int)$checkStmt->fetchColumn());
-    }
-
-    // Brief requires: IntegrityFactor must always be between 10 and 100
-    if ($count < 2) return 100;
-    if ($count == 2) return 75; // 3rd time
-    if ($count == 3) return 50; // 4th time
-    return max(10, 25);          // 5th time or more (max(10,...) guard per brief)
 }

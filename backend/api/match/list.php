@@ -13,6 +13,11 @@ $uid  = $user['id'];
 
 $mode = $data['mode'] ?? 'mine'; // 'mine' or 'browse'
 
+// Fetch requesting player's points for eligibility labelling
+$myPtsStmt = $pdo->prepare("SELECT COALESCE(points, 100) AS points FROM player_stats WHERE user_id = ?");
+$myPtsStmt->execute([$uid]);
+$myPoints = (int)($myPtsStmt->fetchColumn() ?: 100);
+
 // Helper: get slot occupancy counts for a match
 function getMatchSlots(PDO $pdo, int $match_id): array {
     $s = $pdo->prepare("
@@ -201,6 +206,16 @@ foreach ($matches as $m) {
     $userIsRequester = ($wlRequest && (int)$wlRequest['requester_id'] === $uid && $wlRequest['request_status'] === 'pending');
     $userIsWaiting   = ($wlRequest && $wlRequest['request_status'] === 'approved');
 
+    $eligible_min = (int)($m['eligible_min'] ?? 0);
+    $eligible_max = (int)($m['eligible_max'] ?? 9999);
+    $playerEligible = ($myPoints >= $eligible_min && $myPoints <= $eligible_max);
+    $matchLabel = $playerEligible
+        ? ($m['match_type'] === 'competition' ? 'Eligible' : 'Friendly')
+        : 'Not Eligible';
+
+    // Sort key: 1 = eligible competition, 2 = eligible friendly, 3 = not eligible
+    $sortKey = !$playerEligible ? 3 : ($m['match_type'] === 'competition' ? 1 : 2);
+
     $result[] = [
         'id'                   => $mid,
         'match_code'           => $m['match_code'],
@@ -211,6 +226,11 @@ foreach ($matches as $m) {
         'created_with_partner' => (bool)$m['created_with_partner'],
         'gender_type'          => $m['gender_type'],
         'match_type'           => $m['match_type'],
+        'eligible_min'         => $eligible_min,
+        'eligible_max'         => $eligible_max,
+        'player_eligible'      => $playerEligible,
+        'match_label'          => $matchLabel,
+        'sort_key'             => $sortKey,
         'creator_name'         => trim($m['creator_first'] . ' ' . $m['creator_last']),
         'creator_nickname'     => $m['creator_nickname'] ?? null,
         'creator_gender'       => $m['creator_gender'] ?? 'male',
@@ -225,6 +245,11 @@ foreach ($matches as $m) {
         'user_is_waiting'      => $userIsWaiting,
         'waiting_list_id'      => $wlRequest ? (int)$wlRequest['id'] : null,
     ];
+}
+
+// Sort browse results: eligible competition → friendly → not eligible
+if ($mode === 'play_upcoming') {
+    usort($result, fn($a, $b) => $a['sort_key'] <=> $b['sort_key'] ?: strtotime($a['match_datetime']) <=> strtotime($b['match_datetime']));
 }
 
 jsonResponse(true, 'Matches loaded.', ['matches' => $result, 'mode' => $mode]);
