@@ -88,4 +88,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Rules Page: Created a premium, bilingual informational page summarizing competition rules, point formulas, and confirmation flows.
 - Navigation: Integrated Rules page into the router and updated ranking page footers to link to the new centralized documentation.
 
+62079ac - 2026-04-30 05:25:00 +0300
+- Ranking UI: Increased vertical spacing between "Official Leaderboard" tag and "Players Ranking" title on mobile to improve legibility.
+
 
