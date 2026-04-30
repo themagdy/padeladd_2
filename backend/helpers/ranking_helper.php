@@ -135,7 +135,7 @@ function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float {
 // ── Live Rank ─────────────────────────────────────────────────────────────
 function getLiveRank(PDO $pdo, int $user_id): ?int {
     $stmt = $pdo->prepare("
-        SELECT ps.points, up.gender
+        SELECT ps.rank_points, up.gender
         FROM player_stats ps
         JOIN user_profiles up ON ps.user_id = up.user_id
         WHERE ps.user_id = ?
@@ -144,13 +144,14 @@ function getLiveRank(PDO $pdo, int $user_id): ?int {
     $p = $stmt->fetch();
     if (!$p) return null;
 
+    // Rank = position among players of the same gender by rank_points
     $rankStmt = $pdo->prepare("
         SELECT COUNT(*) + 1
         FROM player_stats ps
         JOIN user_profiles up ON ps.user_id = up.user_id
-        WHERE up.gender = ? AND ps.points > ?
+        WHERE up.gender = ? AND ps.rank_points > ?
     ");
-    $rankStmt->execute([$p['gender'], $p['points']]);
+    $rankStmt->execute([$p['gender'], $p['rank_points']]);
     return (int)$rankStmt->fetchColumn();
 }
 
@@ -312,6 +313,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
         $pdo->prepare("
             UPDATE player_stats
             SET points            = ?,
+                rank_points       = rank_points + ?,
                 matches_played    = ?,
                 matches_won       = ?,
                 matches_lost      = ?,
@@ -323,6 +325,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
             WHERE user_id = ?
         ")->execute([
             $p['new_points'],
+            $p['delta'],         // rank_points += delta (can be negative, no floor for rank_points)
             $new_matches,
             $new_wins,
             $new_losses,

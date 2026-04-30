@@ -39,12 +39,12 @@ if (!$m) {
     jsonResponse(false, 'Match not found.', null, 404);
 }
 
-// Slot details
+// Slot details — show rank_points (competition merit) not eligibility points
 $slotStmt = $pdo->prepare("
     SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
            u.first_name, u.last_name,
            up.player_code, up.profile_image, up.nickname,
-           ps.points, ps.matches_played
+           COALESCE(ps.rank_points, 0) AS points, ps.matches_played
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id
     LEFT JOIN user_profiles up ON mp.user_id = up.user_id
