@@ -102,7 +102,7 @@ ed705eb - 2026-04-30 05:22:00 +0300
 - Ranking UI: Refined Team 2 styling to use white labels and capitalized "EMPTY" status for better visual consistency.
 
 0a023f3 - 2026-04-30 06:23:00 +0300
-- Match URLs: Standardized all match links to use the vanity `/matches/open/:matchCode` format (e.g., /matches/open/M-D587) instead of numeric IDs.
-- Notifications: Updated notification navigation to prioritize match codes for consistent user experience.
+- Match URLs: Simplified match links to the clean `/matches/:matchCode` format (e.g., /matches/M-D587) by removing redundant 'open' and 'view' segments.
+- Notifications: Updated notification navigation to follow the new simplified URL structure.
 
 
