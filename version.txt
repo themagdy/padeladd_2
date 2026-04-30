@@ -80,4 +80,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Level Assignment: set_level.php now sets correct starting points on first level selection. Won't overwrite earned points after competition matches.
 - DB Migration: Added eligible_min, eligible_max to matches; reminder_sent to scores; backfilled all existing matches.
 
+ea4df74 - 2026-04-30 04:49:00 +0300
+- Match Detail UI: Hidden the withdrawal policy warning message for past, completed, and cancelled matches to keep the focus on current game information.
+
 
