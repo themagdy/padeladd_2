@@ -4163,7 +4163,7 @@ const NotificationsController = {
         this.close();
 
         // 3. Navigate based on type
-        let navPath = n.match_code ? `/matches/${n.match_code}` : `/matches/${n.reference_id}`;
+        let navPath = n.match_code ? `/matches/${n.match_code}` : `/matches/view/${n.reference_id}`;
         
         switch (n.type) {
             case 'match_joined':
