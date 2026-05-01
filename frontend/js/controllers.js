@@ -1825,7 +1825,7 @@ const MatchesController = {
             return `
             <div class="player-mini-slot">
               <div class="player-avatar-mini">
-                ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                ${(s.profile_image_thumb || s.profile_image) ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image_thumb || s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
               </div>
               <div class="player-name-mini" title="${rawName}">
                    ${displayName}
@@ -2199,7 +2199,7 @@ const MatchesController = {
 
                 el.innerHTML   = `
                     <div class="slot-avatar">
-                        ${s.profile_image ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        ${(s.profile_image_thumb || s.profile_image) ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image_thumb || s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">
@@ -2424,8 +2424,8 @@ const MatchesController = {
                     const reqName = pending_for_me.req_nickname || pending_for_me.req_first;
                     const reqFullName = `${pending_for_me.req_first} ${pending_for_me.req_last}`.trim();
                     const reqInitial = (pending_for_me.req_first?.[0] || '?').toUpperCase();
-                    const reqAvatar = pending_for_me.req_profile 
-                        ? `<img src="${CONFIG.ASSET_BASE}/${pending_for_me.req_profile}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+                    const reqAvatar = (pending_for_me.req_profile_thumb || pending_for_me.req_profile) 
+                        ? `<img src="${CONFIG.ASSET_BASE}/${pending_for_me.req_profile_thumb || pending_for_me.req_profile}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-secondary);border-radius:50%;font-weight:700;font-size:16px;">${reqInitial}</div>`;
 
                     actionArea.innerHTML = `
@@ -3685,8 +3685,9 @@ const ChatController = {
                         
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
-                        const avatar = msg.profile_image
-                            ? '<img src="' + CONFIG.ASSET_BASE + '/' + msg.profile_image + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
+                        const thumb = msg.profile_image_thumb || msg.profile_image;
+                        const avatar = thumb
+                            ? '<img src="' + CONFIG.ASSET_BASE + '/' + thumb + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
                             : (name[0] || '?').toUpperCase();
 
                         group.innerHTML = `
@@ -3717,8 +3718,9 @@ const ChatController = {
                     el.style.cssText = 'background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border:1px solid rgba(16,185,129,0.2); border-radius:16px; padding:14px; margin-bottom:12px; width:100%; display:flex; flex-direction:column; gap:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);';
                     
                     const initials = ((pr.first_name?.[0] || '') + (pr.last_name?.[0] || '')).toUpperCase() || (pr.nickname?.[0] || '?').toUpperCase();
-                    const avatarHtml = pr.profile_image 
-                        ? `<img src="${CONFIG.ASSET_BASE}/${pr.profile_image}" style="width:32px; height:32px; object-fit:cover; border-radius:50%; flex-shrink:0; border:2px solid var(--c-bg-card);">`
+                    const thumb = pr.profile_image_thumb || pr.profile_image;
+                    const avatarHtml = thumb 
+                        ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:32px; height:32px; object-fit:cover; border-radius:50%; flex-shrink:0; border:2px solid var(--c-bg-card);">`
                         : `<div style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:12px; font-weight:800; flex-shrink:0; border:2px solid var(--c-bg-card);">${initials}</div>`;
                     const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(247,148,29,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
 
@@ -4790,8 +4792,9 @@ const RankingController = {
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const fallbackHtml = `<div style='width:40px; height:40px; border-radius:50%; border:2px solid var(--c-border); flex-shrink:0; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff;'>${initials}</div>`;
             
-            const avatarHtml = r.profile_image 
-                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
+            const thumb = r.profile_image_thumb || r.profile_image;
+            const avatarHtml = thumb 
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
                 : fallbackHtml;
             
             html += `

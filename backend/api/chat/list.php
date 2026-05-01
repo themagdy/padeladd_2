@@ -72,7 +72,7 @@ if (!$isPast && !$isCancelled) {
 $query = "
     SELECT cm.id, cm.match_id, cm.user_id, cm.message_text, cm.created_at,
            u.first_name, u.last_name,
-           up.nickname, up.player_code, up.profile_image
+           up.nickname, up.player_code, up.profile_image, up.profile_image_thumb
     FROM chat_messages cm
     JOIN users u ON cm.user_id = u.id
     LEFT JOIN user_profiles up ON cm.user_id = up.user_id
@@ -107,7 +107,7 @@ $pendingPhoneRequests = $prStmt->fetchAll(PDO::FETCH_ASSOC);
 $outStmt = $pdo->prepare("
     SELECT pr.id, pr.target_user_id, pr.status, pr.created_at, pr.updated_at,
            u.first_name, u.last_name, u.mobile as phone,
-           up.nickname, up.player_code, up.profile_image
+           up.nickname, up.player_code, up.profile_image, up.profile_image_thumb
     FROM phone_requests pr
     JOIN users u ON pr.target_user_id = u.id
     LEFT JOIN user_profiles up ON pr.target_user_id = up.user_id
