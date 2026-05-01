@@ -1926,7 +1926,7 @@ const MatchesController = {
         }
 
         const isNotEligible = m.player_eligible === false && MatchesController._currentTab === 'play_upcoming';
-        const dimEffect = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8);' : '';
+        const dimEffect = isNotEligible ? 'opacity: 0.2; filter: grayscale(1); pointer-events:none;' : '';
         
         let notEligibleTag = '';
         if (isNotEligible) {
