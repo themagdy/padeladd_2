@@ -3,8 +3,8 @@
  * One-time migration script to generate thumbnails for all existing profile images.
  * Access this via your browser (e.g., padeladd.com/backend/api/profile/migrate_thumbnails.php)
  */
-require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../../utils/helpers.php';
+require_once __DIR__ . '/../../core/db.php';
+require_once __DIR__ . '/../../helpers/response.php';
 
 $pdo = getDB();
 
