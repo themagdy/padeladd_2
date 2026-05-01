@@ -1926,33 +1926,37 @@ const MatchesController = {
         }
 
         const isNotEligible = m.player_eligible === false && MatchesController._currentTab === 'play_upcoming';
-        const cardStyle = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8); cursor: default;' : 'cursor: pointer;';
+        const dimEffect = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8);' : '';
         
+        let notEligibleTag = '';
         if (isNotEligible) {
-            typeBadges = `<span style="display:inline-block; font-size:10px; font-weight:800; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; margin-right:4px; text-transform:uppercase; letter-spacing:0.5px;">🚫 Not Eligible to Join</span>` + typeBadges;
+            notEligibleTag = `<div style="margin-bottom:12px;"><span style="display:inline-block; font-size:10px; font-weight:800; background:var(--c-red); color:#fff; box-shadow: 0 4px 10px rgba(255,0,0,0.2); padding:4px 10px; border-radius:6px; text-transform:uppercase; letter-spacing:0.5px;">🚫 Not Eligible to Join</span></div>`;
         }
 
         // Default template for upcoming/incomplete/etc.
         return `
-        <div class="match-card-modern" onclick="${isNotEligible ? '' : `Router.navigate('/matches/${matchCode}')`}" id="mc-${m.id}" style="${cardStyle}">
-          <div class="match-title-row">
-            <div style="min-width:0; flex:1;">
-               <div>
-                  <h3 class="match-venue-name" style="padding-right: 80px;">
-                    ${mainTitle} ${subTitle ? `<span style="margin: 0 4px; opacity: 0.3; font-weight: 300;">|</span><span class="match-venue-sub" style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); opacity: 0.8;">${subTitle}</span>` : ''}
-                  </h3>
-                  <div class="badge-user-in-wrapper">${myBadge}</div>
-               </div>
-               <div class="match-meta-row">
-                  ${m.court_name ? `<span class="court-label-white">Court: ${m.court_name}</span>` : ''}
-                  <span>🗓 ${dateStr}</span>
-                  <span>⏰ ${timeStr}</span>
-               </div>
-               ${typeBadges ? `<div style="margin-top:8px;">${typeBadges}</div>` : ''}
-            </div>
-            <div style="text-align:right; flex-shrink:0;">
-               <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
-               <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
+        <div class="match-card-modern" onclick="${isNotEligible ? '' : `Router.navigate('/matches/${matchCode}')`}" id="mc-${m.id}" style="${isNotEligible ? 'cursor:default;' : 'cursor:pointer;'}">
+          ${notEligibleTag}
+          <div style="${dimEffect}">
+            <div class="match-title-row">
+              <div style="min-width:0; flex:1;">
+                 <div>
+                    <h3 class="match-venue-name" style="padding-right: 80px;">
+                      ${mainTitle} ${subTitle ? `<span style="margin: 0 4px; opacity: 0.3; font-weight: 300;">|</span><span class="match-venue-sub" style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); opacity: 0.8;">${subTitle}</span>` : ''}
+                    </h3>
+                    <div class="badge-user-in-wrapper">${myBadge}</div>
+                 </div>
+                 <div class="match-meta-row">
+                    ${m.court_name ? `<span class="court-label-white">Court: ${m.court_name}</span>` : ''}
+                    <span>🗓 ${dateStr}</span>
+                    <span>⏰ ${timeStr}</span>
+                 </div>
+                 ${typeBadges ? `<div style="margin-top:8px;">${typeBadges}</div>` : ''}
+              </div>
+              <div style="text-align:right; flex-shrink:0;">
+                 <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
+                 <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
+              </div>
             </div>
           </div>
 
