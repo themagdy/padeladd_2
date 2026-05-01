@@ -397,18 +397,23 @@ const DashboardController = {
     _currentMatchTab: 'completed',
     _currentRankTab: 'male',
     _currentUser: null,
+    _cache: {}, // Stores user profile and recent matches
 
     init: async function(isSilent = false) {
         if (!isSilent) await UI.syncNav();
         
-        // Use Promise.all for initial data if UI.syncNav didn't already populate it (or just always for freshness)
+        // Use cache for instant render if available
+        if (!isSilent && DashboardController._cache.profile) {
+            DashboardController.applyData(DashboardController._cache.profile, DashboardController._cache.matches);
+        }
+
+        // Use Promise.all for initial data
         const [res, matchRes] = await Promise.all([
             API.post('/profile/get', {}),
             API.post('/matches/recent', { limit: 10 })
         ]);
 
         if (!res || !res.success) {
-            // Authentication state mismatch or server error
             if (!res || res.message === 'Unauthorized') {
                 Auth.clearAll();
                 Router.navigate('/login');
@@ -416,14 +421,35 @@ const DashboardController = {
             return;
         }
 
-        const { user, profile, stats } = res.data;
+        // Compare with cache
+        const profileJson = JSON.stringify(res.data);
+        const matchesJson = matchRes?.success ? JSON.stringify(matchRes.data.matches) : '';
+        
+        if (isSilent && DashboardController._cache.profile_json === profileJson && DashboardController._cache.matches_json === matchesJson) {
+            return;
+        }
+
+        DashboardController._cache.profile = res.data;
+        DashboardController._cache.profile_json = profileJson;
+        if (matchRes?.success) {
+            DashboardController._cache.matches = matchRes.data.matches;
+            DashboardController._cache.matches_json = matchesJson;
+        }
+
+        DashboardController.applyData(res.data, matchRes?.success ? matchRes.data.matches : []);
+
+        // Start polling if this is the first load
+        if (!isSilent && typeof PollManager !== 'undefined') {
+            PollManager.start('dashboard', () => DashboardController.init(true), 10000);
+        }
+    },
+
+    applyData: function(profileData, matchData) {
+        const { user, profile, stats } = profileData;
         DashboardController._currentUser = user;
         
-        // Render upcoming count if matchData arrived early
-        if (matchRes && matchRes.success) {
-           DashboardController._allMatches = matchRes.data.matches;
-           const upcomingCount = matchRes.data.matches.filter(m => m.status === 'upcoming').length;
-
+        if (matchData) {
+            DashboardController._allMatches = matchData;
         }
 
         // Welcome name
@@ -433,18 +459,8 @@ const DashboardController = {
         // Stats
         StatsUI.update(stats, 'dash');
 
-        // Wait to showcase placeholder loaders for lists
-        await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
-
         DashboardController.renderMatches();
-
-        // Ranking (placeholder — real API in Phase 8)
         DashboardController.renderRanking();
-
-        // Start polling if this is the first load
-        if (!isSilent && typeof PollManager !== 'undefined') {
-            PollManager.start('dashboard', () => DashboardController.init(true), 10000);
-        }
     },
 
     switchRankTab: function(gender) {
@@ -1139,13 +1155,13 @@ const ProfileController = {
 //  MATCHES CONTROLLER  (Phase 3)
 // -------------------------------------------------------
 const MatchesController = {
-
-    _currentTab: 'play',
     _lastMode: 'play',
-    _currentFilter: 'all',       // all, joined, waiting, on_hold
-    _playFilterType: 'competition',      // friendly, competition
-    _playFilterGender: 'same_gender',    // open, same_gender
-    _currentMatchId: null,
+    _currentTab: 'play_upcoming',
+    _playFilterType: 'all',
+    _playFilterGender: 'all',
+    _cache: {}, // Stores lists per tab/filters
+    _lastMatchId: null,
+    _lastMatchState: null,
     _partnerEnabled: false,
 
     // ── Create ──────────────────────────────────────────
@@ -1615,8 +1631,19 @@ const MatchesController = {
     loadList: async function(isSilent = false) {
         const skeleton = document.getElementById('ml-skeleton');
         const list     = document.getElementById('ml-list');
-        if (!isSilent && skeleton) skeleton.style.display = 'block';
-        if (!isSilent && list)     list.style.display = 'none';
+        
+        const cacheKey = `${MatchesController._currentTab}_${MatchesController._playFilterType}_${MatchesController._playFilterGender}`;
+        const hasCache = MatchesController._cache[cacheKey];
+
+        if (!isSilent && !hasCache && skeleton) skeleton.style.display = 'block';
+        if (!isSilent && !hasCache && list)     list.style.display = 'none';
+
+        // If we have cache, render it immediately while fetching
+        if (!isSilent && hasCache) {
+            MatchesController.renderList(hasCache);
+            if (skeleton) skeleton.style.display = 'none';
+            if (list)     list.style.display = 'block';
+        }
 
         let endpoint = '/match/list';
         let payload  = { 
@@ -1648,11 +1675,32 @@ const MatchesController = {
         if (!isSilent && list)     list.style.display = 'block';
 
         if (!res || !res.success) {
-            list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load matches</h3><p>${res ? res.message : 'Network error'}</p></div>`;
+            if (!isSilent && !hasCache) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load matches</h3><p>${res ? res.message : 'Network error'}</p></div>`;
+            }
             return;
         }
 
-        let matches = res.data.matches;
+        // Compare with cache to prevent unnecessary re-renders
+        const responseJson = JSON.stringify(res.data.matches);
+        if (isSilent && MatchesController._cache[cacheKey + '_json'] === responseJson) {
+            return;
+        }
+
+        MatchesController._cache[cacheKey] = res.data.matches;
+        MatchesController._cache[cacheKey + '_json'] = responseJson;
+
+        if (!isSilent && skeleton) skeleton.style.display = 'none';
+        if (!isSilent && list)     list.style.display = 'block';
+
+        MatchesController.renderList(res.data.matches);
+    },
+
+    renderList: function(matches) {
+        const list = document.getElementById('ml-list');
+        if (!list) return;
+
+        let endpoint = MatchesController._currentTab === 'play_past' ? '/matches/user' : '/match/list';
 
 
         // If we used /matches/user, filter for completed only
@@ -4624,6 +4672,7 @@ const ScoringController = {
 const RankingController = {
     _currentTab: 'male',
     _fullList: [],
+    _cache: {}, // Stores ranking data per gender
 
     init: async function() {
         await UI.syncNav();
@@ -4644,21 +4693,42 @@ const RankingController = {
         this.loadData();
     },
 
-    loadData: async function() {
+    loadData: async function(isSilent = false) {
         const listEl = document.getElementById('ranking-full-list');
         if (!listEl) return;
 
-        // Show skeletons while loading
-        listEl.innerHTML = '<div class="rank-row-skeleton"></div>'.repeat(8);
+        const cacheKey = this._currentTab;
+        const hasCache = this._cache[cacheKey];
+
+        // Only show skeletons if we have no cache
+        if (!isSilent && !hasCache) {
+            listEl.innerHTML = '<div class="rank-row-skeleton"></div>'.repeat(8);
+        }
+
+        // If we have cache, render it immediately
+        if (!isSilent && hasCache) {
+            this._fullList = hasCache;
+            this.render(hasCache);
+        }
 
         // Fetch larger list for the full page (limit 100)
         const res = await API.post('/ranking/list', { gender: this._currentTab, limit: 100 });
         
         if (!res || !res.success) {
-            listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
+            if (!isSilent && !hasCache) {
+                listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
+            }
             return;
         }
 
+        // Compare with cache to prevent redundant render
+        const responseJson = JSON.stringify(res.data.ranking);
+        if (isSilent && this._cache[cacheKey + '_json'] === responseJson) {
+            return;
+        }
+
+        this._cache[cacheKey] = res.data.ranking;
+        this._cache[cacheKey + '_json'] = responseJson;
         this._fullList = res.data.ranking;
         this.render(this._fullList);
     },
