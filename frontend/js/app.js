@@ -354,4 +354,18 @@ document.addEventListener('DOMContentLoaded', () => {
         StatusBar.setBackgroundColor({ color: '#171C26' });
         StatusBar.setStyle({ style: 'DARK' });
     }
+
+    // Android Physical Back Button Handler
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+        const App = window.Capacitor.Plugins.App;
+        App.addListener('backButton', () => {
+            // If we have history depth, go back
+            if (Router.navDepth > 0) {
+                Router.back();
+            } else {
+                // Otherwise exit the app if on a landing page
+                App.exitApp();
+            }
+        });
+    }
 });
