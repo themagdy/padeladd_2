@@ -71,8 +71,8 @@ $slots = $slotStmt->fetchAll(PDO::FETCH_ASSOC);
 // Waiting list
 $wlStmt = $pdo->prepare("
     SELECT wl.id, wl.request_status, wl.created_at,
-           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile,
-           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile,
+           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile, upr.profile_image_thumb AS req_profile_thumb,
+           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile, upp.profile_image_thumb AS par_profile_thumb,
            wl.requester_id, wl.partner_id
     FROM waiting_list wl
     JOIN users ur  ON wl.requester_id = ur.id
