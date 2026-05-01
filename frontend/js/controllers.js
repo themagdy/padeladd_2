@@ -59,8 +59,9 @@ const UI = {
         // Nav avatar
         const av = document.getElementById('nav-avatar');
         if (av) {
-            if (profile && profile.profile_image) {
-                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}">`;
+            const thumb = profile.profile_image_thumb || profile.profile_image;
+            if (profile && thumb) {
+                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${thumb}">`;
                 av.style.background = 'none';
             } else {
                 const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
