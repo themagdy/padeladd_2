@@ -43,7 +43,7 @@ if ($mode === 'play_upcoming') {
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         WHERE m.status IN ('open', 'full')
-          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 6 HOUR)
+          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
     ";
 
     $params = [];
@@ -84,7 +84,7 @@ if ($mode === 'play_upcoming') {
             SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
         )
         AND m.status IN ('open', 'full', 'on_hold')
-        AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 6 HOUR)
+        AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
         ORDER BY m.match_datetime ASC
         LIMIT 50
     ");
@@ -116,7 +116,7 @@ if ($mode === 'play_upcoming') {
         AND (
             (m.status = 'cancelled') 
             OR 
-            (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 6 HOUR) AND m.id NOT IN (SELECT match_id FROM scores))
+            (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 2 HOUR) AND m.id NOT IN (SELECT match_id FROM scores))
         )
         ORDER BY m.match_datetime DESC
         LIMIT 50
