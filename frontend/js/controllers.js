@@ -1925,9 +1925,16 @@ const MatchesController = {
             `;
         }
 
+        const isNotEligible = m.player_eligible === false && MatchesController._currentTab === 'play_upcoming';
+        const cardStyle = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8); cursor: default;' : 'cursor: pointer;';
+        
+        if (isNotEligible) {
+            typeBadges = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🚫 Not Eligible</span>` + typeBadges;
+        }
+
         // Default template for upcoming/incomplete/etc.
         return `
-        <div class="match-card-modern" onclick="Router.navigate('/matches/${matchCode}')" id="mc-${m.id}">
+        <div class="match-card-modern" onclick="${isNotEligible ? '' : `Router.navigate('/matches/${matchCode}')`}" id="mc-${m.id}" style="${cardStyle}">
           <div class="match-title-row">
             <div style="min-width:0; flex:1;">
                <div>
