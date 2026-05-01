@@ -2091,8 +2091,8 @@ const MatchesController = {
         const withdrawalWarning = document.querySelector('.mv-withdrawal-warning');
         if (withdrawalWarning) {
             const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
-            const isUserInMatch = playerIds.includes(Auth.getUserId());
-            withdrawalWarning.style.display = (isMatchPast || !isUserInMatch) ? 'none' : 'flex';
+            const isNotEligible = player_eligible === false;
+            withdrawalWarning.style.display = (isMatchPast || isNotEligible) ? 'none' : 'flex';
         }
 
         const statusBadgeContainer = document.getElementById('mv-status-badge');
