@@ -133,9 +133,16 @@ const Router = {
         const appDiv = document.getElementById('app-content');
         if (!appDiv) return;
 
-        // Display loading state using global loader
+        // Normalize path for cache check
+        let nPath = path;
+        if (!nPath.startsWith('/')) nPath = '/' + nPath;
+
+        // Skip global loader for main tabs to prevent flickering (they handle their own skeletons/cache)
+        const mainTabs = ['/dashboard', '/matches', '/matches/my', '/ranking', '/profile/view'];
+        const isMainTab = mainTabs.some(tab => nPath.startsWith(tab));
+
         const loader = document.getElementById('global-loader');
-        if (loader) loader.style.display = 'flex';
+        if (loader && !isMainTab) loader.style.display = 'flex';
         
         // Global Protection: Redirect to login if not authenticated and trying to access private route
         const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
