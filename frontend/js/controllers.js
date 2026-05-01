@@ -1929,7 +1929,7 @@ const MatchesController = {
         const cardStyle = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8); cursor: default;' : 'cursor: pointer;';
         
         if (isNotEligible) {
-            typeBadges = `<span style="display:inline-block; font-size:10px; font-weight:800; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; margin-right:4px; text-transform:uppercase; letter-spacing:0.5px;">🚫 Ineligible to Join</span>` + typeBadges;
+            typeBadges = `<span style="display:inline-block; font-size:10px; font-weight:800; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; margin-right:4px; text-transform:uppercase; letter-spacing:0.5px;">🚫 Not Eligible to Join</span>` + typeBadges;
         }
 
         // Default template for upcoming/incomplete/etc.
