@@ -118,6 +118,7 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Performance: Optimized backend match list to filter out old matches after 2 hours.
 - Mobile: Handled physical Android back button to navigate back instead of closing app.
 - UX: Refined loader logic to show global loader on detail pages while keeping main tabs instant.
+- UI: Finalized match list header stabilization for ultra-smooth loading.
 - UI: Stabilized match list header to prevent layout jump on mobile.
 - Mobile: Locked app orientation to portrait mode only.
 - Mobile: Scaled down app icon foreground by 30% for better framing.
