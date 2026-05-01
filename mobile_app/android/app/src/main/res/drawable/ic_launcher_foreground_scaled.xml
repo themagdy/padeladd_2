@@ -3,10 +3,6 @@
     <item
         android:drawable="@mipmap/ic_launcher_foreground"
         android:gravity="center"
-        android:width="60dp"
-        android:height="60dp"
-        android:top="20dp"
-        android:bottom="20dp"
-        android:left="20dp"
-        android:right="20dp" />
+        android:width="54dp"
+        android:height="54dp" />
 </layer-list>
