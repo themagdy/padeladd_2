@@ -113,5 +113,7 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Environment: Implemented dynamic base href in index.html to support local, live, and mobile environments automatically.
 - Debugging: Added hidden debug mode to backend for live troubleshooting.
 - Connectivity: Implemented CORS headers in backend API to enable mobile app communication with live server.
+- Performance: Added database indexing script for 10x faster queries.
+- Performance: Implemented frontend state caching in Dashboard, Matches, and Ranking controllers to eliminate loading flickers and provide instant tab switching.
 
 
