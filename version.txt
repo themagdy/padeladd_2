@@ -118,5 +118,7 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Performance: Optimized backend match list to filter out old matches after 2 hours.
 - Mobile: Handled physical Android back button to navigate back instead of closing app.
 - UX: Refined loader logic to show global loader on detail pages while keeping main tabs instant.
+- UX: Enabled viewing of ineligible matches while hiding Join buttons inside for better clarity.
+- Security: Added server-side eligibility checks to match details API.
 
 
