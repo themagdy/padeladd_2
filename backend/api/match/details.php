@@ -56,7 +56,7 @@ if (!$m) {
 $slotStmt = $pdo->prepare("
     SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
            u.first_name, u.last_name,
-           up.player_code, up.profile_image, up.nickname,
+           up.player_code, up.profile_image, up.profile_image_thumb, up.nickname,
            COALESCE(ps.rank_points, 0) AS points, ps.matches_played
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id

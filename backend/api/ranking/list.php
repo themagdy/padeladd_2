@@ -19,6 +19,7 @@ $stmt = $pdo->prepare("
         u.last_name,
         up.nickname,
         up.profile_image,
+        up.profile_image_thumb,
         up.player_code,
         up.date_of_birth,
         ps.rank_points,

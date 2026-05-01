@@ -147,7 +147,7 @@ $matchIdsStr = implode(',', $matchIds);
 // 1. Bulk fetch ALL slots for ALL matches in the list
 $slotsStmt = $pdo->prepare("
     SELECT mp.match_id, mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.playing_side, mp.user_id,
-           u.first_name, u.last_name, up.player_code, up.profile_image, up.nickname
+           u.first_name, u.last_name, up.player_code, up.profile_image, up.profile_image_thumb, up.nickname
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id
     LEFT JOIN user_profiles up ON mp.user_id = up.user_id

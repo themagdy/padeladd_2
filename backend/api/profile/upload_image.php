@@ -18,95 +18,96 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
 
-// Generate unique filename
+// Generate unique filenames
 $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-$filename = $user['id'] . '_' . time() . '.' . $ext;
+$baseName = $user['id'] . '_' . time();
+$filename = $baseName . '.' . $ext;
+$thumbFilename = $baseName . '_thumb.' . $ext;
 $targetPath = $uploadDir . $filename;
+$thumbPath = $uploadDir . $thumbFilename;
 
-// Process Image (Resize to 700px max)
+// Process Image
 $image = null;
-$resizeSupported = true;
+if ($file['type'] === 'image/jpeg') $image = @imagecreatefromjpeg($file['tmp_name']);
+elseif ($file['type'] === 'image/png') $image = @imagecreatefrompng($file['tmp_name']);
+elseif ($file['type'] === 'image/webp') $image = @imagecreatefromwebp($file['tmp_name']);
 
-if ($file['type'] === 'image/jpeg') {
-    if (function_exists('imagecreatefromjpeg')) $image = imagecreatefromjpeg($file['tmp_name']);
-    else $resizeSupported = false;
-} elseif ($file['type'] === 'image/png') {
-    if (function_exists('imagecreatefrompng')) $image = imagecreatefrompng($file['tmp_name']);
-    else $resizeSupported = false;
-} elseif ($file['type'] === 'image/webp') {
-    if (function_exists('imagecreatefromwebp')) $image = imagecreatefromwebp($file['tmp_name']);
-    else $resizeSupported = false;
-}
-
-if (!$resizeSupported || !$image) {
-    // If GD is missing or failed, just move the file without resizing
-    if (isset($image)) imagedestroy($image);
+if (!$image) {
+    // If GD failed, fallback to basic move
     if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
         jsonResponse(false, 'Failed to save uploaded file.');
     }
+    $thumbFilename = null; // No thumbnail generated
 } else {
-    // We have an image and GD is supported, continue with resizing
     $width = imagesx($image);
     $height = imagesy($image);
-    $maxSize = 700;
-    
-    if ($width > $maxSize || $height > $maxSize) {
-        if ($width > $height) {
-            $newWidth = $maxSize;
-            $newHeight = intval($height * ($maxSize / $width));
+
+    // Function to resize and save
+    function resizeAndSave($image, $path, $type, $targetSize, $origW, $origH) {
+        if ($origW > $targetSize || $origH > $targetSize) {
+            if ($origW > $origH) {
+                $newW = $targetSize;
+                $newH = intval($origH * ($targetSize / $origW));
+            } else {
+                $newH = $targetSize;
+                $newW = intval($origW * ($targetSize / $origH));
+            }
         } else {
-            $newHeight = $maxSize;
-            $newWidth = intval($width * ($maxSize / $height));
+            $newW = $origW;
+            $newH = $origH;
         }
-        
-        $newImage = imagecreatetruecolor($newWidth, $newHeight);
-        
-        // Preserve transparency for PNG/WEBP
-        if ($file['type'] === 'image/png' || $file['type'] === 'image/webp') {
-            imagealphablending($newImage, false);
-            imagesavealpha($newImage, true);
+
+        $newImg = imagecreatetruecolor($newW, $newH);
+        if ($type === 'image/png' || $type === 'image/webp') {
+            imagealphablending($newImg, false);
+            imagesavealpha($newImg, true);
         }
+        imagecopyresampled($newImg, $image, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
         
-        imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-        
-        if ($file['type'] === 'image/jpeg') imagejpeg($newImage, $targetPath, 85);
-        elseif ($file['type'] === 'image/png') imagepng($newImage, $targetPath);
-        elseif ($file['type'] === 'image/webp') imagewebp($newImage, $targetPath, 85);
-        
-        imagedestroy($newImage);
-    } else {
-        move_uploaded_file($file['tmp_name'], $targetPath);
+        if ($type === 'image/jpeg') imagejpeg($newImg, $path, 85);
+        elseif ($type === 'image/png') imagepng($newImg, $path);
+        elseif ($type === 'image/webp') imagewebp($newImg, $path, 85);
+        imagedestroy($newImg);
     }
+
+    // Save Main (700px)
+    resizeAndSave($image, $targetPath, $file['type'], 700, $width, $height);
+    // Save Thumb (150px)
+    resizeAndSave($image, $thumbPath, $file['type'], 150, $width, $height);
+    
     imagedestroy($image);
 }
 
-// Delete old image if exists
-$oldImageStmt = $pdo->prepare("SELECT profile_image FROM user_profiles WHERE user_id = ?");
+// Delete old images if they exist
+$oldImageStmt = $pdo->prepare("SELECT profile_image, profile_image_thumb FROM user_profiles WHERE user_id = ?");
 $oldImageStmt->execute([$user['id']]);
-$oldImage = $oldImageStmt->fetchColumn();
+$oldData = $oldImageStmt->fetch(PDO::FETCH_ASSOC);
 
-if ($oldImage) {
-    $oldPath = __DIR__ . '/../../../' . $oldImage;
-    if (file_exists($oldPath) && is_file($oldPath)) {
-        unlink($oldPath);
+if ($oldData) {
+    $pathsToDelete = [$oldData['profile_image'], $oldData['profile_image_thumb']];
+    foreach ($pathsToDelete as $p) {
+        if ($p) {
+            $fullPath = __DIR__ . '/../../../' . $p;
+            if (file_exists($fullPath) && is_file($fullPath)) unlink($fullPath);
+        }
     }
 }
 
 // Update DB
 $relativePath = 'uploads/avatars/' . $filename;
+$relativeThumbPath = $thumbFilename ? 'uploads/avatars/' . $thumbFilename : null;
 
 // Check if profile exists
 $stmtProf = $pdo->prepare("SELECT id FROM user_profiles WHERE user_id = ?");
 $stmtProf->execute([$user['id']]);
 if ($stmtProf->rowCount() > 0) {
-    $update = $pdo->prepare("UPDATE user_profiles SET profile_image = ? WHERE user_id = ?");
-    $update->execute([$relativePath, $user['id']]);
+    $update = $pdo->prepare("UPDATE user_profiles SET profile_image = ?, profile_image_thumb = ? WHERE user_id = ?");
+    $update->execute([$relativePath, $relativeThumbPath, $user['id']]);
 } else {
-    // Create skeleton profile so the image is saved
     $playerCode = generateUniquePlayerCode($pdo);
-    $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, player_code) VALUES (?, ?, ?)");
-    $insert->execute([$user['id'], $relativePath, $playerCode]);
+    $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, profile_image_thumb, player_code) VALUES (?, ?, ?, ?)");
+    $insert->execute([$user['id'], $relativePath, $relativeThumbPath, $playerCode]);
 }
 
-jsonResponse(true, 'Image uploaded successfully.', ['profile_image' => $relativePath]);
+jsonResponse(true, 'Image uploaded successfully.', ['profile_image' => $relativePath, 'profile_image_thumb' => $relativeThumbPath]);
 ?>
