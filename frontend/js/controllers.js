@@ -615,8 +615,9 @@ const DashboardController = {
             
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const fallbackHtml = `<div style='width:32px; height:32px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; border:1px solid rgba(255,255,255,0.1); flex-shrink:0;'>${initials}</div>`;
-            const avatarHtml = r.profile_image 
-                ? `<img src="${CONFIG.ASSET_BASE}/${r.profile_image}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">`
+            const thumb = r.profile_image_thumb || r.profile_image;
+            const avatarHtml = thumb 
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">`
                 : fallbackHtml;
             
             html += `
@@ -3298,8 +3299,8 @@ const ChatController = {
             // Only show people currently in the queue or pending approval
             if (!['pending', 'approved'].includes(w.request_status)) return;
             
-            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, player_code: w.req_code });
-            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, player_code: w.par_code });
+            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code });
+            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code });
         });
 
         const currentUserId = this._viewerId || 0;
@@ -3320,36 +3321,37 @@ const ChatController = {
         const buildAvatar = (p, isMe) => {
             const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || (p.nickname?.[0] || '?').toUpperCase();
             const displayName = p.nickname || p.first_name || 'Player';
-            const imgPath = p.profile_image ? `src="${CONFIG.ASSET_BASE}/${p.profile_image}"` : '';
-            
-            const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
-            
-            if (isMe) {
-                // Non-clickable representation of self
-                return `
-                    <div class="chat-player-avatar" 
-                         style="position:relative; z-index:5; flex-shrink:0; border-color:var(--c-primary);"
-                         title="${displayName} (You)">
-                        ${p.profile_image ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
-                        ${onlineDot}
-                    </div>
-                `;
-            } else {
-                // Clickable representation of others
-                return `
-                    <div class="chat-player-avatar" 
-                         onclick="ChatController.openPlayerMenu(event)"
-                         data-user-id="${p.user_id}"
-                         data-nickname="${displayName}"
-                         data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
-                         data-code="${p.player_code || ''}"
-                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0;"
-                         title="${displayName}">
-                        ${p.profile_image ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
-                        ${onlineDot}
-                    </div>
-                `;
-            }
+                const thumb = p.profile_image_thumb || p.profile_image;
+                const imgPath = thumb ? `src="${CONFIG.ASSET_BASE}/${thumb}"` : '';
+                
+                const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
+                
+                if (isMe) {
+                    // Non-clickable representation of self
+                    return `
+                        <div class="chat-player-avatar" 
+                             style="position:relative; z-index:5; flex-shrink:0; border-color:var(--c-primary);"
+                             title="${displayName} (You)">
+                            ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                            ${onlineDot}
+                        </div>
+                    `;
+                } else {
+                    // Clickable representation of others
+                    return `
+                        <div class="chat-player-avatar" 
+                             onclick="ChatController.openPlayerMenu(event)"
+                             data-user-id="${p.user_id}"
+                             data-nickname="${displayName}"
+                             data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
+                             data-code="${p.player_code || ''}"
+                             style="position:relative; z-index:5; cursor:pointer; flex-shrink:0;"
+                             title="${displayName}">
+                            ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                            ${onlineDot}
+                        </div>
+                    `;
+                }
         };
 
         if (meUser) {
