@@ -14,6 +14,19 @@ if ($match_id <= 0 && $match_code === '') {
     jsonResponse(false, 'match_id or match_code is required.', null, 422);
 }
 
+// Fetch requesting player's points and gender for eligibility
+$myInfoStmt = $pdo->prepare("
+    SELECT COALESCE(ps.points, 100) AS points, up.gender 
+    FROM users u 
+    LEFT JOIN player_stats ps ON u.id = ps.user_id 
+    LEFT JOIN user_profiles up ON u.id = up.user_id 
+    WHERE u.id = ?
+");
+$myInfoStmt->execute([$uid]);
+$myInfo = $myInfoStmt->fetch(PDO::FETCH_ASSOC);
+$myPoints = (int)($myInfo['points'] ?? 100);
+$myGender = $myInfo['gender'] ?? 'male';
+
 // Fetch match
 if ($match_id > 0) {
     $stmt = $pdo->prepare("
@@ -196,6 +209,7 @@ jsonResponse(true, 'Match details loaded.', [
     'my_pending_request' => $myPendingRequest,
     'my_waitlist_entry'  => $myWaitlistEntry,
     'is_creator'         => (int)$m['creator_id'] === $uid,
+    'player_eligible'    => ($myPoints >= (int)$m['eligible_min'] && $myPoints <= (int)$m['eligible_max']) && ($m['gender_type'] === 'open' || $m['gender_type'] === 'mixed' || $myGender === $m['creator_gender']),
     'user_playing_side'  => $user_playing_side,
     'late_withdrawal'    => $lateWithdrawal,
     'unread_count'       => $unreadCount,
