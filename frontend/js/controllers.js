@@ -1973,6 +1973,7 @@ const MatchesController = {
                 ${MatchesController.renderMiniSlot(m, 2, 2)}
              </div>
           </div>
+          </div>
         </div>`;
     },
 
