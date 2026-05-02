@@ -12,11 +12,13 @@ function getDB() {
         ];
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+            $pdo->exec("SET time_zone = '+03:00'");
         } catch (\PDOException $e) {
             try {
                 // MAMP fallback
                 $dsn_mamp = "mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;dbname=" . DB_NAME . ";charset=utf8mb4";
                 $pdo = new PDO($dsn_mamp, DB_USER, DB_PASS, $options);
+                $pdo->exec("SET time_zone = '+03:00'");
             } catch (\PDOException $e2) {
                 // Log technical error securely in backend
                 error_log("DB Connection Error: " . $e2->getMessage());
