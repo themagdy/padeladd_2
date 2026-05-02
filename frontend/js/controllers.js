@@ -882,7 +882,8 @@ const ProfileController = {
                 const avPreview = document.getElementById('edit-avatar-preview');
                 const removeBtn = document.getElementById('remove-avatar-btn');
                 
-                avImg.src = CONFIG.ASSET_BASE + '/' + res.data.profile_image + '?v=' + Date.now();
+                const displayImg = res.data.profile_image_thumb || res.data.profile_image;
+                avImg.src = CONFIG.ASSET_BASE + '/' + displayImg + '?v=' + Date.now();
                 avImg.style.display = 'block';
                 avPreview.style.display = 'none';
                 if (removeBtn) removeBtn.style.display = 'block';
@@ -978,8 +979,9 @@ const ProfileController = {
                 const avImg = document.getElementById('edit-avatar-img');
                 const removeBtn = document.getElementById('remove-avatar-btn');
                 
-                if (p && p.profile_image) {
-                    avImg.src = CONFIG.ASSET_BASE + '/' + p.profile_image + '?v=' + Date.now();
+                const displayImg = p.profile_image_thumb || p.profile_image;
+                if (displayImg) {
+                    avImg.src = CONFIG.ASSET_BASE + '/' + displayImg + '?v=' + Date.now();
                     avImg.style.display = 'block';
                     avPreview.style.display = 'none';
                     if (removeBtn) removeBtn.style.display = 'block';
