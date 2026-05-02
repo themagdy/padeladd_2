@@ -35,11 +35,31 @@ const Router = {
         }
 
         window.addEventListener('popstate', (e) => {
-            // Phase 5: If we are popping back from the chat overlay, ignore the route change
+            // 1. If we are popping back from the chat overlay, close it
             if (typeof ChatController !== 'undefined' && ChatController._isShowing) {
+                ChatController.close(true);
                 return;
             }
             if (e.state && e.state.ignoreRoute) return;
+
+            const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+            const isDynamicBackBar = path.startsWith('/matches/M-') || 
+                                     path.startsWith('/p/') || 
+                                     (path.startsWith('/profile/view/') && path !== '/profile/view');
+            const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
+
+            // 2. If no back bar (main tab) and we are moving back, we should eventually land on Dashboard
+            if (!hasBackBar && path !== '/dashboard' && path !== '/login' && path !== '/' && path !== '/index.html') {
+                // If we land on a main tab (Play, Ranking, etc) via back button, 
+                // and it's not the dashboard, the user wants to go to dashboard.
+                // However, we let the browser pop naturally first. 
+                // If the new state has no depth or is 0, we force dashboard.
+                if (!e.state || e.state.depth === 0) {
+                    this.navigate('/dashboard', true, true);
+                    return;
+                }
+            }
 
             if (e.state && typeof e.state.depth !== 'undefined') {
                 this.navDepth = e.state.depth;
@@ -85,29 +105,35 @@ const Router = {
     },
 
     back: function() {
-        if (this.navDepth > 0) {
+        const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
+        const isAuthPage = publicRoutes.includes(path) || path === '';
+
+        // 1. If we are on a page with a back bar/button, go back in history
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+        const isDynamicBackBar = path.startsWith('/matches/M-') || 
+                                 path.startsWith('/p/') || 
+                                 (path.startsWith('/profile/view/') && path !== '/profile/view');
+        const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
+
+        if (hasBackBar && this.navDepth > 0) {
             window.history.back();
+            return;
+        }
+
+        // 2. If no back bar (main tabs) OR depth is 0, determine fallback
+        if (path === '/dashboard' || isAuthPage) {
+            // If on dashboard or login, "close" the app
+            if (window.confirm("Do you want to exit Padeladd?")) {
+                if (navigator.app && navigator.app.exitApp) {
+                    navigator.app.exitApp();
+                } else {
+                    window.close();
+                }
+            }
         } else {
-            // Determine the best fallback for landing pages (navDepth 0)
-            const path = window.location.pathname;
-
-            // If on a /chat sub-route, go back to the match detail (strip /chat)
-            if (path.endsWith('/chat')) {
-                const matchPath = path.replace('/chat', '').slice(CONFIG.BASE_PATH.length);
-                this.navigate(matchPath, true, true);
-                return;
-            }
-
-            const isMatchDetail = path.startsWith('/matches/M-') || path.includes('/matches/view');
-
-            if (isMatchDetail) {
-                // If they landed on a match detail directly, go to matches list
-                this.navigate('/matches', true, true);
-            } else if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
-                this.navigate('/dashboard', true, true);
-            } else {
-                this.navigate('/', true, true);
-            }
+            // If on Play/Ranking/etc without back bar, go to Dashboard
+            this.navigate('/dashboard', true, true);
         }
     },
     

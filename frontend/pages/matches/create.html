@@ -126,7 +126,7 @@
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Gender</label>
       <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
-        <button type="button" class="cm-gender-btn" data-val="open" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Open</button>
+        <button type="button" class="cm-gender-btn" data-val="open" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Mixed</button>
         <button type="button" id="cm-gender-restricted-btn" class="cm-gender-btn active" data-val="same_gender" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Males Only</button>
       </div>
       <input type="hidden" name="gender_type" id="cm-gender-type" value="same_gender">

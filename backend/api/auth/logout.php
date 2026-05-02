@@ -2,9 +2,10 @@
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo); // Validates Bearer token
 
-// Nullify token
-$stmt = $pdo->prepare("UPDATE users SET auth_token = NULL WHERE id = ?");
-$stmt->execute([$user['id']]);
+// Delete the current session token
+$token = getBearerToken();
+$stmt = $pdo->prepare("DELETE FROM user_sessions WHERE token = ?");
+$stmt->execute([$token]);
 
 jsonResponse(true, 'Logged out successfully');
 ?>

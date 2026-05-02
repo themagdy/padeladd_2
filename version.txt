@@ -124,4 +124,11 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Mobile: Scaled down app icon foreground by 30% for better framing.
 - UI: Fixed heading flicker on Play and My Matches pages.
 
-
+[NEXT] - 2026-05-02 23:42:00 +0300
+- Multi-Device Support: Implemented session management to allow simultaneous login from multiple devices.
+- Navigation Overhaul: Re-engineered back button logic for Android/Web to follow a logical hierarchy (Close Chat → Go Back → Dashboard → Exit App).
+- Terminology Update: Renamed "Open" matches to "Mixed" and "Completed" matches to "Scores" across the entire platform.
+- Privacy Restrictions: Enforced gender-based privacy in Mixed matches, restricting male profiles from requesting phone numbers from female participants.
+- Match History Refinement: Updated "Past" matches logic to keep games visible until their reported scores are officially confirmed/approved.
+- Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
+- Cache Management: Incremented asset versions to v=84 in index.html to force cache clearing on live environments.

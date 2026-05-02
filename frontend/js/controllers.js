@@ -1527,7 +1527,7 @@ const MatchesController = {
                       </button>
                       <button id="ml-tab-play_past" onclick="MatchesController.switchTab('play_past')"
                         style="flex:1; background:none; border:none; color:${MatchesController._currentTab === 'play_past' ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:15px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${MatchesController._currentTab === 'play_past' ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s;">
-                        🏆 Completed
+                        🏆 Scores
                       </button>
                     `;
                 }
@@ -1550,7 +1550,7 @@ const MatchesController = {
                   </button>
                   <button id="ml-tab-mine_completed" onclick="MatchesController.switchTab('mine_completed')" 
                     style="flex:1; background:none; border:none; color:${isCompleted ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:14px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${isCompleted ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s; white-space:nowrap;">
-                    🏆 Completed
+                    🏆 Scores
                   </button>
                 `;
             }
@@ -1702,11 +1702,10 @@ const MatchesController = {
         const list = document.getElementById('ml-list');
         if (!list) return;
 
-        let endpoint = MatchesController._currentTab === 'play_past' ? '/matches/user' : '/match/list';
+        const isScoreTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
 
-
-        // If we used /matches/user, filter for completed only
-        if (endpoint === '/matches/user') {
+        // Filter for completed only if we are in a score/history tab
+        if (isScoreTab) {
             matches = matches.filter(m => m.status === 'completed');
         }
         
@@ -2026,7 +2025,7 @@ const MatchesController = {
             return;
         }
 
-        const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes, viewer_id, player_eligible } = res.data;
+        const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes, viewer_id, player_eligible, eligibility_reason } = res.data;
         const myUserId = viewer_id || (user_in_match ? parseInt(user_in_match.user_id) : 0);
         
         if (!match || !slots) {
@@ -2063,6 +2062,7 @@ const MatchesController = {
 
 
         MatchesController._currentMatchId = match.id;
+        MatchesController._currentMatchGenderType = match.gender_type;
         MatchesController._currentMatchSlotsCount = slots.length;
         MatchesController._currentMatchSlots = slots;
         MatchesController._currentMatchWaitlist = waiting_list;
@@ -2079,6 +2079,7 @@ const MatchesController = {
             }
         });
         MatchesController._currentMatchPlayerIds = playerIds;
+        MatchesController._currentMatchViewerGender = res.data.viewer_gender || 'male';
 
         let isPast = false;
         let isAuthorized = false;
@@ -2543,7 +2544,7 @@ const MatchesController = {
                         if (player_eligible === false) {
                             joinHtml += `<div style="text-align:center; padding:16px; background:rgba(255,100,100,0.05); border:1px solid rgba(255,100,100,0.2); border-radius:var(--r-md);">
                                             <div style="font-size:13px; font-weight:700; color:var(--c-red); letter-spacing:0.5px;">🚫 You are not eligible to join this match</div>
-                                            <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px;">Check the required gender or points range.</div>
+                                            <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px;">${eligibility_reason || 'Check the required gender or points range.'}</div>
                                          </div>`;
                         } else {
                             joinHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">`;
@@ -3295,13 +3296,13 @@ const ChatController = {
             players.push(p);
         };
 
-        slots.forEach(s => add(s));
+        slots.forEach(s => add({ ...s, gender: s.gender || 'male' }));
         waitlist.forEach(w => {
             // Only show people currently in the queue or pending approval
             if (!['pending', 'approved'].includes(w.request_status)) return;
             
-            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code });
-            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code });
+            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code, gender: w.req_gender });
+            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code, gender: w.par_gender });
         });
 
         const currentUserId = this._viewerId || 0;
@@ -3322,37 +3323,44 @@ const ChatController = {
         const buildAvatar = (p, isMe) => {
             const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || (p.nickname?.[0] || '?').toUpperCase();
             const displayName = p.nickname || p.first_name || 'Player';
-                const thumb = p.profile_image_thumb || p.profile_image;
-                const imgPath = thumb ? `src="${CONFIG.ASSET_BASE}/${thumb}"` : '';
-                
-                const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
-                
-                if (isMe) {
-                    // Non-clickable representation of self
-                    return `
-                        <div class="chat-player-avatar" 
-                             style="position:relative; z-index:5; flex-shrink:0; border-color:var(--c-primary);"
-                             title="${displayName} (You)">
-                            ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
-                            ${onlineDot}
-                        </div>
-                    `;
-                } else {
-                    // Clickable representation of others
-                    return `
-                        <div class="chat-player-avatar" 
-                             onclick="ChatController.openPlayerMenu(event)"
-                             data-user-id="${p.user_id}"
-                             data-nickname="${displayName}"
-                             data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
-                             data-code="${p.player_code || ''}"
-                             style="position:relative; z-index:5; cursor:pointer; flex-shrink:0;"
-                             title="${displayName}">
-                            ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
-                            ${onlineDot}
-                        </div>
-                    `;
-                }
+            const thumb = p.profile_image_thumb || p.profile_image;
+            const imgPath = thumb ? `src="${CONFIG.ASSET_BASE}/${thumb}"` : '';
+            
+            const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
+            
+            // Restriction: In Mixed matches, Males cannot click on Females
+            const isMixed = MatchesController._currentMatchGenderType === 'open';
+            const isViewerMale = MatchesController._currentMatchViewerGender === 'male';
+            const isTargetFemale = p.gender === 'female';
+            const isRestricted = isMixed && isViewerMale && isTargetFemale;
+
+            if (isMe || isRestricted) {
+                // Non-clickable representation
+                return `
+                    <div class="chat-player-avatar" 
+                         style="position:relative; z-index:5; flex-shrink:0; ${isMe ? 'border-color:var(--c-primary);' : ''} ${isRestricted ? 'cursor:default;' : ''}"
+                         title="${displayName}${isMe ? ' (You)' : ''}">
+                        ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        ${onlineDot}
+                    </div>
+                `;
+            } else {
+                // Clickable representation of others
+                return `
+                    <div class="chat-player-avatar" 
+                         onclick="ChatController.openPlayerMenu(event)"
+                         data-user-id="${p.user_id}"
+                         data-nickname="${displayName}"
+                         data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
+                         data-code="${p.player_code || ''}"
+                         data-gender="${p.gender || 'male'}"
+                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0;"
+                         title="${displayName}">
+                        ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        ${onlineDot}
+                    </div>
+                `;
+            }
         };
 
         if (meUser) {
