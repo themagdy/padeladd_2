@@ -133,3 +133,4 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
 - Cache Management: Incremented asset versions to v=84 in index.html to force cache clearing on live environments.
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
+- Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
