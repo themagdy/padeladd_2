@@ -61,18 +61,17 @@ function getHeavyModifier(array $sets, bool $wentToThree): int {
 // ── New Player Factor ─────────────────────────────────────────────────────
 /**
  * Returns the new player factor (as tenths integer, so 15 = 1.5x) for a player.
- * Based only on confirmed competition matches played.
- * We return as a float to use in the round() step.
+ * Based on total approved scores across all matches.
  */
 function getNewPlayerFactor(PDO $pdo, int $user_id): float {
     $stmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT mp.match_id) AS c
-        FROM match_players mp
+        SELECT COUNT(s.id) AS c
+        FROM scores s
+        JOIN match_players mp ON s.match_id = mp.match_id
         JOIN matches m ON m.id = mp.match_id
         WHERE mp.user_id = ?
-          AND mp.status = 'confirmed'
+          AND s.status = 'approved'
           AND m.match_type = 'competition'
-          AND m.status = 'completed'
     ");
     $stmt->execute([$user_id]);
     $count = (int)$stmt->fetchColumn();
@@ -87,9 +86,6 @@ function getNewPlayerFactor(PDO $pdo, int $user_id): float {
 /**
  * Returns the integrity factor (float) for a player in a given match.
  * Based on how many times this player has faced the same opponents in the last 30 days.
- *
- * 0.0 reserved for admin use (completely fake match).
- * Counts completed matches against the same opponents within 30 days.
  */
 function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float {
     // Get opponent IDs (opposing team)
@@ -105,15 +101,16 @@ function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float {
 
     if (count($opponents) < 2) return 1.0;
 
-    // Count unique completed competition matches against these opponents in last 30 days
+    // Count all approved competition scores against these opponents in last 30 days
     $count = 0;
     foreach ($opponents as $opp_id) {
         $checkStmt = $pdo->prepare("
-            SELECT COUNT(DISTINCT m.id)
-            FROM matches m
+            SELECT COUNT(s.id)
+            FROM scores s
+            JOIN matches m ON s.match_id = m.id
             JOIN match_players mp1 ON m.id = mp1.match_id
             JOIN match_players mp2 ON m.id = mp2.match_id
-            WHERE m.status = 'completed'
+            WHERE s.status = 'approved'
               AND m.match_type = 'competition'
               AND m.id != ?
               AND mp1.user_id = ?

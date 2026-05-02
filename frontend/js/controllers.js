@@ -50,6 +50,7 @@ const UI = {
         form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
         form.querySelectorAll('.form-error').forEach(el => el.style.display = 'none');
     },
+    _lastNavAvatar: null,
     syncNav: async function() {
         if (!Auth.isAuthenticated()) return;
         const res = await API.post('/profile/get', {});
@@ -61,18 +62,37 @@ const UI = {
         if (av) {
             const thumb = profile.profile_image_thumb || profile.profile_image;
             if (profile && thumb) {
-                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${thumb}">`;
-                av.style.background = 'none';
+                // Only update DOM if the image changed to prevent flickering/re-loading
+                if (UI._lastNavAvatar !== thumb) {
+                    av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;');
+                    av.style.background = 'none';
+                    UI._lastNavAvatar = thumb;
+                }
             } else {
                 const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
-                av.textContent = initials;
-                av.style.background = 'var(--g-primary)';
+                if (UI._lastNavAvatar !== initials) {
+                    av.textContent = initials;
+                    av.style.background = 'var(--g-primary)';
+                    UI._lastNavAvatar = initials;
+                }
             }
             av.setAttribute('href', 'profile/view');
         }
 
         // Notification badge — pull real unread count from Phase 6
         NotificationsController.pollBadge();
+    },
+
+    getAvatarHtml: function(thumb, style = '', wrapperStyle = '', initials = '?', className = '') {
+        if (thumb) {
+            return `
+                <div class="avatar-wrap ${className}" style="${wrapperStyle}">
+                    <img src="${CONFIG.ASSET_BASE}/${thumb}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';">
+                </div>
+            `;
+        } else {
+            return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}">${initials}</div>`;
+        }
     }
 };
 
@@ -614,11 +634,8 @@ const DashboardController = {
             const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
             
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
-            const fallbackHtml = `<div style='width:32px; height:32px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; border:1px solid rgba(255,255,255,0.1); flex-shrink:0;'>${initials}</div>`;
             const thumb = r.profile_image_thumb || r.profile_image;
-            const avatarHtml = thumb 
-                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:32px; height:32px; border-radius:50%; object-fit:cover; border:1px solid var(--c-border);">`
-                : fallbackHtml;
+            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);', initials);
             
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
@@ -693,15 +710,17 @@ const ProfileViewController = {
         // Avatar
         const av = document.getElementById('prof-avatar');
         if (av) {
-            if (profile && profile.profile_image) {
-                av.innerHTML = `<img src="${CONFIG.ASSET_BASE}/${profile.profile_image}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            const thumb = profile.profile_image_thumb || profile.profile_image;
+            const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
+            
+            if (profile && thumb) {
+                av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials);
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
                 av.textContent = initials;
                 av.classList.add('avatar-placeholder');
-                // Transparent for background if we have initials
+                av.style.background = 'var(--g-primary)';
             }
         }
 
@@ -788,15 +807,15 @@ const ProfileViewController = {
             if (historyMatches.length === 0) {
                 listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
             } else {
-                // Limit to latest 5 results (scores)
+                // Limit to latest 50 results (matching API limit)
                 let scoreCount = 0;
                 let html = '';
                 for (const m of historyMatches) {
-                    if (scoreCount >= 5) break;
+                    if (scoreCount >= 50) break;
                     
                     if (m.scores && m.scores.length > 0) {
                         for (const s of m.scores) {
-                            if (scoreCount >= 5) break;
+                            if (scoreCount >= 50) break;
                             html += DashboardController.renderMatchCard(m, user.id, s);
                             scoreCount++;
                         }
@@ -878,14 +897,10 @@ const ProfileController = {
             }).then(r => r.json());
 
             if (res && res.success) {
-                const avImg = document.getElementById('edit-avatar-img');
-                const avPreview = document.getElementById('edit-avatar-preview');
-                const removeBtn = document.getElementById('remove-avatar-btn');
-                
                 const displayImg = res.data.profile_image_thumb || res.data.profile_image;
-                avImg.src = CONFIG.ASSET_BASE + '/' + displayImg + '?v=' + Date.now();
-                avImg.style.display = 'block';
-                avPreview.style.display = 'none';
+                const avContainer = document.getElementById('edit-avatar-container');
+                avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
+                
                 if (removeBtn) removeBtn.style.display = 'block';
                 Toast.show('Photo updated', 'success');
                 UI.syncNav();
@@ -975,21 +990,17 @@ const ProfileController = {
                 }
 
                 // Avatar setup
-                const avPreview = document.getElementById('edit-avatar-preview');
-                const avImg = document.getElementById('edit-avatar-img');
+                const avContainer = document.getElementById('edit-avatar-container');
                 const removeBtn = document.getElementById('remove-avatar-btn');
                 
                 const displayImg = p.profile_image_thumb || p.profile_image;
                 if (displayImg) {
-                    avImg.src = CONFIG.ASSET_BASE + '/' + displayImg + '?v=' + Date.now();
-                    avImg.style.display = 'block';
-                    avPreview.style.display = 'none';
+                    avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
                     if (removeBtn) removeBtn.style.display = 'block';
                 } else if (u) {
                     // Show initials if no photo
-                    avImg.style.display = 'none';
-                    avPreview.style.display = 'flex';
-                    avPreview.textContent = (u.first_name[0] + u.last_name[0]).toUpperCase();
+                    const initials = (u.first_name[0] + u.last_name[0]).toUpperCase();
+                    avContainer.innerHTML = UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials);
                     if (removeBtn) removeBtn.style.display = 'none';
                 }
             }
@@ -1827,8 +1838,8 @@ const MatchesController = {
             const displayName = rawName.length > 10 ? rawName.substring(0, 8) + '..' : rawName;
             return `
             <div class="player-mini-slot">
-              <div class="player-avatar-mini">
-                ${(s.profile_image_thumb || s.profile_image) ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image_thumb || s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+              <div class="player-avatar-mini" style="width:32px; height:32px; border-radius:50%; overflow:hidden;">
+                ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
               </div>
               <div class="player-name-mini" title="${rawName}">
                    ${displayName}
@@ -2204,8 +2215,8 @@ const MatchesController = {
                 const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
                 el.innerHTML   = `
-                    <div class="slot-avatar">
-                        ${(s.profile_image_thumb || s.profile_image) ? `<img src="${CONFIG.ASSET_BASE}/${s.profile_image_thumb || s.profile_image}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                    <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
+                        ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">
@@ -3340,9 +3351,9 @@ const ChatController = {
                 // Non-clickable representation
                 return `
                     <div class="chat-player-avatar" 
-                         style="position:relative; z-index:5; flex-shrink:0; ${isMe ? 'border-color:var(--c-primary);' : ''} ${isRestricted ? 'cursor:default;' : ''}"
+                         style="position:relative; z-index:5; flex-shrink:0; width:36px; height:36px; border-radius:50%; ${isMe ? 'border-color:var(--c-primary);' : ''} ${isRestricted ? 'cursor:default;' : ''}"
                          title="${displayName}${isMe ? ' (You)' : ''}">
-                        ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        ${UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         ${onlineDot}
                     </div>
                 `;
@@ -3356,9 +3367,9 @@ const ChatController = {
                          data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
                          data-code="${p.player_code || ''}"
                          data-gender="${p.gender || 'male'}"
-                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0;"
+                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0; width:36px; height:36px; border-radius:50%;"
                          title="${displayName}">
-                        ${thumb ? `<img ${imgPath} style="pointer-events:none;width:100%;height:100%;object-fit:cover;border-radius:50%;">` : initials}
+                        ${UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         ${onlineDot}
                     </div>
                 `;
@@ -4147,35 +4158,25 @@ const NotificationsController = {
                         // Phase 6: Consistent avatar style with emoji badge
                         const emoji = typeIcon[n.type] || '🔔';
                         
-                        let avatarContent = '';
-                        if (n.sender_avatar) {
-                            avatarContent = `<img src="${CONFIG.ASSET_BASE}/${n.sender_avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                        } else {
-                            // Robust initial extraction
-                            let initials = '';
-                            if (n.sender_first_name || n.sender_last_name) {
-                                initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
-                            } else if (n.sender_nickname) {
-                                initials = n.sender_nickname[0].toUpperCase();
-                            }
-                            
-                            // Last resort: Extract from message text (usually starts with sender name)
-                            if (!initials && n.message_text) {
-                                const firstChar = n.message_text.trim()[0];
-                                if (firstChar && /[a-zA-Z0-9]/.test(firstChar)) {
-                                    initials = firstChar.toUpperCase();
-                                }
-                            }
-
-                            if (!initials) initials = 'P'; // Final fallback for Padeladd
-                            
-                            avatarContent = `<div style="width:100%; height:100%; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#fff;">${initials}</div>`;
+                        const thumb = n.sender_avatar_thumb || n.sender_avatar;
+                        let initials = '';
+                        if (n.sender_first_name || n.sender_last_name) {
+                            initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
+                        } else if (n.sender_nickname) {
+                            initials = n.sender_nickname[0].toUpperCase();
                         }
+                        if (!initials && n.message_text) {
+                            const firstChar = n.message_text.trim()[0];
+                            if (firstChar && /[a-zA-Z0-9]/.test(firstChar)) {
+                                initials = firstChar.toUpperCase();
+                            }
+                        }
+                        if (!initials) initials = 'P'; 
 
                         const avatarHtml = `
                             <div style="position:relative; flex-shrink:0;">
                                 <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
-                                    ${avatarContent}
+                                    ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
                                 </div>
                                 <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
                                     ${emoji}
@@ -4804,12 +4805,8 @@ const RankingController = {
         list.forEach(r => {
             const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
-            const fallbackHtml = `<div style='width:40px; height:40px; border-radius:50%; border:2px solid var(--c-border); flex-shrink:0; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:#fff;'>${initials}</div>`;
-            
             const thumb = r.profile_image_thumb || r.profile_image;
-            const avatarHtml = thumb 
-                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" onerror="this.onerror=null; this.outerHTML=\`${fallbackHtml}\`;" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid var(--c-border); flex-shrink:0;">`
-                : fallbackHtml;
+            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);', initials);
             
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
