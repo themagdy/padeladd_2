@@ -131,7 +131,7 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Privacy Restrictions: Enforced gender-based privacy in Mixed matches, restricting male profiles from requesting phone numbers from female participants.
 - Match History Refinement: Updated "Past" matches logic to keep games visible until their reported scores are officially confirmed/approved.
 - Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
-- Cache Management: Incremented asset versions to v=85 in index.html to force cache clearing on live environments.
+- Cache Management: Incremented asset versions to v=86 in index.html to force cache clearing on live environments.
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
 - Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
 - Avatar Loading Experience: Implemented a global native-like loading animation (spinner) and smooth fade-in effect for all avatars across the platform (Dashboard, Ranking, Matches, Chat, and Notifications).

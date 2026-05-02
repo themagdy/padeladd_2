@@ -2333,10 +2333,23 @@ const MatchesController = {
                             if (idx > 0) {
                                 scoringHtml += `<div style="height:1px; background:rgba(255,255,255,0.08); margin:40px 16px;"></div>`;
                             }
+
+                            // Date formatting helper
+                            const formatDate = (dateStr) => {
+                                if (!dateStr) return '';
+                                const d = new Date(dateStr.replace(' ', 'T'));
+                                return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true });
+                            };
+
                             if (s.status === 'approved') {
                                 scoringHtml += `
                                     <div class="approved-score-wrapper" style="margin-bottom:24px;">
-                                        ${(scores || []).length > 1 ? `<div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px; padding:0 20px; opacity:0.6;">Match Result #${idx + 1}</div>` : ''}
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
+                                            <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.6;">
+                                                ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
+                                            </div>
+                                            <div style="font-size:10px; color:var(--c-success); font-weight:700; opacity:0.8;">Approved: ${formatDate(s.updated_at)}</div>
+                                        </div>
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                     </div>
                                 `;
@@ -2344,6 +2357,12 @@ const MatchesController = {
                                 const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                                 const submitterName = s.nickname || s.first_name;
                                 
+                                // Calculate auto-approval (24h after created_at)
+                                const subDate = new Date(s.created_at.replace(' ', 'T'));
+                                const autoDate = new Date(subDate.getTime() + (24 * 60 * 60 * 1000));
+                                const subTimeStr = formatDate(s.created_at);
+                                const autoTimeStr = formatDate(autoDate.toISOString());
+
                                 // Determine teams based on composition switch if available
                                 let currentTeamNo = user_in_match ? parseInt(user_in_match.team_no) : null;
                                 let subTeamNo = null;
@@ -2367,12 +2386,18 @@ const MatchesController = {
 
                                 scoringHtml += `
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:0 20px;">
                                             <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.7;">
                                                 ${(scores || []).length > 1 ? `Match #${idx + 1} ` : ''}Result Submitted
                                             </div>
                                             <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending Approval</div>
                                         </div>
+                                        
+                                        <div style="padding:0 20px; margin-bottom:12px; display:flex; flex-direction:column; gap:2px;">
+                                            <div style="font-size:11px; color:var(--c-text-muted); opacity:0.8;">Submitted: <strong style="color:var(--c-text);">${subTimeStr}</strong></div>
+                                            <div style="font-size:11px; color:var(--c-text-muted); opacity:0.8;">Auto-approval: <strong style="color:var(--c-orange);">${autoTimeStr}</strong></div>
+                                        </div>
+
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                         
                                         <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:20px;">
