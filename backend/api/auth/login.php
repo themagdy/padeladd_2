@@ -27,8 +27,8 @@ if ((int)$user['is_email_verified'] === 0 || (int)$user['is_phone_verified'] ===
 
 // Generate auth token
 $authToken = generateRandomString(40);
-$updateToken = $pdo->prepare("UPDATE users SET auth_token = ? WHERE id = ?");
-$updateToken->execute([$authToken, $user['id']]);
+$sessionStmt = $pdo->prepare("INSERT INTO user_sessions (user_id, token) VALUES (?, ?)");
+$sessionStmt->execute([$user['id'], $authToken]);
 
 // Check if user has profile
 $stmtProf = $pdo->prepare("SELECT id, level FROM user_profiles WHERE user_id = ?");

@@ -116,7 +116,7 @@ if ($mode === 'play_upcoming') {
         AND (
             (m.status = 'cancelled') 
             OR 
-            (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 2 HOUR) AND m.id NOT IN (SELECT match_id FROM scores))
+            (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 2 HOUR))
         )
         ORDER BY m.match_datetime DESC
         LIMIT 50

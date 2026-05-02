@@ -1,49 +1,62 @@
 # Padeladd Development Rules
 
-## Application Architecture
-- **Mobile-first Single Page Application (SPA).**
-- AJAX must be used for all data loading and form submissions (no page reloads allowed).
-- Frontend logic lives in `/frontend`, interacting with `/backend/api` endpoints using JS `fetch` via the centralized `API` object.
+This document outlines the coding standards, design principles, and technical constraints for the Padeladd project. All developers must adhere to these rules to ensure consistency and maintainability.
 
-## Design System
-- **Font:** Montserrat
-- **Colors:**
+## Application Architecture
+
+- **Mobile-first Single Page Application (SPA).**
+- **AJAX-only**: No full page reloads allowed. Use the `fetch` API via the centralized `API` object.
+- **Frontend Logic**: Lives in `/frontend/js`. It interacts exclusively with `/backend/api` endpoints.
+- **State Management**: Use `localStorage` for persistent data (Auth tokens) and `sessionStorage` for ephemeral UI states.
+
+## Design System (Vanilla CSS)
+
+We use a modern, dark-themed design system.
+- **Font**: Montserrat (Primary), Monospace (for codes/IDs).
+- **Core Colors**:
   - Background: `#171C26`
-  - Primary text: `#FFFFFF`
+  - Primary Text: `#FFFFFF`
+  - Muted Text: `#A0A0A0`
   - Borders: `#3B475B`
-  - Primary button: `#1B52CE`
-  - Secondary button: `#293342`
+- **Action Colors**:
+  - Primary Button: `#1B52CE`
+  - Secondary Button: `#293342`
   - Accents: Orange (`#F7941D`), Green (`#00CE00`), Red (`#F15A29`)
+- **Spacing**: Use a 4px/8px grid system for consistent margins and padding.
 
 ## API Standards
-- **Format:** JSON only for requests and responses.
-- **Methods:** Use `POST` for all API calls to ensure consistency.
-- **Payload & Response Structure:**
-  Always return the standard JSON wrapper:
+
+- **Method**: Use `POST` for all API calls (even reads) to maintain a consistent communication interface and payload handling.
+- **Format**: JSON only for both requests and responses.
+- **Standard Response**:
   ```json
   {
       "success": boolean,
-      "message": "Human-readable string/error",
+      "message": "Human-readable string",
       "data": {} | [] | null
   }
   ```
-- **Error Handling:** Protect private endpoints. Backend returns structured JSON error responses instead of HTML logic. The SPA will display these errors gracefully without breaking the flow.
+- **Error Handling**: Never leak PHP errors or HTML logic. The backend must return a structured JSON response with a relevant HTTP status code (400, 401, 403, 404, 500).
 
 ## Database Rules (MySQL)
-- **Tables and Columns:** `snake_case` (e.g. `user_profiles`).
-- **Keys:** Primary keys must use `id`. Foreign keys must use `{table_singular}_id`.
-- **Timestamps:** Add `created_at` and `updated_at` on any primary table.
-- Use explicit enums and clear states.
+
+- **Naming**: Use `snake_case` for all tables and columns.
+- **Keys**: Primary keys must be named `id`. Foreign keys must follow the `{table_singular}_id` pattern.
+- **Timestamps**: Every primary table must have `created_at` and `updated_at`.
+- **Integrity**: Always use foreign keys with appropriate `ON DELETE` actions (CASCADE or SET NULL).
 
 ## Security Practices
-- Protect all private endpoints with auth/session checks.
-- Sanitize and validate logic on both the frontend and backend.
-- Prepared statements only via PDO to prevent SQL Injection.
-- Prevent duplicate form submissions visually and via backend logic if applicable.
-- Passwords must be securely hashed.
 
-## Authentication (Phase 1)
-- **Token System:** Uses Bearer `auth_token` stored in localStorage.
-- **Verification:** Users must verify SMS and Email via `verification_codes` before accessing the system.
-- **Login check:** Login verifies `is_email_verified` and `is_phone_verified`. If incomplete, they are redirected to `/verify`.
-- **Profile constraint:** After successful verification and login, if the user has no `user_profiles` row, they are routed to `/profile/edit` to finalize registration.
+- **Sanitization**: Validate and sanitize all input on **both** frontend and backend.
+- **SQL Injection**: Use PDO prepared statements for **all** database queries.
+- **Passwords**: Must be hashed using `password_hash()` with the default algorithm.
+- **Authentication**: Protect private endpoints by checking for a valid `auth_token` in the session/database.
+
+## Authentication & Verification Flow
+
+1.  **Registration**: Requires basic info. Users are initially "unverified".
+2.  **Verification**: Users must verify both Email and Phone via OTP/Magic Link before accessing the dashboard.
+3.  **Profile Completion**: Users must finalize their profile (Nickname, Level, Side) before participating in matches.
+
+---
+[Back to README](README.md)

@@ -56,7 +56,7 @@ if (!$m) {
 $slotStmt = $pdo->prepare("
     SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
            u.first_name, u.last_name,
-           up.player_code, up.profile_image, up.profile_image_thumb, up.nickname,
+           up.player_code, up.profile_image, up.profile_image_thumb, up.nickname, up.gender,
            COALESCE(ps.rank_points, 0) AS points, ps.matches_played
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id
@@ -71,8 +71,8 @@ $slots = $slotStmt->fetchAll(PDO::FETCH_ASSOC);
 // Waiting list
 $wlStmt = $pdo->prepare("
     SELECT wl.id, wl.request_status, wl.created_at,
-           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile, upr.profile_image_thumb AS req_profile_thumb,
-           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile, upp.profile_image_thumb AS par_profile_thumb,
+           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile, upr.profile_image_thumb AS req_profile_thumb, upr.gender AS req_gender,
+           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile, upp.profile_image_thumb AS par_profile_thumb, upp.gender AS par_gender,
            wl.requester_id, wl.partner_id
     FROM waiting_list wl
     JOIN users ur  ON wl.requester_id = ur.id
@@ -210,12 +210,23 @@ jsonResponse(true, 'Match details loaded.', [
     'my_waitlist_entry'  => $myWaitlistEntry,
     'is_creator'         => (int)$m['creator_id'] === $uid,
     'player_eligible'    => ($myPoints >= (int)$m['eligible_min'] && $myPoints <= (int)$m['eligible_max']) && ($m['gender_type'] === 'open' || $m['gender_type'] === 'mixed' || $myGender === $m['creator_gender']),
+    'eligibility_reason' => (function() use ($myPoints, $m, $myGender) {
+        if ($myPoints < (int)$m['eligible_min'] || $myPoints > (int)$m['eligible_max']) {
+            return "Your level (" . $myPoints . " pts) is outside the required range (" . (int)$m['eligible_min'] . " - " . (int)$m['eligible_max'] . " pts).";
+        }
+        if (!($m['gender_type'] === 'open' || $m['gender_type'] === 'mixed' || $myGender === $m['creator_gender'])) {
+            $genderStr = ($m['creator_gender'] === 'female') ? 'Women' : 'Men';
+            return "This match is for " . $genderStr . " only.";
+        }
+        return null;
+    })(),
     'user_playing_side'  => $user_playing_side,
     'late_withdrawal'    => $lateWithdrawal,
     'unread_count'       => $unreadCount,
     'scores'             => $scores,
     'disputes'           => $disputes,
     'viewer_id'          => $uid,
+    'viewer_gender'      => $myGender,
 ]);
 
 

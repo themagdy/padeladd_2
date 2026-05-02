@@ -43,8 +43,9 @@ function getAuthenticatedUser($pdo) {
     $stmt = $pdo->prepare("
         SELECT u.*, up.nickname 
         FROM users u
+        JOIN user_sessions us ON u.id = us.user_id
         LEFT JOIN user_profiles up ON u.id = up.user_id
-        WHERE u.auth_token = ? AND u.status = 'active'
+        WHERE us.token = ? AND u.status = 'active'
     ");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
