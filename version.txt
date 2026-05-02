@@ -134,3 +134,8 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Cache Management: Incremented asset versions to v=84 in index.html to force cache clearing on live environments.
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
 - Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
+- Avatar Loading Experience: Implemented a global native-like loading animation (spinner) and smooth fade-in effect for all avatars across the platform (Dashboard, Ranking, Matches, Chat, and Notifications).
+- UI Architecture: Developed a centralized `UI.getAvatarHtml` helper to standardize image rendering and error fallback logic.
+- Performance: Optimized the navigation bar avatar to prevent redundant re-loads during page transitions.
+- Match History: Removed the hardcoded display limit in player profiles, allowing users to see their full history of finalized scores.
+- Ranking Consistency: Updated New Player Bonus and Integrity Factor to count individual approved scores instead of unique Match IDs, aligning with the multi-match-per-booking requirement.
