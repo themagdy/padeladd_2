@@ -86,35 +86,31 @@
   }
 }
 
-/* Aggressive scrollbar hiding for Android WebViews & Mobile App */
-html, body, * {
+/* Aggressive scrollbar hiding only for Mobile App */
+body.is-mobile-app,
+body.is-mobile-app *,
+body.is-mobile-app html {
   scrollbar-width: none !important; /* Firefox */
   -ms-overflow-style: none !important; /* IE/Edge */
 }
 
-/* Chrome, Safari, Opera, Android WebView */
-*::-webkit-scrollbar {
+/* Chrome, Safari, Opera, Android WebView inside Mobile App */
+body.is-mobile-app *::-webkit-scrollbar,
+body.is-mobile-app ::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
   background: transparent !important;
 }
 
-*::-webkit-scrollbar-thumb {
+body.is-mobile-app *::-webkit-scrollbar-thumb {
   background: transparent !important;
   display: none !important;
 }
 
-*::-webkit-scrollbar-track {
+body.is-mobile-app *::-webkit-scrollbar-track {
   background: transparent !important;
   display: none !important;
-}
-
-html::-webkit-scrollbar, 
-body::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
 }
 
 .loading-overlay {
@@ -4260,8 +4256,8 @@ html, body {
 }
 
 
-/* Final Global Scrollbar Kill */
-*::-webkit-scrollbar {
+/* Final Global Scrollbar Kill - Mobile App Only */
+body.is-mobile-app *::-webkit-scrollbar {
   width: 0 !important;
   height: 0 !important;
   display: none !important;
