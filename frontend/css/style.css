@@ -2429,7 +2429,7 @@ form {
 }
 
 .avatar-circle.active {
-  /* Removed glow from outer flex item */
+  border-color: var(--c-orange) !important;
 }
 
 .nav-notif {
