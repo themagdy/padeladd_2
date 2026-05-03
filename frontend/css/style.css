@@ -2658,6 +2658,7 @@ form {
     border-radius: 0 !important;
     width: auto !important;
     height: auto !important;
+    overflow: visible !important; /* Allow glow to bleed out */
   }
 
   .avatar-circle .avatar-wrap,
@@ -2671,6 +2672,7 @@ form {
     align-items: center;
     justify-content: center;
     margin: 0 auto !important;
+    transition: all var(--t-fast);
   }
 
   .avatar-circle .avatar-wrap img {
@@ -2682,8 +2684,8 @@ form {
   .avatar-circle.active .avatar-wrap,
   .avatar-circle.active .avatar-placeholder {
     border-color: var(--c-orange) !important;
-    box-shadow: 0 0 15px rgba(247, 148, 29, 0.4) !important;
-    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(247, 148, 29, 0.35) !important;
+    transform: scale(1.08);
   }
 
   /* ---- Notification bell ---- */
