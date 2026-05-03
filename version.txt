@@ -150,3 +150,7 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Dashboard Polish: Enhanced the ranking table with subtle player separators and optimized spacing for a cleaner, high-end aesthetic.
 - UX Refinement: Standardized toast and action message durations to 5 seconds to ensure critical eligibility feedback is easily readable.
 - APK Build Trigger: 2026-05-03 08:30 PM (No APK Build)
+- Loading Screen: Refined the splash experience with a smaller, more minimal spinner and app icon (26px).
+- Premium Shimmer: Implemented a high-end gradient sweep (mask-image) on the loading logo for a professional "metallic glint" effect.
+- UI Stability: Removed distracting pulse animations from the loader for a calmer, more stable entry experience.
+- APK Build Trigger: 2026-05-03 11:15 PM (No APK Build)
