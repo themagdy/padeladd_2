@@ -4247,3 +4247,15 @@ form {
     padding: 0 !important;
   }
 }
+
+/* Native App Touch & Selection Logic */
+html, body {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn, .nav-item, .clickable {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
