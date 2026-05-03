@@ -1173,7 +1173,7 @@ const MatchesController = {
     _lastMode: 'play',
     _currentTab: 'play_upcoming',
     _playFilterType: 'all',
-    _playFilterGender: 'open',
+    _playFilterGender: 'same_gender',
     _cache: {}, // Stores lists per tab/filters
     _lastMatchId: null,
     _lastMatchState: null,
