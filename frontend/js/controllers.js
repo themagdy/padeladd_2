@@ -1445,13 +1445,14 @@ const MatchesController = {
             btn.textContent = 'Creating…';
 
             const res = await API.post('/match/create', payload);
-            btn.disabled = false;
-            btn.textContent = '🎾 Create Match';
-
+            
             if (res && res.success) {
                 Toast.show('Match created!', 'success');
+                SoundManager.play('success');
                 Router.navigate('/matches/' + res.data.match_code, true, true);
             } else {
+                btn.disabled = false;
+                btn.textContent = '🎾 Create Match';
                 Toast.show(res ? res.message : 'Failed to create match', 'error');
             }
         });
@@ -2983,6 +2984,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show('You joined the match!', 'success');
+            SoundManager.play('success');
             await MatchesController.loadDetails({ match_id });
         } else {
             MatchesController.showActionError(res ? res.message : 'Join failed');
@@ -4064,9 +4066,13 @@ const NotificationsController = {
             
             // Use global unread count from backend for the badge
             const unreadCount = parseInt(res.data.unread_count || 0);
-            
             const badge = document.getElementById('nav-notif-badge');
+            
             if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                if (unreadCount > currentCount) {
+                    SoundManager.play('notify');
+                }
                 badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
                 badge.style.display = unreadCount > 0 ? 'flex' : 'none';
             }
@@ -4708,6 +4714,7 @@ const ScoringController = {
         const res = await API.post('/score/approve', { score_id: scoreId });
         if (res && res.success) {
             Toast.show('Score approved! Points updated.', 'success');
+            SoundManager.play('success');
             MatchesController.loadDetails({ match_id: MatchesController._currentMatchId });
             UI.syncNav();
         } else {

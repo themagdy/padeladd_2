@@ -1,3 +1,27 @@
+const SoundManager = {
+    _sounds: {
+        tap: new Audio('assets/sounds/tap.mp3'),
+        success: new Audio('assets/sounds/success.mp3'),
+        notify: new Audio('assets/sounds/notify.mp3')
+    },
+    play: function(type) {
+        const s = this._sounds[type];
+        if (s) {
+            s.currentTime = 0;
+            s.play().catch(e => {}); // Silent fail if blocked by browser
+        }
+    },
+    init: function() {
+        // Global tap listener for all buttons, links and clickable items
+        document.addEventListener('click', (e) => {
+            const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
+            if (el) {
+                this.play('tap');
+            }
+        }, true);
+    }
+};
+
 const Toast = {
     show: function(message, type = 'info', duration = 4000) {
         // Create container if not exists
@@ -347,6 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Phase 6: Initialize notifications engine
     NotificationsController.init();
+
+    // Initialize sound engine
+    SoundManager.init();
 
     // Mobile Status Bar Fix
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
