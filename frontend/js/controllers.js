@@ -1184,9 +1184,21 @@ const MatchesController = {
         UI.syncNav();
 
         const genderBtn = document.getElementById('cm-gender-restricted-btn');
-        if (genderBtn && DashboardController._currentUser) {
-            const isFemale = DashboardController._currentUser.gender === 'female';
-            genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
+        if (genderBtn) {
+            const updateGenderLabel = (user) => {
+                if (!user) return;
+                const isFemale = user.gender === 'female';
+                genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
+            };
+            
+            if (DashboardController._currentUser) {
+                updateGenderLabel(DashboardController._currentUser);
+            } else {
+                // Fetch if not available
+                API.post('/profile/get', {}).then(res => {
+                    if (res && res.success) updateGenderLabel(res.data.profile);
+                });
+            }
         }
 
         const dateScroller = document.getElementById('cm-date-scroller');
@@ -1585,13 +1597,20 @@ const MatchesController = {
         filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
 
         if (isUpcomingPlay) {
-            // Update gender button label based on user gender
-            const res = await API.post('/profile/get', {});
-            if (res && res.success) {
-                const gender = res.data.profile?.gender || 'male';
-                const label = gender === 'female' ? 'Females' : 'Males';
-                const btn = document.getElementById('ml-gender-restricted-filter-btn');
-                if (btn) btn.textContent = label;
+            const btn = document.getElementById('ml-gender-restricted-filter-btn');
+            if (btn) {
+                const updateLabel = (u) => {
+                    if (!u) return;
+                    btn.textContent = u.gender === 'female' ? 'Females' : 'Males';
+                };
+                
+                if (DashboardController._currentUser) {
+                    updateLabel(DashboardController._currentUser);
+                } else {
+                    API.post('/profile/get', {}).then(res => {
+                        if (res && res.success) updateLabel(res.data.profile);
+                    });
+                }
             }
         }
     },
@@ -4748,6 +4767,23 @@ const RankingController = {
 
     init: async function() {
         await UI.syncNav();
+        
+        // Default to user's gender if available
+        if (DashboardController._currentUser) {
+            this._currentTab = DashboardController._currentUser.gender || 'male';
+        } else {
+            const res = await API.post('/profile/get', {});
+            if (res && res.success) this._currentTab = res.data.profile.gender || 'male';
+        }
+        
+        // Update UI buttons to reflect default tab
+        const mBtn = document.getElementById('rank-tab-male');
+        const fBtn = document.getElementById('rank-tab-female');
+        if (mBtn && fBtn) {
+            mBtn.classList.toggle('active', this._currentTab === 'male');
+            fBtn.classList.toggle('active', this._currentTab === 'female');
+        }
+
         this.loadData();
     },
 
