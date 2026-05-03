@@ -331,9 +331,9 @@ const StatsUI = {
             const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
             if (el) {
                 if (key === 'points' && stats.eligibility_pts !== undefined) {
-                    el.innerHTML = `${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 12px; line-height: 1; text-align: left;">
+                    el.innerHTML = `${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;">
                         <span style="font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;">+ ${stats.eligibility_pts}</span>
-                        <span style="font-size: 9px; font-weight: 800; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Buffer</span>
+                        <span style="font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;">Buffer</span>
                     </span>`;
                 } else {
                     el.textContent = val;
