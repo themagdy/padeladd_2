@@ -141,9 +141,14 @@ try {
     $eligMax = (int)$match['eligible_max'];
 
     // Get joining player's points
-    $ptsStmt = $pdo->prepare("SELECT COALESCE(points, 100) AS points FROM player_stats WHERE user_id = ?");
+    $ptsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
     $ptsStmt->execute([$uid]);
-    $joinerPts = (int)($ptsStmt->fetchColumn() ?: 100);
+    $ptsRow = $ptsStmt->fetch(PDO::FETCH_ASSOC);
+    
+    $joinerPts = 100;
+    if ($ptsRow) {
+        $joinerPts = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
+    }
 
     if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
         $pdo->rollBack();
@@ -155,14 +160,38 @@ try {
         ], 422);
     }
 
+    // ── Gender check for Same Gender matches ─────────────────────────────────
+    if ($match['gender_type'] === 'same_gender') {
+        // Creator's gender
+        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtC->execute([$match['creator_id']]);
+        $creatorGender = $stmtC->fetchColumn() ?: 'male';
+
+        // Joiner's gender
+        $stmtJ = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtJ->execute([$uid]);
+        $joinerGender = $stmtJ->fetchColumn() ?: 'male';
+
+        if ($joinerGender !== $creatorGender) {
+            $pdo->rollBack();
+            $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+            jsonResponse(false, "You are not eligible for this match. This is a {$genderLabel} match.", [
+                'eligibility_failed' => true,
+                'reason' => 'gender_mismatch'
+            ], 422);
+        }
+    }
+
     // Friendly match only: when this join makes the match full, check team avg diff <= 300
     if ($match['match_type'] === 'friendly' && count($occupied) + 1 === 4) {
         $allIds = array_merge(array_column($occupied, 'user_id'), [$uid]);
         $ph = implode(',', array_fill(0, count($allIds), '?'));
-        $ptsSt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN ($ph)");
+        $ptsSt = $pdo->prepare("SELECT user_id, current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id IN ($ph)");
         $ptsSt->execute($allIds);
         $ptsMap = [];
-        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
+        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 100);
+        }
         foreach ($allIds as $pid) { if (!isset($ptsMap[$pid])) $ptsMap[$pid] = 100; }
 
         $proj = array_merge($occupied, [['user_id' => $uid, 'team_no' => $targetTeam]]);
@@ -198,7 +227,7 @@ try {
     ")->execute([$match_id, $uid, $uid]);
 
     // Ensure player_stats row (starting points = 100 for beginners)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$uid]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$uid]);
 
     // Check if match is now full
     if (count($occupied) + 1 >= 4) {

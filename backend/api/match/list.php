@@ -14,9 +14,13 @@ $uid  = $user['id'];
 $mode = $data['mode'] ?? 'mine'; // 'mine' or 'browse'
 
 // Fetch requesting player's points for eligibility labelling
-$myPtsStmt = $pdo->prepare("SELECT COALESCE(points, 100) AS points FROM player_stats WHERE user_id = ?");
+$myPtsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
 $myPtsStmt->execute([$uid]);
-$myPoints = (int)($myPtsStmt->fetchColumn() ?: 100);
+$ptsRow = $myPtsStmt->fetch(PDO::FETCH_ASSOC);
+$myPoints = 100;
+if ($ptsRow) {
+    $myPoints = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
+}
 
 // Helper: get slot occupancy counts for a match
 function getMatchSlots(PDO $pdo, int $match_id): array {

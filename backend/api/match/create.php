@@ -20,11 +20,14 @@ $match_type           = trim($data['match_type'] ?? 'competition');
 if (!in_array($gender_type, ['open', 'same_gender'])) $gender_type = 'same_gender';
 if (!in_array($match_type, ['friendly', 'competition'])) $match_type = 'competition';
 // Fetch creator's side and points
-$ups = $pdo->prepare("SELECT up.playing_side, COALESCE(ps.points, 100) AS points FROM user_profiles up LEFT JOIN player_stats ps ON up.user_id = ps.user_id WHERE up.user_id = ?");
+$ups = $pdo->prepare("SELECT up.playing_side, ps.current_buffer, ps.rank_points, ps.buffer_matches_left FROM user_profiles up LEFT JOIN player_stats ps ON up.user_id = ps.user_id WHERE up.user_id = ?");
 $ups->execute([$uid]);
 $upRow = $ups->fetch();
 $creator_side   = $upRow ? $upRow['playing_side'] : 'flexible';
-$creator_points = $upRow ? (int)$upRow['points'] : 100;
+$creator_points = 100;
+if ($upRow) {
+    $creator_points = (int)($upRow['rank_points'] ?? 0) + (int)($upRow['current_buffer'] ?? 100);
+}
 
 // Compute locked eligibility range
 $elig_range  = ($match_type === 'competition') ? 100 : 300;
@@ -60,6 +63,27 @@ if ($created_with_partner && $partner_code !== '') {
         jsonResponse(false, 'You cannot add yourself as a partner.', null, 422);
     }
     $partner_id = (int)$partnerRow['user_id'];
+
+    // ── Gender check for Same Gender matches ─────────────────────────────────
+    if ($gender_type === 'same_gender') {
+        // Creator's gender
+        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtC->execute([$uid]);
+        $creatorGender = $stmtC->fetchColumn() ?: 'male';
+
+        // Partner's gender
+        $stmtP = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtP->execute([$partner_id]);
+        $partnerGender = $stmtP->fetchColumn() ?: 'male';
+
+        if ($partnerGender !== $creatorGender) {
+            $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+            jsonResponse(false, "Your partner is not eligible for this match. This is a {$genderLabel} match.", [
+                'eligibility_failed' => true,
+                'reason' => 'gender_mismatch'
+            ], 422);
+        }
+    }
 }
 
 function generateMatchCode($pdo) {
@@ -99,7 +123,7 @@ try {
     $ins->execute([$match_id, $uid, $creator_side]);
 
     // Ensure creator has a player_stats row (starting points = 100 for beginners)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$uid]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$uid]);
 
     // Partner -> Send invite to waiting_list instead of confirming directly
     if ($partner_id !== null) {

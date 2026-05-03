@@ -16,7 +16,7 @@ if ($match_id <= 0 && $match_code === '') {
 
 // Fetch requesting player's points and gender for eligibility
 $myInfoStmt = $pdo->prepare("
-    SELECT COALESCE(ps.points, 100) AS points, up.gender 
+    SELECT ps.current_buffer, ps.rank_points, ps.buffer_matches_left, up.gender 
     FROM users u 
     LEFT JOIN player_stats ps ON u.id = ps.user_id 
     LEFT JOIN user_profiles up ON u.id = up.user_id 
@@ -24,7 +24,11 @@ $myInfoStmt = $pdo->prepare("
 ");
 $myInfoStmt->execute([$uid]);
 $myInfo = $myInfoStmt->fetch(PDO::FETCH_ASSOC);
-$myPoints = (int)($myInfo['points'] ?? 100);
+
+$myPoints = 100;
+if ($myInfo) {
+    $myPoints = (int)($myInfo['rank_points'] ?? 0) + (int)($myInfo['current_buffer'] ?? 100);
+}
 $myGender = $myInfo['gender'] ?? 'male';
 
 // Fetch match

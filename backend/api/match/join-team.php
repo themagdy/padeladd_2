@@ -79,10 +79,12 @@ if ($wlCheck->fetch()) {
 $eligMin = (int)$match['eligible_min'];
 $eligMax = (int)$match['eligible_max'];
 
-$ptsStmt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN (?, ?)");
+$ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id IN (?, ?)");
 $ptsStmt->execute([$uid, $partner_id]);
 $ptsMap = [];
-foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
+foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+    $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 100);
+}
 $myPts      = $ptsMap[$uid]        ?? 100;
 $partnerPts = $ptsMap[$partner_id] ?? 100;
 
@@ -101,6 +103,27 @@ if ($partnerPts < $eligMin || $partnerPts > $eligMax) {
         'eligible_min' => $eligMin,
         'eligible_max' => $eligMax,
     ], 422);
+}
+
+// ── Gender check for Same Gender matches ─────────────────────────────────
+if ($match['gender_type'] === 'same_gender') {
+    // Get creator's gender (the rule is same as creator)
+    $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+    $stmtC->execute([$match['creator_id']]);
+    $creatorGender = $stmtC->fetchColumn() ?: 'male';
+    
+    // Get partner's gender
+    $stmtP = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+    $stmtP->execute([$partner_id]);
+    $partnerGender = $stmtP->fetchColumn() ?: 'male';
+    
+    if ($partnerGender !== $creatorGender) {
+        $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+        jsonResponse(false, "Your partner is not eligible for this match. This is a {$genderLabel} match.", [
+            'eligibility_failed' => true,
+            'reason' => 'gender_mismatch'
+        ], 422);
+    }
 }
 
 

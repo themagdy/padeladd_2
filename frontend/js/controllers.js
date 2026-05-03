@@ -418,6 +418,7 @@ const DashboardController = {
     _currentMatchTab: 'completed',
     _currentRankTab: 'male',
     _currentUser: null,
+    _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
 
     init: async function(isSilent = false) {
@@ -468,6 +469,22 @@ const DashboardController = {
     applyData: function(profileData, matchData) {
         const { user, profile, stats } = profileData;
         DashboardController._currentUser = user;
+        DashboardController._currentProfile = profile;
+        
+        // Default ranking tab to user's gender
+        if (profile && profile.gender) {
+            DashboardController._currentRankTab = profile.gender;
+            
+            // Update UI buttons in dashboard
+            const males = document.getElementById('tab-males');
+            const females = document.getElementById('tab-females');
+            if (males && females) {
+                males.style.borderBottomColor = profile.gender === 'male' ? 'var(--c-primary)' : 'transparent';
+                males.style.color = profile.gender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
+                females.style.borderBottomColor = profile.gender === 'female' ? 'var(--c-primary)' : 'transparent';
+                females.style.color = profile.gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
+            }
+        }
         
         if (matchData) {
             DashboardController._allMatches = matchData;
@@ -629,7 +646,8 @@ const DashboardController = {
         }
 
         let html = '';
-        ranking.forEach(r => {
+        ranking.forEach((r, idx) => {
+            const isLast = idx === ranking.length - 1;
             const trend = r.points_this_week;
             const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
             
@@ -638,7 +656,7 @@ const DashboardController = {
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);', initials);
             
             html += `
-                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; border-radius:var(--r-md); transition:all 0.2s; cursor:pointer; margin-bottom:4px;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; transition:all 0.2s; cursor:pointer; border-bottom: ${isLast ? 'none' : '1px solid rgba(255,255,255,0.05)'};" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                     <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         ${avatarHtml}
@@ -1185,16 +1203,15 @@ const MatchesController = {
 
         const genderBtn = document.getElementById('cm-gender-restricted-btn');
         if (genderBtn) {
-            const updateGenderLabel = (user) => {
-                if (!user) return;
-                const isFemale = user.gender === 'female';
+            const updateGenderLabel = (p) => {
+                if (!p || !p.gender) return;
+                const isFemale = p.gender.toLowerCase() === 'female';
                 genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
             };
             
-            if (DashboardController._currentUser) {
-                updateGenderLabel(DashboardController._currentUser);
+            if (DashboardController._currentProfile) {
+                updateGenderLabel(DashboardController._currentProfile);
             } else {
-                // Fetch if not available
                 API.post('/profile/get', {}).then(res => {
                     if (res && res.success) updateGenderLabel(res.data.profile);
                 });
@@ -1600,13 +1617,14 @@ const MatchesController = {
         if (isUpcomingPlay) {
             const btn = document.getElementById('ml-gender-restricted-filter-btn');
             if (btn) {
-                const updateLabel = (u) => {
-                    if (!u) return;
-                    btn.textContent = u.gender === 'female' ? 'Females' : 'Males';
+                const updateLabel = (p) => {
+                    if (!p || !p.gender) return;
+                    const isFemale = p.gender.toLowerCase() === 'female';
+                    btn.textContent = isFemale ? 'Females' : 'Males';
                 };
                 
-                if (DashboardController._currentUser) {
-                    updateLabel(DashboardController._currentUser);
+                if (DashboardController._currentProfile) {
+                    updateLabel(DashboardController._currentProfile);
                 } else {
                     API.post('/profile/get', {}).then(res => {
                         if (res && res.success) updateLabel(res.data.profile);
@@ -1910,9 +1928,22 @@ const MatchesController = {
         
         const matchCode = m.match_code || `M-${m.id.toString().padStart(4, '0')}`;
         const venueVal = m.venue_name || m.venue || 'Venue TBD';
-        const venueParts = venueVal.split('-');
-        const mainTitle = venueParts[0].trim();
-        const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
+        let mainTitle = venueVal;
+        let subTitle = '';
+        
+        if (venueVal.includes(' | ')) {
+            const parts = venueVal.split(' | ');
+            mainTitle = parts[0].trim();
+            subTitle = parts.slice(1).join(' | ').trim();
+        } else if (venueVal.includes(' - ')) {
+            const parts = venueVal.split(' - ');
+            mainTitle = parts[0].trim();
+            subTitle = parts.slice(1).join(' - ').trim();
+        } else if (venueVal.includes('-')) {
+            const parts = venueVal.split('-');
+            mainTitle = parts[0].trim();
+            subTitle = parts.slice(1).join('-').trim();
+        }
         
         let typeBadges = '';
         if (m.match_type === 'competition') {
@@ -1972,8 +2003,9 @@ const MatchesController = {
           <div class="match-title-row">
             <div style="min-width:0; flex:1;">
                <div>
-                  <h3 class="match-venue-name" style="padding-right: 80px;">
-                    ${mainTitle} ${subTitle ? `<span style="margin: 0 4px; opacity: 0.3; font-weight: 300;">|</span><span class="match-venue-sub" style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); opacity: 0.8;">${subTitle}</span>` : ''}
+                  <h3 class="match-venue-name" style="padding-right: 80px; color: #fff; font-family: inherit; display: flex; flex-wrap: wrap; align-items: baseline;">
+                    <span style="font-weight: 800; margin-right: 8px;">${mainTitle}</span>
+                    ${subTitle ? `<span style="display: inline-flex; align-items: baseline; white-space: nowrap; font-weight: 600; opacity: 0.9;"><span style="margin-right: 8px; opacity: 0.3; font-weight: 300;">|</span>${subTitle}</span>` : ''}
                   </h3>
                   <div class="badge-user-in-wrapper">${myBadge}</div>
                </div>
@@ -4791,11 +4823,13 @@ const RankingController = {
         await UI.syncNav();
         
         // Default to user's gender if available
-        if (DashboardController._currentUser) {
-            this._currentTab = DashboardController._currentUser.gender || 'male';
+        if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
+            this._currentTab = DashboardController._cache.profile.profile.gender || 'male';
         } else {
             const res = await API.post('/profile/get', {});
-            if (res && res.success) this._currentTab = res.data.profile.gender || 'male';
+            if (res && res.success && res.data.profile) {
+                this._currentTab = res.data.profile.gender || 'male';
+            }
         }
         
         // Update UI buttons to reflect default tab

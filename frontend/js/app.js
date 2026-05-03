@@ -23,7 +23,7 @@ const SoundManager = {
 };
 
 const Toast = {
-    show: function(message, type = 'info', duration = 4000) {
+    show: function(message, type = 'info', duration = 5000) {
         // Create container if not exists
         let container = document.getElementById('toast-container');
         if (!container) {
