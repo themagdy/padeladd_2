@@ -247,8 +247,9 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
     }
 
     // ── 5. Team averages & strength adjustment ────────────────────────────
-    $teamAvgA = (int)floor(($team1[0]['points'] + $team1[1]['points']) / 2);
-    $teamAvgB = (int)floor(($team2[0]['points'] + $team2[1]['points']) / 2);
+    // Effective Points = Buffer (points) + Competitive (rank_points) - 50
+    $teamAvgA = (int)floor((($team1[0]['points'] + $team1[0]['rank_points'] - 50) + ($team1[1]['points'] + $team1[1]['rank_points'] - 50)) / 2);
+    $teamAvgB = (int)floor((($team2[0]['points'] + $team2[0]['rank_points'] - 50) + ($team2[1]['points'] + $team2[1]['rank_points'] - 50)) / 2);
     $diff      = abs($teamAvgA - $teamAvgB);
     $adj       = getStrengthAdj($diff);
 
