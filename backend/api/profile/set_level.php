@@ -36,14 +36,18 @@ $hasPlayed = (int)$compPlayed->fetchColumn() > 0;
 if (!$hasPlayed) {
     // No competition history — safe to set/reset starting eligibility points; always init rank_points = 50
     $pdo->prepare("
-        INSERT INTO player_stats (user_id, points, rank_points)
-        VALUES (?, ?, 50)
-        ON DUPLICATE KEY UPDATE points = VALUES(points), rank_points = IF(rank_points = 0, 50, rank_points)
-    ")->execute([$user['id'], $startPoints]);
+        INSERT INTO player_stats (user_id, points, rank_points, initial_buffer, buffer_matches_left)
+        VALUES (?, ?, 50, ?, 20)
+        ON DUPLICATE KEY UPDATE 
+            points = VALUES(points), 
+            rank_points = IF(rank_points = 0, 50, rank_points),
+            initial_buffer = VALUES(initial_buffer),
+            buffer_matches_left = 20
+    ")->execute([$user['id'], $startPoints, $startPoints]);
 } else {
     // Has played — just ensure a stats row exists, don't overwrite earned points
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, ?, 50)")
-        ->execute([$user['id'], $startPoints]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points, initial_buffer, buffer_matches_left) VALUES (?, ?, 50, ?, 0)")
+        ->execute([$user['id'], $startPoints, $startPoints]);
 }
 
 jsonResponse(true, 'Level saved successfully.');
