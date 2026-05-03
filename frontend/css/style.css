@@ -2429,9 +2429,7 @@ form {
 }
 
 .avatar-circle.active {
-  border-color: var(--c-orange); /* Orange when selected */
-  box-shadow: 0 0 15px rgba(247, 148, 29, 0.4);
-  transform: scale(1.05);
+  /* Removed glow from outer flex item */
 }
 
 .nav-notif {
@@ -2679,6 +2677,13 @@ form {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+  }
+
+  .avatar-circle.active .avatar-wrap,
+  .avatar-circle.active .avatar-placeholder {
+    border-color: var(--c-orange) !important;
+    box-shadow: 0 0 15px rgba(247, 148, 29, 0.4) !important;
+    transform: scale(1.1);
   }
 
   /* ---- Notification bell ---- */
