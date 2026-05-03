@@ -79,10 +79,10 @@ if ($wlCheck->fetch()) {
 $eligMin = (int)$match['eligible_min'];
 $eligMax = (int)$match['eligible_max'];
 
-$ptsStmt = $pdo->prepare("SELECT user_id, (COALESCE(points, 100) + COALESCE(rank_points, 50) - 50) AS effective_points FROM player_stats WHERE user_id IN (?, ?)");
+$ptsStmt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN (?, ?)");
 $ptsStmt->execute([$uid, $partner_id]);
 $ptsMap = [];
-foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['effective_points'];
+foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
 $myPts      = $ptsMap[$uid]        ?? 100;
 $partnerPts = $ptsMap[$partner_id] ?? 100;
 

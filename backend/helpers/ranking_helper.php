@@ -247,9 +247,8 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
     }
 
     // ── 5. Team averages & strength adjustment ────────────────────────────
-    // Effective Points = Buffer (points) + Competitive (rank_points) - 50
-    $teamAvgA = (int)floor((($team1[0]['points'] + $team1[0]['rank_points'] - 50) + ($team1[1]['points'] + $team1[1]['rank_points'] - 50)) / 2);
-    $teamAvgB = (int)floor((($team2[0]['points'] + $team2[0]['rank_points'] - 50) + ($team2[1]['points'] + $team2[1]['rank_points'] - 50)) / 2);
+    $teamAvgA = (int)floor(($team1[0]['points'] + $team1[1]['points']) / 2);
+    $teamAvgB = (int)floor(($team2[0]['points'] + $team2[1]['points']) / 2);
     $diff      = abs($teamAvgA - $teamAvgB);
     $adj       = getStrengthAdj($diff);
 
@@ -288,27 +287,10 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
 
         $change = (int)round($subtotal * $newFactor * $integrityFac);
         $change = max(-15, min(15, $change)); // clamp ±15
-        
-        // ── BUFFER CONSUMPTION LOGIC (First 20 matches) ──
-        $consumedFromBuffer = 0;
-        if ((int)$p['buffer_matches_left'] > 0) {
-            $initial = (int)$p['initial_buffer'];
-            $consumptionAmount = (int)round($initial * 0.05);
-            $p['buffer_matches_left'] = (int)$p['buffer_matches_left'] - 1;
-            if ($isWinner) {
-                $consumedFromBuffer = $consumptionAmount;
-            }
-            $p['new_eligibility_pts'] = max(0, (int)$p['points'] - $consumptionAmount);
-            if ($p['buffer_matches_left'] <= 0) {
-                $p['new_eligibility_pts'] = 0;
-            }
-        } else {
-            $p['new_eligibility_pts'] = (int)$p['points'];
-        }
+        $newPts = max(0, $p['points'] + $change); // floor at 0
 
-        $p['delta']      = $change + $consumedFromBuffer;
-        $p['rank_delta'] = $change + $consumedFromBuffer;
-        $p['new_points'] = $p['new_eligibility_pts'];
+        $p['delta']      = $change;
+        $p['new_points'] = $newPts;
         $p['won']        = $isWinner;
         $p['skipped']    = false;
         $p['old_rank']   = getLiveRank($pdo, $p['user_id']);
@@ -317,9 +299,9 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
 
     // ── 7. Update DB ──────────────────────────────────────────────────────
     foreach ($players as $p) {
-        $new_matches = (int)$p['matches_played'] + 1;
-        $new_wins    = (int)$p['matches_won']  + ($p['won'] ? 1 : 0);
-        $new_losses  = (int)$p['matches_lost'] + ($p['won'] ? 0 : 1);
+        $new_matches = $p['matches_played'] + 1;
+        $new_wins    = $p['matches_won']  + ($p['won'] ? 1 : 0);
+        $new_losses  = $p['matches_lost'] + ($p['won'] ? 0 : 1);
         $new_wr      = (int)floor(($new_wins * 100) / $new_matches);
         $new_streak  = $p['won']
             ? (($p['streak'] >= 0) ? $p['streak'] + 1 : 1)
@@ -329,8 +311,6 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
             UPDATE player_stats
             SET points            = ?,
                 rank_points       = rank_points + ?,
-                initial_buffer    = ?,
-                buffer_matches_left = ?,
                 matches_played    = ?,
                 matches_won       = ?,
                 matches_lost      = ?,
@@ -342,15 +322,13 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
             WHERE user_id = ?
         ")->execute([
             $p['new_points'],
-            $p['rank_delta'],
-            $p['initial_buffer'],
-            $p['buffer_matches_left'] ?? 0,
+            $p['delta'],         // rank_points += delta (can be negative, no floor for rank_points)
             $new_matches,
             $new_wins,
             $new_losses,
             $new_wr,
             $new_streak,
-            $p['rank_delta'],
+            $p['delta'],
             $p['old_rank'] ?? null,
             $p['user_id'],
         ]);
