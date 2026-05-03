@@ -329,7 +329,13 @@ const StatsUI = {
         for (const [key, val] of Object.entries(elMap)) {
             // Try both prefix-key and prefix-key-count for flexibility
             const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
-            if (el) el.textContent = val;
+            if (el) {
+                if (key === 'points' && stats.eligibility_pts !== undefined) {
+                    el.innerHTML = `${val} <span style="font-size: 14px; opacity: 0.7; font-weight: 400; margin-left: 8px;">+ ${stats.eligibility_pts} Buffer</span>`;
+                } else {
+                    el.textContent = val;
+                }
+            }
         }
 
         // Secondary details (if elements exist)
