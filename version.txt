@@ -154,3 +154,12 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Premium Shimmer: Implemented a high-end gradient sweep (mask-image) on the loading logo for a professional "metallic glint" effect.
 - UI Stability: Removed distracting pulse animations from the loader for a calmer, more stable entry experience.
 - APK Build Trigger: 2026-05-03 11:15 PM (No APK Build)
+
+a00a4ef - 2026-05-04 00:10:00 +0300
+- Rules Page Overhaul: Completely redesigned the rules documentation with premium icon-based cards and clear mobile-first layouts.
+- Performance Terminology: Clarified "Performance Points" vs "Buffer Points" to improve user understanding of the calibration phase.
+- Infinite Scroll: Implemented AJAX-driven lazy loading for the match listing page to support large volumes of data without performance degradation.
+- Real-time Polling: Added automated background refreshing (10s) for the matches list to ensure users see slot availability instantly.
+- UI Alignment: Standardized the global top-bar back button alignment (16px) and modernized the Rules page footer navigation.
+- Filter Logic: Updated the "All" gender filter to correctly fetch both Mixed and Gender-restricted matches simultaneously.
+- Code Quality: Synchronized backend API and frontend controller logic for robust pagination and gender filtering.
