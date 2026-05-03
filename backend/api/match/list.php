@@ -12,6 +12,8 @@ $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
 
 $mode = $data['mode'] ?? 'mine'; // 'mine' or 'browse'
+$limit  = (int)($data['limit']  ?? 20);
+$offset = (int)($data['offset'] ?? 0);
 
 // Fetch requesting player's points for eligibility labelling
 $myPtsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
@@ -37,38 +39,63 @@ function getMatchSlots(PDO $pdo, int $match_id): array {
     return $s->fetchAll(PDO::FETCH_ASSOC);
 }
 
+$totalMatches = 0;
+
 if ($mode === 'play_upcoming') {
     $filterType = $data['match_type'] ?? 'all';
     $filterGender = $data['gender_type'] ?? 'all';
 
-    $sql = "
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
-        FROM matches m
-        JOIN users u ON m.creator_id = u.id
-        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+    $where = "
         WHERE m.status IN ('open', 'full')
           AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
     ";
 
     $params = [];
     if ($filterType !== 'all') {
-        $sql .= " AND m.match_type = :match_type";
+        $where .= " AND m.match_type = :match_type";
         $params[':match_type'] = $filterType;
     }
     if ($filterGender === 'same_gender') {
-        // Only show matches created by someone of the same gender as me
-        $sql .= " AND m.gender_type = 'same_gender' AND up.gender = (SELECT gender FROM user_profiles WHERE user_id = :uid_gender)";
+        $where .= " AND m.gender_type = 'same_gender' AND up.gender = (SELECT gender FROM user_profiles WHERE user_id = :uid_gender)";
         $params[':uid_gender'] = $uid;
     } elseif ($filterGender !== 'all') {
-        $sql .= " AND m.gender_type = :gender_type";
+        $where .= " AND m.gender_type = :gender_type";
         $params[':gender_type'] = $filterGender;
     }
 
-    $sql .= " ORDER BY m.match_datetime ASC LIMIT 50";
+    // Total Count
+    $countStmt = $pdo->prepare("
+        SELECT COUNT(*) 
+        FROM matches m 
+        JOIN users u ON m.creator_id = u.id
+        LEFT JOIN user_profiles up ON m.creator_id = up.user_id 
+        $where
+    ");
+    $countStmt->execute($params);
+    $totalMatches = (int)$countStmt->fetchColumn();
+
+    $sql = "
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        FROM matches m
+        JOIN users u ON m.creator_id = u.id
+        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        $where
+        ORDER BY m.match_datetime ASC 
+        LIMIT :limit OFFSET :offset
+    ";
     
     $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    foreach ($params as $key => $val) {
+        $stmt->bindValue($key, $val);
+    }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
 } elseif ($mode === 'play_past') {
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches WHERE status = 'completed' AND id IN (SELECT match_id FROM scores)");
+    $countStmt->execute();
+    $totalMatches = (int)$countStmt->fetchColumn();
+
     $stmt = $pdo->prepare("
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
@@ -77,59 +104,95 @@ if ($mode === 'play_upcoming') {
         WHERE m.status = 'completed'
           AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
-        LIMIT 50
+        LIMIT :limit OFFSET :offset
     ");
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
 } elseif ($mode === 'mine_upcoming') {
-    $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
-        FROM matches m
-        JOIN users u ON m.creator_id = u.id
-        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+    $whereMine = "
         WHERE m.id IN (
-            SELECT match_id FROM match_players WHERE user_id = ?
+            SELECT match_id FROM match_players WHERE user_id = :uid1
             UNION
-            SELECT match_id FROM waiting_list WHERE (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
+            SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved')
         )
         AND m.status IN ('open', 'full', 'on_hold')
         AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
-        ORDER BY m.match_datetime ASC
-        LIMIT 50
-    ");
-    $stmt->execute([$uid, $uid, $uid]);
-} elseif ($mode === 'mine_completed') {
+    ";
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches m $whereMine");
+    $countStmt->execute([':uid1' => $uid, ':uid2' => $uid, ':uid3' => $uid]);
+    $totalMatches = (int)$countStmt->fetchColumn();
+
     $stmt = $pdo->prepare("
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
-        WHERE m.id IN (
-            SELECT match_id FROM match_players WHERE user_id = ?
-        )
+        $whereMine
+        ORDER BY m.match_datetime ASC
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(':uid1', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':uid3', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+} elseif ($mode === 'mine_completed') {
+    $whereComp = "
+        WHERE m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1)
         AND m.status = 'completed'
         AND m.id IN (SELECT match_id FROM scores)
-        ORDER BY m.match_datetime DESC
-        LIMIT 50
-    ");
-    $stmt->execute([$uid]);
-} elseif ($mode === 'mine_past') {
+    ";
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches m $whereComp");
+    $countStmt->execute([':uid1' => $uid]);
+    $totalMatches = (int)$countStmt->fetchColumn();
+
     $stmt = $pdo->prepare("
         SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
-        WHERE (m.creator_id = ? 
-               OR m.id IN (SELECT match_id FROM match_players WHERE user_id = ?)
+        $whereComp
+        ORDER BY m.match_datetime DESC
+        LIMIT :limit OFFSET :offset
+    ");
+    $stmt->bindValue(':uid1', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+} elseif ($mode === 'mine_past') {
+    $wherePast = "
+        WHERE (m.creator_id = :uid1 
+               OR m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid2)
         )
         AND (
             (m.status = 'cancelled') 
             OR 
             (m.status != 'completed' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 2 HOUR))
         )
+    ";
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches m $wherePast");
+    $countStmt->execute([':uid1' => $uid, ':uid2' => $uid]);
+    $totalMatches = (int)$countStmt->fetchColumn();
+
+    $stmt = $pdo->prepare("
+        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        FROM matches m
+        JOIN users u ON m.creator_id = u.id
+        LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        $wherePast
         ORDER BY m.match_datetime DESC
-        LIMIT 50
+        LIMIT :limit OFFSET :offset
     ");
-    $stmt->execute([$uid, $uid]);
+    $stmt->bindValue(':uid1', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
 } else {
     // Fallback empty but with correct structure
     $stmt = $pdo->prepare("
@@ -260,4 +323,13 @@ if ($mode === 'play_upcoming') {
     usort($result, fn($a, $b) => $a['sort_key'] <=> $b['sort_key'] ?: strtotime($a['match_datetime']) <=> strtotime($b['match_datetime']));
 }
 
-jsonResponse(true, 'Matches loaded.', ['matches' => $result, 'mode' => $mode]);
+$has_more = ($offset + count($result)) < $totalMatches;
+
+jsonResponse(true, 'Matches loaded.', [
+    'matches'     => $result, 
+    'mode'        => $mode,
+    'total_count' => $totalMatches,
+    'has_more'    => $has_more,
+    'limit'       => $limit,
+    'offset'      => $offset
+]);
