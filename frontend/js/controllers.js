@@ -3975,7 +3975,10 @@ const ChatController = {
         bubble.dataset.msgId = msg.id;
         bubble.style.cssText = 'position:relative; background:' + (isMe ? 'var(--g-primary)' : 'var(--g-card)') + '; border:1px solid ' + (isMe ? 'transparent' : 'var(--c-border)') + '; border-radius:' + (isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px') + '; padding:7px 12px; font-size:14px; line-height:1.4; color:var(--c-text); word-break:break-word; max-width:100%;';
 
-        bubble.innerHTML = this.escapeHtml(msg.message_text) + `<span style="float:right; font-size:9px; color:var(--c-text-muted); opacity:0.6; margin:6px -4px -2px 8px; vertical-align:bottom;">${timeStr}</span>`;
+        const escapedText = this.escapeHtml(msg.message_text);
+        const linkifiedText = this.linkify(escapedText, isMe);
+        
+        bubble.innerHTML = linkifiedText + `<span style="float:right; font-size:9px; color:var(--c-text-muted); opacity:0.6; margin:6px -4px -2px 8px; vertical-align:bottom;">${timeStr}</span>`;
         return bubble;
     },
 
@@ -4011,6 +4014,15 @@ const ChatController = {
         el.style.overflowY = el.scrollHeight > 100 ? 'auto' : 'hidden';
     },
 
+
+    linkify: function(text, isMe) {
+        if (!text) return '';
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const linkColor = isMe ? '#fff' : 'var(--c-primary)';
+        return text.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:${linkColor}; text-decoration:underline; font-weight:600;">${url}</a>`;
+        });
+    },
 
     escapeHtml: function(str) {
         if (!str) return '';

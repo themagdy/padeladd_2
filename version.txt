@@ -163,3 +163,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Alignment: Standardized the global top-bar back button alignment (16px) and modernized the Rules page footer navigation.
 - Filter Logic: Updated the "All" gender filter to correctly fetch both Mixed and Gender-restricted matches simultaneously.
 - Code Quality: Synchronized backend API and frontend controller logic for robust pagination and gender filtering.
+- Chat Links: URLs in chat messages are now automatically converted to clickable links with proper security attributes.
