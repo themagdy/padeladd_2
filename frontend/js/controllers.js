@@ -4092,17 +4092,29 @@ const NotificationsController = {
         const panel = document.getElementById('notif-panel');
         if (!panel) return;
         
-        // Phase 6: Reset pagination and load first page
-        this._offset = 0;
-        this._hasMore = true;
-        this._notifications = [];
-        this.loadMore();
+        // Render preloaded data immediately if we have it
+        if (this._notifications.length > 0) {
+            this.renderList();
+        } else {
+            // If nothing preloaded, reset and show skeletons
+            this._offset = 0;
+            this._hasMore = true;
+            this.loadMore();
+        }
 
         // Hide badge immediately
         const badge = document.getElementById('nav-notif-badge');
         if (badge) badge.style.display = 'none';
 
         panel.classList.add('open');
+        
+        // Trigger a fresh reload in background to ensure data is current
+        if (this._notifications.length > 0) {
+            this._offset = 0;
+            this._hasMore = true;
+            this._notifications = []; // Clear for fresh sync, but only AFTER renderList was called above
+            this.loadMore(true); // silent load
+        }
     },
 
     close: function() {
@@ -4120,10 +4132,13 @@ const NotificationsController = {
         this._isOpen ? this.close() : this.open();
     },
 
-    loadMore: async function() {
+    loadMore: async function(isSilent = false) {
         if (this._isLoading || !this._hasMore) return;
-        this._isLoading = true;
-        this.renderList(); // Show loading indicator at bottom
+        
+        if (!isSilent) {
+            this._isLoading = true;
+            this.renderList(); // Show loading indicator at bottom
+        }
 
         try {
             const res = await API.post('/notifications/list', { limit: 20, offset: this._offset });
