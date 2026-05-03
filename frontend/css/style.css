@@ -2587,18 +2587,36 @@ form {
   .nav-container {
     display: flex !important;
     align-items: center;
-    justify-content: center !important;
-    /* Perfect absolute centering */
+    justify-content: space-evenly !important;
+    /* Guaranteed equal distribution for 6 items */
     width: 100%;
-    padding: 0;
-    gap: 25px !important;
-    /* Final adjusted space between all 6 items */
+    padding: 0 10px;
+    gap: 0 !important;
   }
 
   /* Flat structure for the 6-item centered block */
   .nav-links,
-  .nav-right {
+  .nav-right,
+  .nav-logo,
+  .nav-item,
+  .nav-notif {
     display: contents !important;
+  }
+
+  /* Each logical item gets its own equal flex slice */
+  .nav-item, 
+  .nav-logo, 
+  .nav-notif,
+  .avatar-circle {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 10px 0 !important;
+    text-align: center;
   }
 
   .nav-logo .logo-full {
@@ -2612,19 +2630,6 @@ form {
   }
 
   /* ---- ZONE 1: Logo ---- */
-  .nav-logo {
-    display: flex !important;
-    flex: none !important;
-    align-items: center;
-    justify-content: center;
-    width: auto !important;
-    min-width: 0 !important;
-    /* Neutralize desktop 140px */
-    margin: 0 !important;
-    padding: 0 !important;
-    cursor: pointer;
-  }
-
   .nav-logo img {
     height: 32px;
     width: auto;
@@ -2635,69 +2640,44 @@ form {
   }
 
   /* ---- Nav link items ---- */
-  .nav-links .nav-item {
-    display: flex !important;
-    flex: none !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: auto !important;
-    gap: 4px;
-    margin: 0 !important;
-    padding: 0 !important;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
   .nav-links .nav-item img {
     height: 20px;
     width: auto;
   }
 
   .nav-links .nav-item .nav-label {
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
     color: var(--c-text);
-  }
-
-  /* ---- User section ---- */
-  .nav-right .nav-notif {
-    display: flex !important;
-    flex: none !important;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-    margin: 0 !important;
+    margin-top: 2px;
   }
 
   /* ---- Avatar ---- */
   .avatar-circle {
-    display: flex !important;
-    flex: none !important;
-    align-items: center;
-    justify-content: center;
-    width: 40px !important;
-    /* Slightly smaller for centered tight fit */
-    height: 40px !important;
-    border-radius: 50% !important;
-    font-size: 14px !important;
-    font-weight: 800 !important;
-    background: var(--g-primary);
-    cursor: pointer;
+    width: 38px !important;
+    height: 38px !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    margin: 0 !important;
   }
 
   /* ---- Notification bell ---- */
   .nav-notif {
-    display: flex !important;
-    flex: none !important;
-    align-items: center;
-    justify-content: center;
     position: relative;
-    margin: 0 !important;
-    padding: 0 !important;
+  }
+
+  .nav-notif img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .notif-badge {
+    position: absolute;
+    top: -2px;
+    right: calc(50% - 18px);
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    z-index: 2;
   }
 
   .nav-notif img {
