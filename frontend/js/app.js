@@ -386,11 +386,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
         const App = window.Capacitor.Plugins.App;
         App.addListener('backButton', () => {
-            // If we have history depth, go back
+            // Priority 1: Close notifications if open
+            if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
+                NotificationsController.close();
+                return;
+            }
+
+            // Priority 2: Navigate back if we have history
             if (Router.navDepth > 0) {
                 Router.back();
             } else {
-                // Otherwise exit the app if on a landing page
+                // Otherwise exit the app
                 App.exitApp();
             }
         });

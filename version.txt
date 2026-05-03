@@ -133,8 +133,8 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
 - Match Scoring UI: Redesigned the score header to a compact single-line layout with relative submission time (e.g., "3h ago") and a live countdown for auto-approval (e.g., "in 4 hours").
 - Notification Refinement: Removed redundant emojis from notification message text (e.g., for team invite acceptance) to keep the list clean, while preserving the status badge on the player avatar.
-- Final Build (v=107): Consolidated all premium features from this session including Gender-Aware UI defaults, Global UI Sounds (Tap/Success/Notify), Instant Notification Preloading, and Native Scrollbar removal.
-- Cache Management: Incremented asset versions to v=107 to ensure immediate rollout of all features.
+- Final Build (v=108): Consolidated all premium features from this session including Gender-Aware UI defaults, Global UI Sounds (Tap/Success/Notify), Instant Notification Preloading, and Native Scrollbar removal.
+- Cache Management: Incremented asset versions to v=108 to ensure immediate rollout of all features.
 - APK Build Trigger: 2026-05-03 05:35 AM
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
 - Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
