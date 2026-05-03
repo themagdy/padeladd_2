@@ -4259,3 +4259,17 @@ html, body {
   user-select: none;
 }
 
+
+/* Final Global Scrollbar Kill */
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+  background: transparent !important;
+}
+
+html, body {
+  overflow-x: hidden !important;
+  overscroll-behavior: none !important;
+}
+
