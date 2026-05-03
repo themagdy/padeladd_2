@@ -2348,7 +2348,6 @@ const MatchesController = {
                                             <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.6;">
                                                 ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
                                             </div>
-                                            <div style="font-size:10px; color:var(--c-success); font-weight:700; opacity:0.8;">Approved: ${formatDate(s.updated_at)}</div>
                                         </div>
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                     </div>
@@ -2357,11 +2356,24 @@ const MatchesController = {
                                 const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                                 const submitterName = s.nickname || s.first_name;
                                 
-                                // Calculate auto-approval (24h after created_at)
+                                // Calculate relative times
                                 const subDate = new Date(s.created_at.replace(' ', 'T'));
+                                const now = new Date();
+                                
+                                // Submitted Xh ago
+                                const subDiffMs = now - subDate;
+                                const subDiffHrs = Math.floor(subDiffMs / (1000 * 60 * 60));
+                                let subTimeStr = subDiffHrs === 0 ? 'just now' : `${subDiffHrs}h ago`;
+                                
+                                // Auto-approval countdown
                                 const autoDate = new Date(subDate.getTime() + (24 * 60 * 60 * 1000));
-                                const subTimeStr = formatDate(s.created_at);
-                                const autoTimeStr = formatDate(autoDate.toISOString());
+                                const autoDiffMs = autoDate - now;
+                                const autoDiffHrs = Math.ceil(autoDiffMs / (1000 * 60 * 60));
+                                
+                                let autoTimeStr = '';
+                                if (autoDiffHrs <= 0) autoTimeStr = 'Processing...';
+                                else if (autoDiffHrs === 1) autoTimeStr = 'in 1 hour';
+                                else autoTimeStr = `in ${autoDiffHrs} hours`;
 
                                 // Determine teams based on composition switch if available
                                 let currentTeamNo = user_in_match ? parseInt(user_in_match.team_no) : null;
@@ -2386,29 +2398,27 @@ const MatchesController = {
 
                                 scoringHtml += `
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; padding:0 20px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:0 20px;">
                                             <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.7;">
                                                 ${(scores || []).length > 1 ? `Match #${idx + 1} ` : ''}Result Submitted
                                             </div>
-                                            <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending Approval</div>
+                                            <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending</div>
                                         </div>
                                         
-                                        <div style="padding:0 20px; margin-bottom:12px; display:flex; flex-direction:column; gap:2px;">
-                                            <div style="font-size:11px; color:var(--c-text-muted); opacity:0.8;">Submitted: <strong style="color:var(--c-text);">${subTimeStr}</strong></div>
-                                            <div style="font-size:11px; color:var(--c-text-muted); opacity:0.8;">Auto-approval: <strong style="color:var(--c-orange);">${autoTimeStr}</strong></div>
+                                        <div style="padding:0 20px; margin-bottom:16px; font-size:11px; color:var(--c-text-muted); display:flex; align-items:center; gap:8px;">
+                                            <span style="opacity:0.8;">Submitted by <strong>${isSubmitter ? 'you' : submitterName}</strong></span>
+                                            <span style="width:3px; height:3px; background:currentColor; border-radius:50%; opacity:0.2;"></span>
+                                            <span style="opacity:0.8;">Auto-approval <strong style="color:var(--c-orange);">${autoTimeStr}</strong></span>
                                         </div>
 
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                         
                                         <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:20px;">
-                                            <p style="font-size:12px; color:var(--c-text-muted); margin:0;">Submitted by ${isSubmitter ? 'you' : submitterName}</p>
                                             ${!isSubmitter ? `
-                                                <span style="width:4px; height:4px; background:var(--c-text-muted); border-radius:50%; opacity:0.3;"></span>
                                                 <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">
                                                     ${amOpponent ? 'Please verify the result' : 'Waiting for opponents to verify...'}
                                                 </p>
                                             ` : `
-                                                <span style="width:4px; height:4px; background:var(--c-text-muted); border-radius:50%; opacity:0.3;"></span>
                                                 <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">Waiting for opponents to verify...</p>
                                             `}
                                         </div>

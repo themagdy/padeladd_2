@@ -73,7 +73,7 @@ try {
 
         // Phase 6: Notify requester (match creator) that partner approved
         $approverName = getDisplayName($user);
-        createNotification($pdo, $requester_id, 'partner_confirmed', $match_id, "✅ {$approverName} accepted your team invite", $uid);
+        createNotification($pdo, $requester_id, 'partner_confirmed', $match_id, "{$approverName} accepted your team invite", $uid);
 
         jsonResponse(true, 'You have approved the request and joined the match as the creator\'s partner.', null);
     }
