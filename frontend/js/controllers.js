@@ -4145,7 +4145,8 @@ const NotificationsController = {
                 match_joined: '🎾', team_invite: '👥', partner_confirmed: '✅',
                 partner_denied: '✗', partner_blocked: '🚫', match_cancelled: '❌',
                 player_withdrawn: '🚪', phone_requested: '📞', phone_approved: '📱', phone_denied: '🚫',
-                new_message: '💬', score_submitted: '📊', score_confirmed: '🏆', score_disputed: '⚠️'
+                new_message: '💬', score_submitted: '📊', score_confirmed: '🏆', score_disputed: '⚠️',
+                score_approved: '🏆'
             };
 
             // Phase 6: Grouping (Aggregation) for new_message by match
@@ -4195,17 +4196,22 @@ const NotificationsController = {
                         
                         const thumb = n.sender_avatar_thumb || n.sender_avatar;
                         let initials = '';
-                        if (n.sender_first_name || n.sender_last_name) {
-                            initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
-                        } else if (n.sender_nickname) {
-                            initials = n.sender_nickname[0].toUpperCase();
-                        }
-                        if (!initials && n.message_text) {
-                            const firstChar = n.message_text.trim()[0];
-                            if (firstChar && /[a-zA-Z0-9]/.test(firstChar)) {
-                                initials = firstChar.toUpperCase();
+                        if (thumb) {
+                            if (n.sender_first_name || n.sender_last_name) {
+                                initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
+                            } else if (n.sender_nickname) {
+                                initials = n.sender_nickname[0].toUpperCase();
+                            }
+                        } else {
+                            // System notification (no sender)
+                            // Use Time emoji for auto-approvals, otherwise use the type emoji
+                            if (n.type === 'score_approved') {
+                                initials = '⏳';
+                            } else {
+                                initials = emoji;
                             }
                         }
+                        
                         if (!initials) initials = 'P'; 
 
                         const avatarHtml = `
