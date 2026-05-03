@@ -20,6 +20,7 @@ const Router = {
         '/matches/join': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
+        '/matches/view/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
         '/rules': { template: 'frontend/pages/rules.html', init: () => {} }
     },

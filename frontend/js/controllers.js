@@ -4342,19 +4342,13 @@ const NotificationsController = {
             case 'score_disputed':
                 Router.navigate(navPath);
                 break;
-            
             case 'new_message':
             case 'phone_requested':
             case 'phone_approved':
             case 'phone_denied':
-                // Phase 6: Stack navigation so Back takes you to the match, not dashboard
-                // First navigate to the match detail page
-                Router.navigate(navPath); 
-                
-                // Then open the chat overlay which will push its own /chat state
-                setTimeout(() => {
-                    if (typeof ChatController !== 'undefined') ChatController.open(n.reference_id);
-                }, 100);
+                // Navigate directly to the chat permalink route
+                // This is more robust as initView handles the auto-opening after loading data
+                Router.navigate(navPath + '/chat'); 
                 break;
             
             case 'partner_blocked':
