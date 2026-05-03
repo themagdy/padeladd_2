@@ -2166,8 +2166,8 @@ const MatchesController = {
                     <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
                     ${typeBadges}
                 </div>
-                <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2;">
-                    ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: var(--c-text-muted); opacity: 0.7;">${subTitle}</span>` : ''}
+                <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
+                    ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff;">${subTitle}</span>` : ''}
                 </div>
             `;
         }
@@ -4342,13 +4342,19 @@ const NotificationsController = {
             case 'score_disputed':
                 Router.navigate(navPath);
                 break;
+            
             case 'new_message':
             case 'phone_requested':
             case 'phone_approved':
             case 'phone_denied':
-                // Navigate directly to the chat permalink route
-                // This is more robust as initView handles the auto-opening after loading data
-                Router.navigate(navPath + '/chat'); 
+                // Phase 6: Stack navigation so Back takes you to the match, not dashboard
+                // First navigate to the match detail page
+                Router.navigate(navPath); 
+                
+                // Then open the chat overlay which will push its own /chat state
+                setTimeout(() => {
+                    if (typeof ChatController !== 'undefined') ChatController.open(n.reference_id);
+                }, 100);
                 break;
             
             case 'partner_blocked':
