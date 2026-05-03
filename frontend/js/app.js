@@ -395,4 +395,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Force hide scrollbars via JS (Safety Injector for WebView)
+    const style = document.createElement('style');
+    style.textContent = `
+        *::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; background: transparent !important; }
+        *::-webkit-scrollbar-thumb { display: none !important; background: transparent !important; }
+        *::-webkit-scrollbar-track { display: none !important; background: transparent !important; }
+        html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+    `;
+    document.head.appendChild(style);
 });
