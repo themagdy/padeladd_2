@@ -32,6 +32,25 @@ try {
         $pdo->rollBack();
         jsonResponse(false, 'Cannot join a match that has already passed.', null, 422);
     }
+ 
+    // ── Eligibility Check (ENFORCED FIRST) ───────────────────────────────
+    $eligMin = (int)$match['eligible_min'];
+    $eligMax = (int)$match['eligible_max'];
+ 
+    // Get joining player's points (Effective Level = Buffer + Rank - 50)
+    $ptsStmt = $pdo->prepare("SELECT (COALESCE(points, 100) + COALESCE(rank_points, 50) - 50) AS effective_points FROM player_stats WHERE user_id = ?");
+    $ptsStmt->execute([$uid]);
+    $joinerPts = (int)($ptsStmt->fetchColumn() ?: 100);
+ 
+    if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
+        $pdo->rollBack();
+        jsonResponse(false, "You are not eligible for this match. Your points ({$joinerPts}) must be between {$eligMin} and {$eligMax}.", [
+            'eligibility_failed' => true,
+            'your_points'   => $joinerPts,
+            'eligible_min'  => $eligMin,
+            'eligible_max'  => $eligMax,
+        ], 422);
+    }
 
     // Check user not already in match
     $dupCheck = $pdo->prepare("SELECT id FROM match_players WHERE match_id = ? AND user_id = ?");
@@ -135,34 +154,15 @@ try {
     // Use overrides if provided
     $user_side = $data['playing_side'] ?? $profile_side;
 
-    // ── Eligibility Check ────────────────────────────────────────────────
-    // Fetch match eligibility range (locked at creation)
-    $eligMin = (int)$match['eligible_min'];
-    $eligMax = (int)$match['eligible_max'];
-
-    // Get joining player's points
-    $ptsStmt = $pdo->prepare("SELECT COALESCE(points, 100) AS points FROM player_stats WHERE user_id = ?");
-    $ptsStmt->execute([$uid]);
-    $joinerPts = (int)($ptsStmt->fetchColumn() ?: 100);
-
-    if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
-        $pdo->rollBack();
-        jsonResponse(false, "You are not eligible for this match. Your points ({$joinerPts}) must be between {$eligMin} and {$eligMax}.", [
-            'eligibility_failed' => true,
-            'your_points'   => $joinerPts,
-            'eligible_min'  => $eligMin,
-            'eligible_max'  => $eligMax,
-        ], 422);
-    }
 
     // Friendly match only: when this join makes the match full, check team avg diff <= 300
     if ($match['match_type'] === 'friendly' && count($occupied) + 1 === 4) {
         $allIds = array_merge(array_column($occupied, 'user_id'), [$uid]);
         $ph = implode(',', array_fill(0, count($allIds), '?'));
-        $ptsSt = $pdo->prepare("SELECT user_id, COALESCE(points, 100) AS points FROM player_stats WHERE user_id IN ($ph)");
+        $ptsSt = $pdo->prepare("SELECT user_id, (COALESCE(points, 100) + COALESCE(rank_points, 50) - 50) AS effective_points FROM player_stats WHERE user_id IN ($ph)");
         $ptsSt->execute($allIds);
         $ptsMap = [];
-        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['points'];
+        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) $ptsMap[(int)$r['user_id']] = (int)$r['effective_points'];
         foreach ($allIds as $pid) { if (!isset($ptsMap[$pid])) $ptsMap[$pid] = 100; }
 
         $proj = array_merge($occupied, [['user_id' => $uid, 'team_no' => $targetTeam]]);
