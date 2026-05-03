@@ -157,9 +157,6 @@ try {
         case 'chat/list':
             require __DIR__ . '/chat/list.php';
             break;
-        case 'chat/heartbeat':
-            require __DIR__ . '/chat/heartbeat.php';
-            break;
         case 'chat/presence-clear':
             require __DIR__ . '/chat/presence-clear.php';
             break;

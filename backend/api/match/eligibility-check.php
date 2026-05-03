@@ -28,7 +28,7 @@ if (count(array_unique($allIds)) !== 4) {
 // ── Fetch player stats ────────────────────────────────────────────────────
 $placeholders = implode(',', array_fill(0, 4, '?'));
 $statsStmt = $pdo->prepare("
-    SELECT ps.user_id, (COALESCE(ps.points, 100) + COALESCE(ps.rank_points, 50) - 50) AS effective_points, ps.matches_played
+    SELECT ps.user_id, ps.points, ps.matches_played
     FROM player_stats ps
     WHERE ps.user_id IN ($placeholders)
 ");
@@ -39,7 +39,7 @@ $statsRows = $statsStmt->fetchAll(PDO::FETCH_ASSOC);
 $stats = [];
 foreach ($statsRows as $row) {
     $stats[(int)$row['user_id']] = [
-        'points'         => (int)$row['effective_points'],
+        'points'         => (int)$row['points'],
         'matches_played' => (int)$row['matches_played'],
     ];
 }
