@@ -133,8 +133,8 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
 - Match Scoring UI: Redesigned the score header to a compact single-line layout with relative submission time (e.g., "3h ago") and a live countdown for auto-approval (e.g., "in 4 hours").
 - Notification Refinement: Removed redundant emojis from notification message text (e.g., for team invite acceptance) to keep the list clean, while preserving the status badge on the player avatar.
-- Instant Notifications: Preloaded notifications for an instantaneous panel experience. The list now renders immediately using cached data and syncs silently in the background.
-- Cache Management: Incremented asset versions to v=91 in index.html to force cache clearing and enable optimized notification logic.
+- Native UI Polish: Hidden the browser scrollbars globally to give the app a cleaner, more native appearance.
+- Cache Management: Incremented asset versions to v=92 in index.html to apply new styling rules.
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
 - Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
 - Avatar Loading Experience: Implemented a global native-like loading animation (spinner) and smooth fade-in effect for all avatars across the platform (Dashboard, Ranking, Matches, Chat, and Notifications).
