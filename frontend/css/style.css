@@ -2631,7 +2631,7 @@ form {
 
   /* ---- ZONE 1: Logo ---- */
   .nav-logo img {
-    height: 32px;
+    height: 36px;
     width: auto;
   }
 
@@ -2641,7 +2641,7 @@ form {
 
   /* ---- Nav link items ---- */
   .nav-links .nav-item img {
-    height: 20px;
+    height: 23px;
     width: auto;
   }
 
@@ -2664,8 +2664,8 @@ form {
 
   .avatar-circle .avatar-wrap,
   .avatar-circle .avatar-placeholder {
-    width: 38px !important;
-    height: 38px !important;
+    width: 42px !important;
+    height: 42px !important;
     border-radius: 50% !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     overflow: hidden !important;
@@ -2687,29 +2687,14 @@ form {
   }
 
   .nav-notif img {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   .notif-badge {
     position: absolute;
     top: -2px;
     right: calc(50% - 18px);
-    width: 15px;
-    height: 15px;
-    font-size: 8px;
-    z-index: 2;
-  }
-
-  .nav-notif img {
-    width: 24px;
-    height: 24px;
-  }
-
-  .notif-badge {
-    position: absolute;
-    top: -4px;
-    right: calc(50% - 20px);
     width: 16px;
     height: 16px;
     font-size: 9px;
