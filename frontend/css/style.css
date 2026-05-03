@@ -4251,7 +4251,7 @@ form {
 /* Native App Touch & Selection Logic */
 html, body {
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: pan-y;
 }
 
 .btn, .nav-item, .clickable {
@@ -4270,6 +4270,6 @@ html, body {
 
 html, body {
   overflow-x: hidden !important;
-  overscroll-behavior: none !important;
+  
 }
 
