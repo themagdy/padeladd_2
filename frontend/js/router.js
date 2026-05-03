@@ -296,6 +296,8 @@ const Router = {
                     tbarInner.style.maxWidth = '1200px';
                 } else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) {
                     tbarInner.style.maxWidth = '900px';
+                } else if (nPath === '/rules') {
+                    tbarInner.style.maxWidth = '800px';
                 } else {
                     tbarInner.style.maxWidth = '480px';
                 }

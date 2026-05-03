@@ -1196,6 +1196,10 @@ const MatchesController = {
     _lastMatchId: null,
     _lastMatchState: null,
     _partnerEnabled: false,
+    _offset: 0,
+    _limit: 20,
+    _hasMore: true,
+    _isLoading: false,
 
     // ── Create ──────────────────────────────────────────
     initCreate: function() {
@@ -1601,6 +1605,15 @@ const MatchesController = {
         
         await MatchesController.updatePlayFiltersUI();
         
+        // Reset pagination
+        MatchesController._offset = 0;
+        MatchesController._hasMore = true;
+        MatchesController._isLoading = false;
+
+        // Scroll listener for pagination
+        window.removeEventListener('scroll', MatchesController.handleScroll);
+        window.addEventListener('scroll', MatchesController.handleScroll);
+
         await MatchesController.loadList();
         if (typeof PollManager !== 'undefined') {
             PollManager.start('match_list', () => MatchesController.loadList(true), 10000);
@@ -1652,6 +1665,11 @@ const MatchesController = {
         btn.style.color = '#fff';
         btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
 
+        // Reset pagination
+        MatchesController._offset = 0;
+        MatchesController._hasMore = true;
+        MatchesController._isLoading = false;
+
         MatchesController.loadList();
     },
 
@@ -1675,6 +1693,11 @@ const MatchesController = {
             }
         }
         
+        // Reset pagination
+        MatchesController._offset = 0;
+        MatchesController._hasMore = true;
+        MatchesController._isLoading = false;
+
         await MatchesController.loadList();
         if (typeof PollManager !== 'undefined') {
             PollManager.start('match_list', () => MatchesController.loadList(true), 10000);
@@ -1692,7 +1715,7 @@ const MatchesController = {
         if (!isSilent && !hasCache && list)     list.style.display = 'none';
 
         // If we have cache, render it immediately while fetching
-        if (!isSilent && hasCache) {
+        if (!isSilent && hasCache && MatchesController._offset === 0) {
             MatchesController.renderList(hasCache);
             if (skeleton) skeleton.style.display = 'none';
             if (list)     list.style.display = 'block';
@@ -1702,19 +1725,21 @@ const MatchesController = {
         let payload  = { 
             mode: MatchesController._currentTab,
             match_type: MatchesController._playFilterType,
-            gender_type: MatchesController._playFilterGender
+            gender_type: MatchesController._playFilterGender,
+            limit: isSilent ? 10 : MatchesController._limit,
+            offset: isSilent ? 0 : MatchesController._offset
         };
 
         // ONLY use /matches/user for 'Completed' tabs (mine_completed and play_past) to get scores
-        // Revert 'mine_past' to original /match/list to show teams instead of scores
         if (MatchesController._currentTab === 'play_past') {
             endpoint = '/matches/recent';
-            payload  = { limit: 50 };
+            payload  = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         } else if (MatchesController._currentTab === 'mine_completed') {
             endpoint = '/matches/user';
-            payload  = {};
+            payload  = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         }
 
+        if (!isSilent) MatchesController._isLoading = true;
         let res = await API.post(endpoint, payload);
         
         // Phase 6: Silent retry on first failure
@@ -1724,29 +1749,64 @@ const MatchesController = {
             res = await API.post(endpoint, payload);
         }
 
+        if (!isSilent) MatchesController._isLoading = false;
         if (!isSilent && skeleton) skeleton.style.display = 'none';
         if (!isSilent && list)     list.style.display = 'block';
 
         if (!res || !res.success) {
-            if (!isSilent && !hasCache) {
+            if (!isSilent && !hasCache && MatchesController._offset === 0) {
                 list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Could not load matches</h3><p>${res ? res.message : 'Network error'}</p></div>`;
             }
             return;
         }
 
-        // Compare with cache to prevent unnecessary re-renders
-        const responseJson = JSON.stringify(res.data.matches);
-        if (isSilent && MatchesController._cache[cacheKey + '_json'] === responseJson) {
+        const newMatches = res.data.matches || [];
+        
+        // Polling (isSilent) logic: only refresh the first 10
+        if (isSilent) {
+            // Update the top of the cache/list
+            if (MatchesController._cache[cacheKey]) {
+                // Merge fresh top 10 into existing list
+                const existing = MatchesController._cache[cacheKey];
+                newMatches.forEach((nm, idx) => {
+                    if (idx < existing.length) {
+                        existing[idx] = nm; // Replace with fresh data
+                    }
+                });
+                MatchesController.renderList(existing);
+            }
             return;
         }
 
-        MatchesController._cache[cacheKey] = res.data.matches;
-        MatchesController._cache[cacheKey + '_json'] = responseJson;
+        // Normal load (not polling)
+        if (MatchesController._offset === 0) {
+            MatchesController._cache[cacheKey] = newMatches;
+        } else {
+            MatchesController._cache[cacheKey] = (MatchesController._cache[cacheKey] || []).concat(newMatches);
+        }
 
-        if (!isSilent && skeleton) skeleton.style.display = 'none';
-        if (!isSilent && list)     list.style.display = 'block';
+        MatchesController._hasMore = res.data.has_more;
+        MatchesController._offset += newMatches.length;
 
-        MatchesController.renderList(res.data.matches);
+        MatchesController.renderList(MatchesController._cache[cacheKey]);
+    },
+
+    loadMore: function() {
+        if (MatchesController._isLoading || !MatchesController._hasMore) return;
+        MatchesController.loadList();
+    },
+
+    handleScroll: function() {
+        // Only paginate on match list pages
+        if (!document.getElementById('ml-list')) return;
+
+        const scrollHeight = document.documentElement.scrollHeight;
+        const scrollTop    = window.scrollY || document.documentElement.scrollTop;
+        const clientHeight = window.innerHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight - 300) {
+            MatchesController.loadMore();
+        }
     },
 
     renderList: function(matches) {
@@ -1846,7 +1906,7 @@ const MatchesController = {
                         html += MatchesController.renderMatchCard(m);
                     }
                 });
-                resultsContainer.innerHTML = html;
+                resultsContainer.innerHTML = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
             }
         } else {
             let html = '';
@@ -1858,7 +1918,7 @@ const MatchesController = {
                     html += MatchesController.renderMatchCard(m);
                 }
             });
-            list.innerHTML = html;
+            list.innerHTML = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
         }
     },
 
