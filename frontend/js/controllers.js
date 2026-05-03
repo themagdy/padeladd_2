@@ -980,7 +980,24 @@ const ProfileController = {
                 }
                 if (p) {
                     if (form.nickname && p.nickname) form.nickname.value = p.nickname;
-                    if (form.gender && p.gender) form.gender.value = p.gender;
+                    if (form.gender && p.gender) {
+                        const genderSelect = form.gender;
+                        const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
+                        
+                        // Create a readonly input to replace the dropdown
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.name = 'gender';
+                        input.className = 'form-input';
+                        input.value = val;
+                        input.readOnly = true;
+                        input.style.cursor = 'default';
+                        input.style.background = 'rgba(255,255,255,0.02)';
+                        input.style.color = 'var(--c-text-muted)';
+                        input.title = 'Gender cannot be changed once set.';
+                        
+                        genderSelect.parentNode.replaceChild(input, genderSelect);
+                    }
                     if (form.playing_side && p.playing_side) form.playing_side.value = p.playing_side;
                     if (form.location && p.location) form.location.value = p.location;
                     if (form.bio && p.bio) form.bio.value = p.bio;

@@ -28,25 +28,21 @@ function getStartingPoints(string $level): int {
 
 // ── Strength Difference Adjustment ────────────────────────────────────────
 /**
- * Returns the absolute adjustment value (0–3) based on team avg diff.
+ * Returns the absolute adjustment value (0–4) based on team avg diff.
  * Direction is applied by the caller (+ for upset winner, - for expected winner).
  */
 function getStrengthAdj(int $diff): int {
     if ($diff <= 50)  return 0;
-    if ($diff <= 100) return 1;
-    if ($diff <= 200) return 2;
-    return 3;
+    if ($diff <= 100) return 2;
+    return 4; // Max adjustment for 101-150 gap
 }
 
 
 // ── Heavy Win/Loss Modifier ────────────────────────────────────────────────
 /**
- * Returns the modifier for the winner (+1) and loser (-1) or 0.
+ * Returns the modifier for the winner (+4) and loser (-4) or 0.
  * Never applies in a 3-set match.
- * Applies if total game diff across played sets >= 7.
- *
- * $sets: array of ['w' => int, 'l' => int] — winner/loser games per set
- * Returns: int (0, 1) — winner gets +value, loser gets -value
+ * Applies if total game diff across played sets >= 8.
  */
 function getHeavyModifier(array $sets, bool $wentToThree): int {
     if ($wentToThree) return 0;
@@ -54,13 +50,13 @@ function getHeavyModifier(array $sets, bool $wentToThree): int {
     foreach ($sets as $s) {
         $totalDiff += abs($s['w'] - $s['l']);
     }
-    return ($totalDiff >= 7) ? 1 : 0;
+    return ($totalDiff >= 8) ? 4 : 0;
 }
 
 
 // ── New Player Factor ─────────────────────────────────────────────────────
 /**
- * Returns the new player factor (as tenths integer, so 15 = 1.5x) for a player.
+ * Returns the new player factor (float) for a player.
  * Based on total approved scores across all matches.
  */
 function getNewPlayerFactor(PDO $pdo, int $user_id): float {
@@ -76,7 +72,7 @@ function getNewPlayerFactor(PDO $pdo, int $user_id): float {
     $stmt->execute([$user_id]);
     $count = (int)$stmt->fetchColumn();
 
-    if ($count <= 5)  return 1.5;
+    if ($count <= 5)  return 2.0;
     if ($count <= 15) return 1.2;
     return 1.0;
 }
@@ -269,7 +265,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
         }
 
         // Base + adj + heavy
-        $base    = $isWinner ? +4 : -4;
+        $base    = $isWinner ? +6 : -6;
         $heavy   = $isWinner ? +$heavyMod : -$heavyMod;
         $subtotal = $base + $strengthAdj + $heavy;
 
@@ -282,7 +278,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
             $change = 0;
         } else {
             $change = (int)round($subtotal * $newFactor * $integrityFac);
-            $change = max(-15, min(15, $change)); // clamp ±15
+            $change = max(-25, min(25, $change)); // clamp ±25
         }
 
         $buffer_delta = 0;

@@ -174,3 +174,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Smart Sharing: Implemented platform-aware sharing (Native Share menu in app, Copy Link + Toast in web browsers).
 - Link Standardization: Ensured all shared match links point to the public live URL regardless of the origin (localhost/app/web).
 - Bug Fix: Corrected the global Toast function call in the frontend controllers.
+
+[SCORING_OVERHAUL_V2_2] - 2026-05-04 03:00:00 +0300
+- Scoring Logic v2.2: Implemented higher base points (±6) and more aggressive modifiers.
+- Team Strength: Updated tiers to 0, 2, 4 based on team average gaps (max 150).
+- Performance Rewards: Increased heavy win/loss threshold to 8+ games and reward to ±4 points.
+- Rapid Calibration: Increased the first 5 matches multiplier from 1.5x to 2.0x for faster rank discovery.
+- Point Swings: Increased the per-match point clamp from 15 to 25 to accommodate new bonuses.
+- Rules Page: Fully updated the PadelAdd Rules UI with the new scoring values and stricter fair play wording.
