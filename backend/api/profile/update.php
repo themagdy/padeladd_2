@@ -26,12 +26,17 @@ if (empty($nickname)) {
 }
 
 // Check if a profile already exists
-$stmtProf = $pdo->prepare("SELECT player_code, level FROM user_profiles WHERE user_id = ?");
+$stmtProf = $pdo->prepare("SELECT player_code, level, gender FROM user_profiles WHERE user_id = ?");
 $stmtProf->execute([$user['id']]);
 $existingProfile = $stmtProf->fetch();
 $hasProfile = $existingProfile !== false;
 
 if ($hasProfile) {
+    // If gender is already set in the database, lock it (ignore the incoming $gender value)
+    if (!empty($existingProfile['gender'])) {
+        $gender = $existingProfile['gender'];
+    }
+
     // Update
     $update = $pdo->prepare("UPDATE user_profiles SET date_of_birth=?, gender=?, playing_side=?, nickname=?, location=?, bio=? WHERE user_id=?");
     $update->execute([$dob, $gender, $playingSide, $nickname, $location, $bio, $user['id']]);
