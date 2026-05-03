@@ -143,14 +143,10 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Performance: Optimized the navigation bar avatar to prevent redundant re-loads during page transitions.
 - Match History: Removed the hardcoded display limit in player profiles, allowing users to see their full history of finalized scores.
 - Ranking Consistency: Updated New Player Bonus and Integrity Factor to count individual approved scores instead of unique Match IDs, aligning with the multi-match-per-booking requirement.
-
-[LATEST] - 2026-05-03 20:25:00 +0300
-- Gender-Aware UI: Integrated profile gender data to automatically set default ranking tabs (Male/Female) and match listing filters across the entire platform.
-- Calibration Experience: Transformed the level selection into a premium glassmorphic interface with clear "Buffer Points" terminology and 20-match calibration stakes.
-- Calibration Mechanics: Implemented a 20-match buffer system (5% gain/loss per match) for new players, ensuring accurate skill seeding.
-- Match Listing UI: Redesigned venue names with white bold/light typography and smart wrapping for better readability on mobile.
-- Dashboard Ranking: Added subtle separators between players for improved visual structure and professional polish.
-- Security: Implemented strict backend gender enforcement for "Same Gender" matches, blocking mismatched partner invites and joins with specific eligibility feedback.
-- UX Refinement: Increased default notification toast duration to 5 seconds to ensure important eligibility messages are fully readable.
-- Layout Optimization: Reduced bottom padding on match listing for a tighter, more modern look.
-- API Integrity: Enhanced partner invitation logic to validate both points and gender before sending requests.
+- Gender-Aware UI: Integrated profile gender data to automatically set default ranking tabs and filter labels across the Dashboard and Ranking pages.
+- Backend Integrity: Implemented strict backend gender enforcement for match creation, solo joins, and team invitations to prevent eligibility mismatches.
+- Visual Identity: Refined venue name styling in match cards with a bold/light hierarchical design and flexible parsing for multi-club venues.
+- Calibration Experience: Transformed the level selection UI with premium glassmorphism and clarified "Buffer Points" terminology for the 20-match calibration phase.
+- Dashboard Polish: Enhanced the ranking table with subtle player separators and optimized spacing for a cleaner, high-end aesthetic.
+- UX Refinement: Standardized toast and action message durations to 5 seconds to ensure critical eligibility feedback is easily readable.
+- APK Build Trigger: 2026-05-03 08:30 PM (No APK Build)
