@@ -2167,7 +2167,7 @@ const MatchesController = {
                     ${typeBadges}
                 </div>
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
-                    ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff; opacity: 0.9;">${subTitle}</span>` : ''}
+                    ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.4; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff;">${subTitle}</span>` : ''}
                 </div>
             `;
         }
