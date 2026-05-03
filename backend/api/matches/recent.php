@@ -11,8 +11,9 @@ $limit = (int)($data['limit'] ?? 10);
 
 // Fetch recent completed matches that have approved scores
 $stmt = $pdo->prepare("
-    SELECT m.*
+    SELECT m.*, v.name AS official_venue_name
     FROM matches m
+    LEFT JOIN venues v ON m.venue_id = v.id
     WHERE m.status = 'completed'
       AND m.id IN (SELECT match_id FROM scores WHERE status = 'approved')
     ORDER BY m.match_datetime DESC
@@ -93,7 +94,7 @@ foreach ($matches as $m) {
         'id'             => $mid,
         'match_code'     => $m['match_code'],
         'scheduled_at'   => $m['match_datetime'],
-        'venue'          => $m['venue_name'],
+        'venue'          => $m['official_venue_name'] ?: 'Venue TBD',
         'court_name'     => $m['court_name'],
         'status'         => 'completed',
         'team_a'         => $teamA,

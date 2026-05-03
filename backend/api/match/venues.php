@@ -32,14 +32,14 @@ try {
 
     // Search for matching venue names
     $stmt = $pdo->prepare("
-        SELECT name 
+        SELECT id, name 
         FROM venues 
         WHERE $whereClause 
         ORDER BY name ASC 
         LIMIT 10
     ");
     $stmt->execute($params);
-    $venues = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $venues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     jsonResponse(true, 'Venues retrieved', ['venues' => $venues]);
 

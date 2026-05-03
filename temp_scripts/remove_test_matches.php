@@ -12,8 +12,8 @@ $venueName = "TEST_PAGINATION";
 echo "Cleaning up matches with venue '$venueName'...<br>";
 
 // We only need to delete from 'matches' because of ON DELETE CASCADE
-$stmt = $pdo->prepare("DELETE FROM matches WHERE venue_name = ?");
-$stmt->execute([$venueName]);
+$stmt = $pdo->prepare("DELETE FROM matches WHERE venue_id = 1 AND match_code LIKE 'T%'");
+$stmt->execute();
 
 $count = $stmt->rowCount();
 

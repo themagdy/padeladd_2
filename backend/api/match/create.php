@@ -8,6 +8,7 @@ $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
 
+$venue_id             = (int)($data['venue_id'] ?? 0);
 $venue_name           = trim($data['venue_name'] ?? '');
 $court_name           = trim($data['court_name'] ?? '');
 $match_datetime       = trim($data['match_datetime'] ?? '');
@@ -16,6 +17,10 @@ $partner_code         = strtoupper(trim($data['partner_player_code'] ?? ''));
 $duration_minutes     = (int)($data['duration_minutes'] ?? 90);
 $gender_type          = trim($data['gender_type'] ?? 'same_gender');
 $match_type           = trim($data['match_type'] ?? 'competition');
+
+if ($venue_id === 0 && $venue_name === '') {
+    jsonResponse(false, 'Venue is required.', null, 422);
+}
 
 if (!in_array($gender_type, ['open', 'same_gender'])) $gender_type = 'same_gender';
 if (!in_array($match_type, ['friendly', 'competition'])) $match_type = 'competition';
@@ -36,9 +41,6 @@ $eligible_max = $creator_points + $elig_range;
 
 // --- Validation ---
 
-if ($venue_name === '') {
-    jsonResponse(false, 'Venue name is required.', null, 422);
-}
 if ($court_name === '') {
     jsonResponse(false, 'Court name or number is required.', null, 422);
 }
@@ -108,10 +110,10 @@ try {
 
     // Insert match with locked eligibility range
     $stmt = $pdo->prepare("
-        INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code, gender_type, match_type, eligible_min, eligible_max)
+        INSERT INTO matches (creator_id, venue_id, court_name, match_datetime, duration_minutes, created_with_partner, status, match_code, gender_type, match_type, eligible_min, eligible_max)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-    $stmt->execute([$uid, $venue_name, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code, $gender_type, $match_type, $eligible_min, $eligible_max]);
+    $stmt->execute([$uid, $venue_id ?: null, $court_name ?: null, $dt->format('Y-m-d H:i:s'), $duration_minutes, $created_with_partner, $matchStatus, $match_code, $gender_type, $match_type, $eligible_min, $eligible_max]);
 
     $match_id = (int)$pdo->lastInsertId();
 

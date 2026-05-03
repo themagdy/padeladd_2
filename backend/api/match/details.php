@@ -34,19 +34,23 @@ $myGender = $myInfo['gender'] ?? 'male';
 // Fetch match
 if ($match_id > 0) {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender, up.player_code AS creator_code
+        SELECT m.*, v.name AS official_venue_name, v.venue_location_link,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender, up.player_code AS creator_code
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         WHERE m.id = ?
     ");
     $stmt->execute([$match_id]);
 } else {
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender, up.player_code AS creator_code
+        SELECT m.*, v.name AS official_venue_name, v.venue_location_link,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender, up.player_code AS creator_code
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         WHERE m.match_code = ?
     ");
     $stmt->execute([$match_code]);
@@ -191,7 +195,8 @@ jsonResponse(true, 'Match details loaded.', [
     'match' => [
         'id'                   => (int)$m['id'],
         'match_code'           => $m['match_code'],
-        'venue_name'           => $m['venue_name'],
+        'venue_name'           => $m['official_venue_name'] ?: 'Venue TBD',
+        'venue_location_link'  => $m['venue_location_link'] ?? null,
         'court_name'           => $m['court_name'],
         'match_datetime'       => $m['match_datetime'],
         'status'               => $m['status'],
