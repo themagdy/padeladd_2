@@ -164,3 +164,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Filter Logic: Updated the "All" gender filter to correctly fetch both Mixed and Gender-restricted matches simultaneously.
 - Code Quality: Synchronized backend API and frontend controller logic for robust pagination and gender filtering.
 - Chat Links: URLs in chat messages are now automatically converted to clickable links with proper security attributes.
+
+[MATCH_VENUES_RELATION] - 2026-05-04 02:00:00 +0300
+- Database Normalization: Successfully transitioned the matches table from string-based venue_name to relational venue_id foreign key.
+- Data Integrity: Implemented LEFT JOINs across all match-listing APIs (list, details, recent, user) to ensure official venue names are used.
+- Code Cleanup: Fully removed the venue_name column usage from the codebase, making it obsolete and ready for deletion.
+- Venue Enhancements: Added venue_location_link to the venues table and populated it for all existing clubs.
+- Match Details UI: Added "Court Location" and "Share Match" buttons with a premium glassmorphic design and micro-animations.
+- Smart Sharing: Implemented platform-aware sharing (Native Share menu in app, Copy Link + Toast in web browsers).
+- Link Standardization: Ensured all shared match links point to the public live URL regardless of the origin (localhost/app/web).
+- Bug Fix: Corrected the global Toast function call in the frontend controllers.

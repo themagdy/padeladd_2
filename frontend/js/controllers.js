@@ -1306,12 +1306,15 @@ const MatchesController = {
                     const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
 
                     if (res && res.success && res.data.venues.length > 0) {
-                        venueDrop.innerHTML = res.data.venues.map(v => `<li>${v}</li>`).join('');
+                        venueDrop.innerHTML = res.data.venues.map(v => `<li data-id="${v.id}">${v.name}</li>`).join('');
                         venueDrop.style.display = 'block';
                         if (addBtnWrap) addBtnWrap.style.display = 'none';
                     } else {
                         venueDrop.style.display = 'none';
                         if (addBtnWrap) addBtnWrap.style.display = 'block';
+                        // Reset ID if no matches
+                        const idInput = document.getElementById('cm-venue-id');
+                        if (idInput) idInput.value = '';
                     }
                 }, 300);
 
@@ -1324,11 +1327,15 @@ const MatchesController = {
             venueDrop.addEventListener('click', (e) => {
                 if (e.target.tagName === 'LI') {
                     const fullText = e.target.textContent;
+                    const venueId  = e.target.dataset.id;
                     venueInput.value = fullText;
                     venueDrop.style.display = 'none';
                     
                     const dbFlag = document.getElementById('cm-venue-is-db');
                     if (dbFlag) dbFlag.value = '1';
+
+                    const idInput = document.getElementById('cm-venue-id');
+                    if (idInput) idInput.value = venueId;
 
                     const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
                     if (addBtnWrap) addBtnWrap.style.display = 'none';
@@ -1439,6 +1446,7 @@ const MatchesController = {
 
 
             const payload = {
+                venue_id:         form.venue_id.value,
                 venue_name:       venue,
                 court_name:       form.court_name.value.trim(),
                 match_datetime:   combined,
@@ -2741,11 +2749,24 @@ const MatchesController = {
                         </span>` : '';
 
                     const chatBtnHtml = `
-                        <div style="margin-bottom:20px;">
-                            <button onclick="ChatController.open(${match.id})" class="btn btn-secondary" style="width:100%; padding:14px; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:700; border-radius:var(--r-md); background:var(--c-bg-card); color:var(--c-text);">
-                                <span>💬</span> Match Chat
+                        <div style="margin-bottom:24px; padding: 0 4px;">
+                            <!-- Premium Chat Button -->
+                            <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                                <span style="font-size:20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));">💬</span> 
+                                <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                                 ${badgeHtml}
                             </button>
+                            
+                            <!-- Sub-Actions Grid -->
+                            <div style="margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                                ${match.venue_location_link ? `
+                                <a href="${match.venue_location_link}" target="_blank" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); border:1px solid rgba(27,82,206,0.25); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
+                                    <span style="font-size:16px;">📍</span> Location
+                                </a>` : ''}
+                                <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.25); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
+                                    <span style="font-size:16px;">🔗</span> Share
+                                </button>
+                            </div>
                         </div>
                     `;
                     if (chatArea) chatArea.innerHTML = chatBtnHtml;
@@ -2811,6 +2832,26 @@ const MatchesController = {
         return { id: parseInt(match.id), isAuthorized, isChatAllowed: isAuthorized };
     },
 
+    share: function(id, code) {
+        const url = (CONFIG.LIVE_URL || window.location.origin) + '/matches/' + code;
+        const isNativeApp = document.body.classList.contains('is-mobile-app');
+        
+        if (isNativeApp && navigator.share) {
+            // Native mobile app: use share menu, no toast
+            navigator.share({
+                title: 'Join me for a Padel match!',
+                text: 'Check out this match on PadelAdd: ' + code,
+                url: url
+            }).catch(err => {
+                if (err.name !== 'AbortError') console.error(err);
+            });
+        } else {
+            // Regular browser (Desktop or Mobile): copy link + toast
+            navigator.clipboard.writeText(url).then(() => {
+                Toast.show('Match link copied', 'success');
+            });
+        }
+    },
 
 
 

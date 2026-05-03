@@ -43,10 +43,10 @@ for ($i = 1; $i <= 100; $i++) {
         
         // Insert Match
         $stmt = $pdo->prepare("
-            INSERT INTO matches (creator_id, venue_name, court_name, match_datetime, duration_minutes, status, match_code, gender_type, match_type, eligible_min, eligible_max)
-            VALUES (?, ?, ?, ?, 90, 'open', ?, 'open', 'competition', ?, ?)
+            INSERT INTO matches (creator_id, venue_id, court_name, match_datetime, duration_minutes, status, match_code, gender_type, match_type, eligible_min, eligible_max)
+            VALUES (?, 1, ?, ?, 90, 'open', ?, 'open', 'competition', ?, ?)
         ");
-        $stmt->execute([$uid, $venueName, "Court " . ($i % 5 + 1), $date, $matchCode, $eligible_min, $eligible_max]);
+        $stmt->execute([$uid, "Court " . ($i % 5 + 1), $date, $matchCode, $eligible_min, $eligible_max]);
         $matchId = $pdo->lastInsertId();
         
         // Add Creator

@@ -11,8 +11,9 @@ $target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
 
 // Fetch matches where user is a participant OR an active waiting list entry (only for upcoming)
 $stmt = $pdo->prepare("
-    SELECT m.*
+    SELECT m.*, v.name AS official_venue_name
     FROM matches m
+    LEFT JOIN venues v ON m.venue_id = v.id
     WHERE (
         -- Condition A: User was a confirmed participant (Always show)
         m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1)
@@ -116,7 +117,7 @@ foreach ($matches as $m) {
     $result[] = [
         'id'             => $mid,
         'match_code'     => $m['match_code'],
-        'venue'          => $m['venue_name'],
+        'venue'          => $m['official_venue_name'] ?: 'Venue TBD',
         'scheduled_at'   => $m['match_datetime'],
         'status'         => $status,
         'original_status' => $m['status'],

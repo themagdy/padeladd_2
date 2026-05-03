@@ -75,10 +75,12 @@ if ($mode === 'play_upcoming') {
     $totalMatches = (int)$countStmt->fetchColumn();
 
     $sql = "
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name, 
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         $where
         ORDER BY m.match_datetime ASC 
         LIMIT :limit OFFSET :offset
@@ -97,10 +99,12 @@ if ($mode === 'play_upcoming') {
     $totalMatches = (int)$countStmt->fetchColumn();
 
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         WHERE m.status = 'completed'
           AND m.id IN (SELECT match_id FROM scores)
         ORDER BY m.match_datetime DESC
@@ -125,10 +129,12 @@ if ($mode === 'play_upcoming') {
     $totalMatches = (int)$countStmt->fetchColumn();
 
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         $whereMine
         ORDER BY m.match_datetime ASC
         LIMIT :limit OFFSET :offset
@@ -151,10 +157,12 @@ if ($mode === 'play_upcoming') {
     $totalMatches = (int)$countStmt->fetchColumn();
 
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         $whereComp
         ORDER BY m.match_datetime DESC
         LIMIT :limit OFFSET :offset
@@ -180,10 +188,12 @@ if ($mode === 'play_upcoming') {
     $totalMatches = (int)$countStmt->fetchColumn();
 
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         $wherePast
         ORDER BY m.match_datetime DESC
         LIMIT :limit OFFSET :offset
@@ -196,10 +206,12 @@ if ($mode === 'play_upcoming') {
 } else {
     // Fallback empty but with correct structure
     $stmt = $pdo->prepare("
-        SELECT m.*, u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
+        SELECT m.*, v.name AS official_venue_name,
+               u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
         FROM matches m
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
+        LEFT JOIN venues v ON m.venue_id = v.id
         WHERE 1=0
     ");
     $stmt->execute();
@@ -290,7 +302,7 @@ foreach ($matches as $m) {
     $result[] = [
         'id'                   => $mid,
         'match_code'           => $m['match_code'],
-        'venue_name'           => $m['venue_name'],
+        'venue_name'           => $m['official_venue_name'] ?: 'Venue TBD',
         'court_name'           => $m['court_name'],
         'match_datetime'       => $m['match_datetime'],
         'status'               => $m['status'],
