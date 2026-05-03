@@ -92,11 +92,22 @@ html, body, * {
   -ms-overflow-style: none !important; /* IE/Edge */
 }
 
+/* Chrome, Safari, Opera, Android WebView */
 *::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
   background: transparent !important;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  display: none !important;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent !important;
+  display: none !important;
 }
 
 html::-webkit-scrollbar, 
