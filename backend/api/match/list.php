@@ -51,7 +51,11 @@ if ($mode === 'play_upcoming') {
         $sql .= " AND m.match_type = :match_type";
         $params[':match_type'] = $filterType;
     }
-    if ($filterGender !== 'all') {
+    if ($filterGender === 'same_gender') {
+        // Only show matches created by someone of the same gender as me
+        $sql .= " AND m.gender_type = 'same_gender' AND up.gender = (SELECT gender FROM user_profiles WHERE user_id = :uid_gender)";
+        $params[':uid_gender'] = $uid;
+    } elseif ($filterGender !== 'all') {
         $sql .= " AND m.gender_type = :gender_type";
         $params[':gender_type'] = $filterGender;
     }
