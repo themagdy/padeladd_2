@@ -61,7 +61,7 @@ try {
             VALUES (?, ?, 1, 2, 'team', 'confirmed', ?)
         ");
         $ins->execute([$match_id, $partner_id, $partner_side]);
-        $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)")->execute([$partner_id]);
+        $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$partner_id]);
 
         // Finish waiting list
         $pdo->prepare("UPDATE waiting_list SET request_status = 'joined' WHERE id = ?")->execute([$wl_id]);
@@ -132,14 +132,15 @@ try {
         $allCheckIds = array_map('intval', array_column($occupied, 'user_id'));
         $allCheckIds = array_merge($allCheckIds, [$requester_id, $partner_id]);
         $phStr = implode(',', array_fill(0, count($allCheckIds), '?'));
-        $statsStmt = $pdo->prepare("SELECT user_id, points, matches_played FROM player_stats WHERE user_id IN ($phStr)");
+        $statsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points, buffer_matches_left, matches_played FROM player_stats WHERE user_id IN ($phStr)");
         $statsStmt->execute($allCheckIds);
         $statsMap = [];
         foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-            $statsMap[(int)$r['user_id']] = ['points' => (int)$r['points'], 'matches_played' => (int)$r['matches_played']];
+            $pts = (int)$r['buffer_matches_left'] > 0 ? (int)($r['current_buffer'] ?? 100) : (int)($r['rank_points'] ?? 50);
+            $statsMap[(int)$r['user_id']] = ['points' => $pts, 'matches_played' => (int)$r['matches_played']];
         }
         foreach ($allCheckIds as $pid) {
-            if (!isset($statsMap[$pid])) $statsMap[$pid] = ['points' => 50, 'matches_played' => 0];
+            if (!isset($statsMap[$pid])) $statsMap[$pid] = ['points' => 0, 'matches_played' => 0];
         }
         $t1Stats = array_map(fn($p) => $statsMap[(int)$p['user_id']], $team1Players);
         $t2Stats = [$statsMap[$requester_id], $statsMap[$partner_id]];
@@ -154,6 +155,33 @@ try {
         }
     }
 
+    // ── Gender check for Same Gender matches ─────────────────────────────────
+    if ($match['gender_type'] === 'same_gender') {
+        // Creator's gender
+        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtC->execute([$match['creator_id']]);
+        $creatorGender = $stmtC->fetchColumn() ?: 'male';
+
+        // Approver's gender
+        $stmtA = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtA->execute([$uid]);
+        $approverGender = $stmtA->fetchColumn() ?: 'male';
+
+        // Requester's gender
+        $stmtR = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtR->execute([$requester_id]);
+        $requesterGender = $stmtR->fetchColumn() ?: 'male';
+
+        if ($approverGender !== $creatorGender || $requesterGender !== $creatorGender) {
+            $pdo->rollBack();
+            $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+            jsonResponse(false, "You are not eligible for this match. This is a {$genderLabel} match.", [
+                'eligibility_failed' => true,
+                'reason' => 'gender_mismatch'
+            ], 422);
+        }
+    }
+
     // Insert both players into team 2
     $ins = $pdo->prepare("
         INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
@@ -163,9 +191,9 @@ try {
     $ins->execute([$match_id, $partner_id,   2, 2, $par_side]);
 
 
-    // Ensure player_stats rows (starting points = 50 per brief)
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)")->execute([$requester_id]);
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)")->execute([$partner_id]);
+    // Ensure player_stats rows (starting points = 0 per brief)
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$requester_id]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$partner_id]);
 
     // Move to joined status (terminal)
     $pdo->prepare("UPDATE waiting_list SET request_status = 'joined' WHERE id = ?")->execute([$wl_id]);

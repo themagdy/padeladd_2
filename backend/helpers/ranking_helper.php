@@ -231,7 +231,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
         $psStmt->execute([$part['user_id']]);
         $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         if (!$ps) {
-            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 100, 50)")->execute([$part['user_id']]);
+            $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$part['user_id']]);
             $psStmt->execute([$part['user_id']]);
             $ps = $psStmt->fetch(PDO::FETCH_ASSOC);
         }
@@ -247,8 +247,9 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
     }
 
     // ── 5. Team averages & strength adjustment ────────────────────────────
-    $teamAvgA = (int)floor(($team1[0]['points'] + $team1[1]['points']) / 2);
-    $teamAvgB = (int)floor(($team2[0]['points'] + $team2[1]['points']) / 2);
+    $eff = function($p) { return (int)($p['rank_points'] ?? 0) + (int)($p['current_buffer'] ?? 100); };
+    $teamAvgA = (int)floor(($eff($team1[0]) + $eff($team1[1])) / 2);
+    $teamAvgB = (int)floor(($eff($team2[0]) + $eff($team2[1])) / 2);
     $diff      = abs($teamAvgA - $teamAvgB);
     $adj       = getStrengthAdj($diff);
 
@@ -278,21 +279,38 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
 
         // Skip if integrity too low
         if ($integrityFac < 0.5) {
-            $p['delta']      = 0;
-            $p['new_points'] = $p['points'];
-            $p['won']        = $isWinner;
-            $p['skipped']    = true;
-            continue;
+            $change = 0;
+        } else {
+            $change = (int)round($subtotal * $newFactor * $integrityFac);
+            $change = max(-15, min(15, $change)); // clamp ±15
         }
 
-        $change = (int)round($subtotal * $newFactor * $integrityFac);
-        $change = max(-15, min(15, $change)); // clamp ±15
-        $newPts = max(0, $p['points'] + $change); // floor at 0
+        $buffer_delta = 0;
+        $new_buffer = $p['current_buffer'];
+        $buffer_matches_left = (int)$p['buffer_matches_left'];
+        $buffer_rank_bonus = 0;
+
+        if ($integrityFac >= 0.5 && $buffer_matches_left > 0) {
+            // 5% of initial buffer
+            $five_percent = (int)round(((int)$p['initial_buffer'] * 5) / 100);
+            
+            // Deduct 5% from buffer
+            $new_buffer = max(0, $p['current_buffer'] - $five_percent);
+            $buffer_matches_left--;
+
+            if ($isWinner) {
+                // If won, 5% of buffer points into actual points (rank_points)
+                $buffer_rank_bonus = $five_percent;
+            }
+        }
 
         $p['delta']      = $change;
-        $p['new_points'] = $newPts;
+        $p['buffer_rank_bonus'] = $buffer_rank_bonus;
+        $p['total_rank_change'] = $change + $buffer_rank_bonus;
+        $p['new_current_buffer'] = $new_buffer;
+        $p['new_buffer_matches_left'] = $buffer_matches_left;
         $p['won']        = $isWinner;
-        $p['skipped']    = false;
+        $p['skipped']    = ($integrityFac < 0.5);
         $p['old_rank']   = getLiveRank($pdo, $p['user_id']);
     }
     unset($p);
@@ -309,7 +327,8 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
 
         $pdo->prepare("
             UPDATE player_stats
-            SET points            = ?,
+            SET current_buffer    = ?,
+                buffer_matches_left = ?,
                 rank_points       = rank_points + ?,
                 matches_played    = ?,
                 matches_won       = ?,
@@ -321,14 +340,15 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
                 updated_at        = NOW()
             WHERE user_id = ?
         ")->execute([
-            $p['new_points'],
-            $p['delta'],         // rank_points += delta (can be negative, no floor for rank_points)
+            $p['new_current_buffer'],
+            $p['new_buffer_matches_left'],
+            $p['total_rank_change'], // rank_points += delta + buffer bonus
             $new_matches,
             $new_wins,
             $new_losses,
             $new_wr,
             $new_streak,
-            $p['delta'],
+            $p['total_rank_change'],
             $p['old_rank'] ?? null,
             $p['user_id'],
         ]);

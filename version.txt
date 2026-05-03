@@ -133,8 +133,8 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Enhanced Feedback: Match joining now provides specific reasons for ineligibility (e.g., exact point range mismatch or gender restriction).
 - Match Scoring UI: Redesigned the score header to a compact single-line layout with relative submission time (e.g., "3h ago") and a live countdown for auto-approval (e.g., "in 4 hours").
 - Notification Refinement: Removed redundant emojis from notification message text (e.g., for team invite acceptance) to keep the list clean, while preserving the status badge on the player avatar.
-- Final Build (v=130): Consolidated all premium features from this session including Gender-Aware UI defaults, Global UI Sounds (Tap/Success/Notify), Instant Notification Preloading, and Native Scrollbar removal.
-- Cache Management: Incremented asset versions to v=130 to ensure immediate rollout of all features.
+- Final Build (v=93): Consolidated all premium features from this session including Gender-Aware UI defaults, Global UI Sounds (Tap/Success/Notify), Instant Notification Preloading, and Native Scrollbar removal.
+- Cache Management: Incremented asset versions to v=93 to ensure immediate rollout of all features.
 - APK Build Trigger: 2026-05-03 05:35 AM
 - Timezone Synchronization: Synchronized PHP and MySQL timezones to Africa/Cairo (UTC+3) to ensure accurate match filtering and prevent past matches from appearing as upcoming.
 - Profile UI Optimization: Switched Edit Profile avatar preview to use smaller thumbnails (150px) for faster loading and better performance.
@@ -143,3 +143,14 @@ ef8f6dd - 2026-05-01 02:55:00 +0300
 - Performance: Optimized the navigation bar avatar to prevent redundant re-loads during page transitions.
 - Match History: Removed the hardcoded display limit in player profiles, allowing users to see their full history of finalized scores.
 - Ranking Consistency: Updated New Player Bonus and Integrity Factor to count individual approved scores instead of unique Match IDs, aligning with the multi-match-per-booking requirement.
+
+[LATEST] - 2026-05-03 20:25:00 +0300
+- Gender-Aware UI: Integrated profile gender data to automatically set default ranking tabs (Male/Female) and match listing filters across the entire platform.
+- Calibration Experience: Transformed the level selection into a premium glassmorphic interface with clear "Buffer Points" terminology and 20-match calibration stakes.
+- Calibration Mechanics: Implemented a 20-match buffer system (5% gain/loss per match) for new players, ensuring accurate skill seeding.
+- Match Listing UI: Redesigned venue names with white bold/light typography and smart wrapping for better readability on mobile.
+- Dashboard Ranking: Added subtle separators between players for improved visual structure and professional polish.
+- Security: Implemented strict backend gender enforcement for "Same Gender" matches, blocking mismatched partner invites and joins with specific eligibility feedback.
+- UX Refinement: Increased default notification toast duration to 5 seconds to ensure important eligibility messages are fully readable.
+- Layout Optimization: Reduced bottom padding on match listing for a tighter, more modern look.
+- API Integrity: Enhanced partner invitation logic to validate both points and gender before sending requests.

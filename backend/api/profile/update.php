@@ -39,7 +39,7 @@ if ($hasProfile) {
     $isMissingLevel = empty($existingProfile['level']);
     
     // Give them their base points so they appear on leaderboards
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)")->execute([$user['id']]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$user['id']]);
 
     jsonResponse(true, 'Profile updated successfully.', [
         'player_code' => $existingProfile['player_code'],
@@ -56,7 +56,7 @@ if ($hasProfile) {
     $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $location, $bio, $playerCode]);
     
     // Give them their base points so they appear on leaderboards
-    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, points, rank_points) VALUES (?, 50, 50)")->execute([$user['id']]);
+    $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$user['id']]);
 
     jsonResponse(true, 'Profile created successfully.', ['player_code' => $playerCode, 'is_new_profile' => true]);
 }

@@ -90,7 +90,7 @@ jsonResponse(true, 'Profile loaded.', [
     ] : null,
     'stats' => $stats ? [
         'points'           => (int)($stats['rank_points'] ?? 0),  // competition points for display
-        'eligibility_pts'  => (int)$stats['points'],              // level-based points (internal, for eligibility)
+        'eligibility_pts'  => (int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0),     // total points (buffer + earned) for eligibility
         'matches_played'   => (int)$stats['matches_played'],
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
