@@ -408,10 +408,15 @@ window.AdminControllers = {
                             <div style="color:#fff; font-weight:700; font-size:16px; margin-top:4px;">${m.venue_name || m.venue_name_manual || 'Manual Venue'}</div>
                             <div style="font-size:12px; color:var(--c-text-muted)">${m.match_datetime ? new Date(m.match_datetime).toLocaleString() : 'N/A'}</div>
                         </div>
-                        <div class="card" style="margin-bottom:0; padding:20px;">
-                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1px;">Type / Status</label>
-                            <div style="color:#fff; font-weight:700; text-transform:capitalize; margin-top:4px;">${m.match_type || '---'}</div>
-                            <div class="status-tag ${m.status || 'open'}" style="margin-top:4px; display:inline-block;">${m.status || 'open'}</div>
+                        <div class="card" style="margin-bottom:0; padding:20px; display:flex; flex-direction:column; justify-content:center;">
+                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1.5px; margin-bottom:10px; display:block;">Match Identity</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div style="color:#fff; font-weight:800; font-size:18px; text-transform:capitalize; line-height:1;">${m.match_type || '---'}</div>
+                                <span class="status-tag ${m.status || 'open'}" style="font-size:10px; font-weight:900; text-transform:uppercase; padding:4px 10px; border-radius:100px;">
+                                    ${(m.status === 'open' ? 'Mixed' : (m.status === 'completed' ? 'Scores' : m.status)) || '---'}
+                                </span>
+                            </div>
+                            <div style="font-size:11px; color:var(--c-text-muted); margin-top:8px; font-weight:600; letter-spacing:0.5px;">CODE: <b style="color:var(--c-primary)">${m.match_code || '---'}</b></div>
                         </div>
                         <div class="card" style="margin-bottom:0; padding:20px;">
                             <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1px;">Point Calculation</label>
