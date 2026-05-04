@@ -248,8 +248,30 @@ window.AdminControllers = {
             document.getElementById('edit-buffer-matches').value = p.buffer_matches_left || 0;
             document.getElementById('edit-status').value = p.account_status || 'active';
             
+            // Map Avatar
+            const preview = document.getElementById('edit-avatar-preview');
+            const removeBtn = document.getElementById('btn-remove-avatar');
+            const removeStatus = document.getElementById('avatar-remove-status');
+            const removeInput = document.getElementById('edit-remove-avatar');
+
+            removeInput.value = "0";
+            removeStatus.style.display = 'none';
+            removeBtn.style.display = p.profile_image_thumb ? 'block' : 'none';
+
+            if (p.profile_image_thumb) {
+                preview.innerHTML = `<img src="../${p.profile_image_thumb}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                preview.innerHTML = `<span style="font-size:24px;">👤</span>`;
+            }
+
             document.getElementById('modal-title').innerText = `Edit ${p.full_name || 'Player'}`;
             document.getElementById('edit-player-modal').style.display = 'flex';
+        },
+        markAvatarForRemoval() {
+            document.getElementById('edit-remove-avatar').value = "1";
+            document.getElementById('avatar-remove-status').style.display = 'block';
+            document.getElementById('btn-remove-avatar').style.display = 'none';
+            document.getElementById('edit-avatar-preview').style.opacity = "0.3";
         },
         closeModal() {
             document.getElementById('edit-player-modal').style.display = 'none';
@@ -268,7 +290,8 @@ window.AdminControllers = {
                 rank_points: document.getElementById('edit-rank-points').value,
                 current_buffer: document.getElementById('edit-current-buffer').value,
                 buffer_matches_left: document.getElementById('edit-buffer-matches').value,
-                account_status: document.getElementById('edit-status').value
+                account_status: document.getElementById('edit-status').value,
+                remove_avatar: document.getElementById('edit-remove-avatar').value
             };
             const res = await fetch(`../backend/api/admin/players/update.php?admin_token=${token}`, {
                 method: 'POST',
