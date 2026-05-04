@@ -50,6 +50,13 @@ try {
         ");
         $stmtProfile->execute([$nickname, $gender, $userId]);
 
+        // Optional: Remove avatar
+        $removeAvatar = (int)($input['remove_avatar'] ?? 0);
+        if ($removeAvatar === 1) {
+            $pdo->prepare("UPDATE user_profiles SET profile_image = NULL, profile_image_thumb = NULL WHERE user_id = ?")
+                ->execute([$userId]);
+        }
+
         // 3. Update Player Stats (Points, Buffer)
         // Use INSERT INTO ... ON DUPLICATE KEY UPDATE in case player_stats row doesn't exist yet
         $stmtStats = $pdo->prepare("

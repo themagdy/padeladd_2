@@ -81,6 +81,20 @@
                             <option value="suspended">Banned</option>
                         </select>
                     </div>
+
+                    <div class="modal-form-group" style="grid-column: span 2; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.05); margin-top: 10px;">
+                        <label style="display:block; margin-bottom:12px;">Profile Picture</label>
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            <div id="edit-avatar-preview" style="width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.1); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                                <span style="font-size:24px;">👤</span>
+                            </div>
+                            <div id="avatar-actions-area">
+                                <button type="button" id="btn-remove-avatar" onclick="AdminControllers.players.markAvatarForRemoval()" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); font-size:10px; padding:6px 12px;">REMOVE PHOTO</button>
+                                <div id="avatar-remove-status" style="font-size:10px; color:var(--c-orange); margin-top:6px; display:none; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">● Marked for removal</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-remove-avatar" value="0">
+                    </div>
                 </div>
             </div>
 
