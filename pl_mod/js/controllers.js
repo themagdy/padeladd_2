@@ -540,6 +540,7 @@ window.AdminControllers = {
                             <th onclick="AdminControllers.matches.sortLogs('player')" style="cursor:pointer; user-select:none;">Player <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('player')}</span></th>
                             <th onclick="AdminControllers.matches.sortLogs('action')" style="cursor:pointer; user-select:none;">Action <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('action')}</span></th>
                             <th onclick="AdminControllers.matches.sortLogs('time')" style="cursor:pointer; user-select:none; text-align:right;">Timestamp <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('time')}</span></th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -547,26 +548,52 @@ window.AdminControllers = {
                             let actionText = l.action || '---';
                             let color = 'var(--c-text-muted)';
                             let weight = '700';
+                            const isChat = actionText.startsWith('Chat:');
+                            const isHidden = l.is_hidden == 1;
                             
                             if (actionText.includes('Joined') || actionText.includes('Accepted')) color = 'var(--c-green)';
                             if (actionText.includes('Withdrew') || actionText.includes('Cancelled')) color = 'var(--c-red)';
                             
-                            if (actionText.startsWith('Chat:')) {
+                            if (isChat) {
                                 color = 'var(--c-primary)';
                                 actionText = actionText.replace('Chat:', '💬 Chat:');
                                 weight = '400';
+                                if (isHidden) actionText = `<span style="color:var(--c-orange); font-weight:800;">[HIDDEN]</span> ` + actionText;
                             }
                             
                             return `
-                            <tr>
+                            <tr style="${isHidden ? 'opacity:0.5; background:rgba(241, 90, 41, 0.02);' : ''}">
                                 <td><b style="color:#fff">${l.player || 'System'}</b> ${l.player_code ? `<small style="color:var(--c-text-muted)">(${l.player_code})</small>` : ''}</td>
                                 <td><span style="color:${color}; font-weight:${weight};">${actionText}</span></td>
                                 <td style="text-align:right; color:var(--c-text-muted); font-size:12px;">${l.time ? new Date(l.time).toLocaleString() : '---'}</td>
+                                <td style="text-align:right;">
+                                    ${isChat ? `
+                                        <button onclick="AdminControllers.matches.toggleChatVisibility(${l.chat_id}, ${l.is_hidden || 0})" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${isHidden ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:4px 10px; border:1px solid rgba(255,255,255,0.05); font-size:9px;">
+                                            ${isHidden ? '👁️' : '🚫'}
+                                        </button>
+                                    ` : ''}
+                                </td>
                             </tr>`;
-                        }).join('') : '<tr><td colspan="3" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
+                        }).join('') : '<tr><td colspan="4" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
                     </tbody>
                 </table>
             `;
+        },
+        async toggleChatVisibility(chatId, currentHidden) {
+            const token = localStorage.getItem('admin_token');
+            const newStatus = currentHidden ? 0 : 1;
+            try {
+                const res = await fetch(`../backend/api/admin/system/moderate_chat.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ chat_id: chatId, hide: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const msg = this.currentData.logs.find(l => l.chat_id == chatId);
+                    if (msg) msg.is_hidden = newStatus;
+                    this.renderLogsTable();
+                }
+            } catch (e) { console.error('Moderate chat error:', e); }
         }
     },
 
@@ -955,12 +982,29 @@ window.AdminControllers = {
             }
             if (empty) empty.style.display = 'none';
 
-            list.innerHTML = this.allLogs.map(l => {
+            let html = `
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>User</th>
+                            <th>Type</th>
+                            <th>Match</th>
+                            <th>Details</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            html += this.allLogs.map(l => {
                 const time = new Date(l.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                 const typeLabel = l.event_type.replace('_', ' ');
+                const isChat = l.event_type === 'chat_message';
+                const isHidden = l.is_hidden == 1;
                 
                 return `
-                    <tr>
+                    <tr style="${isHidden ? 'opacity:0.5; background:rgba(241, 90, 41, 0.02);' : ''}">
                         <td style="color:var(--c-text-muted); font-size:12px; font-family:monospace;">${time}</td>
                         <td>
                             <div style="display:flex; align-items:center; gap:12px;">
@@ -978,10 +1022,39 @@ window.AdminControllers = {
                         </td>
                         <td><span class="event-type-tag ${l.event_type}">${typeLabel}</span></td>
                         <td><b style="color:#fff">${l.match_code || '---'}</b></td>
-                        <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${l.details}</td>
+                        <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">
+                            ${isChat && isHidden ? '<span style="color:var(--c-orange); font-weight:800; font-size:10px;">[HIDDEN]</span> ' : ''}
+                            ${l.details}
+                        </td>
+                        <td style="text-align:right;">
+                            ${isChat ? `
+                                <button onclick="AdminControllers.logs.toggleChatVisibility(${l.chat_id}, ${l.is_hidden || 0})" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${isHidden ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05); font-size:10px;">
+                                    ${isHidden ? '👁️ Unhide' : '🚫 Hide'}
+                                </button>
+                            ` : ''}
+                        </td>
                     </tr>
                 `;
             }).join('');
+
+            html += `</tbody></table>`;
+            list.innerHTML = html;
+        },
+        async toggleChatVisibility(chatId, currentHidden) {
+            const token = localStorage.getItem('admin_token');
+            const newStatus = currentHidden ? 0 : 1;
+            try {
+                const res = await fetch(`../backend/api/admin/system/moderate_chat.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ chat_id: chatId, hide: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const msg = this.allLogs.find(l => l.chat_id == chatId);
+                    if (msg) msg.is_hidden = newStatus;
+                    this.renderLogs();
+                }
+            } catch (e) { console.error('Moderate chat error:', e); }
         }
     }
 };
