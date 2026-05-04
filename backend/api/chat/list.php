@@ -76,7 +76,7 @@ $query = "
     FROM chat_messages cm
     JOIN users u ON cm.user_id = u.id
     LEFT JOIN user_profiles up ON cm.user_id = up.user_id
-    WHERE cm.match_id = ?
+    WHERE cm.match_id = ? AND cm.is_hidden = 0
 ";
 $params = [$match_id];
 

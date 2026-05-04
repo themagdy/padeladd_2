@@ -105,7 +105,9 @@ $logs = array_merge($logs, $stmt->fetchAll(PDO::FETCH_ASSOC));
 // D. Chat Messages
 $stmt = $pdo->prepare("
     SELECT mc.created_at as time, up.nickname as player, up.player_code, 
-    CONCAT('Chat: ', mc.message_text) as action
+    CONCAT('Chat: ', mc.message_text) as action,
+    mc.is_hidden,
+    mc.id as chat_id
     FROM chat_messages mc
     JOIN user_profiles up ON mc.user_id = up.user_id
     WHERE mc.match_id = ?

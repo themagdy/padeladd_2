@@ -27,7 +27,9 @@ $queries[] = "SELECT
     main.id as match_id,
     main.match_code,
     CONCAT('Created a ', main.match_type, ' match') as details,
-    main.created_at
+    main.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM matches main";
 
 // 2. Player Joined
@@ -40,7 +42,9 @@ $queries[] = "SELECT
     main.match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.match_id LIMIT 1) as match_code,
     'Joined a match' as details,
-    main.created_at
+    main.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM match_players main";
 
 // 3. Scores
@@ -53,7 +57,9 @@ $queries[] = "SELECT
     main.match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.match_id LIMIT 1) as match_code,
     'Submitted match scores' as details,
-    main.created_at
+    main.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM scores main";
 
 // 4. Match Events
@@ -66,7 +72,9 @@ $queries[] = "SELECT
     main.match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.match_id LIMIT 1) as match_code,
     'Match status update / Withdrawal' as details,
-    main.created_at
+    main.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM match_events main";
 
 // 5. New Users
@@ -79,7 +87,9 @@ $queries[] = "SELECT
     NULL as match_id,
     NULL as match_code,
     'New player joined the platform' as details,
-    u.created_at
+    u.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM users u
 LEFT JOIN user_profiles up ON u.id = up.user_id";
 
@@ -93,7 +103,9 @@ $queries[] = "SELECT
     main.match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.match_id LIMIT 1) as match_code,
     'Match score approved' as details,
-    main.updated_at as created_at
+    main.updated_at as created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM scores main WHERE main.status = 'approved' AND main.approved_by_user_id IS NOT NULL";
 
 // 7. Invites
@@ -106,7 +118,9 @@ $queries[] = "SELECT
     main.reference_id as match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.reference_id LIMIT 1) as match_code,
     'Sent a team/match invitation' as details,
-    main.created_at
+    main.created_at,
+    NULL as is_hidden,
+    NULL as chat_id
 FROM notifications main WHERE main.type = 'team_invite' AND main.sender_id IS NOT NULL";
 
 // 8. Chat Messages
@@ -119,7 +133,9 @@ $queries[] = "SELECT
     main.match_id,
     (SELECT match_code FROM matches m WHERE m.id = main.match_id LIMIT 1) as match_code,
     main.message_text as details,
-    main.created_at
+    main.created_at,
+    main.is_hidden,
+    main.id as chat_id
 FROM chat_messages main";
 
 $sql = "SELECT * FROM (" . implode(" UNION ALL ", $queries) . ") as combined_logs";
