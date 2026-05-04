@@ -127,6 +127,10 @@ try {
     // Ensure creator has a player_stats row (starting points = 100 for beginners)
     $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$uid]);
 
+    // Audit log: Match creator joined
+    $pdo->prepare("INSERT INTO match_events (match_id, user_id, event_type, event_data) VALUES (?, ?, 'player_joined', ?)")
+        ->execute([$match_id, $uid, json_encode(['role' => 'creator'])]);
+
     // Partner -> Send invite to waiting_list instead of confirming directly
     if ($partner_id !== null) {
         $insWL = $pdo->prepare("

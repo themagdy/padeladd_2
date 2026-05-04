@@ -69,6 +69,10 @@ try {
         // Open the match
         $pdo->prepare("UPDATE matches SET status = 'open' WHERE id = ?")->execute([$match_id]);
 
+        // Audit log: Partner joined (Special case creator partner)
+        $pdo->prepare("INSERT INTO match_events (match_id, user_id, event_type, event_data) VALUES (?, ?, 'player_joined', ?)")
+            ->execute([$match_id, $partner_id, json_encode(['role' => 'partner_creator'])]);
+
         $pdo->commit();
 
         // Phase 6: Notify requester (match creator) that partner approved
@@ -208,6 +212,12 @@ try {
     if (count($occupied) + 2 >= 4) {
         $pdo->prepare("UPDATE matches SET status = 'full' WHERE id = ?")->execute([$match_id]);
     }
+
+    // Audit log: Both players joined
+    $pdo->prepare("INSERT INTO match_events (match_id, user_id, event_type, event_data) VALUES (?, ?, 'player_joined', ?)")
+        ->execute([$match_id, $requester_id, json_encode(['type' => 'team'])]);
+    $pdo->prepare("INSERT INTO match_events (match_id, user_id, event_type, event_data) VALUES (?, ?, 'player_joined', ?)")
+        ->execute([$match_id, $partner_id, json_encode(['type' => 'team'])]);
 
     $pdo->commit();
 
