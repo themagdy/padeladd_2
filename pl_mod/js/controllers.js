@@ -982,22 +982,7 @@ window.AdminControllers = {
             }
             if (empty) empty.style.display = 'none';
 
-            let html = `
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>User</th>
-                            <th>Type</th>
-                            <th>Match</th>
-                            <th>Details</th>
-                            <th style="text-align:right;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            html += this.allLogs.map(l => {
+            list.innerHTML = this.allLogs.map(l => {
                 const time = new Date(l.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
                 const typeLabel = l.event_type.replace('_', ' ');
                 const isChat = l.event_type === 'chat_message';
@@ -1036,9 +1021,6 @@ window.AdminControllers = {
                     </tr>
                 `;
             }).join('');
-
-            html += `</tbody></table>`;
-            list.innerHTML = html;
         },
         async toggleChatVisibility(chatId, currentHidden) {
             const token = localStorage.getItem('admin_token');
