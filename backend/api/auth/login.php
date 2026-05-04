@@ -8,13 +8,20 @@ if (empty($email) || empty($password)) {
     jsonResponse(false, 'Phone number/email and password are required.');
 }
 
-// Allow login by email or mobile
-$stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? OR mobile = ?) AND status = 'active'");
+// Allow login by email or mobile (without status check first to distinguish errors)
+$stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? OR mobile = ?)");
 $stmt->execute([$email, $email]);
 $user = $stmt->fetch();
 
 if (!$user || !password_verify($password, $user['password_hash'])) {
     jsonResponse(false, 'Invalid phone number/email or password.');
+}
+
+// Now check account status
+if ($user['status'] === 'suspended') {
+    jsonResponse(false, 'Your account is currently suspended. Please contact Padeladd Support for assistance.');
+} else if ($user['status'] !== 'active') {
+    jsonResponse(false, 'Your account is not active. Please contact support.');
 }
 
 // Rules say User cannot log in until required verification is complete.

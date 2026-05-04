@@ -18,6 +18,7 @@ const Router = {
         '/matches/my': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('mine') },
         '/matches/create': { template: 'frontend/pages/matches/create.html', init: () => MatchesController.initCreate() },
         '/matches/join': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
+        '/matches/view/:id': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView({ id: params.id }) },
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },

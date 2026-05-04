@@ -1,0 +1,82 @@
+<div class="violations-page">
+    <!-- Header Actions (Synced to top bar) -->
+    <div id="page-search-source" style="display:none;">
+        <div class="search-wrap" style="position:relative; width:360px;">
+            <input type="text" id="violation-search" class="form-input" placeholder="Search Match or Player Code..." style="padding-left:40px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:14px;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+        </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01);">
+            <h2 style="color:#fff; margin:0; font-size:16px; font-weight:800;">Time Policy Violations</h2>
+            
+            <div style="display:flex; align-items:center; gap:24px;">
+                <label class="switch-container">
+                    <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Archived</span>
+                    <input type="checkbox" id="show-archived-violations" onchange="AdminControllers.violations.toggleArchived(this.checked)">
+                    <span class="switch-slider"></span>
+                </label>
+                <div style="font-size:11px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;">Threshold: 6h</div>
+            </div>
+        </div>
+        
+        <div id="violations-container" style="min-height:400px;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Event Type</th>
+                        <th>Match</th>
+                        <th>Time Before Start</th>
+                        <th>Reason</th>
+                        <th>Date</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="violations-list"></tbody>
+            </table>
+            <div id="violations-empty" style="display:none; text-align:center; padding:80px; color:var(--c-text-muted);">
+                <div style="font-size:48px; opacity:0.2; margin-bottom:16px;">🛡️</div>
+                No policy violations recorded recently.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .event-tag {
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .event-tag.withdrawal {
+        background: rgba(241, 90, 41, 0.1);
+        color: var(--c-orange);
+        border: 1px solid rgba(241, 90, 41, 0.2);
+    }
+    .event-tag.cancellation {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .time-badge {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        background: rgba(255,255,255,0.05);
+        padding: 4px 10px;
+        border-radius: 100px;
+        color: #fff;
+        font-size: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .player-info-cell { display: flex; flex-direction: column; gap: 2px; }
+    .player-name { font-weight: 700; color: #fff; }
+    .player-code { font-size: 11px; color: var(--c-primary); font-weight: 800; }
+</style>

@@ -1,0 +1,122 @@
+<div class="players-page">
+    <!-- This search wrapper will be moved to the global header by app.js -->
+    <div id="page-search-source" style="display:none;">
+        <div class="search-wrap" style="position:relative; width:320px;">
+            <input type="text" id="player-search" class="form-input" placeholder="Search players..." style="padding-left:40px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:14px;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+        </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th onclick="AdminControllers.players.setSort('name')" style="cursor:pointer; user-select:none;">Player <span id="sort-icon-name" class="sort-icon">↕</span></th>
+                    <th>Contact Info</th>
+                    <th onclick="AdminControllers.players.setSort('gender')" style="cursor:pointer; user-select:none;">Gender <span id="sort-icon-gender" class="sort-icon">↕</span></th>
+                    <th>Rank / Buffer</th>
+                    <th onclick="AdminControllers.players.setSort('status')" style="cursor:pointer; user-select:none;">Status <span id="sort-icon-status" class="sort-icon">↕</span></th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="player-list">
+                <!-- Rows loaded via JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit Player Modal -->
+<div id="edit-player-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modal-title">Edit Player Profile</h3>
+            <button onclick="AdminControllers.players.closeModal()" class="btn-close-modal">✕</button>
+        </div>
+        
+        <form id="edit-player-form">
+            <div class="modal-body">
+                <input type="hidden" id="edit-player-id">
+                
+                <div class="modal-form-grid">
+                    <div class="modal-form-group">
+                        <label>First Name</label>
+                        <input type="text" id="edit-first-name" class="form-input" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="edit-last-name" class="form-input" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="edit-email" class="form-input" required>
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Nickname</label>
+                        <input type="text" id="edit-nickname" class="form-input">
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Gender</label>
+                        <select id="edit-gender" class="form-input">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Rank Points</label>
+                        <input type="number" id="edit-rank-points" class="form-input" step="1">
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Current Buffer</label>
+                        <input type="number" id="edit-current-buffer" class="form-input" step="1">
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Buffer Matches Left</label>
+                        <input type="number" id="edit-buffer-matches" class="form-input">
+                    </div>
+                    <div class="modal-form-group">
+                        <label>Status</label>
+                        <select id="edit-status" class="form-input">
+                            <option value="active">Active</option>
+                            <option value="suspended">Banned</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" onclick="AdminControllers.players.closeModal()" class="btn-badge" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); border:1px solid rgba(255,255,255,0.1); padding:10px 24px;">Cancel</button>
+                <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">SAVE CHANGES</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(5px);
+        z-index: 200;
+        padding: 20px;
+    }
+    .player-info-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .player-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.05);
+        flex-shrink: 0;
+    }
+    .player-nickname { font-weight: 400; color: var(--c-text-muted); }
+    .player-name { font-weight: 700; color: #fff; }
+    .player-code { font-size: 11px; color: var(--c-primary); font-weight: 800; }
+    .contact-info { font-size: 13px; color: var(--c-text-muted); }
+</style>

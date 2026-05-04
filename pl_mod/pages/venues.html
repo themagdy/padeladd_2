@@ -1,0 +1,52 @@
+<div class="venues-page">
+
+    <div class="card" style="padding:0; overflow:hidden;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Requested Club</th>
+                    <th>Submitted By</th>
+                    <th>Date</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="venue-request-list">
+                <!-- Rows loaded via JS -->
+            </tbody>
+        </table>
+        <div id="no-requests" style="display:none; padding:40px; text-align:center; color:var(--c-text-muted);">
+            No pending venue requests.
+        </div>
+    </div>
+</div>
+
+<!-- Review Venue Modal -->
+<div id="review-venue-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Review Venue Request</h3>
+            <button onclick="AdminControllers.venues.closeModal()" class="btn-close-modal">✕</button>
+        </div>
+        
+        <form id="approve-venue-form">
+            <div class="modal-body">
+                <input type="hidden" id="review-request-id">
+                <div class="modal-form-grid">
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Official Club Name</label>
+                        <input type="text" id="review-name" class="form-input" placeholder="e.g. Padel Club Heliopolis" required>
+                    </div>
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Google Maps Location Link</label>
+                        <input type="url" id="review-location" class="form-input" placeholder="https://maps.google.com/...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" onclick="AdminControllers.venues.processRequest('reject')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:10px 24px;">Reject</button>
+                <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">APPROVE & ADD</button>
+            </div>
+        </form>
+    </div>
+</div>
