@@ -2,8 +2,12 @@
     <div class="card" style="padding:0; overflow:hidden;">
         <div class="tabs" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.05); padding-right:24px;">
             <div style="display:flex;">
-                <button onclick="AdminControllers.reports.switchTab('profile')" id="tab-profile-reports" class="report-tab active">Player Reports</button>
-                <button onclick="AdminControllers.reports.switchTab('match')" id="tab-match-reports" class="report-tab">Match Reports</button>
+                <button onclick="AdminControllers.reports.switchTab('profile')" id="tab-profile-reports" class="report-tab active">
+                    Player Reports <span id="count-profile-reports" class="tab-count">0</span>
+                </button>
+                <button onclick="AdminControllers.reports.switchTab('match')" id="tab-match-reports" class="report-tab">
+                    Match Reports <span id="count-match-reports" class="tab-count">0</span>
+                </button>
             </div>
 
             <label class="switch-container">
@@ -45,5 +49,21 @@
     .report-tab:hover:not(.active) {
         background: rgba(255,255,255,0.02);
         color: #fff;
+    }
+    .tab-count {
+        background: rgba(255,255,255,0.05);
+        padding: 2px 8px;
+        border-radius: 100px;
+        font-size: 11px;
+        margin-left: 8px;
+        opacity: 0.7;
+        font-weight: 800;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .report-tab.active .tab-count {
+        background: var(--c-primary);
+        color: #fff;
+        opacity: 1;
+        border-color: rgba(255,255,255,0.1);
     }
 </style>
