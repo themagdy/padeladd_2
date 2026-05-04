@@ -133,6 +133,24 @@
     box-shadow:0 4px 12px rgba(27, 82, 206, 0.3);
 }
 
+#rank-search {
+    transition: all 0.2s ease !important;
+    outline: none !important;
+}
+#rank-search:hover {
+    border-color: rgba(255,255,255,0.2) !important;
+    background: var(--c-bg-secondary) !important;
+}
+#rank-search:focus {
+    border-color: var(--c-primary) !important;
+    box-shadow: 0 0 0 4px var(--c-primary-glow) !important;
+    background: var(--c-bg-secondary) !important;
+}
+
+#rank-search:focus + span {
+    opacity: 1 !important;
+}
+
 .rank-row-skeleton {
     height:74px;
     margin:10px 20px;
