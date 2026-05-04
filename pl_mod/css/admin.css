@@ -6,7 +6,7 @@
 
 .admin-body {
     display: flex;
-    background: #0b0e16; /* #0B0E17 */
+    background: #0b0e16; /* old: #0B0E17 */
     min-height: 100vh;
     overflow: hidden;
 }
@@ -112,7 +112,7 @@
     flex-direction: column;
     height: 100vh;
     overflow-y: auto;
-    background: #0b0e16; /* #0B0E17 */
+    background: #0B0E17;
 }
 
 .admin-header {
