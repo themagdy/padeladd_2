@@ -321,6 +321,8 @@ window.AdminControllers = {
     // ── Matches Controller ───────────────────────────────────────────────
     matches: {
         currentReportTab: 'profile',
+        currentData: null,
+        logSort: { field: 'time', order: 'asc' },
         async init() {
             this.bindInvestigate();
         },
@@ -391,12 +393,12 @@ window.AdminControllers = {
                     return;
                 }
 
+                this.currentData = data;
                 empty.style.display = 'none';
                 container.style.display = 'block';
 
                 const m = data.match;
                 const players = data.players || [];
-                const logs = data.logs || [];
                 const scores = data.scores || [];
                 const team1 = players.filter(p => p.team_no == 1);
                 const team2 = players.filter(p => p.team_no == 2);
@@ -440,32 +442,8 @@ window.AdminControllers = {
                         </div>
                     </div>
 
-                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:24px;">
-                        <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); font-weight:800; color:#fff; font-size:12px; text-transform:uppercase;">Match Activity Log</div>
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Player</th>
-                                    <th>Action</th>
-                                    <th style="text-align:right;">Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${logs.length ? logs.map(l => {
-                                    let actionText = l.action || '---';
-                                    let color = 'var(--c-text-muted)';
-                                    if(actionText.includes('Joined') || actionText.includes('Accepted')) color = 'var(--c-green)';
-                                    if(actionText.includes('Withdrew') || actionText.includes('Cancelled')) color = 'var(--c-red)';
-                                    
-                                    return `
-                                    <tr>
-                                        <td><b style="color:#fff">${l.player || 'System'}</b> ${l.player_code ? `<small style="color:var(--c-text-muted)">(${l.player_code})</small>` : ''}</td>
-                                        <td><span style="color:${color}; font-weight:700;">${actionText}</span></td>
-                                        <td style="text-align:right; color:var(--c-text-muted); font-size:12px;">${l.time ? new Date(l.time).toLocaleString() : '---'}</td>
-                                    </tr>`;
-                                }).join('') : '<tr><td colspan="3" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
-                            </tbody>
-                        </table>
+                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:24px;" id="investigation-logs-card">
+                        <!-- Rendered by renderLogsTable -->
                     </div>
 
                     <div class="card" style="padding:0; overflow:hidden;">
@@ -490,10 +468,82 @@ window.AdminControllers = {
                         </table>
                     </div>
                 `;
+                
+                this.renderLogsTable();
             } catch (err) {
                 console.error("Render Investigation Error:", err);
                 alert("Error displaying match details. Check console.");
             }
+        },
+        sortLogs(field) {
+            if (this.logSort.field === field) {
+                this.logSort.order = (this.logSort.order === 'asc') ? 'desc' : 'asc';
+            } else {
+                this.logSort.field = field;
+                this.logSort.order = 'asc';
+            }
+            this.renderLogsTable();
+        },
+        renderLogsTable() {
+            const container = document.getElementById('investigation-logs-card');
+            if (!container || !this.currentData) return;
+
+            let logs = [...(this.currentData.logs || [])];
+            const { field, order } = this.logSort;
+
+            logs.sort((a, b) => {
+                let valA = (a[field] || '').toString().toLowerCase();
+                let valB = (b[field] || '').toString().toLowerCase();
+                if (field === 'time') {
+                    valA = new Date(a.time).getTime();
+                    valB = new Date(b.time).getTime();
+                }
+                return order === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+            });
+
+            const getIcon = (f) => {
+                if (this.logSort.field !== f) return '↕';
+                return this.logSort.order === 'asc' ? '↑' : '↓';
+            };
+
+            container.innerHTML = `
+                <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); font-weight:800; color:#fff; font-size:12px; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center;">
+                    <span>Match Activity Log</span>
+                    <span style="font-size:10px; color:var(--c-text-muted); text-transform:none; font-weight:400;">Click headers to sort</span>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th onclick="AdminControllers.matches.sortLogs('player')" style="cursor:pointer; user-select:none;">Player <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('player')}</span></th>
+                            <th onclick="AdminControllers.matches.sortLogs('action')" style="cursor:pointer; user-select:none;">Action <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('action')}</span></th>
+                            <th onclick="AdminControllers.matches.sortLogs('time')" style="cursor:pointer; user-select:none; text-align:right;">Timestamp <span style="font-size:10px; color:var(--c-primary); opacity:0.6;">${getIcon('time')}</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${logs.length ? logs.map(l => {
+                            let actionText = l.action || '---';
+                            let color = 'var(--c-text-muted)';
+                            let weight = '700';
+                            
+                            if (actionText.includes('Joined') || actionText.includes('Accepted')) color = 'var(--c-green)';
+                            if (actionText.includes('Withdrew') || actionText.includes('Cancelled')) color = 'var(--c-red)';
+                            
+                            if (actionText.startsWith('Chat:')) {
+                                color = 'var(--c-primary)';
+                                actionText = actionText.replace('Chat:', '💬 Chat:');
+                                weight = '400';
+                            }
+                            
+                            return `
+                            <tr>
+                                <td><b style="color:#fff">${l.player || 'System'}</b> ${l.player_code ? `<small style="color:var(--c-text-muted)">(${l.player_code})</small>` : ''}</td>
+                                <td><span style="color:${color}; font-weight:${weight};">${actionText}</span></td>
+                                <td style="text-align:right; color:var(--c-text-muted); font-size:12px;">${l.time ? new Date(l.time).toLocaleString() : '---'}</td>
+                            </tr>`;
+                        }).join('') : '<tr><td colspan="3" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
+                    </tbody>
+                </table>
+            `;
         }
     },
 
