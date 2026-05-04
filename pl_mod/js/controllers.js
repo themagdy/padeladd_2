@@ -620,6 +620,7 @@ window.AdminControllers = {
                 if (data.success) {
                     this.allReports = data.data;
                     console.log('Data stored in allReports:', this.allReports);
+                    this.updateCounts();
                     this.renderReports();
                 } else {
                     console.error('API Error:', data.message);
@@ -700,6 +701,17 @@ window.AdminControllers = {
                 console.error("Render Reports Error:", err);
             }
         },
+        updateCounts() {
+            if (!this.allReports) return;
+            const pUnarchived = (this.allReports.profile_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
+            const mUnarchived = (this.allReports.match_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
+            
+            const pCountEl = document.getElementById('count-profile-reports');
+            const mCountEl = document.getElementById('count-match-reports');
+            
+            if (pCountEl) pCountEl.innerText = pUnarchived;
+            if (mCountEl) mCountEl.innerText = mUnarchived;
+        },
         toggleArchived(checked) {
             this.showArchived = checked;
             this.renderReports();
@@ -720,6 +732,7 @@ window.AdminControllers = {
                     const listKey = type === 'profile' ? 'profile_reports' : 'match_reports';
                     const idx = this.allReports[listKey].findIndex(r => r.id == id);
                     if (idx !== -1) this.allReports[listKey][idx].is_archived = newStatus;
+                    this.updateCounts();
                     this.renderReports();
                 }
             } catch (e) { console.error('Archive error:', e); }
