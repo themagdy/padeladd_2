@@ -53,12 +53,22 @@ $calcLog = []; // Safeguard for response structure
 
 // A. Joins
 $stmt = $pdo->prepare("
-    SELECT mp.created_at as time, up.nickname as player, up.player_code, 'Joined' as action 
-    FROM match_players mp 
-    JOIN user_profiles up ON mp.user_id = up.user_id 
-    WHERE mp.match_id = ?
+    SELECT time, player, player_code, 'Joined' as action FROM (
+        SELECT mp.created_at as time, up.nickname as player, up.player_code
+        FROM match_players mp 
+        JOIN user_profiles up ON mp.user_id = up.user_id 
+        WHERE mp.match_id = ?
+        
+        UNION
+        
+        SELECT me.created_at as time, up.nickname as player, up.player_code
+        FROM match_events me
+        JOIN user_profiles up ON me.user_id = up.user_id
+        WHERE me.match_id = ? AND me.event_type = 'player_joined'
+    ) as joined_history
+    GROUP BY time, player, player_code
 ");
-$stmt->execute([$matchId]);
+$stmt->execute([$matchId, $matchId]);
 $logs = array_merge($logs, $stmt->fetchAll(PDO::FETCH_ASSOC));
 
 // B. Withdrawals / Cancellations

@@ -234,6 +234,10 @@ try {
         $pdo->prepare("UPDATE matches SET status = 'full' WHERE id = ?")->execute([$match_id]);
     }
 
+    // Audit log: Player joined
+    $pdo->prepare("INSERT INTO match_events (match_id, user_id, event_type, event_data) VALUES (?, ?, 'player_joined', ?)")
+        ->execute([$match_id, $uid, json_encode(['type' => 'solo'])]);
+
     $pdo->commit();
 
     // Phase 6: Notify all match participants that a player joined
