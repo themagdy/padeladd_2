@@ -77,7 +77,7 @@ try {
     $now        = time();
     $hoursUntil = ($matchTime - $now) / 3600;
     
-    $isLate = ($hoursUntil >= 0 && $hoursUntil < 6);
+    $isLate = ($hoursUntil >= 0 && $hoursUntil < POLICY_VIOLATION_HOURS);
 
     $eventData = json_encode([
         'hours_until_match' => round($hoursUntil, 2),
@@ -136,7 +136,7 @@ try {
 
     $message = 'Match has been cancelled.';
     if ($isLate) {
-        $message .= ' Note: This is a late cancellation (within 6 hours of the match).';
+        $message .= ' Note: This is a late cancellation (within ' . POLICY_VIOLATION_HOURS . ' hours of the match).';
     }
 
     jsonResponse(true, $message, [

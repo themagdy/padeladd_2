@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PadelAdd | Admin Login</title>
+    <link rel="stylesheet" href="../frontend/css/style.css">
+    <style>
+        body {
+            background: var(--c-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .login-card {
+            background: var(--g-card);
+            border: 1px solid var(--c-border);
+            border-radius: var(--r-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .login-logo {
+            width: 60px;
+            margin: 0 auto 24px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        p {
+            color: var(--c-text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--c-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            font-weight: 800;
+            margin-top: 12px;
+            background: var(--g-primary);
+            color: #fff;
+            border-radius: var(--r-md);
+            box-shadow: var(--shadow-btn);
+            transition: all 0.2s;
+        }
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+        #login-error {
+            color: var(--c-red);
+            font-size: 13px;
+            margin-top: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <img src="../frontend/assets/logo_ico.png" alt="Logo" class="login-logo">
+        <h1>Admin Panel</h1>
+        <p>Enter your credentials to continue</p>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" class="form-input" placeholder="Admin username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn-login">SIGN IN</button>
+            <div id="login-error">Invalid username or password.</div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const err = document.getElementById('login-error');
+            const btn = e.target.querySelector('button');
+
+            btn.disabled = true;
+            btn.innerText = 'AUTHENTICATING...';
+            err.style.display = 'none';
+
+            try {
+                const res = await fetch('../backend/api/admin/login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('admin_token', data.data.admin_token);
+                    window.location.href = 'index.html';
+                } else {
+                    err.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerText = 'SIGN IN';
+                }
+            } catch (error) {
+                console.error(error);
+                err.innerText = 'Server error. Please try again.';
+                err.style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = 'SIGN IN';
+            }
+        });
+
+        // Redirect if already logged in
+        if (localStorage.getItem('admin_token')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<div class="logs-page">
+    
+    <div id="page-search-source" style="display:none;">
+        <div style="display:flex; gap:12px; align-items:center;">
+            <div class="search-wrap" style="position:relative; width:280px;">
+                <input type="text" id="log-search" class="form-input" placeholder="Search user or match code..." style="padding-left:40px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:14px;">
+                <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+            </div>
+            <select id="log-type-filter" class="form-input" style="width:180px; height:44px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); font-size:13px; font-weight:700;">
+                <option value="all">All Events</option>
+                <option value="match_created">Matches Created</option>
+                <option value="player_joined">Player Joins</option>
+                <option value="score_submitted">Scores Submitted</option>
+                <option value="score_approved">Scores Approved</option>
+                <option value="team_invite">Invites Sent</option>
+                <option value="chat_message">Chat Messages</option>
+                <option value="user_registered">New Players</option>
+                <option value="player_withdrawn">Withdrawals</option>
+                <option value="match_cancelled">Cancellations</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th style="width:180px;">Timestamp</th>
+                    <th>User / Player</th>
+                    <th>Action</th>
+                    <th>Match Code</th>
+                    <th style="max-width:300px;">Details</th>
+                </tr>
+            </thead>
+            <tbody id="logs-list">
+                <!-- Loaded via JS -->
+            </tbody>
+        </table>
+        <div id="logs-empty" style="display:none; padding:60px; text-align:center; color:var(--c-text-muted);">
+            <div style="font-size:40px; margin-bottom:16px; opacity:0.3;">📜</div>
+            <p>No activity logs found matching your filters.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .event-type-tag {
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .event-type-tag.match_created { background: rgba(27, 82, 206, 0.1); color: var(--c-primary); }
+    .event-type-tag.player_joined { background: rgba(16, 185, 129, 0.1); color: var(--c-green); }
+    .event-type-tag.score_submitted { background: rgba(245, 197, 24, 0.1); color: var(--c-gold); }
+    .event-type-tag.score_approved { background: rgba(16, 185, 129, 0.2); color: #00ff00; border: 1px solid rgba(0,255,0,0.2); }
+    .event-type-tag.team_invite { background: rgba(27, 82, 206, 0.15); color: #818cf8; }
+    .event-type-tag.chat_message { background: rgba(34, 211, 238, 0.15); color: #22d3ee; }
+    .event-type-tag.user_registered { background: rgba(255, 255, 255, 0.05); color: #fff; }
+    .event-type-tag.player_withdrawn, .event-type-tag.match_cancelled { background: rgba(241, 90, 41, 0.1); color: var(--c-red); }
+
+    .player-avatar-small {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.05);
+        flex-shrink: 0;
+    }
+</style>

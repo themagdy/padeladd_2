@@ -94,7 +94,7 @@ try {
     $matchTime  = strtotime($match['match_datetime']);
     $now        = time();
     $hoursUntil = ($matchTime - $now) / 3600;
-    $isLate     = ($hoursUntil >= 0 && $hoursUntil < 6);
+    $isLate     = ($hoursUntil >= 0 && $hoursUntil < POLICY_VIOLATION_HOURS);
 
     // Fetch THIS player's slot
     $slotStmt = $pdo->prepare("
@@ -218,7 +218,7 @@ try {
         : 'You have been removed from the match.';
 
     if ($isLate) {
-        $message .= ' Note: This is a late withdrawal (within 6 hours of the match).';
+        $message .= ' Note: This is a late withdrawal (within ' . POLICY_VIOLATION_HOURS . ' hours of the match).';
     }
 
     jsonResponse(true, $message, [

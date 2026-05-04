@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PadelAdd | Mod Panel</title>
+    <link rel="stylesheet" href="../frontend/css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <img src="../assets/logo_ico.png" alt="Logo">
+            <span>MOD PANEL</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="#players" class="nav-link" data-page="players">
+                <span class="icon">👥</span> Players
+            </a>
+            <a href="#matches" class="nav-link" data-page="matches">
+                <span class="icon">🎾</span> Matches
+            </a>
+            <a href="#reports" class="nav-link" data-page="reports">
+                <span class="icon">🚩</span> Reports
+            </a>
+            <a href="#violations" class="nav-link" data-page="violations">
+                <span class="icon">⚠️</span> Violations
+            </a>
+            <a href="#venues" class="nav-link" data-page="venues">
+                <span class="icon">📍</span> Venues
+            </a>
+            <a href="#logs" class="nav-link" data-page="logs">
+                <span class="icon">📜</span> Log
+            </a>
+            <a href="#system" class="nav-link" data-page="system">
+                <span class="icon">⚙️</span> System
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button onclick="AdminApp.logout()" class="btn-logout">
+                <span>🚪</span> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <h2 id="page-title">Dashboard</h2>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:24px;">
+                <!-- Dynamic Area for Search/Actions -->
+                <div id="header-actions" style="display:flex; align-items:center;"></div>
+
+                <div class="header-right" style="display:flex; align-items:center; gap:16px;">
+                    <div style="width:1px; height:24px; background:var(--c-border);"></div>
+                    <div class="admin-badge">Admin</div>
+                </div>
+            </div>
+        </header>
+
+        <div id="admin-content" class="content-container">
+            <!-- Dynamic content loaded here -->
+            <div class="loader">Loading...</div>
+        </div>
+    </main>
+
+    <script src="js/controllers.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

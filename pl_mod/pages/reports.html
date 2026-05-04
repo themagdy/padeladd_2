@@ -1,0 +1,49 @@
+<div class="reports-page">
+    <div class="card" style="padding:0; overflow:hidden;">
+        <div class="tabs" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.05); padding-right:24px;">
+            <div style="display:flex;">
+                <button onclick="AdminControllers.reports.switchTab('profile')" id="tab-profile-reports" class="report-tab active">Player Reports</button>
+                <button onclick="AdminControllers.reports.switchTab('match')" id="tab-match-reports" class="report-tab">Match Reports</button>
+            </div>
+
+            <label class="switch-container">
+                <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Archived</span>
+                <input type="checkbox" id="show-archived-reports" onchange="AdminControllers.reports.toggleArchived(this.checked)">
+                <span class="switch-slider"></span>
+            </label>
+        </div>
+        
+        <div id="reports-container" style="min-height:400px;">
+            <table class="admin-table">
+                <thead id="reports-head"></thead>
+                <tbody id="reports-list"></tbody>
+            </table>
+            <div id="reports-empty" style="display:none; text-align:center; padding:60px; color:var(--c-text-muted);">
+                No reports found in this category.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .report-tab {
+        padding: 20px 32px;
+        background: none;
+        color: var(--c-text-muted);
+        font-weight: 700;
+        font-size: 14px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .report-tab.active {
+        color: var(--c-primary);
+        border-bottom-color: var(--c-primary);
+        background: rgba(27, 82, 206, 0.05);
+    }
+    .report-tab:hover:not(.active) {
+        background: rgba(255,255,255,0.02);
+        color: #fff;
+    }
+</style>

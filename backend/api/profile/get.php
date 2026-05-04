@@ -20,7 +20,7 @@ if ($playerCode) {
 }
 
 // Get basic user info
-$stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile FROM users WHERE id = ?");
+$stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile FROM users WHERE id = ? AND status = 'active'");
 $stmtUser->execute([$viewingId]);
 $u = $stmtUser->fetch();
 if (!$u) jsonResponse(false, 'User not found.');

@@ -23,7 +23,7 @@ $stmt = $pdo->prepare("
     FROM notifications n
     LEFT JOIN users u ON n.sender_id = u.id
     LEFT JOIN user_profiles up ON n.sender_id = up.user_id
-    LEFT JOIN matches m ON n.reference_id = m.id AND n.type IN ('match_joined', 'team_invite', 'partner_confirmed', 'player_withdrawn', 'partner_denied', 'score_submitted', 'score_confirmed', 'score_disputed', 'match_cancelled', 'new_message', 'phone_requested', 'phone_approved', 'phone_denied', 'partner_blocked', 'match_started', 'availability_alert')
+    LEFT JOIN matches m ON n.reference_id = m.id AND n.type IN ('match_joined', 'team_invite', 'partner_confirmed', 'player_withdrawn', 'partner_denied', 'score_submitted', 'score_confirmed', 'score_disputed', 'score_approved', 'score_reminder', 'match_cancelled', 'new_message', 'phone_requested', 'phone_approved', 'phone_denied', 'partner_blocked', 'match_started', 'availability_alert')
     WHERE n.user_id = :uid
     ORDER BY n.created_at DESC
     LIMIT :limit OFFSET :offset
