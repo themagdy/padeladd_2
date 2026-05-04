@@ -103,6 +103,17 @@ $stmt = $pdo->prepare("
 $stmt->execute([$matchId]);
 $logs = array_merge($logs, $stmt->fetchAll(PDO::FETCH_ASSOC));
 
+// E. Match Creation
+$stmt = $pdo->prepare("
+    SELECT m.created_at as time, up.nickname as player, up.player_code, 
+    CONCAT('Created a ', m.match_type, ' match') as action
+    FROM matches m
+    JOIN user_profiles up ON m.creator_id = up.user_id
+    WHERE m.id = ?
+");
+$stmt->execute([$matchId]);
+$logs = array_merge($logs, $stmt->fetchAll(PDO::FETCH_ASSOC));
+
 // Sort by time
 usort($logs, fn($a, $b) => strtotime($a['time']) - strtotime($b['time']));
 
