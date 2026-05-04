@@ -195,3 +195,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Dashboard Metrics: Added pending venue requests to the dashboard to track platform growth.
 - Session Protection: Enforced immediate token invalidation for suspended users across all API endpoints.
 - UI Polish: Standardized premium circular avatars and orange/blue branding across all administrative interfaces.
+- Investigation Timeline: Overhauled the match investigator to pull from a permanent historical ledger (match_events), ensuring joins/withdrawals remain visible in perfect sequence.
+- Historical Logging: Implemented mandatory 'player_joined' event logging across create, solo-join, and team-approval API paths for absolute data integrity.
+- Investigator UX: Added click-to-sort headers (Player, Action, Time) and integrated real-time Chat monitoring with premium 💬 iconography.
