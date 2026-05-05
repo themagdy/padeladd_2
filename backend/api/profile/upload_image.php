@@ -104,9 +104,31 @@ if ($stmtProf->rowCount() > 0) {
     $update = $pdo->prepare("UPDATE user_profiles SET profile_image = ?, profile_image_thumb = ? WHERE user_id = ?");
     $update->execute([$relativePath, $relativeThumbPath, $user['id']]);
 } else {
-    $playerCode = generateUniquePlayerCode($pdo);
-    $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, profile_image_thumb, player_code) VALUES (?, ?, ?, ?)");
-    $insert->execute([$user['id'], $relativePath, $relativeThumbPath, $playerCode]);
+    // Use a small retry loop in case of a rare race condition (duplicate player_code)
+    $maxRetries = 3;
+    $playerCode = null;
+    while ($maxRetries > 0) {
+        $playerCode = generateUniquePlayerCode($pdo);
+        if (!$playerCode) {
+            jsonResponse(false, 'Unable to generate unique player code.');
+        }
+
+        try {
+            $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, profile_image_thumb, player_code) VALUES (?, ?, ?, ?)");
+            $insert->execute([$user['id'], $relativePath, $relativeThumbPath, $playerCode]);
+            break; // Success
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') { // Duplicate entry
+                $maxRetries--;
+                continue;
+            }
+            throw $e;
+        }
+    }
+    
+    if ($maxRetries <= 0) {
+        jsonResponse(false, 'Failed to generate a unique code after multiple attempts.');
+    }
 }
 
 jsonResponse(true, 'Image uploaded successfully.', ['profile_image' => $relativePath, 'profile_image_thumb' => $relativeThumbPath]);
