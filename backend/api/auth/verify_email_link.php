@@ -48,7 +48,7 @@ try {
     $verifiedEmail->execute([$row['user_id']]);
     $emailStr = $verifiedEmail->fetchColumn();
     if ($emailStr) {
-        $pdo->prepare("DELETE FROM users WHERE email = ? AND is_email_verified = 0 AND id != ?")->execute([$emailStr, $row['user_id']]);
+        $pdo->prepare("DELETE FROM users WHERE email = ? AND is_email_verified = 0 AND is_phone_verified = 0 AND id != ?")->execute([$emailStr, $row['user_id']]);
     }
 
     $pdo->commit();
