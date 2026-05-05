@@ -302,7 +302,7 @@ window.AdminControllers = {
                 this.closeModal();
                 this.fetchPlayers();
             } else {
-                alert(data.message || 'Update failed');
+                AdminApp.toast(data.message || 'Update failed', 'error');
             }
         },
         async toggleStatus(userId, currentStatus) {
@@ -373,7 +373,7 @@ window.AdminControllers = {
                 
                 const code = input.value.trim();
                 if (!code) {
-                    alert("Please enter a match code.");
+                    AdminApp.toast("Please enter a match code.", 'error');
                     return;
                 }
                 
@@ -390,11 +390,11 @@ window.AdminControllers = {
                 if (data.success) {
                     AdminControllers.matches.renderInvestigation(data.data);
                 } else {
-                    alert(data.message || "Match not found.");
+                    AdminApp.toast(data.message || "Match not found.", 'error');
                 }
             } catch (err) {
                 console.error("Investigate Error:", err);
-                alert("Failed to investigate match. Check console.");
+                AdminApp.toast("Failed to investigate match. Check console.", 'error');
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -412,7 +412,7 @@ window.AdminControllers = {
                 }
 
                 if (!data || !data.match) {
-                    alert("No data found for this match code.");
+                    AdminApp.toast("No data found for this match code.", 'error');
                     return;
                 }
 
@@ -495,7 +495,7 @@ window.AdminControllers = {
                 this.renderLogsTable();
             } catch (err) {
                 console.error("Render Investigation Error:", err);
-                alert("Error displaying match details. Check console.");
+                AdminApp.toast("Error displaying match details. Check console.", 'error');
             }
         },
         sortLogs(field) {
@@ -831,7 +831,7 @@ window.AdminControllers = {
             if (data.success) {
                 this.closeModal();
                 this.fetchRequests();
-            } else alert(data.message);
+            } else AdminApp.toast(data.message, 'error');
         }
     },
 
@@ -1161,18 +1161,18 @@ window.AdminControllers = {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    alert('Flag logged successfully!');
+                    AdminApp.toast('Flag logged successfully!');
                     e.target.reset();
                     // Reset radio border
                     e.target.querySelectorAll('.form-group div label div').forEach(d => d.style.borderColor = 'rgba(255,255,255,0.1)');
                     e.target.querySelector('input[value="green"]').parentElement.querySelector('div').style.borderColor = 'var(--c-green)';
                     await this.fetchFlags();
                 } else {
-                    alert(data.message);
+                    AdminApp.toast(data.message, 'error');
                 }
             } catch (err) {
                 console.error('Add Flag Error:', err);
-                alert('An error occurred.');
+                AdminApp.toast('An error occurred.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerText = originalText;
