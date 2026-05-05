@@ -5,8 +5,8 @@
  * Sends a push notification to players 2 hours before their match.
  */
 
-require_once __DIR__ . '/../core/db.php';
-require_once __DIR__ . '/../helpers/notification_helper.php';
+require_once __DIR__ . '/../../core/db.php';
+require_once __DIR__ . '/../../helpers/notification_helper.php';
 
 // Set timezone to match system
 date_default_timezone_set('Africa/Cairo');
