@@ -36,7 +36,7 @@ Defined in `frontend/css/style.css`:
 - **Primary**: `#1B52CE`
 - **Secondary**: `#293342`
 - **Text**: `#FFFFFF`
-- **Accents**: Orange (`#F7941D`), Green (`#00CE00`), Red (`#F15A29`)
+- **Accents**: Orange (`#ff8b00`), Green (`#00CE00`), Red (`#F15A29`)
 
 ### Global UI Helpers (`app.js`)
 - `Toast`: Success/Error notification overlays.
