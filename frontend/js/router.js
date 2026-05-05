@@ -22,7 +22,8 @@ const Router = {
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
-        '/rules': { template: 'frontend/pages/rules.html', init: () => {} }
+        '/rules': { template: 'frontend/pages/rules.html', init: () => {} },
+        '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() }
     },
     
     navDepth: 0,
@@ -44,7 +45,7 @@ const Router = {
             if (e.state && e.state.ignoreRoute) return;
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
             const isDynamicBackBar = path.startsWith('/matches/M-') || 
                                      path.startsWith('/p/') || 
                                      (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -111,7 +112,7 @@ const Router = {
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = path.startsWith('/matches/M-') || 
                                  path.startsWith('/p/') || 
                                  (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -280,7 +281,7 @@ const Router = {
         const isAuthPage = authRoutes.includes(nPath) || nPath === '/';
 
         // Pages that need the unified back bar
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = nPath.startsWith('/matches/M-') || 
                                  nPath.startsWith('/p/') || 
                                  (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
