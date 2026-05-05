@@ -776,8 +776,14 @@ window.AdminControllers = {
     // ── Venues Controller ───────────────────────────────────────────────
     venues: {
         allRequests: [],
+        allVenues: [],
+        currentTab: 'all',
+        searchQuery: '',
+        showHidden: false,
         async init() {
-            await this.fetchRequests();
+            this.showHidden = false; // Reset
+            await this.fetchAllData();
+            
             const approveForm = document.getElementById('approve-venue-form');
             if (approveForm) {
                 approveForm.addEventListener('submit', (e) => {
@@ -785,27 +791,117 @@ window.AdminControllers = {
                     this.processRequest('approve');
                 });
             }
-        },
-        async fetchRequests() {
-            const token = localStorage.getItem('admin_token');
-            const res = await fetch(`../backend/api/admin/venues/requests.php?admin_token=${token}`);
-            const data = await res.json();
-            if (data.success) {
-                this.allRequests = data.data.requests;
-                this.renderRequests(this.allRequests);
+
+            const editForm = document.getElementById('edit-venue-form');
+            if (editForm) {
+                editForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.updateVenue();
+                });
             }
         },
-        renderRequests(requests) {
+        async fetchAllData() {
+            const token = localStorage.getItem('admin_token');
+            try {
+                // Fetch Requests
+                const resReq = await fetch(`../backend/api/admin/venues/requests.php?admin_token=${token}`);
+                const dataReq = await resReq.json();
+                if (dataReq.success) this.allRequests = dataReq.data.requests;
+
+                // Fetch All Venues
+                const resAll = await fetch(`../backend/api/admin/venues/list.php?admin_token=${token}`);
+                const dataAll = await resAll.json();
+                if (dataAll.success) this.allVenues = dataAll.data.venues;
+
+                this.render();
+            } catch (err) { console.error('Fetch Venues Error:', err); }
+        },
+        switchTab(tab) {
+            this.currentTab = tab;
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}-venues`).classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            document.getElementById(`tab-content-${tab}`).style.display = 'block';
+            this.render();
+        },
+        setSearch(query) {
+            this.searchQuery = query.toLowerCase().trim();
+            this.renderAllVenues();
+        },
+        toggleFilter(checked) {
+            this.showHidden = checked;
+            this.renderAllVenues();
+        },
+        render() {
+            if (this.currentTab === 'all') this.renderAllVenues();
+            else this.renderRequests();
+        },
+        renderAllVenues() {
+            const tbody = document.getElementById('all-venues-list');
+            const empty = document.getElementById('all-venues-empty');
+            if (!tbody) return;
+
+            let filtered = this.allVenues;
+
+            // Filter by hidden status
+            const targetStatus = this.showHidden ? 1 : 0;
+            filtered = filtered.filter(v => v.is_hidden == targetStatus);
+
+            if (this.searchQuery) {
+                filtered = filtered.filter(v => v.name.toLowerCase().includes(this.searchQuery));
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+            if (empty) empty.style.display = 'none';
+
+            tbody.innerHTML = filtered.map(v => `
+                <tr style="${v.is_hidden == 1 ? 'opacity:0.5;' : ''}">
+                    <td><b style="color:#fff">${v.name}</b></td>
+                    <td>${v.city || 'Cairo'}</td>
+                    <td>
+                        ${v.venue_location_link ? `<a href="${v.venue_location_link}" target="_blank" style="color:var(--c-primary); font-size:12px;">View Map ↗</a>` : '<span style="opacity:0.3">No link</span>'}
+                    </td>
+                    <td>
+                        <span class="status-tag ${v.is_hidden == 1 ? 'rejected' : 'completed'}" style="font-size:9px; padding:2px 8px;">
+                            ${v.is_hidden == 1 ? 'HIDDEN' : 'VISIBLE'}
+                        </span>
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:flex; gap:8px; justify-content:flex-end;">
+                            <button onclick="AdminControllers.venues.openEditModal(${v.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:none; padding:6px 12px;">Edit</button>
+                            <button onclick="AdminControllers.venues.toggleVisibility(${v.id}, ${v.is_hidden})" class="btn-badge" style="background:${v.is_hidden == 1 ? 'var(--c-green)' : 'rgba(241, 90, 41, 0.1)'}; color:${v.is_hidden == 1 ? '#fff' : 'var(--c-red)'}; border:none; padding:6px 12px; min-width:80px;">
+                                ${v.is_hidden == 1 ? 'Unhide' : 'Hide'}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        },
+        renderRequests() {
             const tbody = document.getElementById('venue-request-list');
             const noReq = document.getElementById('no-requests');
             if (!tbody || !noReq) return;
-            if (requests.length === 0) {
+            if (this.allRequests.length === 0) {
                 tbody.innerHTML = '';
                 noReq.style.display = 'block';
                 return;
             }
             noReq.style.display = 'none';
-            tbody.innerHTML = requests.map(r => `<tr><td><b style="color:#fff">${r.venue_name}</b></td><td>${r.requester_name || 'System'} <small style="opacity:0.6">(${r.requester_code || '---'})</small></td><td>${new Date(r.created_at).toLocaleDateString()}</td><td style="text-align:right;"><button onclick="AdminControllers.venues.openModal(${r.id})" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:8px 20px; font-weight:700;">Review</button></td></tr>`).join('');
+            tbody.innerHTML = this.allRequests.map(r => `
+                <tr>
+                    <td><b style="color:#fff">${r.venue_name}</b></td>
+                    <td>${r.requester_name || 'System'} <small style="opacity:0.6">(${r.requester_code || '---'})</small></td>
+                    <td>${new Date(r.created_at).toLocaleDateString()}</td>
+                    <td style="text-align:right;">
+                        <button onclick="AdminControllers.venues.openModal(${r.id})" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:8px 20px; font-weight:700;">Review</button>
+                    </td>
+                </tr>
+            `).join('');
         },
         openModal(requestId) {
             const r = this.allRequests.find(x => x.id == requestId);
@@ -817,6 +913,53 @@ window.AdminControllers = {
         },
         closeModal() {
             document.getElementById('review-venue-modal').style.display = 'none';
+        },
+        openEditModal(venueId) {
+            const v = this.allVenues.find(x => x.id == venueId);
+            if (!v) return;
+            document.getElementById('edit-venue-id').value = v.id;
+            document.getElementById('edit-venue-name').value = v.name;
+            document.getElementById('edit-venue-location').value = v.venue_location_link || '';
+            document.getElementById('edit-venue-modal').style.display = 'flex';
+        },
+        closeEditModal() {
+            document.getElementById('edit-venue-modal').style.display = 'none';
+        },
+        async toggleVisibility(venueId, currentHidden) {
+            const token = localStorage.getItem('admin_token');
+            const newHidden = currentHidden == 1 ? 0 : 1;
+            try {
+                const res = await fetch(`../backend/api/admin/venues/update.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id: venueId, is_hidden: newHidden })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const venue = this.allVenues.find(v => v.id == venueId);
+                    if (venue) venue.is_hidden = newHidden;
+                    this.renderAllVenues();
+                }
+            } catch (e) { console.error('Toggle visibility error:', e); }
+        },
+        async updateVenue() {
+            const token = localStorage.getItem('admin_token');
+            const payload = {
+                id: document.getElementById('edit-venue-id').value,
+                name: document.getElementById('edit-venue-name').value,
+                location_link: document.getElementById('edit-venue-location').value
+            };
+            try {
+                const res = await fetch(`../backend/api/admin/venues/update.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Venue updated successfully!');
+                    this.closeEditModal();
+                    this.fetchAllData();
+                } else AdminApp.toast(data.message, 'error');
+            } catch (e) { console.error('Update venue error:', e); }
         },
         async processRequest(action) {
             if (action === 'reject' && !confirm('Are you sure you want to reject this request?')) return;
@@ -834,7 +977,7 @@ window.AdminControllers = {
             const data = await res.json();
             if (data.success) {
                 this.closeModal();
-                this.fetchRequests();
+                this.fetchAllData();
             } else AdminApp.toast(data.message, 'error');
         }
     },

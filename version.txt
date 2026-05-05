@@ -261,3 +261,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Authentication Security v2: Refined account cleanup to ensure "fully verified" accounts take absolute precedence.
 - Data Integrity: Verification endpoints now delete any other accounts with the same email or mobile that are NOT fully verified (email + phone).
 - Duplicate Prevention: This prevents partially verified "orphan" accounts from lingering in the system once a user has successfully established a definitive verified identity.
+
+[ADMIN_VENUES_V1] - 2026-05-06 01:13:00 +0300
+- Admin Venues Overhaul: Implemented a two-tabbed interface (All Venues / Requests).
+- Search & Filter: Added real-time search and a "Show Hidden" toggle filter to the All Venues list.
+- Management Tools: Enabled Hide/Unhide actions and a full Edit modal for modifying venue names and Google Maps links.
+- Backend APIs: Created list.php and update.php endpoints for robust venue management.
+- Schema Update: Added is_hidden column to venues table.

@@ -1,22 +1,98 @@
 <div class="venues-page">
+    <div class="admin-tabs" style="margin-bottom:24px;">
+        <button onclick="AdminControllers.venues.switchTab('all')" id="tab-all-venues" class="admin-tab active">All Venues</button>
+        <button onclick="AdminControllers.venues.switchTab('requests')" id="tab-requests-venues" class="admin-tab">Requests</button>
+    </div>
 
-    <div class="card" style="padding:0; overflow:hidden;">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Requested Club</th>
-                    <th>Submitted By</th>
-                    <th>Date</th>
-                    <th style="text-align:right;">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="venue-request-list">
-                <!-- Rows loaded via JS -->
-            </tbody>
-        </table>
-        <div id="no-requests" style="display:none; padding:40px; text-align:center; color:var(--c-text-muted);">
-            No pending venue requests.
+    <!-- All Venues Tab -->
+    <div id="tab-content-all" class="tab-content">
+        <div class="card" style="margin-bottom:16px; padding:16px;">
+            <div style="display:flex; align-items:center; gap:24px;">
+                <div style="position:relative; flex:1;">
+                    <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:0.5;">🔍</span>
+                    <input type="text" id="venue-search" class="form-input" placeholder="Search venues by name..." style="padding-left:40px; margin-bottom:0;" oninput="AdminControllers.venues.setSearch(this.value)">
+                </div>
+                
+                <label class="switch-container">
+                    <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Hidden</span>
+                    <input type="checkbox" id="filter-hidden-venues" onchange="AdminControllers.venues.toggleFilter(this.checked)">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
         </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Club Name</th>
+                        <th>City</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="all-venues-list">
+                    <!-- Loaded via JS -->
+                </tbody>
+            </table>
+            <div id="all-venues-empty" style="display:none; padding:40px; text-align:center; color:var(--c-text-muted);">
+                No venues found matching your search.
+            </div>
+        </div>
+    </div>
+
+    <!-- Requests Tab -->
+    <div id="tab-content-requests" class="tab-content" style="display:none;">
+        <div class="card" style="padding:0; overflow:hidden;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Requested Club</th>
+                        <th>Submitted By</th>
+                        <th>Date</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="venue-request-list">
+                    <!-- Rows loaded via JS -->
+                </tbody>
+            </table>
+            <div id="no-requests" style="display:none; padding:40px; text-align:center; color:var(--c-text-muted);">
+                No pending venue requests.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Venue Modal -->
+<div id="edit-venue-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Edit Venue</h3>
+            <button onclick="AdminControllers.venues.closeEditModal()" class="btn-close-modal">✕</button>
+        </div>
+        
+        <form id="edit-venue-form">
+            <div class="modal-body">
+                <input type="hidden" id="edit-venue-id">
+                <div class="modal-form-grid">
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Official Club Name</label>
+                        <input type="text" id="edit-venue-name" class="form-input" required>
+                    </div>
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Google Maps Location Link</label>
+                        <input type="url" id="edit-venue-location" class="form-input">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" onclick="AdminControllers.venues.closeEditModal()" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:var(--c-text-muted); border:none; padding:10px 24px;">Cancel</button>
+                <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">SAVE CHANGES</button>
+            </div>
+        </form>
     </div>
 </div>
 
