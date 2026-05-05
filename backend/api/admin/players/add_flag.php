@@ -1,17 +1,14 @@
 <?php
 require_once __DIR__ . '/../../../helpers/response.php';
 require_once __DIR__ . '/../../../core/db.php';
-require_once __DIR__ . '/../../../helpers/auth_helper.php';
+require_once __DIR__ . '/../../../helpers/admin_auth.php';
 
 header('Content-Type: application/json');
 
-$pdo = getDB();
-$admin = getAuthenticatedUser($pdo);
+// Validate admin session
+validateAdmin();
 
-// Verify admin status
-if ($admin['role'] !== 'admin' && $admin['role'] !== 'moderator') {
-    jsonResponse(false, 'Unauthorized. Admin access required.', null, 403);
-}
+$pdo = getDB();
 
 $input = json_decode(file_get_contents('php://input'), true);
 $playerCode = trim($input['player_code'] ?? '');
@@ -36,9 +33,9 @@ try {
         jsonResponse(false, 'Player with code ' . $playerCode . ' not found.');
     }
 
-    // 2. Insert flag
-    $stmtInsert = $pdo->prepare("INSERT INTO player_flags (user_id, flag_type, reason, admin_id) VALUES (?, ?, ?, ?)");
-    $stmtInsert->execute([$target['user_id'], $flagType, $reason, $admin['id']]);
+    // 2. Insert flag (admin_id column removed)
+    $stmtInsert = $pdo->prepare("INSERT INTO player_flags (user_id, flag_type, reason) VALUES (?, ?, ?)");
+    $stmtInsert->execute([$target['user_id'], $flagType, $reason]);
 
     jsonResponse(true, 'Flag logged successfully.');
 } catch (PDOException $e) {
