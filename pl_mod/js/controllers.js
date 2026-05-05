@@ -911,9 +911,6 @@ window.AdminControllers = {
             document.getElementById('review-location').value = '';
             document.getElementById('review-venue-modal').style.display = 'flex';
         },
-        closeModal() {
-            document.getElementById('review-venue-modal').style.display = 'none';
-        },
         openEditModal(venueId) {
             const v = this.allVenues.find(x => x.id == venueId);
             if (!v) return;
@@ -922,7 +919,8 @@ window.AdminControllers = {
             document.getElementById('edit-venue-location').value = v.venue_location_link || '';
             document.getElementById('edit-venue-modal').style.display = 'flex';
         },
-        closeEditModal() {
+        closeModal() {
+            document.getElementById('review-venue-modal').style.display = 'none';
             document.getElementById('edit-venue-modal').style.display = 'none';
         },
         async toggleVisibility(venueId, currentHidden) {
@@ -956,7 +954,7 @@ window.AdminControllers = {
                 const data = await res.json();
                 if (data.success) {
                     AdminApp.toast('Venue updated successfully!');
-                    this.closeEditModal();
+                    this.closeModal();
                     this.fetchAllData();
                 } else AdminApp.toast(data.message, 'error');
             } catch (e) { console.error('Update venue error:', e); }

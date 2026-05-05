@@ -13,8 +13,6 @@ window.AdminApp = {
                 const activePage = window.location.hash.replace('#', '') || 'dashboard';
                 if (AdminControllers[activePage] && typeof AdminControllers[activePage].closeModal === 'function') {
                     AdminControllers[activePage].closeModal();
-                } else if (AdminControllers.venues && e.target.id === 'review-venue-modal') {
-                    AdminControllers.venues.closeModal();
                 }
             }
         });

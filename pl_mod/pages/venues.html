@@ -70,7 +70,7 @@
     <div class="modal-card">
         <div class="modal-header">
             <h3>Edit Venue</h3>
-            <button onclick="AdminControllers.venues.closeEditModal()" class="btn-close-modal">✕</button>
+            <button onclick="AdminControllers.venues.closeModal()" class="btn-close-modal">✕</button>
         </div>
         
         <form id="edit-venue-form">
@@ -89,7 +89,7 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" onclick="AdminControllers.venues.closeEditModal()" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:var(--c-text-muted); border:none; padding:10px 24px;">Cancel</button>
+                <button type="button" onclick="AdminControllers.venues.closeModal()" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:var(--c-text-muted); border:none; padding:10px 24px;">Cancel</button>
                 <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">SAVE CHANGES</button>
             </div>
         </form>
