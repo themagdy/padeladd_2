@@ -2320,7 +2320,7 @@ const MatchesController = {
         const getTeamSum = (teamNo) => {
             const teamSlots = slots.filter(s => parseInt(s.team_no) === teamNo && s.status === 'confirmed');
             if (teamSlots.length === 0) return null;
-            return teamSlots.reduce((acc, s) => acc + (parseInt(s.points) || 50), 0);
+            return teamSlots.reduce((acc, s) => acc + (parseInt(s.points) || 0) + (parseInt(s.current_buffer) || 0), 0);
         };
 
         const team1Sum = getTeamSum(1);
@@ -2365,7 +2365,7 @@ const MatchesController = {
                         </div>
                         <div class="slot-row-bottom">
                             ${s.player_code ? `<span class="slot-code">${s.player_code}</span>` : '<span></span>'}
-                            <span class="slot-points">${s.points || 50} pts</span>
+                            <span class="slot-points">${(parseInt(s.points) || 0) + (parseInt(s.current_buffer) || 0)} pts</span>
                         </div>
                     </div>`;
             } else {

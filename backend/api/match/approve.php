@@ -41,6 +41,13 @@ try {
         jsonResponse(false, 'Match is no longer available.', null, 409);
     }
 
+    // Fetch current stats for snapshotting
+    $ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points FROM player_stats WHERE user_id IN (?, ?)");
+    $ptsStmt->execute([$requester_id, $partner_id]);
+    $ptsRows = $ptsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $ptsMap = [];
+    foreach ($ptsRows as $pr) { $ptsMap[(int)$pr['user_id']] = $pr; }
+
     // --- SPECIAL CASE: Match Creation Team 1 Approval ---
     if ($match['status'] === 'on_hold' && (int)$match['creator_id'] === $requester_id && (int)$match['created_with_partner'] === 1) {
         
@@ -55,12 +62,15 @@ try {
         if ($creator_side === 'left') $partner_side = 'right';
         if ($creator_side === 'flexible') $partner_side = 'flexible';
 
+        $parRP = (int)($ptsMap[$partner_id]['rank_points'] ?? 0);
+        $parBP = (int)($ptsMap[$partner_id]['current_buffer'] ?? 100);
+
         // Insert partner into Team 1, Slot 2
         $ins = $pdo->prepare("
-            INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
-            VALUES (?, ?, 1, 2, 'team', 'confirmed', ?)
+            INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side, rank_points_at_join, buffer_points_at_join)
+            VALUES (?, ?, 1, 2, 'team', 'confirmed', ?, ?, ?)
         ");
-        $ins->execute([$match_id, $partner_id, $partner_side]);
+        $ins->execute([$match_id, $partner_id, $partner_side, $parRP, $parBP]);
         $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$partner_id]);
 
         // Finish waiting list
@@ -186,13 +196,18 @@ try {
         }
     }
 
+    $reqRP = (int)($ptsMap[$requester_id]['rank_points'] ?? 0);
+    $reqBP = (int)($ptsMap[$requester_id]['current_buffer'] ?? 100);
+    $parRP = (int)($ptsMap[$partner_id]['rank_points'] ?? 0);
+    $parBP = (int)($ptsMap[$partner_id]['current_buffer'] ?? 100);
+
     // Insert both players into team 2
     $ins = $pdo->prepare("
-        INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
-        VALUES (?, ?, ?, ?, 'team', 'confirmed', ?)
+        INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side, rank_points_at_join, buffer_points_at_join)
+        VALUES (?, ?, ?, ?, 'team', 'confirmed', ?, ?, ?)
     ");
-    $ins->execute([$match_id, $requester_id, 2, 1, $req_side]);
-    $ins->execute([$match_id, $partner_id,   2, 2, $par_side]);
+    $ins->execute([$match_id, $requester_id, 2, 1, $req_side, $reqRP, $reqBP]);
+    $ins->execute([$match_id, $partner_id,   2, 2, $par_side, $parRP, $parBP]);
 
 
     // Ensure player_stats rows (starting points = 0 per brief)
