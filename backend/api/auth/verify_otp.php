@@ -41,7 +41,7 @@ try {
     $verifiedMobile->execute([$userId]);
     $mobileStr = $verifiedMobile->fetchColumn();
     if ($mobileStr) {
-        $pdo->prepare("DELETE FROM users WHERE mobile = ? AND is_phone_verified = 0 AND is_email_verified = 0 AND id != ?")->execute([$mobileStr, $userId]);
+        $pdo->prepare("DELETE FROM users WHERE mobile = ? AND NOT (is_email_verified = 1 AND is_phone_verified = 1) AND id != ?")->execute([$mobileStr, $userId]);
     }
 
     $pdo->commit();
