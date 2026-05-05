@@ -451,3 +451,39 @@ input:checked + .switch-slider:before {
     from { transform: translateX(0); opacity: 1; }
     to { transform: translateX(120%); opacity: 0; }
 }
+
+/* Tab System */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.02);
+    padding: 6px;
+    border-radius: 100px;
+    width: fit-content;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-tab {
+    padding: 10px 24px;
+    border-radius: 100px;
+    border: none;
+    background: transparent;
+    color: var(--c-text-muted);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-tab:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.03);
+}
+
+.admin-tab.active {
+    background: var(--c-primary);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(27, 82, 206, 0.2);
+}
