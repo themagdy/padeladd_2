@@ -605,6 +605,7 @@ window.AdminControllers = {
         searchQuery: '',
         async init() {
             console.log('--- Reports Init Start ---');
+            this.searchQuery = '';
             await this.fetchReports();
             
             const toggle = document.getElementById('show-archived-reports');
@@ -1080,6 +1081,7 @@ window.AdminControllers = {
         searchQuery: '',
         async init() {
             console.log('--- Flags Init Start ---');
+            this.searchQuery = '';
             await this.fetchFlags();
         },
         async fetchFlags() {
