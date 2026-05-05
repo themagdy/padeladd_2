@@ -662,12 +662,16 @@ window.AdminControllers = {
                 if (this.searchQuery) {
                     reports = reports.filter(r => {
                         const reporter = (r.reporter_name || '').toLowerCase();
+                        const reporterCode = (r.reporter_code || '').toLowerCase();
                         const reason = (r.reason || r.report_reason || r.reason_text || '').toLowerCase();
                         const target = (r.target_name || '').toLowerCase();
+                        const targetCode = (r.target_code || '').toLowerCase();
                         const match = (r.match_code || '').toLowerCase();
                         return reporter.includes(this.searchQuery) || 
+                               reporterCode.includes(this.searchQuery) || 
                                reason.includes(this.searchQuery) || 
                                target.includes(this.searchQuery) || 
+                               targetCode.includes(this.searchQuery) || 
                                match.includes(this.searchQuery);
                     });
                 }
