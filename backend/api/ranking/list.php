@@ -23,7 +23,13 @@ $stmt = $pdo->prepare("
         up.player_code,
         up.date_of_birth,
         ps.rank_points,
-        ps.points_this_week,
+        (SELECT COALESCE(SUM(mp.point_change), 0) 
+         FROM match_players mp 
+         JOIN matches m ON mp.match_id = m.id 
+         WHERE mp.user_id = u.id 
+           AND m.status = 'completed'
+           AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ) as points_this_week,
         ps.matches_played,
         ps.win_rate
     FROM player_stats ps

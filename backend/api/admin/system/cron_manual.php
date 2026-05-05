@@ -21,7 +21,6 @@ if (empty($task)) {
 $scripts = [
     'auto_confirm' => 'cronjobs/auto_confirm_scores.php',
     'match_reminders' => 'cronjobs/match_reminders.php',
-    'reset_weekly' => 'cronjobs/reset_weekly_points.php',
     'fix_stats'    => 'fix_missing_stats.php'
 ];
 
