@@ -2857,7 +2857,7 @@ const MatchesController = {
             // Native mobile app: use share menu, no toast
             navigator.share({
                 title: 'Join me for a Padel match!',
-                text: 'Check out this match on PadelAdd: ' + code,
+                text: 'Check out this match on Padeladd: ' + code,
                 url: url
             }).catch(err => {
                 if (err.name !== 'AbortError') console.error(err);
