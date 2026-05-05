@@ -220,3 +220,20 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Reminders: Implemented an automated reminder system to notify players 2 hours before their scheduled games.
 - Scripting: Created backend/scripts/match_reminders.php for scheduled cronjob execution.
 - Data Persistence: Added reminder_sent tracking to the match_players table to ensure reliable, single-delivery notifications.
+
+[ROLLING_WEEKLY_POINTS] - 2026-05-05 21:55:00 +0300
+- Rolling 7-Day Logic: Replaced the fixed Sunday reset with a dynamic rolling 7-day points calculation for better player engagement.
+- Point Tracking: Added a permanent point_change record to the match_players table for every completed competition match.
+- Real-time APIs: Updated Ranking, Profile, and Admin APIs to calculate weekly progress on the fly using indexed database subqueries.
+- Consistency: Backfilled matches from the last 7 days to ensure a smooth transition to the new rolling window.
+
+[ADMIN_SYSTEM_V2] - 2026-05-05 21:58:00 +0300
+- Console Redesign: Overhauled the Execution Console with a high-fidelity "Dark Studio" aesthetic, monospace typography, and status icons.
+- Interactive UX: Added a 'Clear' console feature and implemented intelligent auto-scrolling for long task outputs.
+- Logging Enhancements: Integrated real-time timestamps and status-coded log entries (⚡, ✅, ❌, ℹ️) for better audit visibility.
+- Maintenance Cleanup: Removed the obsolete Weekly Reset task and stabilized the manual cron triggers to handle empty result sets gracefully.
+- Player List UI: Added live Weekly Points +/- indicators to the Admin Player list for immediate performance oversight.
+
+[BUG_FIXES_V2] - 2026-05-05 22:00:00 +0300
+- Match Reminders: Fixed the SQL query in the reminder script to correctly support relational venue joins.
+- Cron Stability: Resolved "Network Error" issues in the Admin Console by handling empty task outputs with user-friendly return messages.
