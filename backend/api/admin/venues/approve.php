@@ -33,7 +33,7 @@ try {
         if (empty($finalName)) jsonResponse(false, 'Venue name cannot be empty.', null, 400);
 
         // 1. Insert into official venues table
-        $stmt = $pdo->prepare("INSERT INTO venues (name, location_link) VALUES (?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO venues (name, venue_location_link) VALUES (?, ?)");
         $stmt->execute([$finalName, $location]);
         
         // 2. Mark request as approved
