@@ -189,6 +189,80 @@ const PollManager = {
     }
 };
 
+const PushNotificationsController = {
+    init: async function() {
+        if (!window.Capacitor || !window.Capacitor.Plugins.PushNotifications) {
+            console.log('[PushNotifications] Not a native app or plugin missing');
+            return;
+        }
+
+        const PushNotifications = window.Capacitor.Plugins.PushNotifications;
+
+        try {
+            // Request permission
+            let permStatus = await PushNotifications.checkPermissions();
+            if (permStatus.receive === 'prompt') {
+                permStatus = await PushNotifications.requestPermissions();
+            }
+
+            if (permStatus.receive !== 'granted') {
+                console.log('[PushNotifications] Permission not granted');
+                return;
+            }
+
+            // Register with Apple / Google
+            await PushNotifications.register();
+
+            // On success, we get a token
+            PushNotifications.addListener('registration', (token) => {
+                console.log('[PushNotifications] Registration success:', token.value);
+                this.updateServerToken(token.value);
+            });
+
+            // On error
+            PushNotifications.addListener('registrationError', (error) => {
+                console.error('[PushNotifications] Registration error:', error.error);
+            });
+
+            // Handle incoming notifications (Foreground)
+            PushNotifications.addListener('pushNotificationReceived', (notification) => {
+                console.log('[PushNotifications] Received in foreground:', notification);
+                if (notification.title && notification.body) {
+                    Toast.show(notification.body, 'info');
+                    // Global sound if available
+                    if (typeof SoundManager !== 'undefined') SoundManager.play('notify');
+                    // Trigger refresh if needed
+                    if (typeof Router !== 'undefined' && Router.currentPath === '/dashboard' && typeof DashboardController !== 'undefined') {
+                        DashboardController.load();
+                    }
+                }
+            });
+
+            // Handle notification click (Action)
+            PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+                console.log('[PushNotifications] Action performed:', action);
+                const data = action.notification.data;
+                if (data && data.url && typeof Router !== 'undefined') {
+                    Router.navigate(data.url);
+                }
+            });
+
+        } catch (e) {
+            console.error('[PushNotifications] Setup failed:', e);
+        }
+    },
+
+    updateServerToken: async function(token) {
+        if (typeof Auth !== 'undefined' && !Auth.isAuthenticated()) return;
+        const platform = window.Capacitor.getPlatform();
+        console.log('[PushNotifications] Updating server token...');
+        await API.post('/profile/update_device_token', {
+            token: token,
+            platform: platform
+        });
+    }
+};
+
 
 const ScoreUI = {
     /**
@@ -383,6 +457,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize sound engine
     SoundManager.init();
+
+    // Phase 6: Initialize push notifications
+    if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
+        PushNotificationsController.init();
+    }
 
     // Mobile Status Bar Fix
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {

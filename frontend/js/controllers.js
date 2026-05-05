@@ -124,6 +124,11 @@ const AuthController = {
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile); // If has_profile is true, they have a level
 
+                // Initialize push notifications
+                if (typeof PushNotificationsController !== 'undefined') {
+                    PushNotificationsController.init();
+                }
+
                 if (res.data.has_profile) {
                     Router.navigate('/dashboard');
                 } else {

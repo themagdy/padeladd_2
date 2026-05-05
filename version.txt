@@ -208,3 +208,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - API Enhancements: Updated match details and profile listing APIs to prioritize historical point snapshots over current player statistics for finalized matches.
 - Match UX: Integrated point snapshots into the match details view to provide an accurate historical record of player rankings at the time of the game.
 - Match UX: Hidden the waiting list section for past and cancelled matches to streamline the match details view.
+
+[PUSH_NOTIFICATIONS_V1] - 2026-05-05 21:10:00 +0300
+- Mobile Push Notifications: Implemented a high-fidelity Push Notification system using Firebase Cloud Messaging (FCM) v1.
+- Backend Integration: Created FCMHelper to handle OAuth2 JWT authentication and automated notification delivery.
+- Mobile Logic: Integrated @capacitor/push-notifications with deep-linking support for matches, chats, and profiles.
+- Infrastructure: Implemented device token lifecycle management (registration, storage, and upsert on login).
+- Global Automation: Linked push notifications to the existing in-app notification engine for real-time alerts across all match and chat events.

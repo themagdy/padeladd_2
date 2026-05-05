@@ -97,6 +97,9 @@ try {
         case 'profile/remove_image':
             require __DIR__ . '/profile/remove_image.php';
             break;
+        case 'profile/update_device_token':
+            require __DIR__ . '/profile/update_device_token.php';
+            break;
         case 'stats/get':
             require __DIR__ . '/stats/get.php';
             break;
