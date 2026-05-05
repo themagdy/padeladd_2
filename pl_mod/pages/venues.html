@@ -1,7 +1,9 @@
 <div class="venues-page">
     <div class="admin-tabs" style="margin-bottom:24px;">
         <button onclick="AdminControllers.venues.switchTab('all')" id="tab-all-venues" class="admin-tab active">All Venues</button>
-        <button onclick="AdminControllers.venues.switchTab('requests')" id="tab-requests-venues" class="admin-tab">Requests</button>
+        <button onclick="AdminControllers.venues.switchTab('requests')" id="tab-requests-venues" class="admin-tab">
+            Requests <span id="count-venue-requests" class="tab-badge" style="display:none;">0</span>
+        </button>
     </div>
 
     <!-- All Venues Tab -->
