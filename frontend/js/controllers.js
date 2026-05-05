@@ -4,8 +4,8 @@ const isToday = (d) => {
     const date = new Date(d.replace(' ', 'T')); // Handle PHP datetime format
     const now = new Date();
     return date.getDate() === now.getDate() &&
-           date.getMonth() === now.getMonth() &&
-           date.getFullYear() === now.getFullYear();
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
 };
 
 const relTime = (d) => {
@@ -14,21 +14,21 @@ const relTime = (d) => {
         const date = new Date(d.replace(' ', 'T'));
         const now = new Date();
         const diff = Math.floor((now - date) / 1000); // seconds
-        
+
         if (diff < 60) return 'Just now';
         if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
         if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
         if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
-        
+
         return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     } catch (e) { return ''; }
 };
 
 const UI = {
-    showError: function(inputName, message, form) {
+    showError: function (inputName, message, form) {
         const input = form.querySelector(`[name="${inputName}"]`);
         if (!input) return;
-        
+
         input.classList.add('error');
         const group = input.closest('.form-group');
         if (!group) return;
@@ -46,12 +46,12 @@ const UI = {
         // Smoothly scroll the error into view if it's not fully visible
         group.scrollIntoView({ behavior: 'smooth', block: 'center' });
     },
-    clearErrors: function(form) {
+    clearErrors: function (form) {
         form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
         form.querySelectorAll('.form-error').forEach(el => el.style.display = 'none');
     },
     _lastNavAvatar: null,
-    syncNav: async function() {
+    syncNav: async function () {
         if (!Auth.isAuthenticated()) return;
         const res = await API.post('/profile/get', {});
         if (!res || !res.success) return;
@@ -83,7 +83,7 @@ const UI = {
         NotificationsController.pollBadge();
     },
 
-    getAvatarHtml: function(thumb, style = '', wrapperStyle = '', initials = '?', className = '') {
+    getAvatarHtml: function (thumb, style = '', wrapperStyle = '', initials = '?', className = '') {
         if (thumb) {
             return `
                 <div class="avatar-wrap ${className}" style="${wrapperStyle}">
@@ -97,7 +97,7 @@ const UI = {
 };
 
 const AuthController = {
-    initLogin: function() {
+    initLogin: function () {
         if (Auth.isAuthenticated()) {
             if (Auth.hasProfile()) Router.navigate('/dashboard');
             else Router.navigate('/profile/edit');
@@ -105,11 +105,11 @@ const AuthController = {
         }
         const form = document.getElementById('login-form');
         if (!form) return;
-        
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
-            
+
             if (!form.email.value) { UI.showError('email', 'Phone number or email is required', form); return; }
             if (!form.password.value) { UI.showError('password', 'Password is required', form); return; }
 
@@ -117,13 +117,13 @@ const AuthController = {
                 email: form.email.value,
                 password: form.password.value
             };
-            
+
             const res = await API.post('/login', payload);
             if (res && res.success) {
                 Auth.setToken(res.data.token);
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile); // If has_profile is true, they have a level
-                
+
                 if (res.data.has_profile) {
                     Router.navigate('/dashboard');
                 } else {
@@ -141,7 +141,7 @@ const AuthController = {
         });
     },
 
-    initRegister: function() {
+    initRegister: function () {
         if (Auth.isAuthenticated()) {
             if (Auth.hasProfile() && Auth.hasLevel()) Router.navigate('/dashboard');
             else Router.navigate('/profile/edit');
@@ -149,7 +149,7 @@ const AuthController = {
         }
         const form = document.getElementById('register-form');
         if (!form) return;
-        
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             Auth.clearAll();
@@ -160,9 +160,9 @@ const AuthController = {
             if (!form.email.value || !form.email.value.includes('@')) { UI.showError('email', 'Invalid email address', form); return; }
             const mobileVal = form.mobile.value.trim();
             const mobileRegex = /^01[0125][0-9]{8}$/;
-            if (!mobileRegex.test(mobileVal)) { 
-                UI.showError('mobile', 'Enter a valid 11-digit Egyptian mobile (e.g. 01012345678)', form); 
-                return; 
+            if (!mobileRegex.test(mobileVal)) {
+                UI.showError('mobile', 'Enter a valid 11-digit Egyptian mobile (e.g. 01012345678)', form);
+                return;
             }
             if (!form.password.value || form.password.value.length < 8) { UI.showError('password', 'Password must be at least 8 chars', form); return; }
 
@@ -173,7 +173,7 @@ const AuthController = {
                 email: form.email.value,
                 password: form.password.value
             };
-            
+
             const btn = form.querySelector('button[type="submit"]');
             btn.disabled = true;
             btn.innerText = 'Registering...';
@@ -189,14 +189,14 @@ const AuthController = {
                 if (msg.includes('email')) UI.showError('email', res.message, form);
                 else if (msg.includes('mobile')) UI.showError('mobile', res.message, form);
                 else Toast.show(res ? res.message : 'Registration failed');
-                
+
                 btn.disabled = false;
                 btn.innerText = 'Continue →';
             }
         });
     },
 
-    initVerify: function() {
+    initVerify: function () {
         const smsForm = document.getElementById('verify-sms-form');
         const continueBtn = document.getElementById('btn-complete-verify');
         const userId = localStorage.getItem('verify_user_id');
@@ -226,7 +226,7 @@ const AuthController = {
             if (isEmailVerified && isPhoneVerified && continueBtn) {
                 continueBtn.disabled = false;
                 continueBtn.style.opacity = '1';
-                
+
                 // Auto-advance so they don't get stuck verifying again
                 setTimeout(() => {
                     if (Auth.hasProfile() && Auth.hasLevel()) {
@@ -239,26 +239,26 @@ const AuthController = {
         };
 
         const checkStatus = async () => {
-             const res = await API.post('/check-verification', { user_id: userId });
-             if (res && res.success) {
-                 isEmailVerified = !!res.data.email_verified;
-                 isPhoneVerified = !!res.data.phone_verified;
-                 if (res.data.token) {
-                     Auth.setToken(res.data.token);
-                 }
-                 if (res.data.fully_verified || (isEmailVerified && isPhoneVerified)) {
+            const res = await API.post('/check-verification', { user_id: userId });
+            if (res && res.success) {
+                isEmailVerified = !!res.data.email_verified;
+                isPhoneVerified = !!res.data.phone_verified;
+                if (res.data.token) {
+                    Auth.setToken(res.data.token);
+                }
+                if (res.data.fully_verified || (isEmailVerified && isPhoneVerified)) {
                     Auth.setHasProfile(res.data.has_profile);
                     Auth.setHasLevel(res.data.has_profile);
-                 }
-                 updateUI();
-             }
+                }
+                updateUI();
+            }
         };
 
         if (!userId) {
-            if (Auth.isAuthenticated()) { 
+            if (Auth.isAuthenticated()) {
                 if (Auth.hasProfile() && Auth.hasLevel()) Router.navigate('/dashboard');
                 else Router.navigate('/profile/edit');
-                return; 
+                return;
             }
             Router.navigate('/login'); return;
         }
@@ -315,10 +315,10 @@ const AuthController = {
         };
     },
 
-    handleEmailLink: async function() {
+    handleEmailLink: async function () {
         const params = new URLSearchParams(window.location.search);
         const token = params.get('token');
-        
+
         if (!token) {
             Toast.show('Invalid verification link.');
             Router.navigate('/login');
@@ -345,7 +345,7 @@ const AuthController = {
             if (window._verifyState) {
                 window._verifyState.setEmailVerified(true);
             }
-            
+
             Toast.show('Email verified successfully! Now please complete the WhatsApp step.', 'success');
         } else {
             Toast.show(res ? res.message : 'Verification link expired or invalid.');
@@ -353,15 +353,15 @@ const AuthController = {
         }
     },
 
-    initForgotPassword: function() {
+    initForgotPassword: function () {
         const form = document.getElementById('forgot-form');
-        if(!form) return;
-        
-        form.addEventListener('submit', async(e) => {
+        if (!form) return;
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const payload = { email: form.email.value };
             const res = await API.post('/forgot-password', payload);
-            if(res && res.success) {
+            if (res && res.success) {
                 Toast.show(res.message, 'success');
                 if (res.data && res.data.test_reset_token) {
                     console.log('RESET TOKEN (DEV ONLY): ', res.data.test_reset_token);
@@ -375,15 +375,15 @@ const AuthController = {
         });
     },
 
-    initResetPassword: function() {
+    initResetPassword: function () {
         const form = document.getElementById('reset-form');
-        if(!form) return;
+        if (!form) return;
 
         // Auto-fill test token or URL token if available
         const params = new URLSearchParams(window.location.search);
         const urlToken = params.get('token');
         const testToken = localStorage.getItem('test_reset_token');
-        
+
         if (urlToken && form.token) {
             form.token.value = urlToken;
         } else if (testToken && form.token) {
@@ -391,7 +391,7 @@ const AuthController = {
             localStorage.removeItem('test_reset_token');
         }
 
-        form.addEventListener('submit', async(e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const pt = form.password.value;
             const pc = form.password_confirm.value;
@@ -399,11 +399,11 @@ const AuthController = {
                 Toast.show('Passwords do not match');
                 return;
             }
-            
+
             const payload = { token: form.token.value, new_password: pt };
             const res = await API.post('/reset-password', payload);
             Toast.show(res ? res.message : 'Error resetting password');
-            if (res && res.success){
+            if (res && res.success) {
                 Router.navigate('/login');
             }
         });
@@ -421,9 +421,9 @@ const DashboardController = {
     _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
 
-    init: async function(isSilent = false) {
+    init: async function (isSilent = false) {
         if (!isSilent) await UI.syncNav();
-        
+
         // Use cache for instant render if available
         if (!isSilent && DashboardController._cache.profile) {
             DashboardController.applyData(DashboardController._cache.profile, DashboardController._cache.matches);
@@ -446,7 +446,7 @@ const DashboardController = {
         // Compare with cache
         const profileJson = JSON.stringify(res.data);
         const matchesJson = matchRes?.success ? JSON.stringify(matchRes.data.matches) : '';
-        
+
         if (isSilent && DashboardController._cache.profile_json === profileJson && DashboardController._cache.matches_json === matchesJson) {
             return;
         }
@@ -466,15 +466,15 @@ const DashboardController = {
         }
     },
 
-    applyData: function(profileData, matchData) {
+    applyData: function (profileData, matchData) {
         const { user, profile, stats } = profileData;
         DashboardController._currentUser = user;
         DashboardController._currentProfile = profile;
-        
+
         // Default ranking tab to user's gender
         if (profile && profile.gender) {
             DashboardController._currentRankTab = profile.gender;
-            
+
             // Update UI buttons in dashboard
             const males = document.getElementById('tab-males');
             const females = document.getElementById('tab-females');
@@ -485,7 +485,7 @@ const DashboardController = {
                 females.style.color = profile.gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
             }
         }
-        
+
         if (matchData) {
             DashboardController._allMatches = matchData;
         }
@@ -501,7 +501,7 @@ const DashboardController = {
         DashboardController.renderRanking();
     },
 
-    switchRankTab: function(gender) {
+    switchRankTab: function (gender) {
         DashboardController._currentRankTab = gender;
         const males = document.getElementById('tab-males');
         const females = document.getElementById('tab-females');
@@ -516,7 +516,7 @@ const DashboardController = {
         DashboardController.renderRanking();
     },
 
-    switchMatchTab: function(tab) {
+    switchMatchTab: function (tab) {
         DashboardController._currentMatchTab = tab;
         const comp = document.getElementById('tab-completed');
         const upco = document.getElementById('tab-upcoming');
@@ -527,7 +527,7 @@ const DashboardController = {
         DashboardController.renderMatches();
     },
 
-    renderMatches: function() {
+    renderMatches: function () {
         const listEl = document.getElementById('dash-matches-list');
         if (!listEl) return;
         const filtered = DashboardController._allMatches.filter(m => m.status === DashboardController._currentMatchTab);
@@ -536,7 +536,7 @@ const DashboardController = {
             return;
         }
         const uid = DashboardController._currentUser?.id;
-        
+
         let html = '';
         if (DashboardController._currentMatchTab === 'completed') {
             // Flatten all scores from all completed matches into a single list of cards
@@ -561,16 +561,16 @@ const DashboardController = {
         listEl.innerHTML = html;
     },
 
-    renderMatchCard: function(m, userId, specificScore = null) {
+    renderMatchCard: function (m, userId, specificScore = null) {
         if (m.status === 'completed' && (specificScore || (m.scores && m.scores.length > 0))) {
             const scoreToRender = specificScore || m.scores[0];
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
-            
+
             const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
             const now = new Date();
             const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
-            
+
             let dayStr;
             if (dateObj.toDateString() === now.toDateString()) {
                 dayStr = 'Today';
@@ -580,14 +580,14 @@ const DashboardController = {
                 dayStr = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
             }
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
-            
+
             const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
                     ${venueTitle} &nbsp;·&nbsp; ${dayStr}
                 </div>
             `;
-            
+
             return `
                 <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:29px; transition:var(--t-fast);">
                     ${dashHeader}
@@ -598,7 +598,7 @@ const DashboardController = {
 
         const userTeam = m.user_team;
         const dateStr = m.scheduled_at
-            ? new Date(m.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday:'long', hour:'2-digit', minute:'2-digit' })
+            ? new Date(m.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' })
             : 'TBD';
 
         const renderTeamRow = (players) => {
@@ -626,17 +626,17 @@ const DashboardController = {
         </div>`;
     },
 
-    renderRanking: async function() {
+    renderRanking: async function () {
         const listEl = document.getElementById('dash-ranking-list');
         if (!listEl) return;
-        
+
         // Use current tab gender
         const gender = DashboardController._currentRankTab || 'male';
 
         const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
         if (!res || !res.success) {
-             listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
-             return;
+            listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
+            return;
         }
 
         const ranking = res.data.ranking;
@@ -650,11 +650,11 @@ const DashboardController = {
             const isLast = idx === ranking.length - 1;
             const trend = r.points_this_week;
             const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
-            
+
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);', initials);
-            
+
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; transition:all 0.2s; cursor:pointer; border-bottom: ${isLast ? 'none' : '1px solid rgba(255,255,255,0.05)'};" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                     <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
@@ -684,7 +684,7 @@ const DashboardController = {
 //  PROFILE VIEW CONTROLLER
 // -------------------------------------------------------
 const ProfileViewController = {
-    init: async function(params) {
+    init: async function (params) {
         // Guard: All profile views require authentication
         if (!Auth.isAuthenticated()) {
             Router.navigate('/login');
@@ -692,14 +692,14 @@ const ProfileViewController = {
         }
 
         await UI.syncNav();
-        
+
         // ID could be user_id (numeric) or player_code (string)
         const payload = {};
         if (params && params.id) {
             if (/^\d+$/.test(params.id)) payload.target_id = params.id;
             else payload.player_code = params.id;
         }
-        
+
         const res = await API.post('/profile/get', payload);
         if (!res || !res.success) {
             const pageEl = document.querySelector('.page.active');
@@ -724,13 +724,13 @@ const ProfileViewController = {
             return;
         }
         const { user, profile, stats, is_self } = res.data;
-        
+
         // Avatar
         const av = document.getElementById('prof-avatar');
         if (av) {
             const thumb = profile.profile_image_thumb || profile.profile_image;
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
-            
+
             if (profile && thumb) {
                 av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials);
                 av.classList.remove('avatar-placeholder');
@@ -765,7 +765,7 @@ const ProfileViewController = {
         // Names (Nickname + Full Name)
         const nickEl = document.getElementById('prof-nickname');
         if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
-        
+
         const fullEl = document.getElementById('prof-fullname');
         if (fullEl) {
             if (profile?.nickname) {
@@ -821,7 +821,7 @@ const ProfileViewController = {
         if (listEl) {
             // Filter: only completed matches (history)
             const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
-            
+
             if (historyMatches.length === 0) {
                 listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
             } else {
@@ -830,7 +830,7 @@ const ProfileViewController = {
                 let html = '';
                 for (const m of historyMatches) {
                     if (scoreCount >= 50) break;
-                    
+
                     if (m.scores && m.scores.length > 0) {
                         for (const s of m.scores) {
                             if (scoreCount >= 50) break;
@@ -854,7 +854,7 @@ const ProfileViewController = {
 
 const ProfileController = {
 
-    reportPlayer: async function(targetUserId) {
+    reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({
             title: 'Report Player',
             message: 'Please describe the issue you encountered with this player.',
@@ -876,7 +876,7 @@ const ProfileController = {
 
     _cropper: null,
 
-    cancelCrop: function() {
+    cancelCrop: function () {
         document.getElementById('crop-modal-overlay').style.display = 'none';
         if (this._cropper) {
             this._cropper.destroy();
@@ -886,13 +886,13 @@ const ProfileController = {
         if (input) input.value = '';
     },
 
-    zoom: function(amount) {
+    zoom: function (amount) {
         if (this._cropper) {
             this._cropper.zoom(amount);
         }
     },
 
-    confirmCrop: async function() {
+    confirmCrop: async function () {
         if (!this._cropper) return;
 
         const canvas = this._cropper.getCroppedCanvas({
@@ -918,7 +918,7 @@ const ProfileController = {
                 const displayImg = res.data.profile_image_thumb || res.data.profile_image;
                 const avContainer = document.getElementById('edit-avatar-container');
                 avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
-                
+
                 if (removeBtn) removeBtn.style.display = 'block';
                 Toast.show('Photo updated', 'success');
                 UI.syncNav();
@@ -928,7 +928,7 @@ const ProfileController = {
         }, 'image/png');
     },
 
-    initEdit: function() {
+    initEdit: function () {
         const form = document.getElementById('profile-form');
         if (!form) return;
 
@@ -953,12 +953,12 @@ const ProfileController = {
 
         // Load existing data if they already have a profile
         const isExisting = Auth.hasProfile();
-        
+
         // Dynamic content based on state
         const titleEl = document.getElementById('edit-profile-title');
         const subtitleEl = document.getElementById('edit-profile-subtitle');
         const submitBtn = document.getElementById('edit-profile-submit');
-        
+
         if (isExisting) {
             if (titleEl) titleEl.textContent = 'Edit Profile';
             if (subtitleEl) subtitleEl.style.display = 'none';
@@ -983,7 +983,7 @@ const ProfileController = {
                     if (form.gender && p.gender) {
                         const genderSelect = form.gender;
                         const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
-                        
+
                         // Create a readonly input to replace the dropdown
                         const input = document.createElement('input');
                         input.type = 'text';
@@ -995,13 +995,13 @@ const ProfileController = {
                         input.style.background = 'rgba(255,255,255,0.02)';
                         input.style.color = 'var(--c-text-muted)';
                         input.title = 'Gender cannot be changed once set.';
-                        
+
                         genderSelect.parentNode.replaceChild(input, genderSelect);
                     }
                     if (form.playing_side && p.playing_side) form.playing_side.value = p.playing_side;
                     if (form.location && p.location) form.location.value = p.location;
                     if (form.bio && p.bio) form.bio.value = p.bio;
-                    
+
                     Auth.setHasProfile(true); // They have a profile row
                     Auth.setHasLevel(!!p.level);
 
@@ -1013,7 +1013,7 @@ const ProfileController = {
                             document.documentElement.style.overflow = 'hidden';
                         }
                     }
-                    
+
                     if (p.date_of_birth) {
                         const parts = p.date_of_birth.split('-');
                         if (parts.length === 3) {
@@ -1027,7 +1027,7 @@ const ProfileController = {
                 // Avatar setup
                 const avContainer = document.getElementById('edit-avatar-container');
                 const removeBtn = document.getElementById('remove-avatar-btn');
-                
+
                 const displayImg = p.profile_image_thumb || p.profile_image;
                 if (displayImg) {
                     avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
@@ -1047,7 +1047,7 @@ const ProfileController = {
             avatarInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                
+
                 // Clear the input value so the same file can be selected again if needed
                 e.target.value = "";
 
@@ -1080,7 +1080,7 @@ const ProfileController = {
                         cropBoxMovable: false,
                         cropBoxResizable: false,
                         toggleDragModeOnDblclick: false,
-                        ready: function() {
+                        ready: function () {
                             const data = ProfileController._cropper.getCanvasData();
                             const initialRatio = data.width / data.naturalWidth;
                             if (zoomBar) {
@@ -1089,7 +1089,7 @@ const ProfileController = {
                                 zoomBar.value = initialRatio;
                             }
                         },
-                        zoom: function(e) {
+                        zoom: function (e) {
                             if (zoomBar) zoomBar.value = e.detail.ratio;
                         }
                     });
@@ -1129,7 +1129,7 @@ const ProfileController = {
             if (!form.dob_day.value) { UI.showError('dob_day', 'Select day', form); return; }
             if (!form.dob_month.value) { UI.showError('dob_month', 'Select month', form); return; }
             if (!form.dob_year.value) { UI.showError('dob_year', 'Select year', form); return; }
-            
+
             const dobYear = parseInt(form.dob_year.value);
             const curY = new Date().getFullYear();
             const age = curY - dobYear;
@@ -1154,12 +1154,12 @@ const ProfileController = {
                 location: form.location.value,
                 bio: form.bio.value
             };
-            
+
             const res = await API.post('/profile/update', payload);
             if (res && res.success) {
                 Auth.setHasProfile(true);
                 // Important: Don't set hasLevel(true) here yet!
-                
+
                 if (res.data && res.data.is_new_profile) {
                     const modal = document.getElementById('level-selection-modal');
                     if (modal) {
@@ -1180,7 +1180,7 @@ const ProfileController = {
         });
     },
 
-    submitLevel: async function() {
+    submitLevel: async function () {
         const selected = document.querySelector('input[name="player_level"]:checked');
         if (!selected) return;
         const level = selected.value;
@@ -1219,7 +1219,7 @@ const MatchesController = {
     _isLoading: false,
 
     // ── Create ──────────────────────────────────────────
-    initCreate: function() {
+    initCreate: function () {
         UI.syncNav();
 
         const genderBtn = document.getElementById('cm-gender-restricted-btn');
@@ -1229,7 +1229,7 @@ const MatchesController = {
                 const isFemale = p.gender.toLowerCase() === 'female';
                 genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
             };
-            
+
             if (DashboardController._currentProfile) {
                 updateGenderLabel(DashboardController._currentProfile);
             } else {
@@ -1241,9 +1241,9 @@ const MatchesController = {
 
         const dateScroller = document.getElementById('cm-date-scroller');
         const timeScroller = document.getElementById('cm-time-scroller');
-        const dateInput    = document.getElementById('cm-date');
-        const timeInput    = document.getElementById('cm-time');
-        
+        const dateInput = document.getElementById('cm-date');
+        const timeInput = document.getElementById('cm-time');
+
         if (dateScroller && dateInput) {
             // Generate next 10 days
             let html = '';
@@ -1252,8 +1252,8 @@ const MatchesController = {
                 d.setDate(d.getDate() + i);
                 const iso = d.toISOString().slice(0, 10);
                 const dayName = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
-                const dayNum  = d.getDate();
-                
+                const dayNum = d.getDate();
+
                 html += `
                 <div class="pill ${i === 0 ? 'active' : ''}" data-value="${iso}" onclick="MatchesController._selectPill(this, 'cm-date')">
                     <span class="pill-sub">${dayName}</span>
@@ -1272,12 +1272,12 @@ const MatchesController = {
                     const actualHour = h % 24;
                     const h24 = actualHour.toString().padStart(2, '0');
                     const t = `${h24}:${m}`;
-                    
+
                     // Display label (12h format)
                     const ampm = actualHour >= 12 ? 'PM' : 'AM';
                     const displayHr = actualHour % 12 || 12;
                     const displayTime = `${displayHr}:${m}`;
-                    
+
                     html += `
                     <div class="pill" data-value="${t}" onclick="MatchesController._selectPill(this, 'cm-time')">
                         <span class="pill-main">${displayTime}</span>
@@ -1303,14 +1303,14 @@ const MatchesController = {
 
         // Venue Autocomplete
         const venueInput = document.getElementById('cm-venue');
-        const venueDrop  = document.getElementById('cm-venue-dropdown');
+        const venueDrop = document.getElementById('cm-venue-dropdown');
         let venueTimeout = null;
 
         if (venueInput && venueDrop) {
             venueInput.addEventListener('input', (e) => {
                 clearTimeout(venueTimeout);
                 const q = e.target.value.trim();
-                
+
                 if (q.length < 1) {
                     venueDrop.style.display = 'none';
                     const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
@@ -1344,10 +1344,10 @@ const MatchesController = {
             venueDrop.addEventListener('click', (e) => {
                 if (e.target.tagName === 'LI') {
                     const fullText = e.target.textContent;
-                    const venueId  = e.target.dataset.id;
+                    const venueId = e.target.dataset.id;
                     venueInput.value = fullText;
                     venueDrop.style.display = 'none';
-                    
+
                     const dbFlag = document.getElementById('cm-venue-is-db');
                     if (dbFlag) dbFlag.value = '1';
 
@@ -1369,13 +1369,13 @@ const MatchesController = {
 
         // Partner Code Check
         const partnerInput = document.getElementById('cm-partner-code');
-        const partnerHelp  = document.getElementById('cm-partner-help');
+        const partnerHelp = document.getElementById('cm-partner-help');
         let partnerTimeout = null;
 
         const partnerBadge = document.getElementById('cm-partner-badge');
-        const badgeCode    = document.getElementById('cm-badge-code');
-        const badgeName    = document.getElementById('cm-badge-name');
-        const badgeClear   = document.getElementById('cm-badge-clear');
+        const badgeCode = document.getElementById('cm-badge-code');
+        const badgeName = document.getElementById('cm-badge-name');
+        const badgeClear = document.getElementById('cm-badge-clear');
 
         if (partnerInput && partnerHelp) {
             if (badgeClear) {
@@ -1390,7 +1390,7 @@ const MatchesController = {
 
             partnerInput.addEventListener('input', (e) => {
                 clearTimeout(partnerTimeout);
-                
+
                 const q = e.target.value.trim();
                 partnerHelp.textContent = "Enter your partner's 4-character player code";
                 partnerHelp.style.color = 'var(--c-text-muted)';
@@ -1434,10 +1434,10 @@ const MatchesController = {
             e.preventDefault();
             UI.clearErrors(form);
 
-            const venue    = form.venue_name.value.trim();
-            const court    = form.court_name.value.trim();
-            const dateVal  = dateInput ? dateInput.value : '';
-            const timeVal  = timeInput ? timeInput.value : '';
+            const venue = form.venue_name.value.trim();
+            const court = form.court_name.value.trim();
+            const dateVal = dateInput ? dateInput.value : '';
+            const timeVal = timeInput ? timeInput.value : '';
             const isDbVenue = document.getElementById('cm-venue-is-db')?.value === '1';
 
             if (!venue) { UI.showError('venue_name', 'Venue name is required', form); return; }
@@ -1451,9 +1451,9 @@ const MatchesController = {
             if (!timeVal) { UI.showError('time', 'Please select a time', form); return; }
 
             // Combine
-            const combined  = dateVal + 'T' + timeVal;
-            const pickedDt  = new Date(combined);
-            const now       = new Date();
+            const combined = dateVal + 'T' + timeVal;
+            const pickedDt = new Date(combined);
+            const now = new Date();
             now.setMinutes(now.getMinutes() + 15); // Buffer
 
             if (pickedDt <= now) {
@@ -1463,13 +1463,13 @@ const MatchesController = {
 
 
             const payload = {
-                venue_id:         form.venue_id.value,
-                venue_name:       venue,
-                court_name:       form.court_name.value.trim(),
-                match_datetime:   combined,
+                venue_id: form.venue_id.value,
+                venue_name: venue,
+                court_name: form.court_name.value.trim(),
+                match_datetime: combined,
                 duration_minutes: parseInt(form.duration_minutes.value) || 90,
-                gender_type:      form.gender_type.value,
-                match_type:       form.match_type.value
+                gender_type: form.gender_type.value,
+                match_type: form.match_type.value
             };
 
             if (MatchesController._partnerEnabled) {
@@ -1478,9 +1478,9 @@ const MatchesController = {
                 if (code.includes(' (')) {
                     code = code.split(' (')[0].trim();
                 }
-                if (!code || (code.length !== 3 && code.length !== 4)) { 
-                    UI.showError('partner_player_code', "Enter a valid player code", form); 
-                    return; 
+                if (!code || (code.length !== 3 && code.length !== 4)) {
+                    UI.showError('partner_player_code', "Enter a valid player code", form);
+                    return;
                 }
                 payload.partner_player_code = code;
             }
@@ -1491,7 +1491,7 @@ const MatchesController = {
             btn.textContent = 'Creating…';
 
             const res = await API.post('/match/create', payload);
-            
+
             if (res && res.success) {
                 Toast.show('Match created!', 'success');
                 SoundManager.play('success');
@@ -1504,7 +1504,7 @@ const MatchesController = {
         });
     },
 
-    setToggle: function(fieldName, btn) {
+    setToggle: function (fieldName, btn) {
         document.getElementById('cm-' + fieldName.replace('_', '-')).value = btn.dataset.val;
         const container = btn.parentElement;
         const buttons = container.querySelectorAll('button');
@@ -1518,11 +1518,11 @@ const MatchesController = {
         btn.style.color = '#fff';
     },
 
-    showMatchTypeInfo: function() {
+    showMatchTypeInfo: function () {
         Toast.show("Competition matches affect your points and ranking; friendly matches do not.", "info", 6000);
     },
 
-    showVenueRequest: function() {
+    showVenueRequest: function () {
         ConfirmModal.show({
             title: 'Add a New Venue',
             message: 'Enter the name and location of the venue you would like to add.',
@@ -1541,14 +1541,14 @@ const MatchesController = {
         });
     },
 
-    _selectPill: function(el, inputId) {
+    _selectPill: function (el, inputId) {
         const parent = el.parentElement;
         parent.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
         document.getElementById(inputId).value = el.dataset.value;
     },
 
-    scroll: function(id, direction) {
+    scroll: function (id, direction) {
         const el = document.getElementById(id);
         if (el) {
             const scrollAmount = el.clientWidth * 0.6;
@@ -1558,9 +1558,9 @@ const MatchesController = {
 
 
 
-    togglePartner: function() {
+    togglePartner: function () {
         MatchesController._partnerEnabled = !MatchesController._partnerEnabled;
-        const row     = document.getElementById('cm-partner-toggle-row');
+        const row = document.getElementById('cm-partner-toggle-row');
         const section = document.getElementById('cm-partner-section');
         if (MatchesController._partnerEnabled) {
             row.classList.add('toggle-on');
@@ -1572,24 +1572,24 @@ const MatchesController = {
     },
 
     // ── List ──────────────────────────────────────────
-    initList: async function(mode = 'play') {
+    initList: async function (mode = 'play') {
         // Resolve sub-tab: check if we have a saved sub-tab for this mode
         const savedTab = sessionStorage.getItem('last_sub_tab_' + mode);
         let defaultSubTab = mode === 'play' ? 'play_upcoming' : 'mine_upcoming';
-        
+
         MatchesController._currentTab = savedTab || defaultSubTab;
         MatchesController._lastMode = mode;
 
         await UI.syncNav();
         const skeleton = document.getElementById('ml-skeleton');
-        const list     = document.getElementById('ml-list');
+        const list = document.getElementById('ml-list');
         const headerTitleEl = document.getElementById('ml-header-title');
-        const headerSubEl   = document.getElementById('ml-header-sub');
+        const headerSubEl = document.getElementById('ml-header-sub');
         const tabsContainer = document.getElementById('ml-tabs-container');
 
         if (headerTitleEl) {
             if (mode === 'play') {
-                headerTitleEl.textContent = 'PLAY';
+                headerTitleEl.textContent = 'Play';
                 headerSubEl.textContent = 'Join matches nearby or with friends';
                 if (tabsContainer) {
                     tabsContainer.innerHTML = `
@@ -1604,13 +1604,13 @@ const MatchesController = {
                     `;
                 }
             } else {
-                headerTitleEl.textContent = 'MY MATCHES';
+                headerTitleEl.textContent = 'My matches';
                 headerSubEl.textContent = 'View your upcoming matches and history';
-                
+
                 const isUpcoming = MatchesController._currentTab === 'mine_upcoming';
-                const isPast     = MatchesController._currentTab === 'mine_past';
+                const isPast = MatchesController._currentTab === 'mine_past';
                 const isCompleted = MatchesController._currentTab === 'mine_completed';
-                
+
                 tabsContainer.innerHTML = `
                   <button id="ml-tab-mine_upcoming" onclick="MatchesController.switchTab('mine_upcoming')" 
                     style="flex:1; background:none; border:none; color:${isUpcoming ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:14px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${isUpcoming ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s; white-space:nowrap;">
@@ -1627,9 +1627,9 @@ const MatchesController = {
                 `;
             }
         }
-        
+
         await MatchesController.updatePlayFiltersUI();
-        
+
         // Reset pagination
         MatchesController._offset = 0;
         MatchesController._hasMore = true;
@@ -1645,10 +1645,10 @@ const MatchesController = {
         }
     },
 
-    updatePlayFiltersUI: async function() {
+    updatePlayFiltersUI: async function () {
         const filterEl = document.getElementById('ml-play-filters');
         if (!filterEl) return;
-        
+
         const isUpcomingPlay = MatchesController._currentTab === 'play_upcoming';
         filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
 
@@ -1660,7 +1660,7 @@ const MatchesController = {
                     const isFemale = p.gender.toLowerCase() === 'female';
                     btn.textContent = isFemale ? 'Females' : 'Males';
                 };
-                
+
                 if (DashboardController._currentProfile) {
                     updateLabel(DashboardController._currentProfile);
                 } else {
@@ -1672,7 +1672,7 @@ const MatchesController = {
         }
     },
 
-    setPlayFilter: function(type, val, btn) {
+    setPlayFilter: function (type, val, btn) {
         if (type === 'match_type') MatchesController._playFilterType = val;
         if (type === 'gender_type') MatchesController._playFilterGender = val;
 
@@ -1684,7 +1684,7 @@ const MatchesController = {
             b.style.color = 'var(--c-text-muted)';
             b.style.boxShadow = 'none';
         });
-        
+
         btn.classList.add('active');
         btn.style.background = 'var(--c-primary)';
         btn.style.color = '#fff';
@@ -1698,12 +1698,12 @@ const MatchesController = {
         MatchesController.loadList();
     },
 
-    switchTab: async function(tab) {
+    switchTab: async function (tab) {
         MatchesController._currentTab = tab;
         sessionStorage.setItem('last_sub_tab_' + MatchesController._lastMode, tab);
-        
+
         await MatchesController.updatePlayFiltersUI();
-        
+
         // Reset all tabs
         const tabsContainer = document.getElementById('ml-tabs-container');
         if (tabsContainer) {
@@ -1717,7 +1717,7 @@ const MatchesController = {
                 activeBtn.style.color = 'var(--c-text)';
             }
         }
-        
+
         // Reset pagination
         MatchesController._offset = 0;
         MatchesController._hasMore = true;
@@ -1729,25 +1729,25 @@ const MatchesController = {
         }
     },
 
-    loadList: async function(isSilent = false) {
+    loadList: async function (isSilent = false) {
         const skeleton = document.getElementById('ml-skeleton');
-        const list     = document.getElementById('ml-list');
-        
+        const list = document.getElementById('ml-list');
+
         const cacheKey = `${MatchesController._currentTab}_${MatchesController._playFilterType}_${MatchesController._playFilterGender}`;
         const hasCache = MatchesController._cache[cacheKey];
 
         if (!isSilent && !hasCache && skeleton) skeleton.style.display = 'block';
-        if (!isSilent && !hasCache && list)     list.style.display = 'none';
+        if (!isSilent && !hasCache && list) list.style.display = 'none';
 
         // If we have cache, render it immediately while fetching
         if (!isSilent && hasCache && MatchesController._offset === 0) {
             MatchesController.renderList(hasCache);
             if (skeleton) skeleton.style.display = 'none';
-            if (list)     list.style.display = 'block';
+            if (list) list.style.display = 'block';
         }
 
         let endpoint = '/match/list';
-        let payload  = { 
+        let payload = {
             mode: MatchesController._currentTab,
             match_type: MatchesController._playFilterType,
             gender_type: MatchesController._playFilterGender,
@@ -1758,15 +1758,15 @@ const MatchesController = {
         // ONLY use /matches/user for 'Completed' tabs (mine_completed and play_past) to get scores
         if (MatchesController._currentTab === 'play_past') {
             endpoint = '/matches/recent';
-            payload  = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
+            payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         } else if (MatchesController._currentTab === 'mine_completed') {
             endpoint = '/matches/user';
-            payload  = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
+            payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         }
 
         if (!isSilent) MatchesController._isLoading = true;
         let res = await API.post(endpoint, payload);
-        
+
         // Phase 6: Silent retry on first failure
         if ((!res || !res.success) && !isSilent) {
             console.warn("Matches list failed, retrying once...");
@@ -1776,7 +1776,7 @@ const MatchesController = {
 
         if (!isSilent) MatchesController._isLoading = false;
         if (!isSilent && skeleton) skeleton.style.display = 'none';
-        if (!isSilent && list)     list.style.display = 'block';
+        if (!isSilent && list) list.style.display = 'block';
 
         if (!res || !res.success) {
             if (!isSilent && !hasCache && MatchesController._offset === 0) {
@@ -1786,7 +1786,7 @@ const MatchesController = {
         }
 
         const newMatches = res.data.matches || [];
-        
+
         // Polling (isSilent) logic: only refresh the first 10
         if (isSilent) {
             // Update the top of the cache/list
@@ -1816,17 +1816,17 @@ const MatchesController = {
         MatchesController.renderList(MatchesController._cache[cacheKey]);
     },
 
-    loadMore: function() {
+    loadMore: function () {
         if (MatchesController._isLoading || !MatchesController._hasMore) return;
         MatchesController.loadList();
     },
 
-    handleScroll: function() {
+    handleScroll: function () {
         // Only paginate on match list pages
         if (!document.getElementById('ml-list')) return;
 
         const scrollHeight = document.documentElement.scrollHeight;
-        const scrollTop    = window.scrollY || document.documentElement.scrollTop;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const clientHeight = window.innerHeight;
 
         if (scrollTop + clientHeight >= scrollHeight - 300) {
@@ -1834,7 +1834,7 @@ const MatchesController = {
         }
     },
 
-    renderList: function(matches) {
+    renderList: function (matches) {
         const list = document.getElementById('ml-list');
         if (!list) return;
 
@@ -1844,24 +1844,24 @@ const MatchesController = {
         if (isScoreTab) {
             matches = matches.filter(m => m.status === 'completed');
         }
-        
+
         // Empty state handling
         if (matches.length === 0) {
             let msg = 'Nothing found';
             let sub = 'Check back later for new matches.';
             let icon = '🔍';
-            
+
             if (MatchesController._currentTab === 'play_upcoming') {
-                msg  = 'No games yet';
-                sub  = 'Be the first to create one!';
+                msg = 'No games yet';
+                sub = 'Be the first to create one!';
                 icon = '🎾';
             } else if (MatchesController._currentTab === 'mine_upcoming') {
-                msg  = 'Your schedule is clear';
-                sub  = 'Join a match to get playing.';
+                msg = 'Your schedule is clear';
+                sub = 'Join a match to get playing.';
                 icon = '📅';
             } else if (MatchesController._currentTab.includes('past') || MatchesController._currentTab.includes('completed')) {
-                msg  = 'No history yet';
-                sub  = 'Finished matches will appear here.';
+                msg = 'No history yet';
+                sub = 'Finished matches will appear here.';
                 icon = '🌘';
             }
 
@@ -1880,8 +1880,8 @@ const MatchesController = {
         // Inject Filter Bar if in mine_upcoming
         if (MatchesController._currentTab === 'mine_upcoming') {
             const counts = {
-                all:     matches.length,
-                joined:  matches.filter(m => m.user_in_match).length,
+                all: matches.length,
+                joined: matches.filter(m => m.user_in_match).length,
                 waiting: matches.filter(m => m.user_is_waiting).length,
                 on_hold: matches.filter(m => m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester)).length
             };
@@ -1905,7 +1905,7 @@ const MatchesController = {
 
             list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
 
-            
+
             // Filter logic
             if (MatchesController._currentFilter !== 'all') {
                 matches = matches.filter(m => {
@@ -1917,7 +1917,7 @@ const MatchesController = {
                     return true;
                 });
             }
-            
+
             const resultsContainer = document.getElementById('ml-filtered-results');
             if (matches.length === 0) {
                 resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
@@ -1947,17 +1947,17 @@ const MatchesController = {
         }
     },
 
-    setFilter: function(filter) {
+    setFilter: function (filter) {
         MatchesController._currentFilter = filter;
         MatchesController.loadList(true); // Silent refresh
     },
 
-    renderMiniSlot: function(m, team, slot) {
+    renderMiniSlot: function (m, team, slot) {
         const s = (m.slots || []).find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
         if (s) {
             const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || '?';
             const profileUrl = `/p/${s.player_code}`;
-            const rawName  = s.nickname || s.first_name;
+            const rawName = s.nickname || s.first_name;
             const displayName = rawName.length > 10 ? rawName.substring(0, 8) + '..' : rawName;
             return `
             <div class="player-mini-slot">
@@ -1977,20 +1977,20 @@ const MatchesController = {
         </div>`;
     },
 
-    renderMatchCard: function(m, specificScore = null) {
+    renderMatchCard: function (m, specificScore = null) {
         // Use specificScore if provided, otherwise fallback to finding one
         const approvedScore = specificScore || (m.scores || []).find(s => s.status === 'approved') || (m.scores && m.scores.length > 0 ? m.scores[0] : null);
-        
+
         const dateVal = m.match_datetime || m.scheduled_at;
-        const dt      = new Date(dateVal ? dateVal.replace(' ', 'T') : null);
+        const dt = new Date(dateVal ? dateVal.replace(' ', 'T') : null);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
         const isPast = dt < new Date();
         const statusColor = {
-            open:      isPast ? 'var(--c-text-muted)' : 'var(--c-green)',
-            on_hold:   'var(--c-gold)',
-            full:      'var(--c-orange)',
+            open: isPast ? 'var(--c-text-muted)' : 'var(--c-green)',
+            on_hold: 'var(--c-gold)',
+            full: 'var(--c-orange)',
             completed: 'var(--c-text-muted)',
             cancelled: 'var(--c-red)',
         };
@@ -2010,12 +2010,12 @@ const MatchesController = {
         } else if (m.user_is_waiting) {
             myBadge = `<span class="badge-in-queue">In Queue</span>`;
         }
-        
+
         const matchCode = m.match_code || `M-${m.id.toString().padStart(4, '0')}`;
         const venueVal = m.venue_name || m.venue || 'Venue TBD';
         let mainTitle = venueVal;
         let subTitle = '';
-        
+
         if (venueVal.includes(' | ')) {
             const parts = venueVal.split(' | ');
             mainTitle = parts[0].trim();
@@ -2029,7 +2029,7 @@ const MatchesController = {
             mainTitle = parts[0].trim();
             subTitle = parts.slice(1).join('-').trim();
         }
-        
+
         let typeBadges = '';
         if (m.match_type === 'competition') {
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
@@ -2046,10 +2046,10 @@ const MatchesController = {
         if (m.status === 'completed' && approvedScore && isCompletedTab) {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, allPlayers, false);
-            
+
             const now = new Date();
             const diffDays = Math.floor((now - dt) / (1000 * 60 * 60 * 24));
-            
+
             let dayStr;
             if (dt.toDateString() === now.toDateString()) {
                 dayStr = 'Today';
@@ -2058,14 +2058,14 @@ const MatchesController = {
             } else {
                 dayStr = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
             }
-            
+
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between;">
                     <span>${mainTitle} &nbsp;·&nbsp; ${dayStr}</span>
                     <div style="text-transform:none;">${typeBadges}</div>
                 </div>
             `;
-            
+
             return `
                 <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
                     ${dashHeader}
@@ -2077,7 +2077,7 @@ const MatchesController = {
 
         const isNotEligible = m.player_eligible === false && MatchesController._currentTab === 'play_upcoming';
         const cardStyle = isNotEligible ? 'opacity: 0.45; filter: grayscale(0.8);' : '';
-        
+
         if (isNotEligible) {
             typeBadges = `<span style="display:inline-block; font-size:10px; font-weight:800; background:rgba(0,0,0,0.3); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:4px 8px; border-radius:6px; margin-right:4px; text-transform:uppercase; letter-spacing:0.5px;">🚫 Ineligible to Join</span>` + typeBadges;
         }
@@ -2124,13 +2124,13 @@ const MatchesController = {
     },
 
     // ── View (detail) ──────────────────────────────────
-    initView: async function(params, autoOpenChat = false) {
+    initView: async function (params, autoOpenChat = false) {
         await UI.syncNav();
-        let match_id   = parseInt(params?.id || 0);
+        let match_id = parseInt(params?.id || 0);
         const match_code = params?.matchCode || '';
 
         if (!match_id && !match_code) { Router.navigate('/matches'); return; }
-        
+
         const result = await MatchesController.loadDetails({ match_id, match_code });
         if (result && result.id) match_id = result.id;
 
@@ -2158,13 +2158,13 @@ const MatchesController = {
         }
     },
 
-    loadDetails: async function(query, isSilent = false) {
+    loadDetails: async function (query, isSilent = false) {
 
 
         const skeleton = document.getElementById('mv-skeleton');
-        const content  = document.getElementById('mv-content');
+        const content = document.getElementById('mv-content');
         if (!isSilent && skeleton) skeleton.style.display = 'block';
-        if (!isSilent && content)  content.style.display  = 'none';
+        if (!isSilent && content) content.style.display = 'none';
 
         const res = await API.post('/match/details', query);
         if (!isSilent && skeleton) skeleton.style.display = 'none';
@@ -2177,7 +2177,7 @@ const MatchesController = {
 
         const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes, viewer_id, player_eligible, eligibility_reason } = res.data;
         const myUserId = viewer_id || (user_in_match ? parseInt(user_in_match.user_id) : 0);
-        
+
         if (!match || !slots) {
             Toast.show('Incomplete match data', 'error');
             if (!isSilent) Router.navigate('/matches');
@@ -2206,7 +2206,7 @@ const MatchesController = {
             return; // No changes in DB, skip re-render
         }
 
-        MatchesController._lastMatchId    = parseInt(match.id);
+        MatchesController._lastMatchId = parseInt(match.id);
         MatchesController._lastMatchState = currentStateKey;
 
 
@@ -2218,7 +2218,7 @@ const MatchesController = {
         MatchesController._currentMatchWaitlist = waiting_list;
         MatchesController._currentUserSide = res.data.user_playing_side;
 
-        
+
         // Collect all IDs currently in the match or waiting list
         const playerIds = new Set();
         slots.forEach(s => playerIds.add(parseInt(s.user_id)));
@@ -2234,7 +2234,7 @@ const MatchesController = {
         let isPast = false;
         let isAuthorized = false;
 
-        const dt      = new Date(match.match_datetime);
+        const dt = new Date(match.match_datetime);
         const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
@@ -2247,7 +2247,7 @@ const MatchesController = {
         }
 
         const statusBadgeContainer = document.getElementById('mv-status-badge');
-        
+
         const titleEl = document.getElementById('mv-title');
         if (titleEl) {
             const isPast = dt < new Date();
@@ -2258,10 +2258,10 @@ const MatchesController = {
             const statusClass = (match.status === 'open' && isPast) ? 'incomplete' : match.status;
 
             const matchCode = match.match_code || `M-${match.id.toString().padStart(4, '0')}`;
-            
+
             const venueParts = match.venue_name.split('-');
             const mainTitle = venueParts[0].trim();
-            const subTitle  = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
+            const subTitle = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
             let typeBadges = '';
             if (match.match_type === 'competition' || match.gender_type === 'same_gender') {
@@ -2295,7 +2295,7 @@ const MatchesController = {
             metaEl.style.flexDirection = 'column';
             metaEl.style.alignItems = 'flex-start';
             metaEl.style.gap = '8px';
-            
+
             metaEl.innerHTML = `
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:16px;">
                     ${match.court_name ? `<div class="court-label-white" style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
@@ -2332,26 +2332,26 @@ const MatchesController = {
         if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
 
         // Render slot elements
-        [[1,1],[1,2],[2,1],[2,2]].forEach(([team, slot]) => {
-            const s   = slots.find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
-            const el  = document.getElementById(`mv-team${team}-slot${slot}`);
+        [[1, 1], [1, 2], [2, 1], [2, 2]].forEach(([team, slot]) => {
+            const s = slots.find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
+            const el = document.getElementById(`mv-team${team}-slot${slot}`);
             if (!el) return;
             if (s) {
                 const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || (s.nickname?.[0] || '?').toUpperCase();
-                const isMe     = parseInt(s.user_id) === myUserId && myUserId > 0;
+                const isMe = parseInt(s.user_id) === myUserId && myUserId > 0;
                 const profileUrl = `/p/${s.player_code}`;
-                el.className   = 'mv-slot' + (isMe ? ' slot-mine' : '');
+                el.className = 'mv-slot' + (isMe ? ' slot-mine' : '');
                 if (!isMe) {
                     el.style.cursor = 'pointer';
-                    el.onclick     = () => Router.navigate(profileUrl);
+                    el.onclick = () => Router.navigate(profileUrl);
                 } else {
                     el.style.cursor = 'default';
                     el.onclick = null;
                 }
-                const rawName  = s.nickname || s.first_name;
+                const rawName = s.nickname || s.first_name;
                 const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
-                el.innerHTML   = `
+                el.innerHTML = `
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
                         ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                     </div>
@@ -2378,25 +2378,25 @@ const MatchesController = {
 
         // Action area
         const actionArea = document.getElementById('mv-action-area');
-        const chatArea   = document.getElementById('mv-chat-area');
+        const chatArea = document.getElementById('mv-chat-area');
         if (chatArea) chatArea.innerHTML = '';
         if (actionArea) {
-                // Unified Policy Violation Area
-                const lateWithdrawal = res.data.late_withdrawal;
-                const policyArea     = document.getElementById('mv-policy-area');
-                if (policyArea) {
-                    let combinedHtml = '';
-                    
-                    // Case 1: Late Withdrawal
-                    if (lateWithdrawal) {
-                        const lwUser     = lateWithdrawal.nickname || `${lateWithdrawal.first_name} ${lateWithdrawal.last_name}`;
-                        const lwCode     = lateWithdrawal.player_code || '';
-                        const lwReason   = lateWithdrawal.event_data?.reason || '';
-                        const profileUrl = `/p/${lwCode}`;
-                        const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
-                        const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
+            // Unified Policy Violation Area
+            const lateWithdrawal = res.data.late_withdrawal;
+            const policyArea = document.getElementById('mv-policy-area');
+            if (policyArea) {
+                let combinedHtml = '';
 
-                        combinedHtml += `
+                // Case 1: Late Withdrawal
+                if (lateWithdrawal) {
+                    const lwUser = lateWithdrawal.nickname || `${lateWithdrawal.first_name} ${lateWithdrawal.last_name}`;
+                    const lwCode = lateWithdrawal.player_code || '';
+                    const lwReason = lateWithdrawal.event_data?.reason || '';
+                    const profileUrl = `/p/${lwCode}`;
+                    const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
+                    const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
+
+                    combinedHtml += `
                             <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">⚠️</div>
@@ -2408,11 +2408,11 @@ const MatchesController = {
                                 </div>
                                 <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
                             </div>`;
-                    }
+                }
 
-                    // Case 2: Late Cancellation
-                    if (match.status === 'cancelled' && match.is_policy_violation) {
-                        combinedHtml += `
+                // Case 2: Late Cancellation
+                if (match.status === 'cancelled' && match.is_policy_violation) {
+                    combinedHtml += `
                             <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">🚫</div>
@@ -2423,16 +2423,16 @@ const MatchesController = {
                                 </div>
                                 <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
                             </div>`;
-                    }
-
-                    if (policyArea.innerHTML !== combinedHtml) {
-                        policyArea.innerHTML = combinedHtml;
-                    }
                 }
 
+                if (policyArea.innerHTML !== combinedHtml) {
+                    policyArea.innerHTML = combinedHtml;
+                }
+            }
 
-                if (match.status === 'cancelled') {
-                    actionArea.innerHTML = `
+
+            if (match.status === 'cancelled') {
+                actionArea.innerHTML = `
                         <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
                             <div style="flex:1; text-align:left;">
@@ -2441,17 +2441,17 @@ const MatchesController = {
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
                         </div>`;
-                    if (content) content.style.display = 'block';
-                    if (skeleton) skeleton.style.display = 'none';
-                    return;
-                } else {
-                    const confirmedCount = slots.filter(s => s.status === 'confirmed').length;
-                    const isFull = match.status === 'full' || confirmedCount >= 4;
+                if (content) content.style.display = 'block';
+                if (skeleton) skeleton.style.display = 'none';
+                return;
+            } else {
+                const confirmedCount = slots.filter(s => s.status === 'confirmed').length;
+                const isFull = match.status === 'full' || confirmedCount >= 4;
 
-                    // Time tracking
-                    const matchTimeDate = new Date(match.match_datetime.replace(' ', 'T'));
-                    const now = new Date();
-                    const diffHrs = (matchTimeDate - now) / (1000 * 60 * 60);
+                // Time tracking
+                const matchTimeDate = new Date(match.match_datetime.replace(' ', 'T'));
+                const now = new Date();
+                const diffHrs = (matchTimeDate - now) / (1000 * 60 * 60);
                 const isPastMatch = diffHrs <= 0;
                 const isLiveMatch = !isPastMatch && match.status !== 'completed';
 
@@ -2464,7 +2464,7 @@ const MatchesController = {
                 const canScore = match.status === 'full' || match.status === 'completed';
                 if (isPastMatch && match.status !== 'cancelled' && canScore) {
                     let scoringHtml = '';
-                    
+
                     if ((scores || []).length > 0) {
                         (scores || []).forEach((s, idx) => {
                             if (idx > 0) {
@@ -2492,21 +2492,21 @@ const MatchesController = {
                             } else if (s.status === 'pending') {
                                 const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                                 const submitterName = s.nickname || s.first_name;
-                                
+
                                 // Calculate relative times
                                 const subDate = new Date(s.created_at.replace(' ', 'T'));
                                 const now = new Date();
-                                
+
                                 // Submitted Xh ago
                                 const subDiffMs = now - subDate;
                                 const subDiffHrs = Math.floor(subDiffMs / (1000 * 60 * 60));
                                 let subTimeStr = subDiffHrs === 0 ? 'just now' : `${subDiffHrs}h ago`;
-                                
+
                                 // Auto-approval countdown
                                 const autoDate = new Date(subDate.getTime() + (24 * 60 * 60 * 1000));
                                 const autoDiffMs = autoDate - now;
                                 const autoDiffHrs = Math.ceil(autoDiffMs / (1000 * 60 * 60));
-                                
+
                                 let autoTimeStr = '';
                                 if (autoDiffHrs <= 0) autoTimeStr = 'Processing...';
                                 else if (autoDiffHrs === 1) autoTimeStr = 'in 1 hour';
@@ -2515,7 +2515,7 @@ const MatchesController = {
                                 // Determine teams based on composition switch if available
                                 let currentTeamNo = user_in_match ? parseInt(user_in_match.team_no) : null;
                                 let subTeamNo = null;
-                                
+
                                 if (s.composition_json) {
                                     try {
                                         const comp = JSON.parse(s.composition_json);
@@ -2523,14 +2523,14 @@ const MatchesController = {
                                         const subEntry = comp.find(cx => parseInt(cx.user_id) === parseInt(s.submitted_by_user_id));
                                         if (myEntry) currentTeamNo = parseInt(myEntry.team_no);
                                         if (subEntry) subTeamNo = parseInt(subEntry.team_no);
-                                    } catch(e) {}
+                                    } catch (e) { }
                                 }
-                                
+
                                 if (!subTeamNo) {
                                     const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(s.submitted_by_user_id));
                                     if (submitterSlot) subTeamNo = parseInt(submitterSlot.team_no);
                                 }
-                                
+
                                 const amOpponent = user_in_match && currentTeamNo && subTeamNo && currentTeamNo !== subTeamNo;
 
                                 scoringHtml += `
@@ -2605,7 +2605,7 @@ const MatchesController = {
                     }
 
 
-                    
+
                     actionArea.innerHTML = `<div style="margin-top:40px;">${scoringHtml}</div>`;
                     MatchesController._currentMatchData = match; // Store for controller use
 
@@ -2613,7 +2613,7 @@ const MatchesController = {
                     const reqName = pending_for_me.req_nickname || pending_for_me.req_first;
                     const reqFullName = `${pending_for_me.req_first} ${pending_for_me.req_last}`.trim();
                     const reqInitial = (pending_for_me.req_first?.[0] || '?').toUpperCase();
-                    const reqAvatar = (pending_for_me.req_profile_thumb || pending_for_me.req_profile) 
+                    const reqAvatar = (pending_for_me.req_profile_thumb || pending_for_me.req_profile)
                         ? `<img src="${CONFIG.ASSET_BASE}/${pending_for_me.req_profile_thumb || pending_for_me.req_profile}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-secondary);border-radius:50%;font-weight:700;font-size:16px;">${reqInitial}</div>`;
 
@@ -2678,7 +2678,7 @@ const MatchesController = {
 
                     let actionHtml = `<div style="display:flex; flex-direction:column; gap:10px;">`;
                     actionHtml += `<div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>`;
-                    
+
                     if (showBanner) {
                         actionHtml += `<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.15); border-radius:var(--r-md); padding:12px 16px;">`;
                         actionHtml += `<div style="font-size:13px; font-weight:600; color:var(--c-green);"><span style="margin-right:6px;">✅</span>${isPast ? 'You were in this match' : 'You are in this match'}</div>`;
@@ -2686,7 +2686,7 @@ const MatchesController = {
                         actionHtml += `<div style="display:none;">`;
                     }
                     actionHtml += `<div style="display:flex; gap:8px;">`;
-                    
+
                     if (isLiveMatch && !isCreator) {
                         actionHtml += `<button onclick="MatchesController.leaveMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-sm); color:var(--c-orange); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">🚪 Leave</button>`;
                     }
@@ -2697,7 +2697,7 @@ const MatchesController = {
                     actionArea.innerHTML = actionHtml;
                 } else if (my_waitlist_entry) {
                     const isSolo = !my_waitlist_entry.partner_id;
-                    const otherPerson = (parseInt(my_waitlist_entry.requester_id) === myUserId) 
+                    const otherPerson = (parseInt(my_waitlist_entry.requester_id) === myUserId)
                         ? (my_waitlist_entry.par_nickname || my_waitlist_entry.par_first)
                         : (my_waitlist_entry.req_nickname || my_waitlist_entry.req_first);
                     const wlNames = isSolo ? 'You are in the waitlist' : `You & ${otherPerson} are in line`;
@@ -2724,7 +2724,7 @@ const MatchesController = {
 
                     let joinHtml = `<div style="display:flex; flex-direction:column; gap:10px;">`;
                     joinHtml += `<div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>`;
-                    
+
                     if (isLiveMatch) {
                         if (player_eligible === false) {
                             joinHtml += `<div style="text-align:center; padding:16px; background:rgba(255,100,100,0.05); border:1px solid rgba(255,100,100,0.2); border-radius:var(--r-md);">
@@ -2756,7 +2756,7 @@ const MatchesController = {
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
                 const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
                 isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
-                
+
                 // Only allow chat access if player is in a slot or on the waiting list
                 if (isAuthorized) {
                     const unreadCount = res.data.unread_count || 0;
@@ -2792,8 +2792,8 @@ const MatchesController = {
         }
 
         const wlSection = document.getElementById('mv-waiting-section');
-        const wlList    = document.getElementById('mv-waiting-list');
-        const activeWl  = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
+        const wlList = document.getElementById('mv-waiting-list');
+        const activeWl = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
 
         const isWaitlisted = my_waitlist_entry || my_pending_request;
         if ((is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
@@ -2802,10 +2802,10 @@ const MatchesController = {
                 const isSolo = !w.partner_id;
                 const reqName = w.req_nickname || w.req_first;
                 const parName = w.par_nickname || w.par_first;
-                const names   = isSolo ? reqName : `${reqName} & ${parName}`;
+                const names = isSolo ? reqName : `${reqName} & ${parName}`;
                 let status = 'In Queue';
                 let sClass = 'badge-primary';
-                
+
                 if (w.request_status === 'pending') {
                     status = 'Waiting for partner approval';
                     sClass = 'badge-orange';
@@ -2816,7 +2816,7 @@ const MatchesController = {
                     status = 'Cancelled';
                     sClass = 'badge-muted';
                 }
-                
+
                 return `
                 <div class="wl-row" style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
                     <div>
@@ -2849,10 +2849,10 @@ const MatchesController = {
         return { id: parseInt(match.id), isAuthorized, isChatAllowed: isAuthorized };
     },
 
-    share: function(id, code) {
+    share: function (id, code) {
         const url = (CONFIG.LIVE_URL || window.location.origin) + '/matches/' + code;
         const isNativeApp = document.body.classList.contains('is-mobile-app');
-        
+
         if (isNativeApp && navigator.share) {
             // Native mobile app: use share menu, no toast
             navigator.share({
@@ -2873,15 +2873,15 @@ const MatchesController = {
 
 
 
-    
-    initJoinForm: function() {
+
+    initJoinForm: function () {
         const input = document.getElementById('mv-partner-code-input');
-        const help  = document.getElementById('mv-partner-help');
+        const help = document.getElementById('mv-partner-help');
         const badge = document.getElementById('mv-partner-badge');
         const bCode = document.getElementById('mv-badge-code');
         const bName = document.getElementById('mv-badge-name');
         const bClear = document.getElementById('mv-badge-clear');
-        
+
         if (!input || !help) return;
 
         let lookupTimeout = null;
@@ -2941,7 +2941,7 @@ const MatchesController = {
         };
     },
 
-    showInvitePartner: function(isFull = false) {
+    showInvitePartner: function (isFull = false) {
         // Cancel solo selection mode if active
         MatchesController.cancelSelectionMode();
 
@@ -2965,7 +2965,7 @@ const MatchesController = {
         }
 
         form.style.display = 'block';
-        
+
         const area = document.getElementById('mv-action-area');
         if (area) area.style.display = 'none';
 
@@ -2977,11 +2977,11 @@ const MatchesController = {
         }
     },
 
-    resetInviteForm: function() {
+    resetInviteForm: function () {
         const input = document.getElementById('mv-partner-code-input');
         const badge = document.getElementById('mv-partner-badge');
-        const help  = document.getElementById('mv-partner-help');
-        const btn   = document.querySelector('#mv-join-team-form button[type="submit"]');
+        const help = document.getElementById('mv-partner-help');
+        const btn = document.querySelector('#mv-join-team-form button[type="submit"]');
 
         if (input) {
             input.value = '';
@@ -2998,10 +2998,10 @@ const MatchesController = {
         }
     },
 
-    hideInvitePartner: function() {
+    hideInvitePartner: function () {
         const form = document.getElementById('mv-join-team-form');
         if (form) form.style.display = 'none';
-        
+
         const area = document.getElementById('mv-action-area');
         if (area) area.style.display = 'block';
 
@@ -3009,7 +3009,7 @@ const MatchesController = {
     },
 
 
-    cancelSelectionMode: function() {
+    cancelSelectionMode: function () {
         if (this._soloSelectionTimeout) {
             clearTimeout(this._soloSelectionTimeout);
             this._soloSelectionTimeout = null;
@@ -3042,7 +3042,7 @@ const MatchesController = {
     },
 
     // ── Actions ──────────────────────────────────────────
-    joinSolo: async function(match_id, btn) {
+    joinSolo: async function (match_id, btn) {
         // Hide team form if open
         const teamForm = document.getElementById('mv-join-team-form');
         if (teamForm) teamForm.style.display = 'none';
@@ -3060,19 +3060,19 @@ const MatchesController = {
         // Otherwise, enter selection mode
         btn.disabled = true;
         btn.innerText = 'Select a spot ↑';
-        
+
         // Find all empty slots and make them interactive
         const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
         emptySlots.forEach(el => {
             el.innerText = 'Join here';
             el.style.cursor = 'pointer';
             el.classList.add('pulse-selection');
-            
+
             // Extract team/slot from ID e.g. mv-team1-slot2
             const parts = el.id.split('-');
             const team = parseInt(parts[1].replace('team', ''));
             const slot = parseInt(parts[2].replace('slot', ''));
-            
+
             el.onclick = () => {
                 if (MatchesController._soloSelectionTimeout) {
                     clearTimeout(MatchesController._soloSelectionTimeout);
@@ -3089,9 +3089,9 @@ const MatchesController = {
         }, 3000);
     },
 
-    performJoinSolo: async function(match_id, btn, team_no = null, slot_no = null, force_waitlist = false) {
+    performJoinSolo: async function (match_id, btn, team_no = null, slot_no = null, force_waitlist = false) {
         let oldText = btn ? btn.innerText : '🎾 Join Solo';
-        
+
         let sideOverride = null;
         if (team_no && slot_no && !force_waitlist) {
             const partner = (MatchesController._currentMatchSlots || []).find(s => parseInt(s.team_no) === team_no);
@@ -3105,7 +3105,7 @@ const MatchesController = {
                         thirdText: 'Join Waiting List',
                         cancelText: 'Cancel'
                     });
-                    
+
                     if (result === 'third') {
                         MatchesController.cancelSelectionMode();
                         return MatchesController.joinWaitlist(match_id, btn);
@@ -3121,9 +3121,9 @@ const MatchesController = {
 
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
-        const res = await API.post('/match/join-solo', { 
-            match_id, 
-            team_no, 
+        const res = await API.post('/match/join-solo', {
+            match_id,
+            team_no,
             slot_no,
             playing_side: sideOverride,
             force_waitlist: force_waitlist
@@ -3146,26 +3146,26 @@ const MatchesController = {
         }
     },
 
-    joinWaitlist: async function(match_id, btn) {
+    joinWaitlist: async function (match_id, btn) {
         return MatchesController.performJoinSolo(match_id, btn, null, null, true);
     },
 
-    submitTeamRequest: async function() {
+    submitTeamRequest: async function () {
 
-        const form    = document.getElementById('mv-join-team-form');
-        const btn     = form ? form.querySelector('button[type="submit"]') : null;
+        const form = document.getElementById('mv-join-team-form');
+        const btn = form ? form.querySelector('button[type="submit"]') : null;
         const oldText = btn ? btn.innerText : 'Send Request';
 
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
         const match_id = MatchesController._currentMatchId;
-        const code     = document.getElementById('mv-partner-code-input')?.value.trim();
-        
-        if (!code) { 
+        const code = document.getElementById('mv-partner-code-input')?.value.trim();
+
+        if (!code) {
             MatchesController.showActionError('Enter partner player code!');
             if (btn) { btn.disabled = false; btn.innerText = oldText; }
-            Toast.show('Enter partner player code', 'warning'); 
-            return; 
+            Toast.show('Enter partner player code', 'warning');
+            return;
         }
 
         const res = await API.post('/match/join-team', { match_id, partner_player_code: code });
@@ -3185,7 +3185,7 @@ const MatchesController = {
         }
     },
 
-    showActionError: function(msg) {
+    showActionError: function (msg) {
         const container = document.getElementById('mv-action-msg');
         if (!container) return;
         container.textContent = msg;
@@ -3193,13 +3193,13 @@ const MatchesController = {
         container.style.background = 'rgba(244, 67, 54, 0.1)';
         container.style.color = 'var(--c-danger)';
         container.style.border = '1px solid rgba(244, 67, 54, 0.2)';
-        
+
         setTimeout(() => {
             container.style.display = 'none';
         }, 5000);
     },
 
-    approve: async function(wl_id, match_id, btn) {
+    approve: async function (wl_id, match_id, btn) {
         let oldText = btn ? btn.innerText : '✅ Approve';
 
         const req = (MatchesController._currentMatchWaitlist || []).find(w => parseInt(w.id) === wl_id);
@@ -3219,7 +3219,7 @@ const MatchesController = {
 
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
-        const res = await API.post('/match/approve', { 
+        const res = await API.post('/match/approve', {
             waiting_list_id: wl_id,
             playing_side: sideOverride
         });
@@ -3239,7 +3239,7 @@ const MatchesController = {
         }
     },
 
-    deny: async function(wl_id, match_id, btn) {
+    deny: async function (wl_id, match_id, btn) {
         let oldText = btn ? btn.innerText : '✗ Deny';
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
@@ -3259,7 +3259,7 @@ const MatchesController = {
         }
     },
 
-    block: async function(wl_id, match_id, btn) {
+    block: async function (wl_id, match_id, btn) {
         let oldText = btn ? btn.innerText : '🚫 Block';
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
@@ -3279,7 +3279,7 @@ const MatchesController = {
         }
     },
 
-    cancelRequest: async function(wl_id, match_id, btn) {
+    cancelRequest: async function (wl_id, match_id, btn) {
         let oldText = btn ? btn.innerText : 'Cancel Request';
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
@@ -3298,8 +3298,8 @@ const MatchesController = {
             Toast.show(res ? res.message : 'Cancel failed', 'error');
         }
     },
-    
-    withdraw: async function(wl_id, match_id, btn) {
+
+    withdraw: async function (wl_id, match_id, btn) {
         let oldText = btn ? btn.innerText : 'Withdraw';
         if (btn) { btn.disabled = true; btn.innerText = '...'; }
 
@@ -3316,7 +3316,7 @@ const MatchesController = {
         }
     },
 
-    leaveMatch: async function(match_id, btn, isLate, isFull) {
+    leaveMatch: async function (match_id, btn, isLate, isFull) {
         let modalOpts = {
             title: 'Leave Match?',
             message: 'Are you sure you want to leave this match?',
@@ -3345,7 +3345,7 @@ const MatchesController = {
 
         const reason = (typeof reasonOrConfirmed === 'string') ? reasonOrConfirmed : '';
 
-        const res = await API.post('/match/withdraw', { 
+        const res = await API.post('/match/withdraw', {
             match_id,
             reason: reason
         });
@@ -3366,7 +3366,7 @@ const MatchesController = {
         }
     },
 
-    cancelMatch: async function(match_id, btn, isLate, isFull) {
+    cancelMatch: async function (match_id, btn, isLate, isFull) {
         let modalOpts = {
             title: 'Cancel Match?',
             message: 'This action cannot be undone and other players will be notified.',
@@ -3398,9 +3398,9 @@ const MatchesController = {
         // If it was an input modal, it's the string value.
         const reason = (typeof reasonOrConfirmed === 'string') ? reasonOrConfirmed : '';
 
-        const res = await API.post('/match/cancel', { 
-            match_id, 
-            reason: reason 
+        const res = await API.post('/match/cancel', {
+            match_id,
+            reason: reason
         });
         console.log('[API CancelMatch]', res);
 
@@ -3412,11 +3412,11 @@ const MatchesController = {
         }
     },
 
-    jumpIn: async function(waitlist_id, match_id, btn) {
+    jumpIn: async function (waitlist_id, match_id, btn) {
         let oldText = btn.innerText;
         btn.disabled = true;
         btn.innerText = '…';
-        
+
         const res = await API.post('/match/jump-in', { waitlist_id, match_id });
         if (res && res.success) {
             Toast.show('You joined the match! ⚡', 'success');
@@ -3434,9 +3434,9 @@ const MatchesController = {
 // ── Phase 5: Chat Controller ──────────────────────────────────────────────────
 const ChatController = {
 
-    _matchId:   0,
-    _lastId:    0,
-    _sending:   false,
+    _matchId: 0,
+    _lastId: 0,
+    _sending: false,
     _pollTimer: null,
     _isShowing: false,
     _lastSenderId: 0,
@@ -3448,7 +3448,7 @@ const ChatController = {
 
 
 
-    open: function(match_id) {
+    open: function (match_id) {
         this._matchId = match_id;
         this._isShowing = true;
         this._lastSenderId = 0;
@@ -3458,37 +3458,37 @@ const ChatController = {
         const overlay = document.getElementById('mv-chat-overlay');
         if (overlay) {
             overlay.style.display = 'flex';
-            
+
             // Hardened scroll lock for all platforms
             document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
             document.body.style.height = '100dvh';
 
             // Immediate UX cleanup: hide badge since we are now "reading"
             const badge = document.querySelector('.chat-unread-badge');
             if (badge) badge.style.display = 'none';
         }
-        
+
         // Push state so back button closes the chat
         const currentPath = window.location.pathname;
         const chatPath = currentPath.endsWith('/chat') ? currentPath : (currentPath + '/chat');
 
         // Only push if we are NOT already on the chat path (avoid double history entries)
         if (currentPath !== chatPath) {
-            history.pushState({ 
-                chatOpen: true, 
-                ignoreRoute: true, 
-                depth: (typeof Router !== 'undefined' ? Router.navDepth : 0) 
+            history.pushState({
+                chatOpen: true,
+                ignoreRoute: true,
+                depth: (typeof Router !== 'undefined' ? Router.navDepth : 0)
             }, '', chatPath);
         } else {
             // If already on /chat, just replace state to ensure our chatOpen flag is present
-            history.replaceState({ 
-                chatOpen: true, 
-                ignoreRoute: true, 
-                depth: (typeof Router !== 'undefined' ? Router.navDepth : 0) 
+            history.replaceState({
+                chatOpen: true,
+                ignoreRoute: true,
+                depth: (typeof Router !== 'undefined' ? Router.navDepth : 0)
             }, '', chatPath);
         }
-        
+
         this.init(match_id);
     },
 
@@ -3496,15 +3496,15 @@ const ChatController = {
 
 
 
-    renderPlayerBar: function() {
+    renderPlayerBar: function () {
 
         const bar = document.getElementById('chat-player-bar');
         if (!bar) return;
-        
+
         // Use slot data from MatchesController
         const slots = MatchesController._currentMatchSlots || [];
         const waitlist = MatchesController._currentMatchWaitlist || [];
-        
+
         // Build a unique list of players
         const players = [];
         const seen = new Set();
@@ -3519,16 +3519,16 @@ const ChatController = {
         waitlist.forEach(w => {
             // Only show people currently in the queue or pending approval
             if (!['pending', 'approved'].includes(w.request_status)) return;
-            
+
             if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code, gender: w.req_gender });
             if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code, gender: w.par_gender });
         });
 
         const currentUserId = this._viewerId || 0;
-        
+
         let meUser = null;
         const otherUsers = [];
-        
+
         players.forEach(p => {
             if (parseInt(p.user_id) === currentUserId) {
                 meUser = p;
@@ -3544,9 +3544,9 @@ const ChatController = {
             const displayName = p.nickname || p.first_name || 'Player';
             const thumb = p.profile_image_thumb || p.profile_image;
             const imgPath = thumb ? `src="${CONFIG.ASSET_BASE}/${thumb}"` : '';
-            
+
             const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
-            
+
             // Restriction: In Mixed matches, Males cannot click on Females
             const isMixed = MatchesController._currentMatchGenderType === 'open';
             const isViewerMale = MatchesController._currentMatchViewerGender === 'male';
@@ -3585,7 +3585,7 @@ const ChatController = {
         if (meUser) {
             html += buildAvatar(meUser, true);
         }
-        
+
         if (otherUsers.length > 0) {
             if (meUser) {
                 html += `<div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:auto 4px; flex-shrink:0;"></div>`;
@@ -3597,22 +3597,22 @@ const ChatController = {
     },
 
 
-    openPlayerMenu: function(event) {
+    openPlayerMenu: function (event) {
         if (event) event.stopPropagation();
         const el = (event && event.target) ? event.target.closest('.chat-player-avatar') : null;
         if (!el) return;
 
-        const userId   = el.dataset.userId;
+        const userId = el.dataset.userId;
         const nickname = el.dataset.nickname || '';
         const fullName = el.dataset.fullname || '';
-        const pCode    = el.dataset.code || '';
+        const pCode = el.dataset.code || '';
         if (!userId || Number(userId) === this._viewerId) return;
 
         const actionBar = document.getElementById('chat-player-actions-bar');
 
-        const nameEl    = document.getElementById('chat-selected-player-name');
-        const listEl    = document.getElementById('chat-inline-actions');
-        
+        const nameEl = document.getElementById('chat-selected-player-name');
+        const listEl = document.getElementById('chat-inline-actions');
+
         if (!actionBar || !nameEl || !listEl) return;
 
         const cached = PhoneController._requests[userId];
@@ -3655,12 +3655,12 @@ const ChatController = {
 
 
 
-    closePlayerMenu: function() {
+    closePlayerMenu: function () {
         const actionBar = document.getElementById('chat-player-actions-bar');
         if (actionBar) actionBar.style.setProperty('display', 'none', 'important');
     },
 
-    mentionPlayer: function(nickname) {
+    mentionPlayer: function (nickname) {
         if (!nickname) return;
         const input = document.getElementById('chat-input');
         if (input) {
@@ -3672,11 +3672,11 @@ const ChatController = {
         }
     },
 
-    requestPhone: async function(userId, btn) {
-        if (btn) { 
-            btn.style.pointerEvents = 'none'; 
-            btn.style.opacity = '0.7'; 
-            btn.innerText = '… Sending'; 
+    requestPhone: async function (userId, btn) {
+        if (btn) {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.7';
+            btn.innerText = '… Sending';
         }
         const success = await PhoneController.request(userId, this._matchId);
         if (success) {
@@ -3696,11 +3696,11 @@ const ChatController = {
         setTimeout(() => this.closePlayerMenu(), 1000);
     },
 
-    cancelPhone: async function(userId, btn) {
-        if (btn) { 
-            btn.style.pointerEvents = 'none'; 
-            btn.style.opacity = '0.7'; 
-            btn.innerText = '… Cancelling'; 
+    cancelPhone: async function (userId, btn) {
+        if (btn) {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.7';
+            btn.innerText = '… Cancelling';
         }
         const success = await PhoneController.cancel(userId, this._matchId);
         if (success && btn) {
@@ -3725,7 +3725,7 @@ const ChatController = {
 
 
 
-    suspendAndNavigate: function(path) {
+    suspendAndNavigate: function (path) {
         this._isShowing = false;
         const overlay = document.getElementById('mv-chat-overlay');
         if (overlay) overlay.style.display = 'none';
@@ -3734,11 +3734,11 @@ const ChatController = {
     },
 
 
-    close: function(fromHistory = false) {
+    close: function (fromHistory = false) {
 
         if (!this._isShowing) return;
         this._isShowing = false;
-        
+
         this.closePlayerMenu();
 
         const overlay = document.getElementById('mv-chat-overlay');
@@ -3749,7 +3749,7 @@ const ChatController = {
         if (overlay) {
             overlay.style.display = 'none';
             document.documentElement.style.overflow = '';
-            document.body.style.overflow = ''; 
+            document.body.style.overflow = '';
             document.body.style.height = '';
         }
         this.stop();
@@ -3763,26 +3763,26 @@ const ChatController = {
         }
     },
 
-    init: function(match_id) {
+    init: function (match_id) {
         this._matchId = match_id;
 
-        this._lastId  = 0;
-        
+        this._lastId = 0;
+
         const indicator = document.getElementById('chat-online-indicator');
         if (indicator) indicator.style.display = 'flex';
-        
-        this._shownActionIds.clear(); 
+
+        this._shownActionIds.clear();
         this.loadMessages(true);
 
         this.startPoll();
     },
 
 
-    stop: function() {
-        if (this._pollTimer) { 
-            clearInterval(this._pollTimer); 
-            this._pollTimer = null; 
-            
+    stop: function () {
+        if (this._pollTimer) {
+            clearInterval(this._pollTimer);
+            this._pollTimer = null;
+
             // Phase 6: Explicitly clear presence so notifications re-enable immediately
             const mid = parseInt(this._matchId);
             if (mid) {
@@ -3791,18 +3791,18 @@ const ChatController = {
         }
     },
 
-    startPoll: function() {
+    startPoll: function () {
         this.stop();
         this._pollTimer = setInterval(() => { ChatController.loadMessages(false); }, 5000);
     },
 
 
-    loadMessages: async function(initial = false, forceScroll = false) {
+    loadMessages: async function (initial = false, forceScroll = false) {
         // Phase 6: Don't poll if the tab is in the background (prevents "ghost online" status)
         if (document.hidden && !initial) return;
 
         const container = document.getElementById('chat-messages-container');
-        const inner     = document.getElementById('chat-messages-inner');
+        const inner = document.getElementById('chat-messages-inner');
         if (!container || !inner) return;
 
         const mid = parseInt(this._matchId);
@@ -3818,18 +3818,18 @@ const ChatController = {
             // We do this below after checking what data we received.
         }
 
-        const messages             = res.data.messages || [];
+        const messages = res.data.messages || [];
 
-        const viewerId             = parseInt(res.data.viewer_id);
-        this._viewerId             = viewerId;
-        
+        const viewerId = parseInt(res.data.viewer_id);
+        this._viewerId = viewerId;
+
         if (initial) {
             this.renderPlayerBar();
         }
 
-        const outgoing             = res.data.outgoing_phone_requests || [];
-        const pendingForMe         = res.data.pending_phone_requests || [];
-        const online_users         = res.data.online_users || [];
+        const outgoing = res.data.outgoing_phone_requests || [];
+        const pendingForMe = res.data.pending_phone_requests || [];
+        const online_users = res.data.online_users || [];
 
         // Real-Time dynamically toggle the online indicator dots across the player bar
         const onlineSet = new Set(online_users.map(id => String(id)));
@@ -3844,11 +3844,11 @@ const ChatController = {
 
         // Manage empty state and clearing on initial load
         const hasContent = messages.length > 0 || pendingForMe.length > 0 || outgoing.filter(pr => pr.status === 'approved').length > 0;
-        
+
         if (initial) {
             if (hasContent) {
                 // We have things to show, prep the stage by clearing exactly once
-                inner.innerHTML = ''; 
+                inner.innerHTML = '';
             } else {
                 // Nothing to show, make sure empty state is visible
                 let emptyState = document.getElementById('chat-empty-state');
@@ -3860,7 +3860,7 @@ const ChatController = {
                 }
             }
         }
-        
+
         // Globally ensure placeholder is removed if we are injecting anything
         if (hasContent) {
             const emptyState = document.getElementById('chat-empty-state');
@@ -3887,12 +3887,12 @@ const ChatController = {
         ];
 
         // Sort chronologically
-        timelineEvents.sort((a,b) => a.time - b.time);
+        timelineEvents.sort((a, b) => a.time - b.time);
 
 
 
         const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
-        
+
         try {
             timelineEvents.forEach(event => {
                 if (event.type === 'message') {
@@ -3902,18 +3902,18 @@ const ChatController = {
                     const senderId = parseInt(msg.user_id);
                     const isMe = senderId === viewerId;
                     const bubble = this.buildBubbleEl(msg, isMe);
-                    
+
                     if (senderId === this._lastSenderId && this._lastMsgEl) {
                         const col = this._lastMsgEl.querySelector('.chat-msg-column');
                         if (col) {
                             col.appendChild(bubble);
-                            this._lastMsgEl.style.marginBottom = '16px'; 
+                            this._lastMsgEl.style.marginBottom = '16px';
                         }
                     } else {
                         const group = document.createElement('div');
                         group.className = 'chat-msg-group';
                         group.style.cssText = `display:flex; gap:10px; align-items:flex-end; margin-bottom:16px; width:100%;` + (isMe ? 'flex-direction:row-reverse;' : '');
-                        
+
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
                         const thumb = msg.profile_image_thumb || msg.profile_image;
@@ -3927,15 +3927,15 @@ const ChatController = {
                                 ${!isMe ? `<div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;">${name} ${code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;">${code}</span>` : ''}</div>` : ''}
                             </div>
                         `;
-                        
+
                         group.querySelector('.chat-msg-column').appendChild(bubble);
                         inner.appendChild(group);
                         this._lastMsgEl = group;
                     }
-                    
+
                     this._lastId = Math.max(this._lastId, msgId);
                     this._lastSenderId = senderId;
-                } 
+                }
                 else if (event.type === 'phone_approved') {
                     const pr = event.data;
                     const actionKey = 'approved-' + pr.id;
@@ -3947,10 +3947,10 @@ const ChatController = {
                     const el = document.createElement('div');
                     el.className = 'chat-system-msg';
                     el.style.cssText = 'background:linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.02)); border:1px solid rgba(16,185,129,0.2); border-radius:16px; padding:14px; margin-bottom:12px; width:100%; display:flex; flex-direction:column; gap:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);';
-                    
+
                     const initials = ((pr.first_name?.[0] || '') + (pr.last_name?.[0] || '')).toUpperCase() || (pr.nickname?.[0] || '?').toUpperCase();
                     const thumb = pr.profile_image_thumb || pr.profile_image;
-                    const avatarHtml = thumb 
+                    const avatarHtml = thumb
                         ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:32px; height:32px; object-fit:cover; border-radius:50%; flex-shrink:0; border:2px solid var(--c-bg-card);">`
                         : `<div style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:12px; font-weight:800; flex-shrink:0; border:2px solid var(--c-bg-card);">${initials}</div>`;
                     const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(247,148,29,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
@@ -3975,7 +3975,7 @@ const ChatController = {
                         </a>
                     `;
                     if (inner) inner.appendChild(el);
-                    
+
                     // Break the group
                     this._lastSenderId = 0;
                     this._lastMsgEl = null;
@@ -3999,8 +3999,8 @@ const ChatController = {
             el.innerHTML =
                 '<div style="font-size:13px; color:var(--c-text); flex:1;">📞 <strong>' + requesterName + '</strong> wants your phone number</div>' +
                 '<div style="display:flex; gap:8px; flex-shrink:0;">' +
-                    '<button onclick="PhoneController.respond(' + pr.id + ',\'approve\')" style="background:var(--g-primary); border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; color:#fff; cursor:pointer;">Allow</button>' +
-                    '<button onclick="PhoneController.respond(' + pr.id + ',\'deny\')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; color:var(--c-text-muted); cursor:pointer;">Deny</button>' +
+                '<button onclick="PhoneController.respond(' + pr.id + ',\'approve\')" style="background:var(--g-primary); border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; color:#fff; cursor:pointer;">Allow</button>' +
+                '<button onclick="PhoneController.respond(' + pr.id + ',\'deny\')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; color:var(--c-text-muted); cursor:pointer;">Deny</button>' +
                 '</div>';
             if (inner) inner.appendChild(el);
         });
@@ -4026,7 +4026,7 @@ const ChatController = {
         }
     },
 
-    buildBubbleEl: function(msg, isMe) {
+    buildBubbleEl: function (msg, isMe) {
         const timeStr = new Date(msg.created_at).toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble';
@@ -4035,14 +4035,14 @@ const ChatController = {
 
         const escapedText = this.escapeHtml(msg.message_text);
         const linkifiedText = this.linkify(escapedText, isMe);
-        
+
         bubble.innerHTML = linkifiedText + `<span style="float:right; font-size:9px; color:var(--c-text-muted); opacity:0.6; margin:6px -4px -2px 8px; vertical-align:bottom;">${timeStr}</span>`;
         return bubble;
     },
 
 
 
-    sendMessage: async function() {
+    sendMessage: async function () {
         if (this._sending) return;
         const input = document.getElementById('chat-input');
         if (!input) return;
@@ -4061,11 +4061,11 @@ const ChatController = {
         }
     },
 
-    handleKey: function(e) {
+    handleKey: function (e) {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendMessage(); }
     },
 
-    autoResize: function(el) {
+    autoResize: function (el) {
         el.style.height = 'auto';
         const newHeight = Math.min(el.scrollHeight, 100);
         el.style.height = newHeight + 'px';
@@ -4073,18 +4073,18 @@ const ChatController = {
     },
 
 
-    linkify: function(text, isMe) {
+    linkify: function (text, isMe) {
         if (!text) return '';
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         const linkColor = isMe ? '#fff' : 'var(--c-primary)';
-        return text.replace(urlRegex, function(url) {
+        return text.replace(urlRegex, function (url) {
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color:${linkColor}; text-decoration:underline; font-weight:600;">${url}</a>`;
         });
     },
 
-    escapeHtml: function(str) {
+    escapeHtml: function (str) {
         if (!str) return '';
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
 };
@@ -4092,7 +4092,7 @@ window.ChatController = ChatController;
 
 
 // Handle Browser Back Button for Chat Overlay
-window.addEventListener('popstate', function(event) {
+window.addEventListener('popstate', function (event) {
     if (ChatController && ChatController._isShowing) {
         // If we popped away from the chatOpen state, close the overlay
         if (!event.state || !event.state.chatOpen) {
@@ -4106,14 +4106,14 @@ window.addEventListener('popstate', function(event) {
 const PhoneController = {
     _requests: {},
 
-    request: async function(target_user_id, match_id) {
+    request: async function (target_user_id, match_id) {
         const cached = this._requests[target_user_id];
         // Only block duplicate API calls if the request is already actively pending or approved.
-        if (cached && (cached.status === 'pending' || cached.status === 'approved')) { 
-            this.updateBtn(target_user_id, cached.status, cached.phone || null); 
-            return true; 
+        if (cached && (cached.status === 'pending' || cached.status === 'approved')) {
+            this.updateBtn(target_user_id, cached.status, cached.phone || null);
+            return true;
         }
-        
+
         const btn = document.getElementById('phone-btn-' + target_user_id);
         if (btn) { btn.disabled = true; btn.textContent = '…'; }
         const res = await API.post('/phone/request', { match_id, target_user_id });
@@ -4121,12 +4121,12 @@ const PhoneController = {
             if (btn) { btn.disabled = false; btn.textContent = '📞 Request Phone'; }
             if (res && res.message) {
                 const isBlocked = (res.status === 429);
-                ConfirmModal.show({ 
-                    title: isBlocked ? 'Maximum Attempts Reached' : 'Request Failed', 
-                    message: res.message, 
-                    confirmText: 'OK', 
+                ConfirmModal.show({
+                    title: isBlocked ? 'Maximum Attempts Reached' : 'Request Failed',
+                    message: res.message,
+                    confirmText: 'OK',
                     showCancel: !isBlocked,
-                    type: 'warning' 
+                    type: 'warning'
                 });
             }
             return false;
@@ -4136,7 +4136,7 @@ const PhoneController = {
         return true;
     },
 
-    cancel: async function(target_user_id, match_id) {
+    cancel: async function (target_user_id, match_id) {
         const res = await API.post('/phone/cancel', { match_id, target_user_id });
         if (res && res.success) {
             delete this._requests[target_user_id];
@@ -4150,7 +4150,7 @@ const PhoneController = {
 
 
 
-    respond: async function(request_id, action) {
+    respond: async function (request_id, action) {
         const res = await API.post('/phone/respond', { request_id, action });
         if (!res || !res.success) return;
         const notif = document.getElementById('phone-notif-pending-' + request_id);
@@ -4164,20 +4164,20 @@ const PhoneController = {
         }
     },
 
-    updateBtn: function(target_user_id, status, phone) {
+    updateBtn: function (target_user_id, status, phone) {
         const btn = document.getElementById('phone-btn-' + target_user_id);
         if (!btn) return;
 
         btn.disabled = false;
         btn.style.pointerEvents = 'auto';
 
-        if (status === 'pending') { 
-            btn.innerHTML = 'Cancel request'; 
+        if (status === 'pending') {
+            btn.innerHTML = 'Cancel request';
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:var(--c-primary); color:#fff; border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = () => ChatController.cancelPhone(target_user_id, btn);
         }
-        else if (status === 'approved' && phone) { 
-            btn.innerHTML = '📞 ' + phone; 
+        else if (status === 'approved' && phone) {
+            btn.innerHTML = '📞 ' + phone;
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -4185,7 +4185,7 @@ const PhoneController = {
             };
         }
         else { // Denied, Cancelled, or otherwise invalid
-            btn.innerHTML = '📞 Request Phone'; 
+            btn.innerHTML = '📞 Request Phone';
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(255,255,255,0.1); color:#fff; border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = () => ChatController.requestPhone(target_user_id, btn);
         }
@@ -4206,17 +4206,17 @@ const NotificationsController = {
     _isLoading: false,
 
     // Called once on app init / nav sync
-    init: function() {
+    init: function () {
         this.injectPanel();
         this.pollBadge();
         this._pollTimer = setInterval(() => NotificationsController.pollBadge(), 15000);
     },
 
-    stop: function() {
+    stop: function () {
         if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = null; }
     },
 
-    pollBadge: async function() {
+    pollBadge: async function () {
         if (!Auth.isAuthenticated() || this._inProgress) return;
         // Phase 6: Skip background notification polling if tab is hidden
         if (document.hidden) return;
@@ -4225,11 +4225,11 @@ const NotificationsController = {
         try {
             const res = await API.post('/notifications/list', {});
             if (!res || !res.success) throw new Error('API failed');
-            
+
             // Use global unread count from backend for the badge
             const unreadCount = parseInt(res.data.unread_count || 0);
             const badge = document.getElementById('nav-notif-badge');
-            
+
             if (badge) {
                 const currentCount = parseInt(badge.textContent) || 0;
                 if (unreadCount > currentCount) {
@@ -4248,12 +4248,12 @@ const NotificationsController = {
         }
     },
 
-    open: async function() {
+    open: async function () {
         if (this._isOpen) return;
         this._isOpen = true;
         const panel = document.getElementById('notif-panel');
         if (!panel) return;
-        
+
         // Render preloaded data immediately if we have it
         if (this._notifications.length > 0) {
             this.renderList();
@@ -4269,7 +4269,7 @@ const NotificationsController = {
         if (badge) badge.style.display = 'none';
 
         panel.classList.add('open');
-        
+
         // Trigger a fresh reload in background to ensure data is current
         if (this._notifications.length > 0) {
             this._offset = 0;
@@ -4279,10 +4279,10 @@ const NotificationsController = {
         }
     },
 
-    close: function() {
+    close: function () {
         if (!this._isOpen) return;
         this._isOpen = false;
-        
+
         const panel = document.getElementById('notif-panel');
         if (panel) panel.classList.remove('open');
 
@@ -4290,13 +4290,13 @@ const NotificationsController = {
         this._visuallyUnreadIds.clear();
     },
 
-    toggle: function() {
+    toggle: function () {
         this._isOpen ? this.close() : this.open();
     },
 
-    loadMore: async function(isSilent = false) {
+    loadMore: async function (isSilent = false) {
         if (this._isLoading || !this._hasMore) return;
-        
+
         if (!isSilent) {
             this._isLoading = true;
             this.renderList(); // Show loading indicator at bottom
@@ -4307,7 +4307,7 @@ const NotificationsController = {
             if (!res || !res.success) throw new Error('API failed');
 
             const newNotifs = res.data.notifications || [];
-            
+
             // Phase 6: Aggregate IDs for immediate "mark as read" logic
             const unreadIds = newNotifs.filter(n => !n.is_read).map(n => n.id);
             if (unreadIds.length > 0) {
@@ -4327,10 +4327,10 @@ const NotificationsController = {
         }
     },
 
-    renderList: function() {
+    renderList: function () {
         const listEl = document.getElementById('notif-list');
         if (!listEl) return;
-        
+
         try {
             const notifications = this._notifications;
             if (notifications.length === 0) {
@@ -4390,33 +4390,33 @@ const NotificationsController = {
                 return `
                     <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--c-text-muted); padding:16px 20px 8px; opacity:0.7;">${label}</div>
                     ${items.map(n => {
-                        // Phase 6: Keep items blue if they were originally unread in this session
-                        // For groups, check if the newest one is unread (representative)
-                        const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
-                        // Phase 6: Consistent avatar style with emoji badge
-                        const emoji = typeIcon[n.type] || '🔔';
-                        
-                        const thumb = n.sender_avatar_thumb || n.sender_avatar;
-                        let initials = '';
-                        if (thumb) {
-                            if (n.sender_first_name || n.sender_last_name) {
-                                initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
-                            } else if (n.sender_nickname) {
-                                initials = n.sender_nickname[0].toUpperCase();
-                            }
-                        } else {
-                            // System notification (no sender)
-                            // Use Time emoji for auto-approvals, otherwise use the type emoji
-                            if (n.type === 'score_approved') {
-                                initials = '⏳';
-                            } else {
-                                initials = emoji;
-                            }
-                        }
-                        
-                        if (!initials) initials = 'P'; 
+                    // Phase 6: Keep items blue if they were originally unread in this session
+                    // For groups, check if the newest one is unread (representative)
+                    const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
+                    // Phase 6: Consistent avatar style with emoji badge
+                    const emoji = typeIcon[n.type] || '🔔';
 
-                        const avatarHtml = `
+                    const thumb = n.sender_avatar_thumb || n.sender_avatar;
+                    let initials = '';
+                    if (thumb) {
+                        if (n.sender_first_name || n.sender_last_name) {
+                            initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
+                        } else if (n.sender_nickname) {
+                            initials = n.sender_nickname[0].toUpperCase();
+                        }
+                    } else {
+                        // System notification (no sender)
+                        // Use Time emoji for auto-approvals, otherwise use the type emoji
+                        if (n.type === 'score_approved') {
+                            initials = '⏳';
+                        } else {
+                            initials = emoji;
+                        }
+                    }
+
+                    if (!initials) initials = 'P';
+
+                    const avatarHtml = `
                             <div style="position:relative; flex-shrink:0;">
                                 <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
                                     ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
@@ -4427,7 +4427,7 @@ const NotificationsController = {
                             </div>
                         `;
 
-                        return `
+                    return `
                         <div class="notif-item ${isReadVisually ? '' : 'notif-unread'}" onclick="NotificationsController.handleNotifClick(${JSON.stringify(n).replace(/"/g, '&quot;')})"
                              style="display:flex; align-items:flex-start; gap:12px; padding:14px 20px; cursor:pointer; transition:background 0.15s; border-bottom:1px solid rgba(255,255,255,0.04); position:relative;">
                             ${avatarHtml}
@@ -4439,7 +4439,8 @@ const NotificationsController = {
                             </div>
                             ${!isReadVisually ? '<div style="width:8px; height:8px; background:var(--c-primary); border-radius:50%; flex-shrink:0; margin-top:6px;"></div>' : ''}
                         </div>
-                    `;}).join('')}
+                    `;
+                }).join('')}
                 `;
             };
 
@@ -4473,20 +4474,20 @@ const NotificationsController = {
         }
     },
 
-    handleNotifClick: async function(n) {
+    handleNotifClick: async function (n) {
         // 1. Mark as read immediately if unread (handles groups too)
         if (!n.is_read) {
             const ids = n.all_ids || [n.id];
             await this.markRead(ids);
         }
-        
+
         // 2. Clear badge and close panel
         this._visuallyUnreadIds.clear();
         this.close();
 
         // 3. Navigate based on type
         let navPath = n.match_code ? `/matches/${n.match_code}` : `/matches/view/${n.reference_id}`;
-        
+
         switch (n.type) {
             case 'match_joined':
             case 'team_invite':
@@ -4504,32 +4505,32 @@ const NotificationsController = {
             case 'score_disputed':
                 Router.navigate(navPath);
                 break;
-            
+
             case 'new_message':
             case 'phone_requested':
             case 'phone_approved':
             case 'phone_denied':
                 // Phase 6: Stack navigation so Back takes you to the match, not dashboard
                 // First navigate to the match detail page
-                Router.navigate(navPath); 
-                
+                Router.navigate(navPath);
+
                 // Then open the chat overlay which will push its own /chat state
                 setTimeout(() => {
                     if (typeof ChatController !== 'undefined') ChatController.open(n.reference_id);
                 }, 100);
                 break;
-            
+
             case 'partner_blocked':
                 Router.navigate('/dashboard');
                 break;
-            
+
             default:
                 // Default to dashboard if type is unknown but clicked
                 Router.navigate('/dashboard');
         }
     },
 
-    markRead: async function(ids, isSilent = false) {
+    markRead: async function (ids, isSilent = false) {
         const res = await API.post('/notifications/read', { ids });
         if (res && res.success) {
             ids.forEach(id => {
@@ -4549,7 +4550,7 @@ const NotificationsController = {
         }
     },
 
-    markAllRead: async function() {
+    markAllRead: async function () {
         const res = await API.post('/notifications/read', { all: true });
         if (res && res.success) {
             this._notifications.forEach(n => n.is_read = true);
@@ -4560,7 +4561,7 @@ const NotificationsController = {
         }
     },
 
-    injectPanel: function() {
+    injectPanel: function () {
         if (document.getElementById('notif-panel')) return;
         const panel = document.createElement('div');
         panel.id = 'notif-panel';
@@ -4612,16 +4613,16 @@ const ScoringController = {
         s3_t1: 0, s3_t2: 0
     },
 
-    initScoreSubmission: function(match) {
+    initScoreSubmission: function (match) {
         this._match = match;
         this._scoreData = { s1_t1: 0, s1_t2: 0, s2_t1: 0, s2_t2: 0, s3_t1: 0, s3_t2: 0 };
         this._composition = null; // Default: match original teams
-        
+
         const modal = document.createElement('div');
         modal.id = 'scoring-modal-overlay';
         modal.className = 'loading-overlay';
         modal.style.zIndex = '10000';
-        modal.onclick = (e) => { if(e.target === modal) this.closeModal(); };
+        modal.onclick = (e) => { if (e.target === modal) this.closeModal(); };
         modal.innerHTML = `
             <div class="scoring-modal">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
@@ -4671,7 +4672,7 @@ const ScoringController = {
         this._updateNicknames();
     },
 
-    _updateNicknames: function() {
+    _updateNicknames: function () {
         const teamA = document.getElementById('team-a-nicknames');
         const teamB = document.getElementById('team-b-nicknames');
         if (!teamA || !teamB) return;
@@ -4694,7 +4695,7 @@ const ScoringController = {
         }
     },
 
-    _renderSetInputs: function(set, team) {
+    _renderSetInputs: function (set, team) {
         return `
             <div class="set-input-group-wrapper">
                 <div class="set-input-group">
@@ -4710,18 +4711,18 @@ const ScoringController = {
         `;
     },
 
-    adjustScore: function(set, team, delta) {
+    adjustScore: function (set, team, delta) {
         const key = `s${set}_t${team}`;
         let newVal = this._scoreData[key] + delta;
         if (newVal < 0) newVal = 0;
         if (newVal > 7) newVal = 7;
-        
+
         this._scoreData[key] = newVal;
         const el = document.getElementById(`val-s${set}-t${team}`);
         if (el) el.textContent = newVal;
     },
 
-    toggleComposition: function() {
+    toggleComposition: function () {
         const editor = document.getElementById('comp-editor');
         if (editor.style.display === 'none') {
             editor.style.display = 'block';
@@ -4733,7 +4734,7 @@ const ScoringController = {
         }
     },
 
-    _renderComposition: function() {
+    _renderComposition: function () {
         if (!this._composition) {
             // Initial state from match slots
             this._composition = MatchesController._currentMatchSlots.map(s => ({
@@ -4755,24 +4756,24 @@ const ScoringController = {
         `).join('');
     },
 
-    switchPlayerTeam: function(idx) {
+    switchPlayerTeam: function (idx) {
         const p = this._composition[idx];
         p.team_no = p.team_no == 1 ? 2 : 1;
         this._renderComposition();
         this._updateNicknames();
     },
 
-    closeModal: function() {
+    closeModal: function () {
         const modal = document.getElementById('scoring-modal-overlay');
         if (modal) modal.remove();
     },
 
-    submitScore: async function() {
+    submitScore: async function () {
         const btn = document.querySelector('.scoring-modal .btn-primary');
         if (btn && btn.disabled) return;
 
         let hasErrors = false;
-        
+
         // Clear previous errors
         document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
         document.querySelectorAll('.set-input-group').forEach(el => el.classList.remove('error'));
@@ -4783,11 +4784,11 @@ const ScoringController = {
 
         const checkSet = (t1, t2, setNum) => {
             if (t1 === 0 && t2 === 0) return null; // Set not played
-            
+
             // Padel set rules: 6-0 to 6-4, 7-5, 7-6
             const isT1Winner = (t1 === 6 && t2 <= 4) || (t1 === 7 && (t2 === 5 || t2 === 6));
             const isT2Winner = (t2 === 6 && t1 <= 4) || (t2 === 7 && (t1 === 5 || t1 === 6));
-            
+
             if (!isT1Winner && !isT2Winner) {
                 this._showFieldError(`s${setNum}-t1`, 'Invalid set score');
                 this._showFieldError(`s${setNum}-t2`, 'Invalid set score');
@@ -4810,13 +4811,13 @@ const ScoringController = {
             } else if (w1 && w2) {
                 const team1Sets = (w1 === 1 ? 1 : 0) + (w2 === 1 ? 1 : 0) + (w3 === 1 ? 1 : 0);
                 const team2Sets = (w1 === 2 ? 1 : 0) + (w2 === 2 ? 1 : 0) + (w3 === 2 ? 1 : 0);
-                
+
                 if (team1Sets < 2 && team2Sets < 2) {
                     this._showFieldError('s3-t1', 'Deciding set required (1-1)');
                     this._showFieldError('s3-t2', 'Deciding set required (1-1)');
                     hasErrors = true;
                 }
-                
+
                 // If 3rd set is played, ensure 1st and 2nd sets were split
                 if (w3 && w1 === w2) {
                     this._showFieldError('s3-t1', 'Not needed (2-0)');
@@ -4837,7 +4838,7 @@ const ScoringController = {
                 this._showFieldError('composition', 'Each team must have exactly 2 players.');
                 hasErrors = true;
             }
-            
+
             // Assign slot numbers within teams
             let t1_count = 0, t2_count = 0;
             this._composition.forEach(p => {
@@ -4873,14 +4874,14 @@ const ScoringController = {
         }
     },
 
-    _showFieldError: function(fieldId, msg) {
+    _showFieldError: function (fieldId, msg) {
         const errEl = document.getElementById(`err-${fieldId}`);
         const groupEl = errEl?.previousElementSibling;
         if (errEl) errEl.textContent = msg;
         if (groupEl) groupEl.classList.add('error');
     },
 
-    approveScore: async function(scoreId) {
+    approveScore: async function (scoreId) {
         const confirmed = await ConfirmModal.show({
             title: 'Approve Result',
             message: 'Are you sure you want to approve this score? This will finalize the match and update everyone\'s points.',
@@ -4899,7 +4900,7 @@ const ScoringController = {
         }
     },
 
-    disputeScore: async function(scoreId) {
+    disputeScore: async function (scoreId) {
         const reason = await ConfirmModal.show({
             title: 'Dispute Score',
             message: 'Please provide a brief reason why you are disputing this result.',
@@ -4908,7 +4909,7 @@ const ScoringController = {
             confirmText: 'Send Dispute',
             type: 'warning'
         });
-        
+
         if (!reason) return;
 
         const res = await API.post('/score/dispute', { score_id: scoreId, reason });
@@ -4920,7 +4921,7 @@ const ScoringController = {
         }
     },
 
-    reportIssue: async function(matchId, targetUserId = null) {
+    reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
             title: targetUserId ? 'Report Player' : 'Report Match Issue',
             message: 'Please describe the issue you encountered.',
@@ -4949,9 +4950,9 @@ const RankingController = {
     _fullList: [],
     _cache: {}, // Stores ranking data per gender
 
-    init: async function() {
+    init: async function () {
         await UI.syncNav();
-        
+
         // Default to user's gender if available
         if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
             this._currentTab = DashboardController._cache.profile.profile.gender || 'male';
@@ -4961,7 +4962,7 @@ const RankingController = {
                 this._currentTab = res.data.profile.gender || 'male';
             }
         }
-        
+
         // Update UI buttons to reflect default tab
         const mBtn = document.getElementById('rank-tab-male');
         const fBtn = document.getElementById('rank-tab-female');
@@ -4973,9 +4974,9 @@ const RankingController = {
         this.loadData();
     },
 
-    switchTab: function(gender) {
+    switchTab: function (gender) {
         this._currentTab = gender;
-        
+
         // Update UI buttons
         const mBtn = document.getElementById('rank-tab-male');
         const fBtn = document.getElementById('rank-tab-female');
@@ -4987,7 +4988,7 @@ const RankingController = {
         this.loadData();
     },
 
-    loadData: async function(isSilent = false) {
+    loadData: async function (isSilent = false) {
         const listEl = document.getElementById('ranking-full-list');
         if (!listEl) return;
 
@@ -5007,7 +5008,7 @@ const RankingController = {
 
         // Fetch larger list for the full page (limit 100)
         const res = await API.post('/ranking/list', { gender: this._currentTab, limit: 100 });
-        
+
         if (!res || !res.success) {
             if (!isSilent && !hasCache) {
                 listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
@@ -5027,9 +5028,9 @@ const RankingController = {
         this.render(this._fullList);
     },
 
-    handleSearch: function(query) {
+    handleSearch: function (query) {
         const q = query.toLowerCase().trim();
-        
+
         const clearBtn = document.getElementById('rank-search-clear');
         if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
 
@@ -5038,16 +5039,16 @@ const RankingController = {
             return;
         }
 
-        const filtered = this._fullList.filter(r => 
-            r.nickname.toLowerCase().includes(q) || 
-            r.first_name.toLowerCase().includes(q) || 
+        const filtered = this._fullList.filter(r =>
+            r.nickname.toLowerCase().includes(q) ||
+            r.first_name.toLowerCase().includes(q) ||
             r.last_name.toLowerCase().includes(q) ||
             r.player_code.toUpperCase().includes(q.toUpperCase())
         );
         this.render(filtered);
     },
 
-    clearSearch: function() {
+    clearSearch: function () {
         const input = document.getElementById('rank-search');
         if (input) {
             input.value = '';
@@ -5055,7 +5056,7 @@ const RankingController = {
         }
     },
 
-    render: function(list) {
+    render: function (list) {
         const listEl = document.getElementById('ranking-full-list');
         if (!listEl) return;
 
@@ -5070,7 +5071,7 @@ const RankingController = {
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);', initials);
-            
+
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
                     <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'};">#${r.rank}</span>
