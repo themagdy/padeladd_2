@@ -1073,5 +1073,111 @@ window.AdminControllers = {
                 }
             } catch (e) { console.error('Moderate chat error:', e); }
         }
+    },
+
+    flags: {
+        allFlags: [],
+        searchQuery: '',
+        async init() {
+            console.log('--- Flags Init Start ---');
+            await this.fetchFlags();
+        },
+        async fetchFlags() {
+            try {
+                const response = await fetch('../backend/api/admin/players/list_flags.php', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('admin_token') }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.allFlags = data.data.flags || [];
+                    this.renderFlags();
+                }
+            } catch (err) {
+                console.error('Fetch Error:', err);
+            }
+        },
+        setSearch(query) {
+            this.searchQuery = query.toLowerCase().trim();
+            this.renderFlags();
+        },
+        renderFlags() {
+            const list = document.getElementById('flags-list');
+            const empty = document.getElementById('flags-empty');
+            if (!list) return;
+
+            let filtered = this.allFlags;
+            if (this.searchQuery) {
+                filtered = filtered.filter(f => {
+                    const name = `${f.first_name} ${f.last_name} ${f.nickname}`.toLowerCase();
+                    const code = (f.player_code || '').toLowerCase();
+                    const reason = (f.reason || '').toLowerCase();
+                    return name.includes(this.searchQuery) || code.includes(this.searchQuery) || reason.includes(this.searchQuery);
+                });
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+
+            if (empty) empty.style.display = 'none';
+
+            list.innerHTML = filtered.map(f => `
+                <tr>
+                    <td>
+                        <div style="font-weight:700; color:#fff;">${f.first_name} ${f.last_name}</div>
+                        <div style="font-size:11px; color:var(--c-text-muted);">CODE: ${f.player_code}</div>
+                    </td>
+                    <td>
+                        <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:100px; font-size:11px; font-weight:800; text-transform:uppercase; background:${f.flag_type === 'red' ? 'rgba(241,90,41,0.1)' : 'rgba(0,206,0,0.1)'}; color:${f.flag_type === 'red' ? 'var(--c-red)' : 'var(--c-green)'};">
+                            ${f.flag_type === 'red' ? '🔴 RED' : '🟢 GREEN'}
+                        </span>
+                    </td>
+                    <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${f.reason}</td>
+                    <td style="font-size:12px; font-weight:600; color:#fff;">${f.admin_name}</td>
+                    <td style="text-align:right; font-size:12px; color:var(--c-text-muted);">${new Date(f.created_at).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        },
+        async addFlag(e) {
+            e.preventDefault();
+            const playerCode = document.getElementById('flag-player-code').value;
+            const flagType = document.querySelector('input[name="flag_type"]:checked').value;
+            const reason = document.getElementById('flag-reason').value;
+
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'LOGGING...';
+
+            try {
+                const response = await fetch('../backend/api/admin/players/add_flag.php', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: JSON.stringify({ player_code: playerCode, flag_type: flagType, reason: reason })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Flag logged successfully!');
+                    e.target.reset();
+                    // Reset radio border
+                    e.target.querySelectorAll('.form-group div label div').forEach(d => d.style.borderColor = 'rgba(255,255,255,0.1)');
+                    e.target.querySelector('input[value="green"]').parentElement.querySelector('div').style.borderColor = 'var(--c-green)';
+                    await this.fetchFlags();
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                console.error('Add Flag Error:', err);
+                alert('An error occurred.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
     }
 };
