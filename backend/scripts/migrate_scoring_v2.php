@@ -90,7 +90,7 @@ $updPoints = $pdo->prepare("
 
 $resetCount = 0;
 foreach ($profiles as $p) {
-    $level = strtolower(str_replace(' ', '_', trim($p['level'] ?? '')));
+    $level = trim($p['level'] ?? '');
     $pts   = $levelPoints[$level] ?? 100;
     $updPoints->execute([(int)$p['user_id'], $pts]);
     $resetCount++;
