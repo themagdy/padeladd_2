@@ -1,4 +1,4 @@
-# PadelAdd — Scoring, Ranking & Eligibility System
+# Padeladd — Scoring, Ranking & Eligibility System
 > Developer implementation brief. All rules are final and approved.
 
 ---

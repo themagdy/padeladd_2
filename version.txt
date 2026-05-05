@@ -181,7 +181,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Performance Rewards: Increased heavy win/loss threshold to 8+ games and reward to ±4 points.
 - Rapid Calibration: Increased the first 5 matches multiplier from 1.5x to 2.0x for faster rank discovery.
 - Point Swings: Increased the per-match point clamp from 15 to 25 to accommodate new bonuses.
-- Rules Page: Fully updated the PadelAdd Rules UI with the new scoring values (v2.2) and stricter fair play wording.
+- Rules Page: Fully updated the Padeladd Rules UI with the new scoring values (v2.2) and stricter fair play wording.
 - Conduct & Attitude: Added a dedicated policy for unacceptable behavior on court with permanent ban warnings.
 - Rules Restructure: Moved "Score Verification" into its own dedicated main section at the end of the page for better visibility.
 - UI Polish: Refined the ranking page search bar with premium focus/hover states and smooth transitions.
