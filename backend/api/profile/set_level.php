@@ -21,7 +21,7 @@ $levelPoints = [
     'competition'             => 850,
     'professional'            => 1000,
 ];
-$levelKey    = strtolower(str_replace(' ', '_', $level));
+$levelKey    = $level;
 $startPoints = $levelPoints[$levelKey] ?? 100;
 
 // Check if player has ever completed a competition match
