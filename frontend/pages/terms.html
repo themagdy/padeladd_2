@@ -1,100 +1,198 @@
-<div class="page active" id="terms-page" style="background:var(--c-bg); min-height:100vh; padding-bottom: 40px;">
+<div class="page active" id="terms-page" style="background:var(--c-bg); min-height:100vh; padding-bottom: 60px;">
     
-    <!-- Header -->
-    <div class="auth-header" style="padding: 40px 20px 20px; text-align:center;">
-        <img src="assets/logo_ico.png" style="height:40px; margin-bottom:16px;">
-        <h1 style="font-size:24px; font-weight:800; color:#fff; margin-bottom:4px;">Terms of Use</h1>
-        <p style="color:var(--c-text-muted); font-size:16px; font-weight:600;">شروط الإستخدام</p>
+    <!-- Premium Header -->
+    <div style="background:linear-gradient(180deg, rgba(27, 82, 206, 0.1) 0%, transparent 100%); padding: 60px 20px 40px; text-align:center;">
+        <div style="display:inline-block; padding:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:16px; margin-bottom:20px;">
+            <img src="assets/logo_ico.png" style="height:44px;">
+        </div>
+        <h1 style="font-size:28px; font-weight:900; color:#fff; margin-bottom:8px; letter-spacing:-1px;">Terms of Use</h1>
+        <div style="font-size:18px; font-weight:700; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px;">شروط الإستخدام</div>
     </div>
 
-    <div class="container" style="max-width:480px; margin:0 auto; padding:0 16px;">
+    <div class="container" style="max-width:520px; margin:0 auto; padding:0 20px;">
         
         <!-- Section: Violations -->
-        <div style="margin-bottom:24px;">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-                <span style="font-size:18px;">⚠️</span>
-                <h3 style="color:var(--c-orange); margin:0; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Violations | المخالفات</h3>
+        <div style="margin-bottom:32px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-left:4px;">
+                <div style="width:32px; height:32px; background:rgba(247, 148, 29, 0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px;">⚠️</div>
+                <h3 style="color:#fff; margin:0; font-size:18px; font-weight:800;">Violations <span style="opacity:0.3; margin:0 10px; font-weight:300;">|</span> المخالفات</h3>
             </div>
             
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <!-- Rule 1: Level -->
-                <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 16px;">
-                    <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">📊 Choosing a wrong level</div>
-                    <div style="color:var(--c-text-muted); font-size:13px; font-weight:500; text-align:right;">تختار مستوى غلط (اللعيبة التانية هتبلغ عنك)</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <!-- Rule: Level -->
+                <div class="terms-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--c-border); border-left:4px solid var(--c-orange); border-radius:12px; padding:16px; transition:all 0.3s;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                        <div style="flex:1;">
+                            <div style="font-weight:800; color:#fff; font-size:15px; margin-bottom:6px;">👮 Wrong Level</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:500; line-height:1.4;">Choosing a wrong level</div>
+                        </div>
+                        <div style="flex:1; text-align:right; border-right:1px solid rgba(255,255,255,0.05); padding-right:12px; margin-right:-12px;">
+                            <div style="font-weight:800; color:var(--c-orange); font-size:15px; margin-bottom:6px;">تختار مستوى غلط</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:600;">اللعيبة التانية هتبلغ عنك لو مستواك مش مظبوط</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Rule 2: 6 Hours -->
-                <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 16px;">
-                    <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">⏰ No withdrawal/cancel within 6h</div>
-                    <div style="color:var(--c-text-muted); font-size:13px; font-weight:500; text-align:right;">ممنوع الإنسحاب أو الإلغاء قبل الماتش بـ ٦ ساعات</div>
+                <!-- Rule: 6 Hours -->
+                <div class="terms-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--c-border); border-left:4px solid var(--c-orange); border-radius:12px; padding:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                        <div style="flex:1;">
+                            <div style="font-weight:800; color:#fff; font-size:15px; margin-bottom:6px;">⏰ 6 Hours Rule</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:500; line-height:1.4;">No withdrawal or cancellation within 6h</div>
+                        </div>
+                        <div style="flex:1; text-align:right;">
+                            <div style="font-weight:800; color:var(--c-orange); font-size:15px; margin-bottom:6px;">قاعدة الـ ٦ ساعات</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:600;">ممنوع الإنسحاب أو الإلغاء قبل الماتش بـ ٦ ساعات</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Rule 3: Behavior -->
-                <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 16px;">
-                    <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">🤝 Disrespectful conduct</div>
-                    <div style="color:var(--c-text-muted); font-size:13px; font-weight:500; text-align:right;">سوء السلوك أو عدم احترام اللعيبة</div>
+                <!-- Rule: Behavior -->
+                <div class="terms-card" style="background:rgba(255,255,255,0.02); border:1px solid var(--c-border); border-left:4px solid var(--c-orange); border-radius:12px; padding:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                        <div style="flex:1;">
+                            <div style="font-weight:800; color:#fff; font-size:15px; margin-bottom:6px;">🤝 Conduct</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:500; line-height:1.4;">Disrespectful conduct or bad behavior</div>
+                        </div>
+                        <div style="flex:1; text-align:right;">
+                            <div style="font-weight:800; color:var(--c-orange); font-size:15px; margin-bottom:6px;">سوء السلوك</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:12px; font-weight:600;">معاملة سيئة أو عدم احترام للآخرين</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Consequences -->
-        <div style="margin-bottom:24px;">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-                <span style="font-size:18px;">🚫</span>
-                <h3 style="color:var(--c-red); margin:0; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Direct Ban | حظر نهائي</h3>
+        <!-- Section: Consequences (The Red Zone) -->
+        <div style="margin-bottom:32px; background:rgba(239, 68, 68, 0.03); border:1px solid rgba(239, 68, 68, 0.1); border-radius:20px; padding:20px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                <div style="width:32px; height:32px; background:rgba(239, 68, 68, 0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px;">🚫</div>
+                <h3 style="color:#ef4444; margin:0; font-size:18px; font-weight:900; letter-spacing:-0.5px;">Direct Ban <span style="opacity:0.3; margin:0 10px; font-weight:300;">|</span> حظر نهائي</h3>
             </div>
             
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="background:rgba(239, 68, 68, 0.05); border:1px solid rgba(239, 68, 68, 0.2); border-radius:12px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-weight:700; color:#fff; font-size:14px;">3 Violations</div>
-                    <div style="color:var(--c-red); font-weight:700; font-size:14px;">تجميع ٣ مخالفات</div>
+            <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(239, 68, 68, 0.25); border-radius:16px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+                    <div style="color:#fff; font-weight:800; font-size:16px; line-height:1.2; flex:1;">3 Violations</div>
+                    <div style="width:1px; height:20px; background:rgba(239, 68, 68, 0.2);"></div>
+                    <div style="color:#fff; font-weight:700; font-size:16px; line-height:1.2; flex:1; text-align:right;">٣ مخالفات</div>
                 </div>
-                <div style="background:rgba(239, 68, 68, 0.05); border:1px solid rgba(239, 68, 68, 0.2); border-radius:12px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-weight:700; color:#fff; font-size:14px;">Any No-Show</div>
-                    <div style="color:var(--c-red); font-weight:700; font-size:14px;">عدم الحضور لأي ماتش</div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(239, 68, 68, 0.25); border-radius:16px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+                    <div style="color:#fff; font-weight:800; font-size:16px; line-height:1.2; flex:1;">Any No-Show</div>
+                    <div style="width:1px; height:20px; background:rgba(239, 68, 68, 0.2);"></div>
+                    <div style="color:#fff; font-weight:700; font-size:16px; line-height:1.2; flex:1; text-align:right;">عدم الحضور لأي ماتش</div>
                 </div>
             </div>
         </div>
 
         <!-- Section: Reporting -->
-        <div style="margin-bottom:24px;">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-                <span style="font-size:18px;">📢</span>
-                <h3 style="color:var(--c-primary); margin:0; font-size:16px; font-weight:800; text-transform:uppercase; letter-spacing:1px;">Reporting | البلاغات</h3>
+        <div style="margin-bottom:32px;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px; padding-left:4px;">
+                <div style="width:32px; height:32px; background:rgba(27, 82, 206, 0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px;">📢</div>
+                <h3 style="color:#fff; margin:0; font-size:18px; font-weight:800;">Reporting <span style="opacity:0.3; margin:0 10px; font-weight:300;">|</span> البلاغات</h3>
             </div>
             
-            <div style="background:var(--g-card); border:1px solid var(--c-border); border-radius:12px; padding:16px;">
-                <div style="margin-bottom:12px;">
-                    <div style="font-size:12px; color:var(--c-text-muted); font-weight:700; margin-bottom:4px;">WHERE TO REPORT / تبلغ منين</div>
-                    <div style="color:#fff; font-size:14px; font-weight:600;">Dashboard, Match Page, or Profile</div>
-                    <div style="color:var(--c-text-dim); font-size:13px; font-weight:500; text-align:right;">الداشبورد، صفحة الماتش، أو بروفايل اللاعب</div>
-                </div>
-                <div>
-                    <div style="font-size:12px; color:var(--c-text-muted); font-weight:700; margin-bottom:4px;">WHY TO REPORT / تبلغ ليه</div>
-                    <div style="color:#fff; font-size:14px; font-weight:600;">No-shows or Abuse</div>
-                    <div style="color:var(--c-text-dim); font-size:13px; font-weight:500; text-align:right;">عدم الحضور أو أي إساءة</div>
+            <div style="background:var(--g-card); border:1px solid var(--c-border); border-left:4px solid var(--c-primary); border-radius:12px; padding:20px;">
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <div style="font-size:14px; color:var(--c-orange); font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; text-align:center;">Where to report <span style="opacity:0.3; margin:0 12px; font-weight:300;">|</span> تبلغ منين</div>
+                        <div class="reporting-chips-container" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                            <!-- Dashboard Chip -->
+                            <div class="reporting-chip" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 20px; flex:1; min-width:130px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+                                <div style="font-size:18px;">🏠</div>
+                                <div style="color:#fff; font-weight:800; font-size:13px; line-height:1.2;">Dashboard</div>
+                            </div>
+                            <!-- Match Chip -->
+                            <div class="reporting-chip" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 20px; flex:1; min-width:130px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+                                <div style="font-size:18px;">🎾</div>
+                                <div style="color:#fff; font-weight:800; font-size:13px; line-height:1.2;">Match Page</div>
+                            </div>
+                            <!-- Profile Chip -->
+                            <div class="reporting-chip" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 20px; flex:1; min-width:130px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+                                <div style="font-size:18px;">👤</div>
+                                <div style="color:#fff; font-weight:800; font-size:13px; line-height:1.2;">Player Profile</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height:1px; background:rgba(255,255,255,0.05); margin:8px 0;"></div>
+                    <div>
+                        <div style="font-size:14px; color:var(--c-orange); font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; text-align:center;">When to report <span style="opacity:0.3; margin:0 12px; font-weight:300;">|</span> تبلغ امتى</div>
+                        <div class="reporting-chips-container" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+                            <!-- No-show Chip -->
+                            <div class="reporting-chip" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 20px; flex:1; min-width:130px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+                                <div style="font-size:18px;">🙅🏼‍♂️</div>
+                                <div style="display:flex; flex-direction:column; gap:2px; text-align:left;">
+                                    <div style="color:#fff; font-weight:800; font-size:14px; line-height:1.2;">No-shows</div>
+                                    <div style="color:#fff; font-weight:700; font-size:14px; line-height:1.2;">عدم الحضور</div>
+                                </div>
+                            </div>
+                            <!-- Abuse Chip -->
+                            <div class="reporting-chip" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 20px; flex:1; min-width:130px; display:flex; flex-direction:column; gap:10px; align-items:flex-start;">
+                                <div style="font-size:18px;">🫥</div>
+                                <div style="display:flex; flex-direction:column; gap:2px; text-align:left;">
+                                    <div style="color:#fff; font-weight:800; font-size:14px; line-height:1.2;">Abuse</div>
+                                    <div style="color:#fff; font-weight:700; font-size:14px; line-height:1.2;">الإساءة</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Reminder -->
-        <div style="background:rgba(27, 82, 206, 0.05); border:1px dashed var(--c-primary); border-radius:12px; padding:16px; margin-bottom:24px; text-align:center;">
-            <div style="color:#fff; font-size:14px; font-weight:700; margin-bottom:4px;">💡 Check "Match Rules" for details</div>
-            <div style="color:var(--c-primary); font-size:13px; font-weight:600; margin-bottom:8px;">شوف "قواعد الماتش" عشان تفهم أكتر</div>
-            <div style="color:var(--c-text-muted); font-size:12px; font-weight:600;">Fair play = better matches for everyone<br>لعب نظيف = ماتشات أحلى للكل</div>
+        <!-- Sticky Reminder -->
+        <div style="background:linear-gradient(135deg, rgba(27, 82, 206, 0.1), rgba(27, 82, 206, 0.05)); border:1px solid rgba(27, 82, 206, 0.2); border-radius:16px; padding:20px; margin-bottom:32px; text-align:center;">
+            <div style="color:#fff; font-size:15px; font-weight:800; margin-bottom:8px;">💡 Remember to check “Match Rules”</div>
+            <div style="color:var(--c-text-muted); font-size:13px; font-weight:500; line-height:1.5;">Check inside the app to understand how everything works.<br>Fair play = better matches for everyone!</div>
         </div>
 
-        <!-- Disclaimer -->
-        <div style="padding:0 10px; margin-bottom:32px;">
-            <p style="font-size:11px; color:var(--c-text-dim); line-height:1.5; margin-bottom:8px;">Padeladd is for organizing padel matches. We may handle reports and issue bans. Padeladd is not responsible for issues occurring outside the app. Players should use good judgment and care when interacting with others.</p>
-            <p style="font-size:11px; color:var(--c-text-dim); line-height:1.5; text-align:right; font-weight:500;">بادل أد لتنظيم الماتشات. ممكن ناخد إجراءات زي البلاغات والحظر. الأبليكيشن مش مسؤول عن أي مشاكل بتحصل بره البرنامج. اللعيبة لازم ياخدوا بالهم وهما بيتعاملوا مع بعض.</p>
+        <!-- Disclaimer (Compact Footer Style) -->
+        <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; margin-bottom:40px;">
+            <div style="font-size:11px; color:var(--c-text-dim); line-height:1.6; margin-bottom:12px; text-align:center; font-style:italic;">
+                Padeladd is for organizing matches. We handle reports and bans. Padeladd is not responsible for issues outside the app. Use good judgment.
+            </div>
+            <div style="font-size:11px; color:var(--c-text-dim); line-height:1.6; text-align:center; font-weight:500; opacity:0.7;">
+                بادل أد لتنظيم الماتشات. البرنامج مش مسؤول عن أي مشاكل بره الأبليكيشن. اللعيبة لازم ياخدوا بالهم وهما بيتعاملوا مع بعض.
+            </div>
         </div>
 
-        <!-- Action Button (Hidden if already have profile) -->
-        <div id="terms-agree-container" style="display:none;">
-            <button onclick="AuthController.agreeTerms()" class="btn btn-primary" style="width:100%; height:56px; font-size:16px; font-weight:800;">I AGREE & CONTINUE →</button>
-            <p style="text-align:center; color:var(--c-text-muted); font-size:12px; margin-top:12px; font-weight:600;">أنا موافق ومتابعة</p>
+        <!-- Action Button Container -->
+        <div id="terms-agree-container" style="display:none; position:sticky; bottom:20px; z-index:100; padding-top:20px;">
+            <div style="background:var(--c-bg); padding:10px; border-radius:24px; box-shadow:0 -20px 40px var(--c-bg);">
+                <div id="terms-agree-title" style="text-align:center; color:#fff; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-bottom:20px; opacity:0; transform:translateY(15px); transition:all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">Read Carefully? <span style="opacity:0.3; margin:0 8px; font-weight:300;">|</span> قريت كويس؟</div>
+                <button onclick="AuthController.agreeTerms()" class="btn btn-primary" style="width:100%; height:60px; font-size:18px; font-weight:900; border-radius:16px; box-shadow:0 10px 25px rgba(27, 82, 206, 0.4); border:none; display:flex; align-items:center; justify-content:center; gap:16px;">
+                    <span id="agree-btn-text" style="transition: opacity 0.2s;">AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق</span>
+                </button>
+            </div>
         </div>
 
     </div>
 </div>
+
+<style>
+.terms-card:hover {
+    background: rgba(255,255,255,0.04) !important;
+    transform: translateX(4px);
+    border-color: rgba(255,255,255,0.1) !important;
+}
+@media (min-width: 481px) {
+    #terms-page {
+        padding-bottom: 120px !important;
+    }
+}
+@media (max-width: 480px) {
+    .reporting-chips-container {
+        flex-wrap: nowrap !important;
+        gap: 8px !important;
+    }
+    .reporting-chip {
+        padding: 10px 12px !important;
+        min-width: 0 !important;
+    }
+    .reporting-chip div {
+        font-size: 11px !important;
+    }
+    .reporting-chip div:first-child {
+        font-size: 16px !important; /* emoji size */
+    }
+}
+</style>

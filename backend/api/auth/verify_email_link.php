@@ -62,7 +62,7 @@ try {
     $hasProfile = false;
     if ($u['is_email_verified'] && $u['is_phone_verified']) {
         $authToken = generateRandomString(40);
-        $pdo->prepare("UPDATE users SET auth_token = ? WHERE id = ?")->execute([$authToken, $u['id']]);
+        $pdo->prepare("INSERT INTO user_sessions (user_id, token) VALUES (?, ?)")->execute([$u['id'], $authToken]);
 
         // Check if profile exists
         $stmtProf = $pdo->prepare("SELECT id, level FROM user_profiles WHERE user_id = ?");

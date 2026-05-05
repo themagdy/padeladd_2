@@ -244,3 +244,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Onboarding Flow: Updated AuthController to strictly enforce the "Agree & Continue" step for new players.
 - Dashboard Footer: Added a permanent "terms of use" link to the dashboard for quick reference.
 - UI Consistency: Integrated the terms page into the unified back-bar navigation system.
+
+[AUTH_STABILITY_V1] - 2026-05-06 00:48:00 +0300
+- Authentication Stability: Resolved persistent "Unauthorized" alerts during the onboarding flow.
+- Database Normalization: Migrated auto-login token storage from legacy users.auth_token to the relational user_sessions table.
+- Verification Logic: Updated verify_otp.php, verify_email_link.php, and check_verification.php to ensure consistent session creation.
+- Mobile UI Polish: Optimized auth page containers to eliminate horizontal/vertical ghost scrolling and ensure 100dvh viewport stability on mobile.
+- Data Cleanup: Removed redundant/test user data to maintain database integrity.

@@ -32,10 +32,13 @@ const API = {
             
             // Handle unauthorized globally
             if (response.status === 401) {
-                Auth.clearAll();
-                // Avoid infinite redirect if already on login
-                if (!window.location.pathname.includes('/login')) {
-                    Router.navigate('/login');
+                const path = window.location.pathname;
+                // Don't auto-logout if we are in the middle of onboarding/verification
+                if (!path.includes('/verify') && !path.includes('/terms') && !path.includes('/profile/edit')) {
+                    Auth.clearAll();
+                    if (!path.includes('/login')) {
+                        Router.navigate('/login');
+                    }
                 }
             }
             

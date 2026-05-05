@@ -19,12 +19,16 @@ $phoneV = (int)$user['is_phone_verified'];
 $authToken = null;
 
 if ($emailV && $phoneV) {
-    // Already has token?
-    if (!empty($user['auth_token'])) {
-        $authToken = $user['auth_token'];
+    // Check if user already has an active session
+    $stmtSession = $pdo->prepare("SELECT token FROM user_sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 1");
+    $stmtSession->execute([$userId]);
+    $session = $stmtSession->fetch();
+    
+    if ($session) {
+        $authToken = $session['token'];
     } else {
         $authToken = generateRandomString(40);
-        $pdo->prepare("UPDATE users SET auth_token = ? WHERE id = ?")->execute([$authToken, $userId]);
+        $pdo->prepare("INSERT INTO user_sessions (user_id, token) VALUES (?, ?)")->execute([$userId, $authToken]);
     }
 }
 
