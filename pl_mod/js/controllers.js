@@ -55,7 +55,7 @@ window.AdminControllers = {
                         {
                             label: 'Players',
                             data: players,
-                            borderColor: '#F7941D',
+                            borderColor: '#ff8b00',
                             backgroundColor: 'rgba(247, 148, 29, 0.05)',
                             borderWidth: 2,
                             fill: true,

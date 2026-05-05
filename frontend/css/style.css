@@ -28,7 +28,7 @@
   --c-primary-glow: rgba(27, 82, 206, 0.3);
 
   /* Accents */
-  --c-orange: #F7941D;
+  --c-orange: #ff8b00;
   --c-green: #00CE00;
   --c-red: #F15A29;
   --c-gold: #F5C518;
@@ -36,7 +36,7 @@
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
   --g-card: linear-gradient(145deg, #1E2535 0%, #1A2030 100%);
-  --g-orange: linear-gradient(135deg, #F7941D 0%, #E07010 100%);
+  --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
 
   /* Typography */
   --font: 'Montserrat', sans-serif;

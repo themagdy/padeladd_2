@@ -21,7 +21,7 @@ We use a modern, dark-themed design system.
 - **Action Colors**:
   - Primary Button: `#1B52CE`
   - Secondary Button: `#293342`
-  - Accents: Orange (`#F7941D`), Green (`#00CE00`), Red (`#F15A29`)
+  - Accents: Orange (`#ff8b00`), Green (`#00CE00`), Red (`#F15A29`)
 - **Spacing**: Use a 4px/8px grid system for consistent margins and padding.
 
 ## API Standards
