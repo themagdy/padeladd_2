@@ -204,6 +204,9 @@ window.AdminControllers = {
                     <td style="text-transform:capitalize; font-size:13px; color:var(--c-text-muted);">${p.gender || '---'}</td>
                     <td>
                         <div style="font-weight:700; color:#fff;">${p.rank_points || 0} <small style="color:var(--c-text-muted)">pts</small></div>
+                        <div style="font-size:11px; color:${(p.points_this_week || 0) >= 0 ? 'var(--c-green)' : 'var(--c-red)'}; font-weight:700; margin-bottom:4px;">
+                            ${(p.points_this_week || 0) >= 0 ? '+' : ''}${p.points_this_week || 0} <small style="opacity:0.8">this week</small>
+                        </div>
                         <div style="font-size:11px; color:var(--c-orange); font-weight:800;">⚡ ${p.current_buffer || 0} <span style="opacity:0.6">(${p.buffer_matches_left || 0} left)</span></div>
                     </td>
                     <td>

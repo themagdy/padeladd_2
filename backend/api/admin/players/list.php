@@ -14,7 +14,14 @@ $sql = "
         u.id, u.first_name, u.last_name, u.email, u.mobile as phone, u.status as account_status,
         CONCAT(u.first_name, ' ', u.last_name) as full_name, 
         up.nickname, up.player_code, up.gender, up.profile_image_thumb,
-        ps.rank_points, ps.current_buffer, ps.buffer_matches_left
+        ps.rank_points, ps.current_buffer, ps.buffer_matches_left,
+        (SELECT COALESCE(SUM(mp.point_change), 0) 
+         FROM match_players mp 
+         JOIN matches m ON mp.match_id = m.id 
+         WHERE mp.user_id = u.id 
+           AND m.status = 'completed'
+           AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ) as points_this_week
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
     LEFT JOIN player_stats ps ON u.id = ps.user_id
