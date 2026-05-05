@@ -97,6 +97,26 @@ window.AdminApp = {
         } else {
             console.warn(`No controller found for page: ${page}`);
         }
+    },
+    
+    toast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `admin-toast ${type}`;
+        toast.innerHTML = `
+            <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
+            <span class="toast-msg">${message}</span>
+        `;
+        
+        container.appendChild(toast);
+
+        // Auto-remove
+        setTimeout(() => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 400);
+        }, 4000);
     }
 };
 
