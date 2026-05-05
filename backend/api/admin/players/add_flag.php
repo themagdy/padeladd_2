@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../helpers/db_helper.php';
+require_once __DIR__ . '/../../../core/db.php';
 require_once __DIR__ . '/../../../helpers/auth_helper.php';
 
 header('Content-Type: application/json');

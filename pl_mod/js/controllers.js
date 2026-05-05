@@ -1135,7 +1135,6 @@ window.AdminControllers = {
                         </span>
                     </td>
                     <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${f.reason}</td>
-                    <td style="font-size:12px; font-weight:600; color:#fff;">${f.admin_name}</td>
                     <td style="text-align:right; font-size:12px; color:var(--c-text-muted);">${new Date(f.created_at).toLocaleDateString()}</td>
                 </tr>
             `).join('');
