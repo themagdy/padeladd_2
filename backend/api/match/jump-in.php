@@ -90,17 +90,24 @@ try {
 
     // 3. Move to match_players
     foreach ($targetSlots as [$t, $s, $targetUid]) {
-        // Get user side preference
-        $sideStmt = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
-        $sideStmt->execute([$targetUid]);
-        $sideRow = $sideStmt->fetch();
-        $side = $sideRow ? $sideRow['playing_side'] : 'flexible';
+        // Get user side preference and stats
+        $stmt = $pdo->prepare("
+            SELECT up.playing_side, ps.rank_points, ps.current_buffer 
+            FROM user_profiles up 
+            LEFT JOIN player_stats ps ON up.user_id = ps.user_id 
+            WHERE up.user_id = ?
+        ");
+        $stmt->execute([$targetUid]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $side = $row ? $row['playing_side'] : 'flexible';
+        $rp   = (int)($row['rank_points'] ?? 0);
+        $bp   = (int)($row['current_buffer'] ?? 100);
 
         $ins = $pdo->prepare("
-            INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
-            VALUES (?, ?, ?, ?, ?, 'confirmed', ?)
+            INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side, rank_points_at_join, buffer_points_at_join)
+            VALUES (?, ?, ?, ?, ?, 'confirmed', ?, ?, ?)
         ");
-        $ins->execute([$match_id, $targetUid, $t, $s, ($isSolo ? 'solo' : 'team'), $side]);
+        $ins->execute([$match_id, $targetUid, $t, $s, ($isSolo ? 'solo' : 'team'), $side, $rp, $bp]);
     }
 
     // 4. Mark waitlist as joined

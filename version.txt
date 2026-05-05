@@ -198,3 +198,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Investigation Timeline: Overhauled the match investigator to pull from a permanent historical ledger (match_events), ensuring joins/withdrawals remain visible in perfect sequence.
 - Historical Logging: Implemented mandatory 'player_joined' event logging across create, solo-join, and team-approval API paths for absolute data integrity.
 - Investigator UX: Added click-to-sort headers (Player, Action, Time) and integrated real-time Chat monitoring with premium 💬 iconography.
+
+9ccf55a - 2026-05-05 15:45:50 +0300
+- Migration: Final refinements to the ENUM level system across helpers and scripts.
+
+[POINT_SNAPSHOTS] - 2026-05-05 19:13:00 +0300
+- Implemented Historical Point Snapshotting: Player rank and buffer points are now permanently recorded at the time of match entry (creation, solo join, and team approval).
+- Data Integrity: Modified all match-related entry logic to persist historical point data to the matches_players table, ensuring past match records remain unaffected by subsequent point changes.
+- API Enhancements: Updated match details and profile listing APIs to prioritize historical point snapshots over current player statistics for finalized matches.
+- Match UX: Integrated point snapshots into the match details view to provide an accurate historical record of player rankings at the time of the game.

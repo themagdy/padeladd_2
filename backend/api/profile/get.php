@@ -99,10 +99,11 @@ jsonResponse(true, 'Profile loaded.', [
         'highest_ranking'  => $stats['highest_ranking'],
         'points_this_week' => (int)$stats['points_this_week'],
         'win_rate'         => $winRate,
+        'current_buffer'   => (int)($stats['current_buffer'] ?? 0),
     ] : [
         'points' => 0, 'eligibility_pts' => 0, 'matches_played' => 0, 'matches_won' => 0,
         'matches_lost' => 0, 'ranking' => null, 'ranking_change' => null, 'highest_ranking' => null,
-        'points_this_week' => 0, 'win_rate' => 0
+        'points_this_week' => 0, 'win_rate' => 0, 'current_buffer' => 0
     ],
     'is_self' => ($viewingId === $user['id'])
 ]);

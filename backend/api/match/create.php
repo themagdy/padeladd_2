@@ -119,10 +119,10 @@ try {
 
     // Creator → team 1, slot 1
     $ins = $pdo->prepare("
-        INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side)
-        VALUES (?, ?, 1, 1, 'creator', 'confirmed', ?)
+        INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side, rank_points_at_join, buffer_points_at_join)
+        VALUES (?, ?, 1, 1, 'creator', 'confirmed', ?, ?, ?)
     ");
-    $ins->execute([$match_id, $uid, $creator_side]);
+    $ins->execute([$match_id, $uid, $creator_side, (int)($upRow['rank_points'] ?? 0), (int)($upRow['current_buffer'] ?? 100)]);
 
     // Ensure creator has a player_stats row (starting points = 100 for beginners)
     $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$uid]);
