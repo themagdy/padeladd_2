@@ -45,7 +45,7 @@ const Router = {
             if (e.state && e.state.ignoreRoute) return;
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
             const isDynamicBackBar = path.startsWith('/matches/M-') || 
                                      path.startsWith('/p/') || 
                                      (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -112,7 +112,7 @@ const Router = {
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
         const isDynamicBackBar = path.startsWith('/matches/M-') || 
                                  path.startsWith('/p/') || 
                                  (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -193,10 +193,19 @@ const Router = {
 
         const isPublicVanity = path.startsWith('/p/') || path.startsWith('/profile/view/');
 
-        // Force profile completion if authenticated but no profile OR no level
-        if (Auth.isAuthenticated() && (!Auth.hasProfile() || !Auth.hasLevel()) && path !== '/profile/edit' && path !== '/verify' && !isPublicVanity) {
-             this.navigate('/profile/edit');
-             return;
+        // Force profile completion sequence: Terms -> Profile Edit
+        if (Auth.isAuthenticated() && (!Auth.hasProfile() || !Auth.hasLevel()) && path !== '/verify' && !isPublicVanity) {
+             const hasAgreed = sessionStorage.getItem('padeladd_agreed_terms') === 'true';
+             
+             if (!hasAgreed && path !== '/terms') {
+                 this.navigate('/terms');
+                 return;
+             }
+             
+             if (hasAgreed && path !== '/profile/edit' && path !== '/terms') {
+                 this.navigate('/profile/edit');
+                 return;
+             }
         }
 
         this.updateNavVisibility(path);
@@ -277,11 +286,11 @@ const Router = {
         if (!nPath.startsWith('/')) nPath = '/' + nPath;
         if (nPath !== '/' && nPath.endsWith('/')) nPath = nPath.slice(0, -1);
 
-        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/index.html'];
-        const isAuthPage = authRoutes.includes(nPath) || nPath === '/';
+        const authRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password'];
+        const isAuthPage = authRoutes.includes(nPath) || nPath === '/' || nPath === '/index.html';
 
         // Pages that need the unified back bar
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
         const isDynamicBackBar = nPath.startsWith('/matches/M-') || 
                                  nPath.startsWith('/p/') || 
                                  (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');

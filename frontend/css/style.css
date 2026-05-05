@@ -39,7 +39,7 @@
   --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
 
   /* Typography */
-  --font: 'Montserrat', sans-serif;
+  --font: 'Montserrat', 'Cairo', sans-serif;
 
   /* Spacing */
   --space-xs: 4px;
@@ -222,6 +222,12 @@ ol {
   padding-bottom: 50px;
 }
 
+@media (max-width: 480px) {
+  .page.active {
+    padding-bottom: 20px;
+  }
+}
+
 /* Desktop split auth must be flex when active */
 .desktop-split-auth.active {
   display: flex !important;
@@ -234,6 +240,11 @@ ol {
 
 .has-fixed-bar #app-content {
   padding-top: 74px !important;
+}
+
+/* Adjust auth page height when a top bar is present to prevent scrolling */
+.has-fixed-bar .auth-page {
+  min-height: calc(100dvh - 74px) !important;
 }
 
 /* Unified Section Labels (uppercase, letter-spaced) */
@@ -471,6 +482,12 @@ ol {
    ------------------------------------------------------- */
 form {
   margin-bottom: 50px;
+}
+
+@media (max-width: 480px) {
+  form {
+    margin-bottom: 20px;
+  }
 }
 
 .form-group {
@@ -1378,13 +1395,20 @@ form {
    ------------------------------------------------------- */
 .auth-page {
   min-height: 100vh;
+  display: flex;
   flex-direction: column;
-  padding: var(--space-lg) var(--space-md);
-  padding-top: env(safe-area-inset-top, var(--space-lg));
+  padding: 0; /* Remove padding that causes scrolling */
 }
 
-.auth-page.active {
-  display: flex;
+@media (max-width: 480px) {
+  .auth-page {
+    min-height: 100dvh;
+  }
+}
+
+.auth-page.page.active {
+  display: flex !important;
+  padding-bottom: 0 !important;
 }
 
 .auth-logo {

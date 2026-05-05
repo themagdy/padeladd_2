@@ -132,7 +132,7 @@ const AuthController = {
                 if (res.data.has_profile) {
                     Router.navigate('/dashboard');
                 } else {
-                    Router.navigate('/profile/edit');
+                    Router.navigate('/terms');
                 }
             } else {
                 if (res && res.data && res.data.needs_verification) {
@@ -149,7 +149,7 @@ const AuthController = {
     initRegister: function () {
         if (Auth.isAuthenticated()) {
             if (Auth.hasProfile() && Auth.hasLevel()) Router.navigate('/dashboard');
-            else Router.navigate('/profile/edit');
+            else Router.navigate('/terms');
             return;
         }
         const form = document.getElementById('register-form');
@@ -359,12 +359,39 @@ const AuthController = {
     },
 
     initTerms: function() {
+        this._agreedOnce = false; // Reset confirmation state
+        const btnText = document.getElementById('agree-btn-text');
+        if (btnText) btnText.innerHTML = 'AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق';
+        
         const agreeContainer = document.getElementById('terms-agree-container');
         if (agreeContainer && !Auth.hasProfile()) {
             agreeContainer.style.display = 'block';
         }
     },
     agreeTerms: function() {
+        const title = document.getElementById('terms-agree-title');
+        const btnText = document.getElementById('agree-btn-text');
+        
+        if (!this._agreedOnce) {
+            this._agreedOnce = true;
+            
+            if (title) {
+                // Animation: Bounce up and fade in
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
+            }
+
+            if (btnText) {
+                btnText.style.opacity = '0';
+                setTimeout(() => {
+                    btnText.innerHTML = 'YES <span style="opacity:0.4; font-weight:300;">|</span> أكيد';
+                    btnText.style.opacity = '1';
+                }, 200);
+            }
+            return;
+        }
+
+        sessionStorage.setItem('padeladd_agreed_terms', 'true');
         Router.navigate('/profile/edit');
     },
 
