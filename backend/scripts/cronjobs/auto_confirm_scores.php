@@ -10,10 +10,10 @@
  *   * /15 * * * * /usr/bin/php /Applications/MAMP/htdocs/padeladd4/backend/scripts/auto_confirm_scores.php >> /tmp/padeladd_cron.log 2>&1
  */
 
-require_once __DIR__ . '/../core/db.php';
-require_once __DIR__ . '/../helpers/ranking_helper.php';
-require_once __DIR__ . '/../helpers/notification_helper.php';
-require_once __DIR__ . '/../helpers/response.php';
+require_once __DIR__ . '/../../core/db.php';
+require_once __DIR__ . '/../../helpers/ranking_helper.php';
+require_once __DIR__ . '/../../helpers/notification_helper.php';
+require_once __DIR__ . '/../../helpers/response.php';
 
 $pdo = getDB();
 

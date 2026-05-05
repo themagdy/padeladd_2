@@ -4,7 +4,7 @@
  * Should be run once a week via cron (e.g., Sunday night).
  */
 
-require_once __DIR__ . '/../core/db.php';
+require_once __DIR__ . '/../../core/db.php';
 
 try {
     $pdo = getDB();
