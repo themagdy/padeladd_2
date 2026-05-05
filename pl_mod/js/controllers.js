@@ -1136,8 +1136,37 @@ window.AdminControllers = {
                     </td>
                     <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${f.reason}</td>
                     <td style="text-align:right; font-size:12px; color:var(--c-text-muted);">${new Date(f.created_at).toLocaleDateString()}</td>
+                    <td style="text-align:right;">
+                        <button onclick="AdminControllers.flags.deleteFlag(${f.id})" style="background:none; border:none; color:var(--c-red); cursor:pointer; opacity:0.4; transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                    </td>
                 </tr>
             `).join('');
+        },
+        async deleteFlag(flagId) {
+            if (!confirm('Are you sure you want to delete this flag log?')) return;
+
+            try {
+                const response = await fetch('../backend/api/admin/players/delete_flag.php', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: JSON.stringify({ flag_id: flagId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    AdminApp.toast('Flag deleted successfully!');
+                    await this.fetchFlags();
+                } else {
+                    AdminApp.toast(data.message, 'error');
+                }
+            } catch (err) {
+                console.error('Delete Flag Error:', err);
+                AdminApp.toast('An error occurred.', 'error');
+            }
         },
         async addFlag(e) {
             e.preventDefault();
