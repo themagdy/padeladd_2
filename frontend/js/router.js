@@ -125,12 +125,12 @@ const Router = {
         // 2. If no back bar (main tabs) OR depth is 0, determine fallback
         if (path === '/dashboard' || isAuthPage) {
             // If on dashboard or login, "close" the app
-            if (window.confirm("Do you want to exit Padeladd?")) {
-                if (navigator.app && navigator.app.exitApp) {
-                    navigator.app.exitApp();
-                } else {
-                    window.close();
-                }
+            if (navigator.app && navigator.app.exitApp) {
+                navigator.app.exitApp();
+            } else if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.exitApp();
+            } else {
+                window.close();
             }
         } else {
             // If on Play/Ranking/etc without back bar, go to Dashboard
