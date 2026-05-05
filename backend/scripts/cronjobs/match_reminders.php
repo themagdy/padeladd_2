@@ -38,8 +38,8 @@ try {
     $reminders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($reminders)) {
-        // No reminders to send in this window
-        exit;
+        echo "No reminders to send in this time window.";
+        return;
     }
 
     $count = 0;
