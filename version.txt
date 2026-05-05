@@ -251,3 +251,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Verification Logic: Updated verify_otp.php, verify_email_link.php, and check_verification.php to ensure consistent session creation.
 - Mobile UI Polish: Optimized auth page containers to eliminate horizontal/vertical ghost scrolling and ensure 100dvh viewport stability on mobile.
 - Data Cleanup: Removed redundant/test user data to maintain database integrity.
+
+[AUTH_SECURITY_V1] - 2026-05-06 00:55:00 +0300
+- Authentication Security: Implemented protective registration logic that prevents partially verified accounts (email or phone) from being deleted by new registration attempts.
+- Data Integrity: Refined account cleanup during verification to only target accounts with zero verified identifiers, ensuring player data is never wiped out by accidental clicks on orphan verification links.
+- Logic Synchronization: Updated register.php, verify_otp.php, and verify_email_link.php with a unified "protect-on-first-verification" policy.

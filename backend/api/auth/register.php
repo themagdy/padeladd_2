@@ -26,13 +26,13 @@ $stmt->execute([$email, $mobile]);
 $existingUsers = $stmt->fetchAll();
 
 foreach ($existingUsers as $existing) {
-    // A record only "claims" the email/mobile if it is FULLY verified (both flags)
-    if ((int)$existing['is_email_verified'] === 1 && (int)$existing['is_phone_verified'] === 1) {
+    // A record "claims" the email/mobile if it is EITHER email or phone verified
+    if ((int)$existing['is_email_verified'] === 1 || (int)$existing['is_phone_verified'] === 1) {
         if ($existing['email'] === $email) {
-            jsonResponse(false, 'Email is already registered by a verified user.');
+            jsonResponse(false, 'Email is already registered and verified.');
         }
         if ($existing['mobile'] === $mobile) {
-            jsonResponse(false, 'Mobile number is already registered by a verified user.');
+            jsonResponse(false, 'Mobile number is already registered and verified.');
         }
     }
 }
