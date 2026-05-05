@@ -1,18 +1,58 @@
 <?php
-/**
- * notification_helper.php
- * Phase 6: Central helper for creating notifications.
- *
- * Usage:
- *   createNotification($pdo, $user_id, 'match_joined', $match_id, "{$name} joined your match");
- */
+require_once __DIR__ . '/fcm_helper.php';
 
 function createNotification(PDO $pdo, int $user_id, string $type, ?int $reference_id, string $message_text, ?int $sender_id = null): void {
     try {
         $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, reference_id, sender_id, message_text) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$user_id, $type, $reference_id, $sender_id, $message_text]);
+
+        // Trigger Push Notification via FCM
+        $title = "Padeladd";
+        
+        // Customize title based on type
+        if ($type === 'new_message') $title = "New Message";
+        elseif (str_contains($type, 'match')) $title = "Match Update";
+        elseif (str_contains($type, 'score')) $title = "Score Update";
+
+        FCMHelper::send($user_id, $title, $message_text, [
+            'type' => $type,
+            'reference_id' => (string)$reference_id,
+            'url' => getNotificationUrl($type, $reference_id)
+        ]);
+
     } catch (Exception $e) {
         error_log("createNotification failed: " . $e->getMessage());
+    }
+}
+
+/**
+ * Maps notification types to frontend routes for deep linking.
+ */
+function getNotificationUrl(string $type, ?int $id): string {
+    if (!$id) return "/dashboard";
+    
+    switch ($type) {
+        case 'match_joined':
+        case 'match_confirmed':
+        case 'match_cancelled':
+        case 'score_submitted':
+        case 'score_disputed':
+        case 'score_approved':
+        case 'availability_alert':
+        case 'late_withdrawal':
+        case 'match_on_hold':
+            return "/matches/details?id={$id}";
+        
+        case 'new_message':
+            return "/chat?match_id={$id}";
+            
+        case 'friend_request':
+        case 'phone_request':
+        case 'profile_report':
+            return "/profile/view?target_id={$id}";
+            
+        default:
+            return "/dashboard";
     }
 }
 
