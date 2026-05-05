@@ -237,7 +237,7 @@ const AuthController = {
                     if (Auth.hasProfile() && Auth.hasLevel()) {
                         Router.navigate('/dashboard');
                     } else {
-                        Router.navigate('/profile/edit');
+                        Router.navigate('/terms');
                     }
                 }, 1500);
             }
@@ -286,7 +286,7 @@ const AuthController = {
         if (continueBtn) {
             continueBtn.addEventListener('click', () => {
                 if (!continueBtn.disabled) {
-                    Router.navigate('/profile/edit');
+                    Router.navigate('/terms');
                 }
             });
         }
@@ -356,6 +356,16 @@ const AuthController = {
             Toast.show(res ? res.message : 'Verification link expired or invalid.');
             Router.navigate('/login');
         }
+    },
+
+    initTerms: function() {
+        const agreeContainer = document.getElementById('terms-agree-container');
+        if (agreeContainer && !Auth.hasProfile()) {
+            agreeContainer.style.display = 'block';
+        }
+    },
+    agreeTerms: function() {
+        Router.navigate('/profile/edit');
     },
 
     initForgotPassword: function () {
