@@ -61,22 +61,36 @@ function generateUniquePlayerCode($pdo) {
     $letters = 'ABCDEFGHJKMNPQRTUVWXYZ'; // Excludes I, L, O, S
     $digits  = '2346789';              // Excludes 0, 1, 5
     
-    $checkCode = $pdo->prepare("SELECT id FROM user_profiles WHERE player_code = ?");
-    $attempts    = 0;
-    $maxAttempts = 1000;
-
-    do {
-        $letter = $letters[mt_rand(0, strlen($letters) - 1)];
-        $code   = strtoupper($letter);
-        for ($i = 0; $i < 2; $i++) {
-            $code .= $digits[mt_rand(0, strlen($digits) - 1)];
-        }
-
-        $checkCode->execute([$code]);
-        if ($checkCode->rowCount() == 0) return $code;
+    $numDigits = 2; // Start with 2 digits (e.g., M23)
+    
+    while ($numDigits < 10) { // Safety limit of 10 digits
+        $totalPossible = strlen($letters) * pow(strlen($digits), $numDigits);
         
-        $attempts++;
-    } while($attempts < $maxAttempts);
+        // Count how many codes of this specific length (1 letter + N digits) exist
+        $stmtCount = $pdo->prepare("SELECT COUNT(*) FROM user_profiles WHERE LENGTH(player_code) = ?");
+        $stmtCount->execute([$numDigits + 1]);
+        $usedCount = (int)$stmtCount->fetchColumn();
+        
+        if ($usedCount < $totalPossible) {
+            // There is still room in this "digit pool"
+            $checkCode = $pdo->prepare("SELECT id FROM user_profiles WHERE player_code = ?");
+            
+            // Try to find a unique random code
+            for ($attempt = 0; $attempt < 200; $attempt++) {
+                $letter = $letters[mt_rand(0, strlen($letters) - 1)];
+                $code   = strtoupper($letter);
+                for ($i = 0; $i < $numDigits; $i++) {
+                    $code .= $digits[mt_rand(0, strlen($digits) - 1)];
+                }
+                
+                $checkCode->execute([$code]);
+                if ($checkCode->rowCount() == 0) return $code;
+            }
+        }
+        
+        // If this pool is full (or we couldn't find a random gap), move to the next size
+        $numDigits++;
+    }
 
     return null;
 }
