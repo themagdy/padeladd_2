@@ -207,4 +207,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Data Integrity: Modified all match-related entry logic to persist historical point data to the matches_players table, ensuring past match records remain unaffected by subsequent point changes.
 - API Enhancements: Updated match details and profile listing APIs to prioritize historical point snapshots over current player statistics for finalized matches.
 - Match UX: Integrated point snapshots into the match details view to provide an accurate historical record of player rankings at the time of the game.
-- Match UX: Hidden the waiting list section for past and completed matches to declutter match history.
+- Match UX: Hidden the waiting list section for past and cancelled matches to streamline the match details view.
