@@ -844,7 +844,11 @@ window.AdminControllers = {
         async runTask(task) {
             const consoleEl = document.getElementById('console-output');
             if (!consoleEl) return;
-            consoleEl.innerHTML += `<br>> Running ${task}...`;
+
+            const now = new Date().toLocaleTimeString([], { hour12: false });
+            consoleEl.innerHTML += `<div class="log-entry task-header">⚡ [${now}] Running ${task}...</div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+
             const token = localStorage.getItem('admin_token');
             try {
                 const res = await fetch(`../backend/api/admin/system/cron_manual.php?admin_token=${token}`, {
@@ -852,13 +856,25 @@ window.AdminControllers = {
                     body: JSON.stringify({ task: task })
                 });
                 const data = await res.json();
+                
                 if (data.success) {
-                    consoleEl.innerHTML += `<br><span style="color:#fff">${data.data.output || 'Done (No output)'}</span>`;
-                    consoleEl.innerHTML += `<br>> Task ${task} completed successfully.`;
+                    if (data.data.output) {
+                        const lines = data.data.output.split('\n');
+                        lines.forEach(line => {
+                            if (line.trim()) {
+                                consoleEl.innerHTML += `<div class="log-entry">i ${line}</div>`;
+                            }
+                        });
+                    } else {
+                        consoleEl.innerHTML += `<div class="log-entry" style="opacity:0.6">i Done (No output)</div>`;
+                    }
+                    consoleEl.innerHTML += `<div class="log-entry task-success">✅ Task ${task} completed successfully.</div>`;
                 } else {
-                    consoleEl.innerHTML += `<br><span style="color:var(--c-red)">Error: ${data.message}</span>`;
+                    consoleEl.innerHTML += `<div class="log-entry task-error">❌ Error: ${data.message}</div>`;
                 }
-            } catch (e) { consoleEl.innerHTML += `<br><span style="color:var(--c-red)">Network error.</span>`; }
+            } catch (e) { 
+                consoleEl.innerHTML += `<div class="log-entry task-error">❌ Network error. Check server logs.</div>`; 
+            }
             consoleEl.scrollTop = consoleEl.scrollHeight;
         }
     },
