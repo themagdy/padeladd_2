@@ -281,7 +281,7 @@ CREATE TABLE `user_profiles` (
   `player_code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `level` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `level` enum('beginner','initiation_intermediate','intermediate','intermediate_high','advanced','competition','professional') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `player_code` (`player_code`),
   KEY `user_id` (`user_id`),
