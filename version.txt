@@ -215,3 +215,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Mobile Logic: Integrated @capacitor/push-notifications with deep-linking support for matches, chats, and profiles.
 - Infrastructure: Implemented device token lifecycle management (registration, storage, and upsert on login).
 - Global Automation: Linked push notifications to the existing in-app notification engine for real-time alerts across all match and chat events.
+
+[MATCH_REMINDERS_V1] - 2026-05-05 21:15:00 +0300
+- Match Reminders: Implemented an automated reminder system to notify players 2 hours before their scheduled games.
+- Scripting: Created backend/scripts/match_reminders.php for scheduled cronjob execution.
+- Data Persistence: Added reminder_sent tracking to the match_players table to ensure reliable, single-delivery notifications.
