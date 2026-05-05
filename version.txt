@@ -268,3 +268,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Management Tools: Enabled Hide/Unhide actions and a full Edit modal for modifying venue names and Google Maps links.
 - Backend APIs: Created list.php and update.php endpoints for robust venue management.
 - Schema Update: Added is_hidden column to venues table.
+
+[FONTS_LOCAL_V1] - 2026-05-06 01:27:00 +0300
+- Self-Hosted Typography: Migrated Montserrat and Cairo fonts from Google Fonts CDN to local project hosting.
+- Performance & Offline: Reduced external DNS lookups and ensured 100% font availability in offline/no-connection scenarios.
+- CSS Restructuring: Created fonts.css for local font-face definitions and updated main style.css to import local assets.
