@@ -23,10 +23,11 @@ try {
             mp.user_id,
             mp.match_id,
             m.match_datetime,
-            m.venue_name,
+            COALESCE(v.name, 'the venue') as venue_name,
             m.court_name
         FROM match_players mp
         JOIN matches m ON mp.match_id = m.id
+        LEFT JOIN venues v ON m.venue_id = v.id
         WHERE mp.status = 'confirmed'
           AND mp.reminder_sent = 0
           AND m.status IN ('open', 'full')
