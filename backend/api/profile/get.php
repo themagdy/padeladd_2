@@ -65,6 +65,18 @@ if ($profile && $stats) {
     if ($stats['previous_ranking'] && $currentRanking) {
         $rankingChange = $stats['previous_ranking'] - $currentRanking;
     }
+
+    // Calculate rolling 7-day points
+    $rollingStmt = $pdo->prepare("
+        SELECT COALESCE(SUM(mp.point_change), 0)
+        FROM match_players mp
+        JOIN matches m ON mp.match_id = m.id
+        WHERE mp.user_id = ? 
+          AND m.status = 'completed'
+          AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    ");
+    $rollingStmt->execute([$viewingId]);
+    $pointsThisWeek = (int)$rollingStmt->fetchColumn();
 }
 
 jsonResponse(true, 'Profile loaded.', [
@@ -97,7 +109,7 @@ jsonResponse(true, 'Profile loaded.', [
         'ranking'          => $currentRanking,
         'ranking_change'   => $rankingChange,
         'highest_ranking'  => $stats['highest_ranking'],
-        'points_this_week' => (int)$stats['points_this_week'],
+        'points_this_week' => $pointsThisWeek ?? 0,
         'win_rate'         => $winRate,
         'current_buffer'   => (int)($stats['current_buffer'] ?? 0),
     ] : [
