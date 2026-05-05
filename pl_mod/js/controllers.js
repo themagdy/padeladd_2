@@ -454,13 +454,35 @@ window.AdminControllers = {
                         <div class="card" style="padding:0; overflow:hidden;">
                             <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); font-weight:800; color:#fff; font-size:12px; text-transform:uppercase;">Team 1</div>
                             <div style="padding:12px 0;">
-                                ${team1.length ? team1.map(p => `<div style="display:flex; justify-content:space-between; padding:8px 24px;"><span>${p.nickname || 'Unknown'} <small style="opacity:0.6">(${p.player_code || '---'})</small></span> <b style="color:var(--c-primary)">${p.rank_points || 0} pts</b></div>`).join('') : '<div style="padding:16px 24px; color:var(--c-text-muted)">No players.</div>'}
+                                ${team1.length ? team1.map(p => `
+                                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 24px;">
+                                        <span>${p.nickname || 'Unknown'} <small style="opacity:0.6">(${p.player_code || '---'})</small></span> 
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <b style="color:var(--c-primary)">${p.rank_points || 0} pts</b>
+                                            ${m.status === 'open' || m.status === 'full' ? `
+                                                <button onclick="AdminControllers.matches.withdrawPlayer(${m.id}, ${p.user_id}, '${p.nickname}')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:4px 8px; font-size:10px; font-weight:700;">
+                                                    Withdraw
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>`).join('') : '<div style="padding:16px 24px; color:var(--c-text-muted)">No players.</div>'}
                             </div>
                         </div>
                         <div class="card" style="padding:0; overflow:hidden;">
                             <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); font-weight:800; color:#fff; font-size:12px; text-transform:uppercase;">Team 2</div>
                             <div style="padding:12px 0;">
-                                ${team2.length ? team2.map(p => `<div style="display:flex; justify-content:space-between; padding:8px 24px;"><span>${p.nickname || 'Unknown'} <small style="opacity:0.6">(${p.player_code || '---'})</small></span> <b style="color:var(--c-primary)">${p.rank_points || 0} pts</b></div>`).join('') : '<div style="padding:16px 24px; color:var(--c-text-muted)">No players.</div>'}
+                                ${team2.length ? team2.map(p => `
+                                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 24px;">
+                                        <span>${p.nickname || 'Unknown'} <small style="opacity:0.6">(${p.player_code || '---'})</small></span> 
+                                        <div style="display:flex; align-items:center; gap:12px;">
+                                            <b style="color:var(--c-primary)">${p.rank_points || 0} pts</b>
+                                            ${m.status === 'open' || m.status === 'full' ? `
+                                                <button onclick="AdminControllers.matches.withdrawPlayer(${m.id}, ${p.user_id}, '${p.nickname}')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:4px 8px; font-size:10px; font-weight:700;">
+                                                    Withdraw
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </div>`).join('') : '<div style="padding:16px 24px; color:var(--c-text-muted)">No players.</div>'}
                             </div>
                         </div>
                     </div>
@@ -594,6 +616,27 @@ window.AdminControllers = {
                     this.renderLogsTable();
                 }
             } catch (e) { console.error('Moderate chat error:', e); }
+        },
+        async withdrawPlayer(matchId, userId, nickname) {
+            if (!confirm(`Are you sure you want to WITHDRAW ${nickname} from this match?`)) return;
+            
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/matches/withdraw_player.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ match_id: matchId, user_id: userId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('Player withdrawn successfully.');
+                    this.investigate(); // Refresh the view
+                } else {
+                    alert(data.message || 'Withdrawal failed.');
+                }
+            } catch (e) { 
+                console.error('Withdraw player error:', e); 
+                alert('An error occurred.');
+            }
         }
     },
 
