@@ -806,7 +806,14 @@ window.AdminControllers = {
                 // Fetch Requests
                 const resReq = await fetch(`../backend/api/admin/venues/requests.php?admin_token=${token}`);
                 const dataReq = await resReq.json();
-                if (dataReq.success) this.allRequests = dataReq.data.requests;
+                if (dataReq.success) {
+                    this.allRequests = dataReq.data.requests;
+                    const countEl = document.getElementById('count-venue-requests');
+                    if (countEl) {
+                        countEl.innerText = this.allRequests.length;
+                        countEl.style.display = this.allRequests.length > 0 ? 'inline-flex' : 'none';
+                    }
+                }
 
                 // Fetch All Venues
                 const resAll = await fetch(`../backend/api/admin/venues/list.php?admin_token=${token}`);
