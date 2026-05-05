@@ -21,7 +21,7 @@ const LEVEL_POINTS = [
  * Starting points for a given level string.
  */
 function getStartingPoints(string $level): int {
-    $key = strtolower(str_replace(' ', '_', trim($level)));
+    $key = trim($level);
     return LEVEL_POINTS[$key] ?? 100;
 }
 
