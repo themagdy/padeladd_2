@@ -10,11 +10,18 @@
                 </button>
             </div>
 
-            <label class="switch-container">
-                <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Archived</span>
-                <input type="checkbox" id="show-archived-reports" onchange="AdminControllers.reports.toggleArchived(this.checked)">
-                <span class="switch-slider"></span>
-            </label>
+            <div style="display:flex; align-items:center; gap:24px;">
+                <div class="search-wrapper">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4; margin-right:8px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="reports-search" placeholder="Search reports..." oninput="AdminControllers.reports.setSearch(this.value)" style="background:none; border:none; color:#fff; font-size:13px; font-weight:600; width:180px; outline:none;">
+                </div>
+
+                <label class="switch-container">
+                    <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Archived</span>
+                    <input type="checkbox" id="show-archived-reports" onchange="AdminControllers.reports.toggleArchived(this.checked)">
+                    <span class="switch-slider"></span>
+                </label>
+            </div>
         </div>
         
         <div id="reports-container" style="min-height:400px;">
@@ -65,5 +72,18 @@
         color: #fff;
         opacity: 1;
         border-color: rgba(255,255,255,0.1);
+    }
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        padding: 6px 14px;
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .search-wrapper:focus-within {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.15);
     }
 </style>
