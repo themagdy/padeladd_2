@@ -77,10 +77,10 @@ function generateUniquePlayerCode($pdo) {
             
             // Try to find a unique random code
             for ($attempt = 0; $attempt < 200; $attempt++) {
-                $letter = $letters[mt_rand(0, strlen($letters) - 1)];
+                $letter = $letters[random_int(0, strlen($letters) - 1)];
                 $code   = strtoupper($letter);
                 for ($i = 0; $i < $numDigits; $i++) {
-                    $code .= $digits[mt_rand(0, strlen($digits) - 1)];
+                    $code .= $digits[random_int(0, strlen($digits) - 1)];
                 }
                 
                 $checkCode->execute([$code]);

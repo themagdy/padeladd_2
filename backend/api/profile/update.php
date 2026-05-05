@@ -52,13 +52,31 @@ if ($hasProfile) {
     ]);
 } else {
     // Insert new profile
-    $playerCode = generateUniquePlayerCode($pdo);
-    if (!$playerCode) {
-        jsonResponse(false, 'Unable to generate unique player code.');
-    }
+    // Use a small retry loop in case of a rare race condition (duplicate player_code)
+    $maxRetries = 3;
+    $playerCode = null;
+    while ($maxRetries > 0) {
+        $playerCode = generateUniquePlayerCode($pdo);
+        if (!$playerCode) {
+            jsonResponse(false, 'Unable to generate unique player code.');
+        }
 
-    $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_side, nickname, location, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $location, $bio, $playerCode]);
+        try {
+            $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_side, nickname, location, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $location, $bio, $playerCode]);
+            break; // Success
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') { // Duplicate entry
+                $maxRetries--;
+                continue;
+            }
+            throw $e;
+        }
+    }
+    
+    if ($maxRetries <= 0) {
+        jsonResponse(false, 'Failed to generate a unique code after multiple attempts.');
+    }
     
     // Give them their base points so they appear on leaderboards
     $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$user['id']]);
