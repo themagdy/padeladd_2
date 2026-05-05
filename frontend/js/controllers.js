@@ -2795,8 +2795,11 @@ const MatchesController = {
         const wlList = document.getElementById('mv-waiting-list');
         const activeWl = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
 
+        const isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
+        const isFinished = isPast || match.status === 'completed';
         const isWaitlisted = my_waitlist_entry || my_pending_request;
-        if ((is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
+
+        if (!isFinished && (is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
             wlSection.style.display = 'block';
             wlList.innerHTML = activeWl.map(w => {
                 const isSolo = !w.partner_id;
