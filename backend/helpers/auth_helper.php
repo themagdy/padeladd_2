@@ -68,7 +68,7 @@ function generateUniquePlayerCode($pdo) {
     do {
         $letter = $letters[mt_rand(0, strlen($letters) - 1)];
         $code   = strtoupper($letter);
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $code .= $digits[mt_rand(0, strlen($digits) - 1)];
         }
 

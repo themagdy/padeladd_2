@@ -12,8 +12,8 @@
    ------------------------------------------------------- */
 :root {
   /* Colors */
-  --c-bg: #0b0e16; /* old: #11161E */
-  --c-nav-bg: #101729; /* old: #171C26 */
+  --c-bg: #11161E;
+  --c-nav-bg: #171C26;
   --c-bg-card: #1E2535;
   --c-bg-input: #212A3A;
   --c-bg-secondary: #293342;
@@ -2324,7 +2324,7 @@ form {
   left: 0;
   right: 0;
   height: 74px;
-  background: rgba(16, 23, 41, 0.95); /* old: rgba(23, 28, 38, 0.95) */
+  background: rgba(23, 28, 38, 0.95);
   /* Semi-transparent app background */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
