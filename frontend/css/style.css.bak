@@ -10,23 +10,22 @@
 /* -------------------------------------------------------
    [1] DESIGN TOKENS
    ------------------------------------------------------- */
-
 :root {
-  /* LIGHT THEME (DEFAULT - DAY) */
-  --c-bg: #F8FAFC;
-  --c-nav-bg: #FFFFFF;
-  --c-bg-card: #FFFFFF;
-  --c-bg-input: #F1F5F9;
-  --c-bg-secondary: #E2E8F0;
-  --c-border: #CBD5E1;
-  --c-text: #0F172A;
-  --c-text-muted: #64748B;
-  --c-text-dim: #94A3B8;
+  /* Colors */
+  --c-bg: #11161E;
+  --c-nav-bg: #171C26;
+  --c-bg-card: #1E2535;
+  --c-bg-input: #212A3A;
+  --c-bg-secondary: #293342;
+  --c-border: #3B475B;
+  --c-text: #FFFFFF;
+  --c-text-muted: #8B9BB4;
+  --c-text-dim: #4E5F77;
 
-  /* Brand (Consistent) */
+  /* Brand */
   --c-primary: #1B52CE;
   --c-primary-hover: #1A44AA;
-  --c-primary-glow: rgba(27, 82, 206, 0.2);
+  --c-primary-glow: rgba(27, 82, 206, 0.3);
 
   /* Accents */
   --c-orange: #ff8b00;
@@ -34,9 +33,9 @@
   --c-red: #F15A29;
   --c-gold: #F5C518;
 
-  /* Gradients (Light-specific) */
+  /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
-  --g-card: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%);
+  --g-card: linear-gradient(145deg, #1E2535 0%, #1A2030 100%);
   --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
 
   /* Typography */
@@ -59,10 +58,10 @@
   --r-xl: 24px;
   --r-full: 9999px;
 
-  /* Shadows (Light-specific) */
-  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
-  --shadow-btn: 0 4px 16px rgba(27, 82, 206, 0.3);
-  --shadow-glow: 0 0 20px rgba(27, 82, 206, 0.15);
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-btn: 0 4px 16px rgba(27, 82, 206, 0.4);
+  --shadow-glow: 0 0 20px rgba(27, 82, 206, 0.25);
 
   /* Transitions */
   --t-fast: 150ms ease;
@@ -75,29 +74,6 @@
 
   /* Animations */
   --anim-spin: spin 1s linear infinite;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* DARK THEME (SYSTEM - NIGHT) */
-    --c-bg: #11161E;
-    --c-nav-bg: #171C26;
-    --c-bg-card: #1E2535;
-    --c-bg-input: #212A3A;
-    --c-bg-secondary: #293342;
-    --c-border: #3B475B;
-    --c-text: #FFFFFF;
-    --c-text-muted: #8B9BB4;
-    --c-text-dim: #4E5F77;
-
-    /* Shadows (Dark-specific) */
-    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-    --shadow-btn: 0 4px 16px rgba(27, 82, 206, 0.4);
-    --shadow-glow: 0 0 20px rgba(27, 82, 206, 0.25);
-
-    /* Gradients (Dark-specific) */
-    --g-card: linear-gradient(145deg, #1E2535 0%, #1A2030 100%);
-  }
 }
 
 @keyframes spin {
