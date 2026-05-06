@@ -660,7 +660,10 @@ const DashboardController = {
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
                     ${renderTeamRow(m.team_a)}
-                    <img src="assets/vs.svg" style="width:14px; height:14px; opacity:0.6;" alt="VS">
+                    <div class="match-vs-badge" style="width:14px; height:14px; min-width:14px;" onclick="event.stopPropagation(); FX.ignite(this)">
+                        <div class="vs-fire-fx"></div>
+                        <img src="assets/vs.svg" style="width:14px; height:14px; opacity:0.6;" alt="VS">
+                    </div>
                     ${renderTeamRow(m.team_b)}
                 </div>
                 <div class="status-badge" style="font-size:10px;">${m.status.toUpperCase()}</div>
@@ -4683,7 +4686,10 @@ const ScoringController = {
                             ${this._renderSetInputs(3, 1)}
                         </div>
                     </div>
-                    <img src="assets/vs.svg" style="width:27px; height:27px; opacity:0.8; margin-top:24px;" alt="VS">
+                    <div class="match-vs-badge" style="width:27px; height:27px; margin-top:24px;" onclick="FX.ignite(this)">
+                        <div class="vs-fire-fx"></div>
+                        <img src="assets/vs.svg" style="width:27px; height:27px; opacity:0.8;" alt="VS">
+                    </div>
                     <div class="score-team">
                         <div class="score-team-name">Team B</div>
                         <div id="team-b-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
