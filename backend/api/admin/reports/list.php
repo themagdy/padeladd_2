@@ -29,7 +29,23 @@ $sqlMatch = "
 ";
 $matchReports = $pdo->query($sqlMatch)->fetchAll();
 
+// Fetch Score Disputes
+$sqlDisputes = "
+    SELECT d.*, m.match_code, 
+           disputer.nickname as reporter_name, disputer.player_code as reporter_code,
+           submitter.nickname as target_name, submitter.player_code as target_code,
+           s.t1_set1, s.t1_set2, s.t1_set3, s.t2_set1, s.t2_set2, s.t2_set3
+    FROM disputes d
+    LEFT JOIN matches m ON d.match_id = m.id
+    LEFT JOIN scores s ON d.score_id = s.id
+    LEFT JOIN user_profiles disputer ON d.disputed_by_user_id = disputer.user_id
+    LEFT JOIN user_profiles submitter ON s.submitted_by_user_id = submitter.user_id
+    ORDER BY d.created_at DESC
+";
+$scoreDisputes = $pdo->query($sqlDisputes)->fetchAll();
+
 jsonResponse(true, 'Reports fetched.', [
     'profile_reports' => $profileReports,
-    'match_reports' => $matchReports
+    'match_reports' => $matchReports,
+    'score_disputes' => $scoreDisputes
 ]);

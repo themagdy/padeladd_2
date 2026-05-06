@@ -655,9 +655,10 @@ window.AdminControllers = {
                     return;
                 }
 
-                let reports = this.currentTab === 'profile' 
-                    ? (this.allReports.profile_reports || [])
-                    : (this.allReports.match_reports || []);
+                let reports = [];
+                if (this.currentTab === 'profile') reports = (this.allReports.profile_reports || []);
+                else if (this.currentTab === 'match') reports = (this.allReports.match_reports || []);
+                else if (this.currentTab === 'dispute') reports = (this.allReports.score_disputes || []);
                 
                 if (!this.showArchived) {
                     reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
@@ -706,7 +707,7 @@ window.AdminControllers = {
                             </td>
                         </tr>
                     `).join('');
-                } else {
+                } else if (this.currentTab === 'match') {
                     head.innerHTML = `<tr><th>Reporter</th><th>Match Code</th><th>Reason</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
                     list.innerHTML = reports.map(r => `
                         <tr>
@@ -721,6 +722,34 @@ window.AdminControllers = {
                             </td>
                         </tr>
                     `).join('');
+                } else if (this.currentTab === 'dispute') {
+                    head.innerHTML = `<tr><th>Disputed By</th><th>Match / Score</th><th>Dispute Reason</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
+                    list.innerHTML = reports.map(r => `
+                        <tr>
+                            <td>${r.reporter_name || 'System'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
+                            <td>
+                                <div style="font-weight:800; color:var(--c-primary); margin-bottom:4px;">${r.match_code || '---'}</div>
+                                <div style="font-size:12px; font-weight:700; color:#fff;">
+                                    ${r.t1_set1}-${r.t2_set1} | ${r.t1_set2}-${r.t2_set2} ${r.t1_set3 ? '| '+r.t1_set3+'-'+r.t2_set3 : ''}
+                                </div>
+                                <div style="font-size:10px; color:var(--c-text-muted); margin-top:2px;">Submitted by ${r.target_name || 'Unknown'}</div>
+                            </td>
+                            <td style="max-width:300px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">
+                                <div style="color:var(--c-red); font-weight:700; margin-bottom:4px; font-size:11px;">⚠️ DISPUTED</div>
+                                ${r.reason_text || 'No reason provided'}
+                            </td>
+                            <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
+                            <td style="text-align:right;">
+                                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'approve')" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">APPROVE</button>
+                                    <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'reject')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">REJECT</button>
+                                    <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'dispute')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 10px; border:1px solid rgba(255,255,255,0.05); font-size:10px;">
+                                        ${r.is_archived ? '📂' : '📁'}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
                 }
                 console.log('Render complete.');
             } catch (err) {
@@ -731,21 +760,48 @@ window.AdminControllers = {
             if (!this.allReports) return;
             const pUnarchived = (this.allReports.profile_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const mUnarchived = (this.allReports.match_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
+            const dUnarchived = (this.allReports.score_disputes || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             
             const pCountEl = document.getElementById('count-profile-reports');
             const mCountEl = document.getElementById('count-match-reports');
+            const dCountEl = document.getElementById('count-dispute-reports');
             
             if (pCountEl) pCountEl.innerText = pUnarchived;
             if (mCountEl) mCountEl.innerText = mUnarchived;
+            if (dCountEl) dCountEl.innerText = dUnarchived;
         },
         toggleArchived(checked) {
             this.showArchived = checked;
             this.renderReports();
         },
+        async resolveDispute(disputeId, action) {
+            const confirmMsg = action === 'approve' 
+                ? "Are you sure you want to OVERRIDE the dispute and APPROVE this score?" 
+                : "Are you sure you want to REJECT this score? It will be deleted and players will need to submit it again.";
+            
+            if (!confirm(confirmMsg)) return;
+
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/reports/resolve_dispute.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ dispute_id: disputeId, action: action })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast(`Score ${action}d successfully.`, 'success');
+                    await this.fetchReports();
+                } else {
+                    AdminApp.toast(data.message || 'Resolution failed.', 'error');
+                }
+            } catch (e) { console.error('Resolve dispute error:', e); }
+        },
         async archiveItem(id, currentStatus, type) {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentStatus ? 0 : 1;
-            const apiType = type === 'profile' ? 'profile_report' : 'match_report';
+            let apiType = 'profile_report';
+            if (type === 'match') apiType = 'match_report';
+            if (type === 'dispute') apiType = 'score_dispute';
             
             try {
                 const res = await fetch(`../backend/api/admin/system/archive_item.php?admin_token=${token}`, {
@@ -755,7 +811,10 @@ window.AdminControllers = {
                 const data = await res.json();
                 if (data.success) {
                     // Update local state
-                    const listKey = type === 'profile' ? 'profile_reports' : 'match_reports';
+                    let listKey = 'profile_reports';
+                    if (type === 'match') listKey = 'match_reports';
+                    if (type === 'dispute') listKey = 'score_disputes';
+                    
                     const idx = this.allReports[listKey].findIndex(r => r.id == id);
                     if (idx !== -1) this.allReports[listKey][idx].is_archived = newStatus;
                     this.updateCounts();
