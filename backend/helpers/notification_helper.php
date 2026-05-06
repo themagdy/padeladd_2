@@ -5,6 +5,7 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
     try {
         $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, reference_id, sender_id, message_text) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$user_id, $type, $reference_id, $sender_id, $message_text]);
+        $notif_id = (int)$pdo->lastInsertId();
 
         // Trigger Push Notification via FCM
         $title = "Padeladd";
@@ -15,9 +16,10 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
         elseif (str_contains($type, 'score')) $title = "Score Update";
 
         FCMHelper::send($user_id, $title, $message_text, [
+            'notification_id' => (string)$notif_id,
             'type' => $type,
             'reference_id' => (string)$reference_id,
-            'url' => getNotificationUrl($type, $reference_id)
+            'url' => getNotificationUrl($pdo, $type, $reference_id)
         ]);
 
     } catch (Exception $e) {
@@ -28,9 +30,17 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
 /**
  * Maps notification types to frontend routes for deep linking.
  */
-function getNotificationUrl(string $type, ?int $id): string {
+function getNotificationUrl(PDO $pdo, string $type, ?int $id): string {
     if (!$id) return "/dashboard";
     
+    // Fetch match code if it's a match-related notification
+    $match_code = null;
+    if (str_contains($type, 'match') || str_contains($type, 'score') || $type === 'new_message' || $type === 'availability_alert') {
+        $stmt = $pdo->prepare("SELECT match_code FROM matches WHERE id = ?");
+        $stmt->execute([$id]);
+        $match_code = $stmt->fetchColumn();
+    }
+
     switch ($type) {
         case 'match_joined':
         case 'match_confirmed':
@@ -41,15 +51,15 @@ function getNotificationUrl(string $type, ?int $id): string {
         case 'availability_alert':
         case 'late_withdrawal':
         case 'match_on_hold':
-            return "/matches/details?id={$id}";
+            return $match_code ? "/matches/{$match_code}" : "/dashboard";
         
         case 'new_message':
-            return "/chat?match_id={$id}";
+            return $match_code ? "/chat/{$match_code}" : "/dashboard";
             
         case 'friend_request':
         case 'phone_request':
         case 'profile_report':
-            return "/profile/view?target_id={$id}";
+            return "/profile/{$id}";
             
         default:
             return "/dashboard";
