@@ -700,9 +700,18 @@ const DashboardController = {
             const thumb = r.profile_image_thumb || r.profile_image;
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);', initials);
 
+            let rankHtml = `<span style="font-weight:800; color:#fff; font-size:15px;">${r.rank}</span>`;
+            if (r.rank === 1) {
+                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #FFD700 0%, #B8860B 100%); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#000; box-shadow: 0 2px 8px rgba(184, 134, 11, 0.4); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            } else if (r.rank === 2) {
+                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #E0E0E0 0%, #808080 100%); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#000; box-shadow: 0 2px 8px rgba(128, 128, 128, 0.4); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            } else if (r.rank === 3) {
+                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, #CD7F32 0%, #8B4513 100%); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#000; box-shadow: 0 2px 8px rgba(139, 69, 19, 0.4); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            }
+
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; transition:all 0.2s; cursor:pointer; border-bottom: ${isLast ? 'none' : '1px solid rgba(255,255,255,0.05)'};" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                    <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'}; font-size:15px;">${r.rank}</span>
+                    <div style="display:flex; justify-content:center;">${rankHtml}</div>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
@@ -5121,9 +5130,18 @@ const RankingController = {
             const thumb = r.profile_image_thumb || r.profile_image;
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);', initials);
 
+            let rankHtml = `<span style="text-align:left; font-size:20px; font-weight:700; color:#fff;">${r.rank}</span>`;
+            if (r.rank === 1) {
+                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #FFD700 0%, #B8860B 100%); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:#000; box-shadow: 0 4px 12px rgba(184, 134, 11, 0.4); text-shadow: 0 1px 1px rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            } else if (r.rank === 2) {
+                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #E0E0E0 0%, #808080 100%); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:#000; box-shadow: 0 4px 12px rgba(128, 128, 128, 0.4); text-shadow: 0 1px 1px rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            } else if (r.rank === 3) {
+                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, #CD7F32 0%, #8B4513 100%); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:#000; box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4); text-shadow: 0 1px 1px rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.2);">${r.rank}</div>`;
+            }
+
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <span style="text-align:left; font-size:20px; font-weight:700; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
+                    <div style="display:flex; justify-content:flex-start;">${rankHtml}</div>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
                         ${avatarHtml}
