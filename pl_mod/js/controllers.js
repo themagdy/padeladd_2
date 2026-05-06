@@ -903,6 +903,7 @@ window.AdminControllers = {
                     </td>
                     <td style="font-size:12px; color:var(--c-text-muted);">${new Date(m.created_at).toLocaleDateString()}</td>
                     <td style="text-align:right;">
+                        <button onclick="AdminControllers.messages.viewStats(${m.id})" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; margin-right:8px;">STATS</button>
                         <button onclick="AdminControllers.messages.deleteMessage(${m.id})" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px;">DELETE</button>
                     </td>
                 </tr>
@@ -977,6 +978,59 @@ window.AdminControllers = {
                     this.fetchMessages();
                 }
             } catch (err) { console.error('Delete Message Error:', err); }
+        },
+
+        async viewStats(id) {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/messages/get_stats.php?admin_token=${token}&message_id=${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    this.renderStats(data.data);
+                    document.getElementById('stats-modal').style.display = 'flex';
+                } else {
+                    AdminApp.toast(data.message || 'Failed to fetch stats.', 'error');
+                }
+            } catch (err) { console.error('View Stats Error:', err); }
+        },
+
+        closeStatsModal() {
+            document.getElementById('stats-modal').style.display = 'none';
+        },
+
+        renderStats(data) {
+            const summary = data.summary;
+            const views = data.views;
+            
+            const summaryEl = document.getElementById('stats-summary');
+            const listEl = document.getElementById('stats-list');
+
+            const percent = summary.total_active_players > 0 ? Math.round((summary.seen_count / summary.total_active_players) * 100) : 0;
+
+            summaryEl.innerHTML = `
+                <div>
+                    <div style="font-size:12px; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Engagement Overview</div>
+                    <div style="font-size:18px; font-weight:800; color:#fff;">${summary.seen_count} <span style="font-weight:400; font-size:14px; opacity:0.6;">of ${summary.total_active_players} players saw this</span></div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:24px; font-weight:900; color:var(--c-primary);">${percent}%</div>
+                    <div style="font-size:10px; color:var(--c-text-muted); font-weight:700;">READ RATE</div>
+                </div>
+            `;
+
+            if (views.length === 0) {
+                listEl.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:40px; color:var(--c-text-muted);">No views recorded yet.</td></tr>';
+            } else {
+                listEl.innerHTML = views.map(v => `
+                    <tr>
+                        <td>
+                            <div style="font-weight:700;">${v.nickname || (v.first_name + ' ' + v.last_name)}</div>
+                        </td>
+                        <td><span style="font-family:monospace; opacity:0.7;">${v.player_code}</span></td>
+                        <td style="color:var(--c-text-muted); font-size:12px;">${new Date(v.viewed_at).toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            }
         }
     },
 
