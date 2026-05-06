@@ -19,6 +19,7 @@ const SoundManager = {
         notify: new Audio('assets/sounds/notify.mp3')
     },
     play: function(type) {
+        if (typeof Audio === 'undefined') return;
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
@@ -26,6 +27,7 @@ const SoundManager = {
         }
     },
     init: function() {
+        if (typeof Audio === 'undefined') return;
         // Global tap listener for all buttons, links and clickable items
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
@@ -205,12 +207,11 @@ const PollManager = {
 
 const PushNotificationsController = {
     init: async function() {
-        if (!window.Capacitor || !window.Capacitor.Plugins.PushNotifications) {
+        const PushNotifications = window.Capacitor?.Plugins?.PushNotifications;
+        if (!PushNotifications) {
             console.log('[PushNotifications] Not a native app or plugin missing');
             return;
         }
-
-        const PushNotifications = window.Capacitor.Plugins.PushNotifications;
 
         try {
             // Request permission
@@ -478,15 +479,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mobile Status Bar Fix
-    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
-        const StatusBar = window.Capacitor.Plugins.StatusBar;
+    const StatusBar = window.Capacitor?.Plugins?.StatusBar;
+    if (StatusBar) {
         StatusBar.setBackgroundColor({ color: '#171C26' });
         StatusBar.setStyle({ style: 'DARK' });
     }
 
     // Android Physical Back Button Handler
-    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
-        const App = window.Capacitor.Plugins.App;
+    const App = window.Capacitor?.Plugins?.App;
+    if (App) {
         App.addListener('backButton', () => {
             // Priority 1: Close notifications if open
             if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
