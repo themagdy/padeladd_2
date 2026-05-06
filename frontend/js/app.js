@@ -1,3 +1,17 @@
+const FX = {
+    ignite: function(el) {
+        if (!el) return;
+        el.classList.remove('ignite');
+        void el.offsetWidth; // Trigger reflow
+        el.classList.add('ignite');
+        
+        // Remove class after animation
+        setTimeout(() => {
+            el.classList.remove('ignite');
+        }, 650);
+    }
+};
+
 const SoundManager = {
     _sounds: {
         tap: new Audio('assets/sounds/tap.mp3'),
