@@ -274,6 +274,14 @@ var PushNotificationsController = {
             PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
                 console.log('[PushNotifications] Action performed:', action);
                 const data = action.notification.data;
+                
+                // Mark as read if we have an ID
+                const notifId = data.notification_id || data.notif_id || data.id;
+                if (notifId && typeof NotificationsController !== 'undefined') {
+                    console.log('[PushNotifications] Marking as read:', notifId);
+                    NotificationsController.markRead([notifId], true);
+                }
+
                 if (data && data.url && typeof Router !== 'undefined') {
                     Router.navigate(data.url);
                 }
