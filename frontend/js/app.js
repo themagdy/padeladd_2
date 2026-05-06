@@ -1,4 +1,4 @@
-const FX = {
+var FX = {
     ignite: function(el) {
         if (!el) return;
         el.classList.remove('ignite');
@@ -12,7 +12,7 @@ const FX = {
     }
 };
 
-const SoundManager = {
+var SoundManager = {
     _sounds: {
         tap: new Audio('assets/sounds/tap.mp3'),
         success: new Audio('assets/sounds/success.mp3'),
@@ -38,7 +38,7 @@ const SoundManager = {
     }
 };
 
-const Toast = {
+var Toast = {
     show: function(message, type = 'info', duration = 5000) {
         // Create container if not exists
         let container = document.getElementById('toast-container');
@@ -78,7 +78,7 @@ const Toast = {
     }
 };
 
-const ConfirmModal = {
+var ConfirmModal = {
     _modal: null,
     _resolve: null,
 
@@ -182,7 +182,7 @@ const ConfirmModal = {
     }
 };
 
-const PollManager = {
+var PollManager = {
     _timer: null,
     _activeTask: null,
 
@@ -205,7 +205,7 @@ const PollManager = {
     }
 };
 
-const PushNotificationsController = {
+var PushNotificationsController = {
     init: async function() {
         const PushNotifications = window.Capacitor?.Plugins?.PushNotifications;
         if (!PushNotifications) {
@@ -213,9 +213,14 @@ const PushNotificationsController = {
             return;
         }
 
+        // Add a small delay to ensure native bridge is 100% ready
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         try {
-            // Request permission
+            // Check current status first
             let permStatus = await PushNotifications.checkPermissions();
+            console.log('[PushNotifications] Permission status:', permStatus.receive);
+
             if (permStatus.receive === 'prompt') {
                 permStatus = await PushNotifications.requestPermissions();
             }
@@ -225,12 +230,25 @@ const PushNotificationsController = {
                 return;
             }
 
-            // Register with Apple / Google
+            // Safe Registration
+            console.log('[PushNotifications] Registering...');
             await PushNotifications.register();
+            
+            // Listeners
+            this.setupListeners(PushNotifications);
 
+        } catch (e) {
+            console.error('[PushNotifications] Initialization crash prevented:', e);
+        }
+    },
+
+    setupListeners: function(PushNotifications) {
+        if (!PushNotifications) return;
+
+        try {
             // On success, we get a token
             PushNotifications.addListener('registration', (token) => {
-                console.log('[PushNotifications] Registration success:', token.value);
+                console.log('[PushNotifications] Registration success');
                 this.updateServerToken(token.value);
             });
 
@@ -244,9 +262,7 @@ const PushNotificationsController = {
                 console.log('[PushNotifications] Received in foreground:', notification);
                 if (notification.title && notification.body) {
                     Toast.show(notification.body, 'info');
-                    // Global sound if available
                     if (typeof SoundManager !== 'undefined') SoundManager.play('notify');
-                    // Trigger refresh if needed
                     if (typeof Router !== 'undefined' && Router.currentPath === '/dashboard' && typeof DashboardController !== 'undefined') {
                         DashboardController.load();
                     }
@@ -261,9 +277,8 @@ const PushNotificationsController = {
                     Router.navigate(data.url);
                 }
             });
-
         } catch (e) {
-            console.error('[PushNotifications] Setup failed:', e);
+            console.error('[PushNotifications] Listener setup failed:', e);
         }
     },
 
