@@ -281,3 +281,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 
 [MOBILE_APK_V2] - 2026-05-06 03:51:00 +0300
 - Build Control: Reverted GitHub Actions workflow to manual trigger only (workflow_dispatch).
+
+[ASSETS_VS_V1] - 2026-05-06 03:53:00 +0300
+- Visual Upgrade: Implemented the new assets/vs.svg across the application.
+- Match Details: Replaced inline SVG with the official vs.svg brand asset.
+- Match Cards: Updated dynamic match cards in the list view to use the new vs.svg.
+- Score Modal: Integrated the vs.svg into the score entry interface for visual consistency.
