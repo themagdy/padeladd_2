@@ -310,3 +310,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [MOBILE_NOTIF_LOGIC_V1] - 2026-05-06 05:15:00 +0300
 - Notification Sync: Implemented automatic "Mark as Read" logic when a push notification is clicked, ensuring perfect synchronization between push and in-app alerts.
 - Visual Identity: Refined the notification icon to use ic_launcher_foreground, ensuring a clean, brand-compliant silhouette in the status bar instead of a generic white circle.
+
+[MOBILE_NOTIF_REFINEMENT_V2] - 2026-05-06 05:22:00 +0300
+- Deep Linking Fix: Updated Backend to send Match Codes and proper URLs in push payloads.
+- Read Sync: Guaranteed notification_id delivery in push to enable instant "mark as read" on click.
+- Startup Silence: Implemented a 3-second sound suppression window on app boot to prevent backlog pings.
+- Icon Polish: Reverted notification icon to ic_launcher_round to enforce the #171C26 brand background.
