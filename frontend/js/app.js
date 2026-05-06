@@ -213,10 +213,11 @@ var PushNotificationsController = {
             return;
         }
 
-        // Add a small delay to ensure native bridge is 100% ready
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Give native bridge 2 seconds to breathe before registration
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         try {
+            console.log('[PushNotifications] Starting registration flow...');
             // Check current status first
             let permStatus = await PushNotifications.checkPermissions();
             console.log('[PushNotifications] Permission status:', permStatus.receive);
