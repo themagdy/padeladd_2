@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile Status Bar Fix
     const StatusBar = window.Capacitor?.Plugins?.StatusBar;
     if (StatusBar) {
-        StatusBar.setBackgroundColor({ color: '#171C26' });
+        StatusBar.setBackgroundColor({ color: '#11161E' });
         StatusBar.setStyle({ style: 'DARK' });
     }
 
