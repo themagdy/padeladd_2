@@ -9,7 +9,8 @@
       "style": "DARK"
     },
     "PushNotifications": {
-      "presentationOptions": ["badge", "sound", "alert"]
+      "presentationOptions": ["badge", "sound", "alert"],
+      "iconColor": "#171C26"
     }
   }
 }
