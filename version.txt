@@ -316,3 +316,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Read Sync: Guaranteed notification_id delivery in push to enable instant "mark as read" on click.
 - Startup Silence: Implemented a 3-second sound suppression window on app boot to prevent backlog pings.
 - Icon Polish: Reverted notification icon to ic_launcher_round to enforce the #171C26 brand background.
+[MOBILE_NOTIF_SIMPLIFIED_V1] - 2026-05-06 06:55:00 +0300
+- Simplified Messaging: Hardcoded all push notifications to a singular "Check updates" message.
+- Minimalist UX: Disabled all automated deep-linking and "mark as read" actions on notification click; notifications now simply open the app to its current state.
+- Icon Excellence: Implemented "The YouTube Look" using a high-fill (85%) custom silhouette (push_notif_icon.png) and forced the #171C26 brand background across all Android densities.
+- Tray Deduplication: Configured fixed 'tag' and 'collapse_key' to ensure only one "Check updates" message occupies the notification tray at any time.
+- Chat Performance: Slashed message delivery time from 10s to ~0.5s by implementing OAuth2 token caching and parallelizing FCM requests via curl_multi.
+- Version Bump: Incremented application version to 1.0.1 (Build 2) for release.
