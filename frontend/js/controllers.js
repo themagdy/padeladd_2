@@ -5123,24 +5123,24 @@ const RankingController = {
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
+                    <span style="font-size:18px; font-weight:600; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
                         ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
-                            <div style="font-size:15px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
+                            <div style="font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:3px;">
-                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:uppercase;">${r.player_code}</span>
+                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase;">${r.player_code}</span>
                                 <span style="font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
                             </div>
                         </div>
                     </div>
 
                     <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:800; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
-                    <span style="text-align:center; font-size:16px; font-weight:900; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text);">${r.matches_played}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-green);">${r.win_rate}%</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
+                    <span style="text-align:center; font-size:16px; font-weight:600; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
                 </div>
             `;
         });
