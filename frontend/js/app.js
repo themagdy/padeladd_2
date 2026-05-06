@@ -29,7 +29,7 @@ const SoundManager = {
         // Global tap listener for all buttons, links and clickable items
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
-            if (el) {
+            if (el && !el.hasAttribute('data-no-sound')) {
                 this.play('tap');
             }
         }, true);
