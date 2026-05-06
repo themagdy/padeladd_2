@@ -6,6 +6,7 @@
 
 class FCMHelper {
     private static $credentials_path = __DIR__ . '/../core/firebase_credentials.json';
+    private static $cache_path = __DIR__ . '/../cache/fcm_token.json';
 
     /**
      * Sends a push notification to all devices registered to a specific user.
@@ -30,7 +31,9 @@ class FCMHelper {
         $project_id = self::getProjectId();
         $url = "https://fcm.googleapis.com/v1/projects/{$project_id}/messages:send";
 
-        $results = [];
+        $mh = curl_multi_init();
+        $curl_handles = [];
+
         foreach ($tokens as $token) {
             $payload = [
                 'message' => [
@@ -67,10 +70,25 @@ class FCMHelper {
             ]);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($ch);
+            
+            curl_multi_add_handle($mh, $ch);
+            $curl_handles[] = $ch;
+        }
+
+        // Execute all requests in parallel
+        $running = null;
+        do {
+            curl_multi_exec($mh, $running);
+        } while ($running > 0);
+
+        $results = [];
+        foreach ($curl_handles as $ch) {
+            $response = curl_multi_getcontent($ch);
             $results[] = json_decode($response, true);
+            curl_multi_remove_handle($mh, $ch);
             curl_close($ch);
         }
+        curl_multi_close($mh);
         
         return $results;
     }
@@ -93,6 +111,14 @@ class FCMHelper {
      * Uses RS256 JWT signing (pure PHP + OpenSSL)
      */
     private static function getAccessToken() {
+        // Check cache first
+        if (file_exists(self::$cache_path)) {
+            $cache = json_decode(file_get_contents(self::$cache_path), true);
+            if ($cache && $cache['expires_at'] > time() + 60) {
+                return $cache['access_token'];
+            }
+        }
+
         if (!file_exists(self::$credentials_path)) return null;
         $json = json_decode(file_get_contents(self::$credentials_path), true);
         if (!$json) return null;
@@ -130,6 +156,15 @@ class FCMHelper {
         curl_close($ch);
 
         $res = json_decode($response, true);
-        return $res['access_token'] ?? null;
+        $token = $res['access_token'] ?? null;
+
+        if ($token) {
+            file_put_contents(self::$cache_path, json_encode([
+                'access_token' => $token,
+                'expires_at' => time() + 3500 // Cache for ~58 mins
+            ]));
+        }
+
+        return $token;
     }
 }
