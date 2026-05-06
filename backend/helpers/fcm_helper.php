@@ -37,7 +37,8 @@ class FCMHelper {
                     'token' => $token,
                     'notification' => [
                         'title' => (string)$title,
-                        'body' => (string)$body
+                        'body' => (string)$body,
+                        'image' => 'https://ahmedmagdy.com/pl/assets/logo_ico.png'
                     ],
                     'data' => !empty($data) ? array_map('strval', $data) : new stdClass()
                 ]
@@ -45,10 +46,12 @@ class FCMHelper {
 
             // Add standard sound, color, and icon for Android
             $payload['message']['android'] = [
+                'priority' => 'high',
                 'notification' => [
                     'sound' => 'default',
                     'color' => '#171C26',
-                    'icon' => 'ic_launcher_round'
+                    'icon' => 'ic_launcher',
+                    'image' => 'https://ahmedmagdy.com/pl/assets/logo_ico.png'
                 ]
             ];
             $payload['message']['apns'] = ['payload' => ['aps' => ['sound' => 'default']]];
