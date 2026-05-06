@@ -932,8 +932,16 @@ window.AdminControllers = {
 
         async saveMessage(e) {
             e.preventDefault();
+            console.log('--- Saving Message ---');
             const form = e.target;
             const formData = new FormData(form);
+            const token = localStorage.getItem('admin_token');
+            
+            if (!token) {
+                AdminApp.toast('Admin session expired. Please login again.', 'error');
+                return;
+            }
+
             const data = {
                 heading: formData.get('heading'),
                 body: formData.get('body'),
@@ -944,16 +952,20 @@ window.AdminControllers = {
                 page_route: formData.get('page_route'),
                 android_url: formData.get('android_url'),
                 ios_url: formData.get('ios_url'),
-                is_active: form.is_active.checked ? 1 : 0
+                is_active: form.elements['is_active'] ? (form.elements['is_active'].checked ? 1 : 0) : 1
             };
 
-            const token = localStorage.getItem('admin_token');
+            console.log('Sending data:', data);
+
             try {
                 const res = await fetch(`../backend/api/admin/messages/create.php?admin_token=${token}`, {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 const resData = await res.json();
+                console.log('Server response:', resData);
+
                 if (resData.success) {
                     AdminApp.toast('Message created successfully.');
                     this.closeModal();
@@ -961,7 +973,10 @@ window.AdminControllers = {
                 } else {
                     AdminApp.toast(resData.message || 'Failed to create message.', 'error');
                 }
-            } catch (err) { console.error('Save Message Error:', err); }
+            } catch (err) { 
+                console.error('Save Message Error:', err);
+                AdminApp.toast('Network error or server failed.', 'error');
+            }
         },
 
         async deleteMessage(id) {
