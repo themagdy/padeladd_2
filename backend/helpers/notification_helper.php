@@ -18,11 +18,7 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
         $alreadyHasNotif = (int)$checkStmt->fetchColumn() > 0;
 
         if (!$alreadyHasNotif) {
-            FCMHelper::send($user_id, $title, $body, [
-                'notification_id' => (string)$notif_id,
-                'type' => 'check_updates',
-                'url' => $url
-            ]);
+            FCMHelper::send($user_id, $title, $body, []);
         }
 
     } catch (Exception $e) {
