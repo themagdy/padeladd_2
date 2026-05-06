@@ -702,7 +702,7 @@ const DashboardController = {
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px; align-items:center; transition:all 0.2s; cursor:pointer; border-bottom: ${isLast ? 'none' : '1px solid rgba(255,255,255,0.05)'};" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                    <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'}; font-size:15px;">#${r.rank}</span>
+                    <span style="font-weight:800; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'}; font-size:15px;">${r.rank}</span>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
@@ -5123,7 +5123,7 @@ const RankingController = {
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : 'var(--c-text-dim)'};">#${r.rank}</span>
+                    <span style="font-size:18px; font-weight:900; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
                         ${avatarHtml}
