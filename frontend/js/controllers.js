@@ -5123,7 +5123,7 @@ const RankingController = {
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <span style="text-align:left; font-size:18px; font-weight:600; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
+                    <span style="text-align:left; font-size:20px; font-weight:700; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
                         ${avatarHtml}
@@ -5140,7 +5140,7 @@ const RankingController = {
                     <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text);">${r.matches_played}</span>
                     <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-green);">${r.win_rate}%</span>
                     <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
-                    <span style="text-align:center; font-size:16px; font-weight:600; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
+                    <span style="text-align:right; font-size:16px; font-weight:600; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
                 </div>
             `;
         });
