@@ -273,3 +273,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Self-Hosted Typography: Migrated Montserrat and Cairo fonts from Google Fonts CDN to local project hosting.
 - Performance & Offline: Reduced external DNS lookups and ensured 100% font availability in offline/no-connection scenarios.
 - CSS Restructuring: Created fonts.css for local font-face definitions and updated main style.css to import local assets.
+
+[MOBILE_APK_V1] - 2026-05-06 03:40:00 +0300
+- GitHub Actions Integration: Enabled automatic APK build workflow on push to main.
+- Capacitor Sync: Configured workflow to sync web assets and build Android debug APK.
+- Artifact Export: APK will be available for download from GitHub Actions tab as "padeladd-mobile-app".
