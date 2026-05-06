@@ -318,8 +318,8 @@ ol {
 }
 
 .nav-item img.nav-icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   opacity: 0.45;
   transition: opacity var(--t-fast), transform var(--t-fast);
 }
