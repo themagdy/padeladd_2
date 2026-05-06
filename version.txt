@@ -294,3 +294,19 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Animation Eruption: Added a high-octane "Plasma Burst" fire effect on click, featuring multi-layered gradients and secondary sparks.
 - Tactile Feedback: Integrated a "shake" animation on ignite for physical click feedback.
 - Sound Logic: Implemented sound-suppression (data-no-sound) for VS badges to ensure visual effects remain pure and silent.
+
+[MOBILE_PUSH_STABILITY_V1] - 2026-05-06 04:39:00 +0300
+- Startup Stability: Implemented optional chaining and robust null-checks for Capacitor plugins to prevent immediate crashes on startup.
+- Safe Bootstrapping: Added safeguards for SoundManager and Auth checks to ensure the app stays alive even if the Capacitor bridge is delayed.
+- Cache Management: Incremented asset version to v=130 and cleared redundant Google Fonts imports for a cleaner bootstrap.
+
+[MOBILE_PUSH_FIXES_V2] - 2026-05-06 05:07:00 +0300
+- Push Notification Hardening: Wrapped registration and listener setup in robust try-catch blocks.
+- Registration Delay: Added a 2-second delay to the registration flow to ensure native Firebase/Google services are fully initialized before usage.
+- Manifest Refinement: Explicitly declared the Firebase Messaging service in AndroidManifest.xml and added missing permissions (WAKE_LOCK, ACCESS_NETWORK_STATE).
+- Build Integrity: Standardized the Android build process by explicitly applying the Google Services plugin and including the mandatory google-services.json in the repository.
+- UX Refinement: Created colors.xml and configured PushNotifications presentation options for a consistent, premium OS integration.
+
+[MOBILE_NOTIF_LOGIC_V1] - 2026-05-06 05:15:00 +0300
+- Notification Sync: Implemented automatic "Mark as Read" logic when a push notification is clicked, ensuring perfect synchronization between push and in-app alerts.
+- Visual Identity: Refined the notification icon to use ic_launcher_foreground, ensuring a clean, brand-compliant silhouette in the status bar instead of a generic white circle.
