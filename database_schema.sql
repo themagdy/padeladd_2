@@ -210,7 +210,6 @@ CREATE TABLE `player_stats` (
   `ranking` int(11) DEFAULT NULL,
   `previous_ranking` int(11) DEFAULT NULL,
   `highest_ranking` int(11) DEFAULT NULL,
-  `points_this_week` int(11) DEFAULT '0',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),

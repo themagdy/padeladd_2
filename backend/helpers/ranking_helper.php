@@ -331,7 +331,6 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
                 matches_lost      = ?,
                 win_rate          = ?,
                 streak            = ?,
-                points_this_week  = points_this_week + ?,
                 previous_ranking  = ?,
                 updated_at        = NOW()
             WHERE user_id = ?
@@ -344,7 +343,6 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array 
             $new_losses,
             $new_wr,
             $new_streak,
-            $p['total_rank_change'],
             $p['old_rank'] ?? null,
             $p['user_id'],
         ]);

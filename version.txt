@@ -331,3 +331,21 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Gap Tightening: Decreased the internal gap between navigation icons and their text labels (to 2px) and applied a -3px top margin on mobile text labels to pull them completely flush.
 - Font Sizing: Decreased desktop nav labels to 9px and mobile nav labels to an ultra-sleek 7.5px.
 - SVG Normalization: Processed new pure white SVGs for Play, Rank, and Matches, completely removing the buggy CSS brightness filters from the inactive state and restoring 100% opacity.
+
+[be03840] - 2026-05-06 20:30:57 +03:00
+- [RANKING_UI_CLEANUP] - Leaderboard Aesthetics:
+    - Rank Formatting: Removed the '#' hashtag prefix from ranking numbers for a cleaner, modern look.
+    - Color Standardization: Changed standard ranking numbers from dimmed gray to pure white (#fff), while preserving the signature orange for the top 3 spots.
+
+[9115831] - 2026-05-06 20:43:08 +03:00
+- [RANKING_TABLE_POLISH] - Layout & Alignment:
+    - Text Alignment: Aligned Rank and Player columns to the left; centered stats (Matches, Win Rate, +/-); right-aligned Points for better numerical readability.
+    - Font Styling: Standardized all table fonts (headers and data) to semi-bold (600) weight for a refined, premium feel.
+    - Mobile Identity: Moved player code tag beside nickname on a single line, giving the full name a dedicated second line to prevent truncation.
+    - Scale: Increased mobile rank number size to 20px (weight 700) and increased column spacing (+10px) for better visual focus.
+
+[CURRENT] - 2026-05-06 20:55:00 +03:00
+- [DB_CLEANUP] - Column Retirement:
+    - Obsolete Column: Officially dropped the 'points_this_week' column from the 'player_stats' table.
+    - Source of Truth: Fully transitioned all APIs (Profile, Stats, Ranking, Admin) to the dynamic Rolling 7-Day calculation logic using match_players history.
+    - Sync: Updated 'database_schema.sql' and migration files to remove redundant field definitions.

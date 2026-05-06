@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS player_stats (
     streak INT DEFAULT 0 COMMENT 'Positive = win streak, negative = loss streak',
     ranking INT NULL,
     highest_ranking INT NULL,
-    points_this_week INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
