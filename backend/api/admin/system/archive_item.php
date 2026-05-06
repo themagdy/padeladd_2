@@ -13,7 +13,7 @@ $id = (int)($data['id'] ?? 0);
 $type = $data['type'] ?? ''; // 'match_report', 'profile_report', 'violation'
 $status = (int)($data['status'] ?? 1); // 1 for archived, 0 for unarchived
 
-if ($id <= 0 || !in_array($type, ['match_report', 'profile_report', 'violation'])) {
+if ($id <= 0 || !in_array($type, ['match_report', 'profile_report', 'violation', 'score_dispute'])) {
     jsonResponse(false, 'Invalid parameters.', null, 400);
 }
 
@@ -21,6 +21,7 @@ $table = '';
 if ($type === 'match_report') $table = 'match_reports';
 if ($type === 'profile_report') $table = 'profile_reports';
 if ($type === 'violation') $table = 'match_events';
+if ($type === 'score_dispute') $table = 'disputes';
 
 try {
     $stmt = $pdo->prepare("UPDATE $table SET is_archived = ? WHERE id = ?");
