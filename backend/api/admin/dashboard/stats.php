@@ -13,7 +13,7 @@ $stats = [
     'matches_today' => (int)$pdo->query("SELECT COUNT(*) FROM matches WHERE DATE(match_datetime) = CURDATE()")->fetchColumn(),
     'played_matches' => (int)$pdo->query("SELECT COUNT(*) FROM matches WHERE status = 'completed'")->fetchColumn(),
     'scores_submitted' => (int)$pdo->query("SELECT COUNT(*) FROM scores")->fetchColumn(),
-    'pending_reports' => (int)$pdo->query("SELECT (SELECT COUNT(*) FROM profile_reports WHERE is_archived = 0) + (SELECT COUNT(*) FROM match_reports WHERE is_archived = 0)")->fetchColumn(),
+    'pending_reports' => (int)$pdo->query("SELECT (SELECT COUNT(*) FROM profile_reports WHERE is_archived = 0) + (SELECT COUNT(*) FROM match_reports WHERE is_archived = 0) + (SELECT COUNT(*) FROM disputes)")->fetchColumn(),
     'pending_violations' => (int)$pdo->query("SELECT COUNT(*) FROM match_events WHERE event_type IN ('late_withdrawal', 'late_cancellation') AND (is_archived = 0 OR is_archived IS NULL)")->fetchColumn(),
     'venue_requests' => (int)$pdo->query("SELECT COUNT(*) FROM venue_requests WHERE status = 'pending'")->fetchColumn(),
 ];

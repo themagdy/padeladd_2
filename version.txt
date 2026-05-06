@@ -363,5 +363,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Aggregate Logic: Backend now calculates total message count and collective unread status for grouped alerts.
     - Frontend Sync: Updated NotificationsController to respect server-side counts while maintaining client-side fallbacks.
 
-[CURRENT] - 2026-05-06 21:50:00 +03:00
-- Finalized intelligent notification grouping and pagination.
+[3a006e5] - 2026-05-06 21:50:00 +03:00
+- [ADMIN_DISPUTE_RES_V1] - Admin Dispute Resolution:
+    - Dedicated Hub: Added a "Score Disputes" tab to the Admin Reports page for centralized conflict management.
+    - Interactive Controls: Moderators can now "Approve" (override) or "Reject" (delete) contested scores with one click.
+    - Automatic Triggers: Resolution automatically recalculates rankings (on approve) and notifies all match participants.
+    - Dashboard Integration: Active disputes now count toward "Pending Reports" in the main admin dashboard.
+
+[CURRENT] - 2026-05-06 22:12:00 +03:00
+- Finalized end-to-end score dispute and moderation workflow.
