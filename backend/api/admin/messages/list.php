@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../../../../core/db.php';
-require_once __DIR__ . '/../../../../helpers/admin_auth.php';
-require_once __DIR__ . '/../../../../helpers/response.php';
+require_once __DIR__ . '/../../../core/db.php';
+require_once __DIR__ . '/../../../helpers/admin_auth.php';
+require_once __DIR__ . '/../../../helpers/response.php';
 
 header('Content-Type: application/json');
 validateAdmin();
