@@ -660,7 +660,9 @@ const DashboardController = {
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
                     ${renderTeamRow(m.team_a)}
-                    <div style="font-size:12px; color:var(--c-text-dim); font-weight:700;">VS</div>
+                    <div style="display:flex; align-items:center; justify-content:center; width:24px; height:24px;">
+                        <img src="assets/vs.svg" style="width:100%; height:100%; object-fit:contain; opacity:0.6;">
+                    </div>
                     ${renderTeamRow(m.team_b)}
                 </div>
                 <div class="status-badge" style="font-size:10px;">${m.status.toUpperCase()}</div>
@@ -4683,7 +4685,9 @@ const ScoringController = {
                             ${this._renderSetInputs(3, 1)}
                         </div>
                     </div>
-                    <div style="font-size:18px; font-weight:800; color:var(--c-text-dim); margin-top:28px;">VS</div>
+                    <div style="display:flex; align-items:center; justify-content:center; margin-top:20px;">
+                        <img src="assets/vs.svg" style="width:42px; height:42px; object-fit:contain; opacity:0.8;">
+                    </div>
                     <div class="score-team">
                         <div class="score-team-name">Team B</div>
                         <div id="team-b-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
