@@ -4418,12 +4418,12 @@ const NotificationsController = {
                         existing.is_group = true;
                         if (!existing.all_ids) existing.all_ids = [existing.id];
                         existing.all_ids.push(n.id);
-                        existing.count = (existing.count || 1) + 1;
-                        // Always keep the newest as the representative (notifications are already DESC)
-                        // So we don't need to do anything else, just collect IDs
+                        existing.count = (existing.count || 1) + (n.count || 1);
                         return;
                     } else {
                         chatGroups[mid] = grouped.length;
+                        // If backend already grouped it, set is_group
+                        if (n.count > 1) n.is_group = true;
                     }
                 }
                 grouped.push({ ...n });

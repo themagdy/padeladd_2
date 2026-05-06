@@ -357,5 +357,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Hardened Scroll-Lock: Implemented aggressive viewport freezing (position: fixed) when modals are active to prevent background scrolling.
     - Consistency: Unified modal state tracking via _isOpen flag for global interaction management.
 
-[CURRENT] - 2026-05-06 21:40:00 +03:00
-- Enhanced global modal stability and native interaction logic.
+[0cc6970] - 2026-05-06 21:40:00 +03:00
+- [NOTIF_GROUPING_V1] - Server-Side Aggregation:
+    - Efficient Batching: Implemented SQL grouping for chat notifications. A match chat group now counts as 1 of 20 in the paginated batch, ensuring the panel is always full.
+    - Aggregate Logic: Backend now calculates total message count and collective unread status for grouped alerts.
+    - Frontend Sync: Updated NotificationsController to respect server-side counts while maintaining client-side fallbacks.
+
+[CURRENT] - 2026-05-06 21:50:00 +03:00
+- Finalized intelligent notification grouping and pagination.
