@@ -5136,11 +5136,11 @@ const RankingController = {
                         </div>
                     </div>
 
-                    <span class="hide-mobile" style="text-align:left; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
-                    <span class="hide-mobile" style="text-align:left; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
-                    <span class="hide-mobile" style="text-align:left; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
-                    <span class="hide-mobile" style="text-align:left; font-size:13px; font-weight:800; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
-                    <span style="text-align:left; font-size:16px; font-weight:900; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:700; color:var(--c-text);">${r.matches_played}</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:700; color:var(--c-green);">${r.win_rate}%</span>
+                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:800; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
+                    <span style="text-align:center; font-size:16px; font-weight:900; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
                 </div>
             `;
         });
