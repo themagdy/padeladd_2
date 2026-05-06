@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "785015592470",
+    "project_id": "padeladd-71c95",
+    "storage_bucket": "padeladd-71c95.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785015592470:android:04fc1b1c135fa9a3bdc737",
+        "android_client_info": {
+          "package_name": "com.padeladd.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcMu-Hhz2L1Uf-NADQ4rDNC6vdb31s4ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
