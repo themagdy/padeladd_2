@@ -282,17 +282,23 @@ var PushNotificationsController = {
             // Handle notification click (Action)
             PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
                 console.log('[PushNotifications] Action performed:', action);
-                const data = action.notification.data;
+                const data = action.notification.data || {};
+                console.log('[PushNotifications] Notification Data:', JSON.stringify(data));
                 
                 // Mark as read if we have an ID
                 const notifId = data.notification_id || data.notif_id || data.id;
                 if (notifId && typeof NotificationsController !== 'undefined') {
-                    console.log('[PushNotifications] Marking as read:', notifId);
+                    console.log('[PushNotifications] Triggering markRead for ID:', notifId);
                     NotificationsController.markRead([notifId], true);
+                } else {
+                    console.warn('[PushNotifications] No notification_id found in data or NotificationsController missing');
                 }
 
-                if (data && data.url && typeof Router !== 'undefined') {
+                if (data.url && typeof Router !== 'undefined') {
+                    console.log('[PushNotifications] Navigating to URL:', data.url);
                     Router.navigate(data.url);
+                } else {
+                    console.warn('[PushNotifications] No URL found in data or Router missing');
                 }
             });
         } catch (e) {

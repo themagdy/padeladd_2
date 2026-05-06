@@ -43,8 +43,14 @@ class FCMHelper {
                 ]
             ];
 
-            // Add standard sound for Android/iOS
-            $payload['message']['android'] = ['notification' => ['sound' => 'default']];
+            // Add standard sound, color, and icon for Android
+            $payload['message']['android'] = [
+                'notification' => [
+                    'sound' => 'default',
+                    'color' => '#171C26',
+                    'icon' => 'ic_launcher_round'
+                ]
+            ];
             $payload['message']['apns'] = ['payload' => ['aps' => ['sound' => 'default']]];
 
             $ch = curl_init();
