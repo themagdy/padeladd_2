@@ -278,3 +278,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - GitHub Actions Integration: Enabled automatic APK build workflow on push to main.
 - Capacitor Sync: Configured workflow to sync web assets and build Android debug APK.
 - Artifact Export: APK will be available for download from GitHub Actions tab as "padeladd-mobile-app".
+
+[MOBILE_APK_V2] - 2026-05-06 03:51:00 +0300
+- Build Control: Reverted GitHub Actions workflow to manual trigger only (workflow_dispatch).
