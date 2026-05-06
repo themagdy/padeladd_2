@@ -344,8 +344,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Mobile Identity: Moved player code tag beside nickname on a single line, giving the full name a dedicated second line to prevent truncation.
     - Scale: Increased mobile rank number size to 20px (weight 700) and increased column spacing (+10px) for better visual focus.
 
-[CURRENT] - 2026-05-06 20:55:00 +03:00
-- [DB_CLEANUP] - Column Retirement:
-    - Obsolete Column: Officially dropped the 'points_this_week' column from the 'player_stats' table.
-    - Source of Truth: Fully transitioned all APIs (Profile, Stats, Ranking, Admin) to the dynamic Rolling 7-Day calculation logic using match_players history.
-    - Sync: Updated 'database_schema.sql' and migration files to remove redundant field definitions.
+[c92252c] - 2026-05-06 21:30:00 +03:00
+- [PREMIUM_RANKING_V1] - UI & Layout Refinement:
+    - Hollow Badges: Implemented premium gradient-border "hollow" rank badges for Top 3 players (Gold/Silver/Bronze).
+    - Layout Tuning: Centered Rank column and tightened global table padding for a more compact, high-end feel.
+    - Sticky Headers: Hardened sticky positioning by removing restrictive global overflow rules and optimizing z-index hierarchy.
+    - Consistency: Synchronized layout spacing across Dashboard and full Ranking pages.
+
+[CURRENT] - 2026-05-06 21:35:00 +03:00
+- Finalized premium ranking aesthetics and verified cross-device sticky header stability.
