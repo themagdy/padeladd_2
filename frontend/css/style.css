@@ -77,9 +77,9 @@
   --anim-spin: spin 1s linear infinite;
 }
 
+/* FORCED LIGHT MODE FOR PREVIEW - COMMENTING OUT DARK OVERRIDES
 @media (prefers-color-scheme: dark) {
   :root {
-    /* DARK THEME (SYSTEM - NIGHT) */
     --c-bg: #11161E;
     --c-nav-bg: #171C26;
     --c-bg-card: #1E2535;
@@ -90,15 +90,14 @@
     --c-text-muted: #8B9BB4;
     --c-text-dim: #4E5F77;
 
-    /* Shadows (Dark-specific) */
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
     --shadow-btn: 0 4px 16px rgba(27, 82, 206, 0.4);
     --shadow-glow: 0 0 20px rgba(27, 82, 206, 0.25);
 
-    /* Gradients (Dark-specific) */
     --g-card: linear-gradient(145deg, #1E2535 0%, #1A2030 100%);
   }
 }
+*/
 
 @keyframes spin {
   from {
