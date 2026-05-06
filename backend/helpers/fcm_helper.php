@@ -44,12 +44,16 @@ class FCMHelper {
             ];
 
             // Add standard sound, color, and icon for Android
+            // 'tag' ensures only ONE notification with this name exists in the tray
+            // 'collapse_key' ensures only the LAST message is delivered if device is offline
             $payload['message']['android'] = [
                 'priority' => 'high',
+                'collapse_key' => 'check_updates',
                 'notification' => [
                     'sound' => 'default',
                     'color' => '#171C26',
-                    'icon' => 'ic_launcher'
+                    'icon' => 'ic_launcher',
+                    'tag' => 'padeladd_check_updates'
                 ]
             ];
             $payload['message']['apns'] = ['payload' => ['aps' => ['sound' => 'default']]];

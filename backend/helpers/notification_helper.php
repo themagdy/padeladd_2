@@ -7,20 +7,23 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
         $stmt->execute([$user_id, $type, $reference_id, $sender_id, $message_text]);
         $notif_id = (int)$pdo->lastInsertId();
 
-        // Trigger Push Notification via FCM
+        // NEW LOGIC: Only one message allowed: "Check updates"
         $title = "Padeladd";
-        
-        // Customize title based on type
-        if ($type === 'new_message') $title = "New Message";
-        elseif (str_contains($type, 'match')) $title = "Match Update";
-        elseif (str_contains($type, 'score')) $title = "Score Update";
+        $body = "Check updates";
+        $url = "/dashboard";
 
-        FCMHelper::send($user_id, $title, $message_text, [
-            'notification_id' => (string)$notif_id,
-            'type' => $type,
-            'reference_id' => (string)$reference_id,
-            'url' => getNotificationUrl($pdo, $type, $reference_id)
-        ]);
+        // Check if an unread "Check updates" already exists for this user to avoid duplicate push
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND message_text = 'Check updates' AND is_read = 0");
+        $checkStmt->execute([$user_id]);
+        $alreadyHasNotif = (int)$checkStmt->fetchColumn() > 0;
+
+        if (!$alreadyHasNotif) {
+            FCMHelper::send($user_id, $title, $body, [
+                'notification_id' => (string)$notif_id,
+                'type' => 'check_updates',
+                'url' => $url
+            ]);
+        }
 
     } catch (Exception $e) {
         error_log("createNotification failed: " . $e->getMessage());
