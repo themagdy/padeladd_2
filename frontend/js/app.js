@@ -206,12 +206,19 @@ var PollManager = {
 };
 
 var PushNotificationsController = {
+    _isStartingUp: true,
     init: async function() {
         const PushNotifications = window.Capacitor?.Plugins?.PushNotifications;
         if (!PushNotifications) {
             console.log('[PushNotifications] Not a native app or plugin missing');
             return;
         }
+
+        // Suppress notification sounds for the first 3 seconds of startup
+        setTimeout(() => {
+            this._isStartingUp = false;
+            console.log('[PushNotifications] Startup silence period ended');
+        }, 3000);
 
         // Give native bridge 2 seconds to breathe before registration
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -263,7 +270,9 @@ var PushNotificationsController = {
                 console.log('[PushNotifications] Received in foreground:', notification);
                 if (notification.title && notification.body) {
                     Toast.show(notification.body, 'info');
-                    if (typeof SoundManager !== 'undefined') SoundManager.play('notify');
+                    if (typeof SoundManager !== 'undefined' && !this._isStartingUp) {
+                        SoundManager.play('notify');
+                    }
                     if (typeof Router !== 'undefined' && Router.currentPath === '/dashboard' && typeof DashboardController !== 'undefined') {
                         DashboardController.load();
                     }
