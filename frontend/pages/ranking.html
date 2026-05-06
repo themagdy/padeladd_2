@@ -31,7 +31,7 @@
   <!-- 2. Consolidated Sticky Block (Filters + Header) -->
   <div class="ranking-sticky-bundle">
     <!-- Controls Row -->
-    <div class="ranking-controls-row" style="width:100%; max-width:900px; margin:0 auto; padding:10px 20px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
+    <div class="ranking-controls-row" style="width:100%; max-width:900px; margin:0 auto; padding:0 20px 10px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
       <div class="rank-tabs-container" style="background:var(--c-bg-card); padding:6px; border-radius:12px; display:flex; gap:4px; border:1px solid var(--c-border);">
         <button id="rank-tab-male" onclick="RankingController.switchTab('male')" class="rank-tab-btn active">Males</button>
         <button id="rank-tab-female" onclick="RankingController.switchTab('female')" class="rank-tab-btn">Females</button>
@@ -45,8 +45,8 @@
 
     <!-- Table Header Row -->
     <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px;">
-        <div class="rank-grid-full rank-table-row header" style="padding:20px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
-            <span style="text-align:left;">Rank</span>
+        <div class="rank-grid-full rank-table-row header" style="padding:20px 15px 20px 10px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
+            <span style="text-align:center;">Rank</span>
             <span style="text-align:left;">Player</span>
             <span style="text-align:center;" class="hide-mobile">Age</span>
             <span style="text-align:center;" class="hide-mobile">Matches</span>
@@ -86,22 +86,26 @@
 .ranking-sticky-bundle {
     position: -webkit-sticky !important;
     position: sticky !important;
-    top: 74px !important; /* Desktop Offset */
-    z-index: 110;
-    background: var(--c-bg);
-    padding-bottom: 0;
+    top: 74px !important;
+    z-index: 10000 !important;
+    background: #11161E !important;
+    width: 100% !important;
+    display: block !important;
+    padding-top: 10px;
 }
 
 /* Mobile Adjustment */
 @media (max-width: 768px) {
     .ranking-sticky-bundle {
         top: 0 !important;
+        position: -webkit-sticky !important;
+        position: sticky !important;
     }
     .ranking-controls-row {
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 15px !important;
-        padding: 10px 20px 20px !important;
+        padding: 0 20px 20px !important;
     }
     .rank-tabs-container {
         width: 100% !important;

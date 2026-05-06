@@ -4223,24 +4223,26 @@ form {
 /* --- Unified Ranking Grid System --- */
 .rank-grid-dash {
   display: grid;
-  grid-template-columns: 45px 1fr 50px 75px 50px !important;
+  grid-template-columns: 50px 1fr 50px 75px 50px !important;
+  gap: 12px;
   align-items: center;
 }
 
 .rank-grid-full {
   display: grid;
   grid-template-columns: 50px 1fr 50px 80px 80px 70px 80px !important;
+  gap: 15px;
   align-items: center;
 }
 
 @media (max-width: 600px) {
   .rank-grid-dash {
-    grid-template-columns: 40px 1fr 70px !important;
-    gap: 8px;
+    grid-template-columns: 45px 1fr 70px !important;
+    gap: 10px;
   }
   .rank-grid-full {
-    grid-template-columns: 50px 1fr 80px !important;
-    gap: 8px;
+    grid-template-columns: 45px 1fr 80px !important;
+    gap: 12px;
   }
   .hide-mobile {
     display: none !important;
@@ -4344,8 +4346,7 @@ body.is-mobile-app *::-webkit-scrollbar {
 }
 
 html, body {
-  overflow-x: hidden !important;
-  
+  /* overflow-x: hidden removed to fix sticky headers */
 }
 
 
