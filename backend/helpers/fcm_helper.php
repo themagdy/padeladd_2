@@ -52,7 +52,7 @@ class FCMHelper {
                 'notification' => [
                     'sound' => 'default',
                     'color' => '#171C26',
-                    'icon' => 'ic_launcher',
+                    'icon' => 'ic_padeladd_notif',
                     'tag' => 'padeladd_check_updates'
                 ]
             ];
