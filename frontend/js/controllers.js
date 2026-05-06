@@ -552,7 +552,7 @@ const DashboardController = {
             males.style.color = gender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
         }
         if (females) {
-            females.style.borderBottomColor = gender === 'female' ? 'var(--c-primary)' : 'transparent';
+            females.style.borderBottomColor = gender === 'female' ? '#FF2B6D' : 'transparent';
             females.style.color = gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
         }
         DashboardController.renderRanking();
