@@ -831,6 +831,154 @@ window.AdminControllers = {
             this.renderReports();
         }
     },
+    
+    // ── In-App Messages Controller ───────────────────────────────────────────
+    messages: {
+        allMessages: [],
+        searchQuery: '',
+
+        async init() {
+            await this.fetchMessages();
+        },
+
+        async fetchMessages() {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/messages/list.php?admin_token=${token}`);
+                const data = await res.json();
+                if (data.success) {
+                    this.allMessages = data.data;
+                    this.render();
+                }
+            } catch (err) { console.error('Fetch Messages Error:', err); }
+        },
+
+        setSearch(query) {
+            this.searchQuery = query.toLowerCase().trim();
+            this.render();
+        },
+
+        render() {
+            const list = document.getElementById('messages-list');
+            const empty = document.getElementById('messages-empty');
+            if (!list) return;
+
+            let filtered = this.allMessages;
+            if (this.searchQuery) {
+                filtered = filtered.filter(m => 
+                    m.heading.toLowerCase().includes(this.searchQuery) ||
+                    m.body.toLowerCase().includes(this.searchQuery) ||
+                    (m.target_name || '').toLowerCase().includes(this.searchQuery) ||
+                    (m.target_code || '').toLowerCase().includes(this.searchQuery)
+                );
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = filtered.map(m => `
+                <tr>
+                    <td>
+                        <div style="font-weight:700; color:#fff;">${m.heading}</div>
+                        <div style="font-size:12px; color:var(--c-text-muted); max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.body.replace(/<[^>]*>?/gm, '')}</div>
+                    </td>
+                    <td>
+                        ${m.target_user_id ? `
+                            <div style="color:var(--c-primary); font-weight:700;">${m.target_name}</div>
+                            <small style="opacity:0.6;">${m.target_code}</small>
+                        ` : '<span style="color:var(--c-text-muted);">🌍 All Users</span>'}
+                    </td>
+                    <td>
+                        <div style="font-size:12px; font-weight:700;">${m.action_type.toUpperCase()}</div>
+                        <div style="font-size:11px; color:var(--c-text-muted);">${m.page_route || m.android_url || '---'}</div>
+                    </td>
+                    <td>
+                        <span class="badge ${m.is_active == 1 ? 'status-active' : 'status-inactive'}" style="background:${m.is_active == 1 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color:${m.is_active == 1 ? 'var(--c-green)' : 'var(--c-red)'};">
+                            ${m.is_active == 1 ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td style="font-size:12px; color:var(--c-text-muted);">${new Date(m.created_at).toLocaleDateString()}</td>
+                    <td style="text-align:right;">
+                        <button onclick="AdminControllers.messages.deleteMessage(${m.id})" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px;">DELETE</button>
+                    </td>
+                </tr>
+            `).join('');
+        },
+
+        openModal() {
+            document.getElementById('message-modal').style.display = 'flex';
+            document.getElementById('message-form').reset();
+            this.toggleTargetInput('all');
+            this.toggleActionFields('close');
+        },
+
+        closeModal() {
+            document.getElementById('message-modal').style.display = 'none';
+        },
+
+        toggleTargetInput(val) {
+            document.getElementById('target-player-code-group').style.display = val === 'specific' ? 'block' : 'none';
+        },
+
+        toggleActionFields(val) {
+            document.getElementById('action-navigate-group').style.display = val === 'navigate' ? 'block' : 'none';
+            document.getElementById('action-external-group').style.display = val === 'external' ? 'block' : 'none';
+        },
+
+        async saveMessage(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = {
+                heading: formData.get('heading'),
+                body: formData.get('body'),
+                target_type: formData.get('target_type'),
+                target_player_code: formData.get('target_player_code'),
+                button_text: formData.get('button_text'),
+                action_type: formData.get('action_type'),
+                page_route: formData.get('page_route'),
+                android_url: formData.get('android_url'),
+                ios_url: formData.get('ios_url'),
+                is_active: form.is_active.checked ? 1 : 0
+            };
+
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/messages/create.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const resData = await res.json();
+                if (resData.success) {
+                    AdminApp.toast('Message created successfully.');
+                    this.closeModal();
+                    this.fetchMessages();
+                } else {
+                    AdminApp.toast(resData.message || 'Failed to create message.', 'error');
+                }
+            } catch (err) { console.error('Save Message Error:', err); }
+        },
+
+        async deleteMessage(id) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/messages/delete.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Message deleted.');
+                    this.fetchMessages();
+                }
+            } catch (err) { console.error('Delete Message Error:', err); }
+        }
+    },
 
     // ── Venues Controller ───────────────────────────────────────────────
     venues: {

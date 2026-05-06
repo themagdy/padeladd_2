@@ -370,5 +370,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Automatic Triggers: Resolution automatically recalculates rankings (on approve) and notifies all match participants.
     - Dashboard Integration: Active disputes now count toward "Pending Reports" in the main admin dashboard.
 
-[CURRENT] - 2026-05-06 22:12:00 +03:00
+[CURRENT] - 2026-05-06 22:28:00 +03:00
+- [IN_APP_MSGS_V1] - In-App Messaging Suite:
+    - Admin Console: New "In-App Msgs" section to create, target, and manage announcements.
+    - Targeting Engine: Support for global broadcasts or specific player targeting via Player Code.
+    - Dynamic Actions: Buttons can close the popup, navigate to app pages, or open OS-specific external links.
+    - View Tracking: Automatic tracking ensures users only see each message once.
+    - Proactive Delivery: App automatically polls for active messages on startup with priority routing.
+
 - Finalized end-to-end score dispute and moderation workflow.

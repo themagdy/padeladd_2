@@ -311,6 +311,55 @@ var PushNotificationsController = {
 };
 
 
+const InAppMessagesController = {
+    init: async function() {
+        if (!Auth.isAuthenticated()) return;
+        
+        // Delay slightly to not overwhelm the user on startup
+        setTimeout(() => this.check(), 2000);
+    },
+
+    check: async function() {
+        try {
+            const res = await API.get('/system/check_in_app_messages');
+            if (res.success && res.data) {
+                this.display(res.data);
+            }
+        } catch (err) {
+            console.error('[InAppMessages] Check failed:', err);
+        }
+    },
+
+    display: function(msg) {
+        let confirmText = msg.button_text || 'Got it';
+        let action = msg.action_type;
+
+        ConfirmModal.show({
+            title: msg.heading,
+            message: msg.body,
+            confirmText: confirmText,
+            showCancel: false, // In-app messages usually only have one primary action
+            type: 'info'
+        }).then((confirmed) => {
+            if (!confirmed) return;
+
+            if (action === 'navigate' && msg.page_route) {
+                Router.go(msg.page_route);
+            } else if (action === 'external') {
+                const platform = window.Capacitor?.getPlatform() || 'web';
+                let url = msg.android_url;
+                if (platform === 'ios') url = msg.ios_url || msg.android_url;
+                
+                if (url) {
+                    window.open(url, '_blank');
+                }
+            }
+            // 'close' action is already handled by the modal closing
+        });
+    }
+};
+
+
 const ScoreUI = {
     /**
      * Renders a match score card based on the provided UI design.
@@ -507,6 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
         PushNotificationsController.init();
+        InAppMessagesController.init();
         if (typeof UI !== 'undefined' && UI.syncNav) {
             UI.syncNav();
         }

@@ -1,0 +1,122 @@
+<div class="page-header-actions">
+    <div id="page-search-source">
+        <div class="search-box">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="Search messages..." onkeyup="AdminControllers.messages.setSearch(this.value)">
+        </div>
+        <button class="btn-primary" onclick="AdminControllers.messages.openModal()">
+            <span>➕</span> New Message
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Heading</th>
+                    <th>Target</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="messages-list">
+                <!-- Loaded via JS -->
+            </tbody>
+        </table>
+        <div id="messages-empty" class="empty-state" style="display:none;">
+            <div class="empty-icon">📢</div>
+            <h3>No messages found</h3>
+            <p>Create your first in-app announcement to engage players.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="message-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card" style="max-width:600px;">
+        <div class="modal-header">
+            <h3 id="modal-title">Create In-App Message</h3>
+            <button class="btn-close-modal" onclick="AdminControllers.messages.closeModal()">✕</button>
+        </div>
+        <form id="message-form" onsubmit="AdminControllers.messages.saveMessage(event)">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Target Audience</label>
+                    <select name="target_type" class="admin-input" onchange="AdminControllers.messages.toggleTargetInput(this.value)">
+                        <option value="all">All Users</option>
+                        <option value="specific">Specific User (by Player Code)</option>
+                    </select>
+                </div>
+                
+                <div id="target-player-code-group" class="form-group" style="display:none;">
+                    <label>Target Player Code</label>
+                    <input type="text" name="target_player_code" class="admin-input" placeholder="e.g. PL-1234">
+                </div>
+
+                <div class="form-group">
+                    <label>Heading</label>
+                    <input type="text" name="heading" class="admin-input" required placeholder="Main title of the popup">
+                </div>
+
+                <div class="form-group">
+                    <label>Body (Supports HTML)</label>
+                    <textarea name="body" class="admin-input" style="height:120px;" required placeholder="Detailed message content..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Button Text</label>
+                        <input type="text" name="button_text" class="admin-input" value="Got it" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Action Type</label>
+                        <select name="action_type" class="admin-input" onchange="AdminControllers.messages.toggleActionFields(this.value)">
+                            <option value="close">Close Popup</option>
+                            <option value="navigate">Navigate to App Page</option>
+                            <option value="external">External Link</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="action-navigate-group" class="form-group" style="display:none;">
+                    <label>Select App Page</label>
+                    <select name="page_route" class="admin-input">
+                        <option value="/dashboard">Dashboard</option>
+                        <option value="/matches">Matches</option>
+                        <option value="/players">Players</option>
+                        <option value="/ranking">Ranking</option>
+                        <option value="/rules">Rules</option>
+                        <option value="/partner-finder">Partner Finder</option>
+                        <option value="/profile">My Profile</option>
+                    </select>
+                </div>
+
+                <div id="action-external-group" style="display:none;">
+                    <div class="form-group">
+                        <label>Android URL</label>
+                        <input type="url" name="android_url" class="admin-input" placeholder="https://play.google.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>iOS URL</label>
+                        <input type="url" name="ios_url" class="admin-input" placeholder="https://apps.apple.com/...">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-container" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" name="is_active" checked>
+                        <span>Active (Visible to users)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="AdminControllers.messages.closeModal()">Cancel</button>
+                <button type="submit" class="btn-primary">Save Message</button>
+            </div>
+        </form>
+    </div>
+</div>
