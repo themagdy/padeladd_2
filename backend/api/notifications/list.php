@@ -14,18 +14,29 @@ $data = $data ?? [];
 $limit  = (int)($data['limit']  ?? 20);
 $offset = (int)($data['offset'] ?? 0);
 
-// Fetch count first or just use a standard limit check
+// Phase 6 (Refined): Group chat messages so they count as 1 of 20 in the batch.
 $stmt = $pdo->prepare("
-    SELECT n.id, n.type, n.reference_id, n.sender_id, n.message_text, n.is_read, n.created_at,
-           up.profile_image AS sender_avatar,
-           u.first_name AS sender_first_name, u.last_name AS sender_last_name, up.nickname AS sender_nickname,
-           m.match_code
+    SELECT 
+        MAX(n.id) as id, 
+        n.type, 
+        n.reference_id, 
+        n.sender_id, 
+        MAX(n.message_text) as message_text, 
+        MIN(n.is_read) as is_read, 
+        MAX(n.created_at) as created_at,
+        COUNT(*) as count,
+        up.profile_image AS sender_avatar,
+        u.first_name AS sender_first_name, 
+        u.last_name AS sender_last_name, 
+        up.nickname AS sender_nickname,
+        m.match_code
     FROM notifications n
     LEFT JOIN users u ON n.sender_id = u.id
     LEFT JOIN user_profiles up ON n.sender_id = up.user_id
-    LEFT JOIN matches m ON n.reference_id = m.id AND n.type IN ('match_joined', 'team_invite', 'partner_confirmed', 'player_withdrawn', 'partner_denied', 'score_submitted', 'score_confirmed', 'score_disputed', 'score_approved', 'score_reminder', 'match_cancelled', 'new_message', 'phone_requested', 'phone_approved', 'phone_denied', 'partner_blocked', 'match_started', 'availability_alert')
+    LEFT JOIN matches m ON n.reference_id = m.id
     WHERE n.user_id = :uid
-    ORDER BY n.created_at DESC
+    GROUP BY (CASE WHEN n.type = 'new_message' THEN CONCAT('chat_', n.reference_id) ELSE n.id END)
+    ORDER BY id DESC
     LIMIT :limit OFFSET :offset
 ");
 $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
@@ -34,8 +45,12 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Peak ahead to see if there's more
-$checkStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ?");
+// Peak ahead to see if there's more (counting groups, not raw rows)
+$checkStmt = $pdo->prepare("
+    SELECT COUNT(DISTINCT (CASE WHEN type = 'new_message' THEN CONCAT('chat_', reference_id) ELSE id END)) 
+    FROM notifications 
+    WHERE user_id = ?
+");
 $checkStmt->execute([$uid]);
 $total = (int)$checkStmt->fetchColumn();
 $has_more = ($offset + count($notifications)) < $total;
