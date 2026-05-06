@@ -81,6 +81,7 @@ var Toast = {
 var ConfirmModal = {
     _modal: null,
     _resolve: null,
+    _isOpen: false,
 
     show: function({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...' }) {
         return new Promise((resolve) => {
@@ -151,9 +152,14 @@ var ConfirmModal = {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.style.touchAction = 'none';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
 
             // Prevent touchmove events from bubbling up
             this._modal.ontouchmove = (e) => e.preventDefault();
+
+            // Set state
+            this._isOpen = true;
 
             // Trigger animation
             this._modal.style.opacity = '1';
@@ -171,7 +177,11 @@ var ConfirmModal = {
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
         this._modal.ontouchmove = null;
+
+        this._isOpen = false;
 
         this._modal.style.opacity = '0';
         this._modal.style.pointerEvents = 'none';
@@ -513,7 +523,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const App = window.Capacitor?.Plugins?.App;
     if (App) {
         App.addListener('backButton', () => {
-            // Priority 1: Close notifications if open
+            // Priority 1: Close confirm modal if open
+            if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
+                ConfirmModal.close(false);
+                return;
+            }
+
+            // Priority 2: Close notifications if open
             if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
                 NotificationsController.close();
                 return;
