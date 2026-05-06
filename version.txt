@@ -323,3 +323,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Tray Deduplication: Configured fixed 'tag' and 'collapse_key' to ensure only one "Check updates" message occupies the notification tray at any time.
 - Chat Performance: Slashed message delivery time from 10s to ~0.5s by implementing OAuth2 token caching and parallelizing FCM requests via curl_multi.
 - Version Bump: Incremented application version to 1.0.1 (Build 2) for release.
+
+[MOBILE_NAV_UI_V1] - 2026-05-06 20:17:00 +0300
+- Nav Bar Polish: Increased the default size of all navigation icons by 20% (to 28px) for better tap targets and visibility on mobile and desktop.
+- Visual Balance: Nudged the mobile Avatar 8px to the right to visually close the gap with the thinner Notification bell icon.
+- Icon Scaling: Scaled the mobile notification bell down by ~8% (to 24px) for perfect proportional balance with the main action icons.
+- Gap Tightening: Decreased the internal gap between navigation icons and their text labels (to 2px) and applied a -3px top margin on mobile text labels to pull them completely flush.
+- Font Sizing: Decreased desktop nav labels to 9px and mobile nav labels to an ultra-sleek 7.5px.
+- SVG Normalization: Processed new pure white SVGs for Play, Rank, and Matches, completely removing the buggy CSS brightness filters from the inactive state and restoring 100% opacity.
