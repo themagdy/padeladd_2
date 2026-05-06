@@ -660,7 +660,7 @@ const DashboardController = {
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
                     ${renderTeamRow(m.team_a)}
-                    <div class="match-vs-badge" style="width:14px; height:14px; min-width:14px;" onclick="event.stopPropagation(); FX.ignite(this)">
+                    <div class="match-vs-badge" data-no-sound style="width:14px; height:14px; min-width:14px;" onclick="event.stopPropagation(); FX.ignite(this)">
                         <div class="vs-fire-fx"></div>
                         <img src="assets/vs.svg" style="width:14px; height:14px; opacity:0.6;" alt="VS">
                     </div>
@@ -4686,7 +4686,7 @@ const ScoringController = {
                             ${this._renderSetInputs(3, 1)}
                         </div>
                     </div>
-                    <div class="match-vs-badge" style="width:27px; height:27px; margin-top:24px;" onclick="FX.ignite(this)">
+                    <div class="match-vs-badge" data-no-sound style="width:27px; height:27px; margin-top:24px;" onclick="FX.ignite(this)">
                         <div class="vs-fire-fx"></div>
                         <img src="assets/vs.svg" style="width:27px; height:27px; opacity:0.8;" alt="VS">
                     </div>
