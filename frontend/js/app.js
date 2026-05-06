@@ -495,9 +495,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize sound engine
     SoundManager.init();
 
-    // Phase 6: Initialize push notifications
     if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
         PushNotificationsController.init();
+        if (typeof UI !== 'undefined' && UI.syncNav) {
+            UI.syncNav();
+        }
     }
 
     // Mobile Status Bar Fix
