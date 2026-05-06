@@ -287,3 +287,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Details: Replaced inline SVG with the official vs.svg brand asset.
 - Match Cards: Updated dynamic match cards in the list view to use the new vs.svg.
 - Score Modal: Integrated the vs.svg into the score entry interface for visual consistency.
+
+[VS_BADGE_FX_V1] - 2026-05-06 04:07:00 +0300
+- Asset Personalization: Sized VS badge 15% smaller (36px) and applied a premium dimmed gold fill (#C5A059).
+- Interaction Design: Removed hover rotation for a cleaner feel and implemented a global FX utility system.
+- Animation Eruption: Added a high-octane "Plasma Burst" fire effect on click, featuring multi-layered gradients and secondary sparks.
+- Tactile Feedback: Integrated a "shake" animation on ignite for physical click feedback.
+- Sound Logic: Implemented sound-suppression (data-no-sound) for VS badges to ensure visual effects remain pure and silent.
