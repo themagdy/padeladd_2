@@ -37,8 +37,7 @@ class FCMHelper {
                     'token' => $token,
                     'notification' => [
                         'title' => (string)$title,
-                        'body' => (string)$body,
-                        'image' => 'https://ahmedmagdy.com/pl/assets/logo_ico.png'
+                        'body' => (string)$body
                     ],
                     'data' => !empty($data) ? array_map('strval', $data) : new stdClass()
                 ]
@@ -50,8 +49,7 @@ class FCMHelper {
                 'notification' => [
                     'sound' => 'default',
                     'color' => '#171C26',
-                    'icon' => 'ic_launcher',
-                    'image' => 'https://ahmedmagdy.com/pl/assets/logo_ico.png'
+                    'icon' => 'ic_launcher'
                 ]
             ];
             $payload['message']['apns'] = ['payload' => ['aps' => ['sound' => 'default']]];
