@@ -153,7 +153,9 @@ const Router = {
         if (path.startsWith(CONFIG.BASE_PATH)) {
             path = path.slice(CONFIG.BASE_PATH.length);
         }
-        if (path === '') path = '/';
+        
+        // Ensure path starts with / and has no trailing slash
+        if (!path.startsWith('/')) path = '/' + path;
         if (path !== '/' && path.endsWith('/')) {
             path = path.slice(0, -1);
         }
@@ -265,10 +267,12 @@ const Router = {
                 `;
             }
         } else {
+            if (loader) loader.style.display = 'none';
             appDiv.innerHTML = `
-                <div class="test-page" style="text-align: center;">
-                    <h2>Page Not Found</h2>
-                    <a href="/" data-link class="btn btn-primary">Go Home</a>
+                <div class="test-page" style="text-align: center; padding: 50px 20px;">
+                    <h2 style="color: #fff;">Page Not Found</h2>
+                    <p style="color: var(--c-text-muted); margin-bottom: 30px;">The requested path "${path}" was not found.</p>
+                    <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
                 </div>
             `;
         }
