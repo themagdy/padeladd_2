@@ -5123,7 +5123,7 @@ const RankingController = {
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 20px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <span style="font-size:18px; font-weight:600; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
+                    <span style="text-align:left; font-size:18px; font-weight:600; color:${r.rank <= 3 ? 'var(--c-orange)' : '#fff'};">${r.rank}</span>
                     
                     <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
                         ${avatarHtml}
