@@ -400,13 +400,15 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Cleaned up Arabic/English phrasing in the Terms page for better clarity and conciseness.
 - Version: 1.4.0 (Build 140)
 
-[SYSTEM_REPORTS_V1] - 2026-05-08 01:46:00 +0300
-- [SYSTEM_REPORTS] - Feature Restoration:
-    - Fixed "Report a Problem" feature by registering the missing `system/report` endpoint in the API router.
-    - Initialized the `system_reports` database table and synchronized `database_schema.sql`.
-    - Resolved a column name mismatch (`report_text` vs `reason_text`) to enable successful report submissions.
-- [ADMIN_REPORTS_V2] - System Oversight:
-    - Enabled status management: Administrators can now toggle system report status between `PENDING` and `RESOLVED` directly from the list.
-    - Advanced Sorting: Implemented clickable headers in admin reports for instant sorting by **Status** or **Date**.
-    - Exclusive Archiving: Updated the "Show Archived" toggle to switch between active-only and archived-only views for better historical auditing.
+[SYSTEM_REPORTS_V1.0] - 2026-05-08 01:55:00 +0300
+- End-to-End System Reporting Framework:
+    - User Dashboard: Integrated "Report a Problem" link with a custom warning modal for direct system feedback.
+    - Backend Infrastructure: 
+        - Created `system/report` API endpoint for authenticated report submission.
+        - Initialized `system_reports` database table with user mapping, resolution status, and archiving support.
+    - Admin Reporting Suite:
+        - Dedicated System Reports Tab: Integrated system feedback into the central moderation dashboard.
+        - Quick Resolution: Enabled one-click status toggling (Pending/Resolved) directly from the list.
+        - Smart Filtering: Refined "Show Archived" toggle for exclusive view of historical vs active reports.
+        - Advanced Sorting: Added dynamic sorting by Status and Date for efficient moderation.
 - Version: 1.5.0 (Build 150)
