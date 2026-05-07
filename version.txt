@@ -379,7 +379,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Proactive Delivery: App automatically polls for active messages on startup with priority routing.
 - Finalized end-to-end score dispute and moderation workflow.
 
-[CURRENT] - 2026-05-07 04:45:00 +03:00
+[CURRENT] - 2026-05-07 04:45:00 +0300
 - [IN_APP_MSGS_V1.1] - Messaging & UI Polish:
     - Premium Modal Design: Overhauled in-app messages with glassmorphism, circular emoji framing, and optimized typography.
     - Rich Text Editor: Implemented a WYSIWYG editor for admins with live bold and color formatting.
@@ -389,3 +389,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - UI Refinements: Fixed sticky header overlaps (z-index) and female ranking tab colors on dashboard.
     - Nav Fixes: Resolved profile avatar position shifting in mobile navbar.
     - Version: 1.3.1 (Build 131)
+
+[BORDERLESS_UI] - 2026-05-07 05:45:00 +0300
+- Global Borderless Modernization Sweep:
+    - Systematically eliminated borders across Dashboard, Match Listing, Player Ranking, Rules, and Terms pages.
+    - Modernized global form inputs (inputs, selects, textareas) with a borderless, premium aesthetic.
+    - Refined date/time scroller pills and autocomplete dropdowns for a unified "floating" glass design.
+    - Polished "Rules" button in Play section with a premium gradient and no-border look.
+    - Standardized top margins on Dashboard and Profile views for better layout balance.
+    - Cleaned up Arabic/English phrasing in the Terms page for better clarity and conciseness.
+- Version: 1.4.0 (Build 140)

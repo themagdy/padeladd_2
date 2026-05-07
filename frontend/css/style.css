@@ -508,7 +508,7 @@ form {
 .form-select,
 .form-textarea {
   background: var(--c-bg-input);
-  border: 1px solid var(--c-border);
+  border: 0px;
   border-radius: var(--r-md);
   color: var(--c-text);
   font-family: var(--font);
@@ -535,7 +535,7 @@ form {
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--c-primary);
+  background: var(--c-bg-input);
   box-shadow: 0 0 0 3px var(--c-primary-glow);
 }
 
@@ -1153,7 +1153,6 @@ form {
    ------------------------------------------------------- */
 .match-card {
   background: var(--c-bg-card);
-  border: 1px solid var(--c-border);
   border-radius: var(--r-lg);
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
@@ -3143,7 +3142,7 @@ form {
   flex: 0 0 auto;
   padding: 12px 20px;
   background: var(--c-bg-card);
-  border: 1px solid var(--c-border);
+  border: 0px;
   border-radius: var(--r-md);
   color: var(--c-text-muted);
   font-size: 14px;
@@ -3159,12 +3158,12 @@ form {
 }
 
 .pill:hover {
-  border-color: var(--c-text-dim);
+  background: var(--c-bg-card);
 }
 
 .pill.active {
   background: var(--c-primary);
-  border-color: var(--c-primary);
+  background: var(--c-primary);
   color: #fff !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(27, 82, 206, 0.4);
@@ -3254,7 +3253,7 @@ form {
   left: 0;
   right: 0;
   background: var(--c-bg-card);
-  border: 1px solid var(--c-border);
+  border: none;
   border-radius: var(--r-md);
   max-height: 200px;
   overflow-y: auto;
@@ -3304,7 +3303,6 @@ form {
 .match-card-modern {
   padding: 24px;
   background: var(--g-card);
-  border: 1px solid var(--c-border);
   border-radius: 20px;
   margin-bottom: 16px;
   position: relative;
@@ -3315,7 +3313,6 @@ form {
 
 .match-card-modern:hover {
   transform: translateY(-4px);
-  border-color: var(--c-gray-light);
 }
 
 .match-title-row {
@@ -3420,7 +3417,6 @@ form {
   height: 28px;
   border-radius: 50%;
   background: var(--c-bg-secondary);
-  border: 1px solid var(--c-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3930,7 +3926,6 @@ form {
     border-radius: 12px;
     transition: all 0.2s ease;
     background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -3940,7 +3935,6 @@ form {
 
 .msc-team.winner {
     background: rgba(255, 149, 0, 0.05);
-    border-color: rgba(255, 149, 0, 0.15);
 }
 
 .msc-team.winner .msc-player-name {
@@ -3991,13 +3985,11 @@ form {
 .dash-match-card {
     background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%) !important;
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dash-match-card:hover {
-    border-color: var(--c-orange) !important;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
     transform: translateY(-2px);
 }
