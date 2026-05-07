@@ -307,14 +307,21 @@ const Router = {
             
             const tbarInner = document.getElementById('top-bar-inner');
             if (tbarInner) {
-                if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
+                if (nPath === '/profile/edit') {
+                    tbarInner.style.maxWidth = '500px';
+                    tbarInner.style.padding = '0 20px';
+                } else if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
                     tbarInner.style.maxWidth = '1200px';
+                    tbarInner.style.padding = '0 16px';
                 } else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) {
                     tbarInner.style.maxWidth = '900px';
+                    tbarInner.style.padding = '0 16px';
                 } else if (nPath === '/rules') {
                     tbarInner.style.maxWidth = '800px';
+                    tbarInner.style.padding = '0 16px';
                 } else {
                     tbarInner.style.maxWidth = '480px';
+                    tbarInner.style.padding = '0 16px';
                 }
             }
             

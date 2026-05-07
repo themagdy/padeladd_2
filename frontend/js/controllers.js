@@ -1031,6 +1031,12 @@ const ProfileController = {
                 if (u) {
                     if (form.first_name) form.first_name.value = u.first_name || '';
                     if (form.last_name) form.last_name.value = u.last_name || '';
+                    
+                    // Populate read-only contact info
+                    const emailEl = document.getElementById('edit-email');
+                    const phoneEl = document.getElementById('edit-phone');
+                    if (emailEl) emailEl.textContent = u.email || '—';
+                    if (phoneEl) phoneEl.textContent = u.mobile || '—';
                 }
                 if (p) {
                     if (form.nickname && p.nickname) form.nickname.value = p.nickname;
