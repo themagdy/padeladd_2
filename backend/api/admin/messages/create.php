@@ -10,6 +10,7 @@ $pdo = getDB();
 $data = json_decode(file_get_contents('php://input'), true);
 
 $heading = $data['heading'] ?? '';
+$emoji = $data['emoji'] ?? '👋';
 $body = $data['body'] ?? '';
 $target_type = $data['target_type'] ?? 'all';
 $target_player_code = $data['target_player_code'] ?? '';
@@ -37,12 +38,12 @@ if ($target_type === 'specific' && !empty($target_player_code)) {
 try {
     $sql = "
         INSERT INTO in_app_messages 
-        (target_user_id, heading, body, button_text, action_type, page_route, android_url, ios_url, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (target_user_id, heading, emoji, body, button_text, action_type, page_route, android_url, ios_url, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        $target_user_id, $heading, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active
+        $target_user_id, $heading, $emoji, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active
     ]);
 
     jsonResponse(true, 'Message created successfully.');

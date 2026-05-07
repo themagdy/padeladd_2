@@ -1,0 +1,59 @@
+<?php
+require_once __DIR__ . '/../../../core/db.php';
+require_once __DIR__ . '/../../../helpers/auth_helper.php';
+require_once __DIR__ . '/../../../helpers/response.php';
+
+header('Content-Type: application/json');
+
+$pdo = getDB();
+if (!validateAdmin($pdo)) {
+    jsonResponse(false, 'Unauthorized');
+}
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+if (!isset($data['id'])) {
+    jsonResponse(false, 'Message ID is required');
+}
+
+$sql = "UPDATE in_app_messages SET 
+        target_user_id = ?, 
+        heading = ?, 
+        emoji = ?, 
+        body = ?, 
+        button_text = ?, 
+        action_type = ?, 
+        page_route = ?, 
+        android_url = ?, 
+        ios_url = ?, 
+        is_active = ?
+        WHERE id = ?";
+
+// Get user ID from player code if specific
+$target_user_id = null;
+if ($data['target_type'] === 'specific' && !empty($data['target_player_code'])) {
+    $stmt = $pdo->prepare("SELECT user_id FROM user_profiles WHERE player_code = ?");
+    $stmt->execute([$data['target_player_code']]);
+    $target_user_id = $stmt->fetchColumn();
+}
+
+$stmt = $pdo->prepare($sql);
+$success = $stmt->execute([
+    $target_user_id,
+    $data['heading'],
+    $data['emoji'],
+    $data['body'],
+    $data['button_text'],
+    $data['action_type'],
+    $data['page_route'] ?? null,
+    $data['android_url'] ?? null,
+    $data['ios_url'] ?? null,
+    $data['is_active'],
+    $data['id']
+]);
+
+if ($success) {
+    jsonResponse(true, 'Message updated successfully');
+} else {
+    jsonResponse(false, 'Failed to update message');
+}

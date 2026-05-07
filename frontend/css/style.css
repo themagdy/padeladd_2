@@ -2691,7 +2691,7 @@ form {
     width: auto !important;
     height: auto !important;
     overflow: visible !important; /* Allow glow to bleed out */
-    transform: translateX(8px);
+    transform: translateX(8px) !important;
   }
 
   .avatar-circle .avatar-wrap,

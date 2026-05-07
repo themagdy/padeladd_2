@@ -1,4 +1,41 @@
 const API = {
+    get: async function(endpoint) {
+        const url = CONFIG.API_BASE_URL + endpoint;
+        const headers = {
+            'Accept': 'application/json'
+        };
+
+        if (Auth.isAuthenticated()) {
+            Object.assign(headers, Auth.getAuthHeaders());
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: headers
+            });
+
+            if (!response.ok) {
+                console.error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (response.status === 401) {
+                Auth.clearAll();
+                Router.navigate('/login');
+            }
+
+            return result;
+        } catch (error) {
+            console.error('API request failed:', error);
+            return {
+                success: false,
+                message: 'Failed to process request.',
+                error_details: error.message
+            };
+        }
+    },
     post: async function(endpoint, data = {}) {
         const url = CONFIG.API_BASE_URL + endpoint;
         const headers = {
