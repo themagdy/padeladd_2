@@ -43,6 +43,7 @@
             <button class="btn-close-modal" onclick="AdminControllers.messages.closeModal()">✕</button>
         </div>
         <form id="message-form" onsubmit="AdminControllers.messages.saveMessage(event)">
+            <input type="hidden" name="id" id="edit-message-id">
             <div class="modal-body">
                 <div class="form-group">
                     <label>Target Audience</label>
@@ -57,14 +58,29 @@
                     <input type="text" name="target_player_code" class="admin-input" placeholder="e.g. PL-1234">
                 </div>
 
-                <div class="form-group">
-                    <label>Heading</label>
-                    <input type="text" name="heading" class="admin-input" required placeholder="Main title of the popup">
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;">
+                        <label>Heading</label>
+                        <input type="text" name="heading" class="admin-input" required placeholder="Main title">
+                    </div>
+                    <div class="form-group" style="width:100px;">
+                        <label>Top Emoji</label>
+                        <input type="text" name="emoji" class="admin-input" value="👋" style="text-align:center; font-size:20px;">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Body (Supports HTML)</label>
-                    <textarea name="body" class="admin-input" style="height:120px;" required placeholder="Detailed message content..."></textarea>
+                    <label style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Body Content</span>
+                        <div class="editor-toolbar" style="display:flex; gap:4px;">
+                            <button type="button" title="Bold" onclick="document.execCommand('bold', false, null)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">B</button>
+                            <button type="button" title="Primary Blue" onclick="document.execCommand('foreColor', false, '#1b52ce')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-primary); width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">A</button>
+                            <button type="button" title="Orange" onclick="document.execCommand('foreColor', false, '#f15a29')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-orange); width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">A</button>
+                            <button type="button" title="Clear Formatting" onclick="document.execCommand('removeFormat', false, null)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); width:28px; height:28px; border-radius:4px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✖</button>
+                        </div>
+                    </label>
+                    <div id="message-body-editor" contenteditable="true" class="admin-input" style="height:150px; overflow-y:auto; padding:12px; line-height:1.6; font-size:14px; outline:none; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); border-radius:12px;"></div>
+                    <input type="hidden" name="body" id="message-body-hidden">
                 </div>
 
                 <div class="form-row">
@@ -86,13 +102,12 @@
                     <label>Select App Page</label>
                     <select name="page_route" class="admin-input">
                         <option value="/dashboard">Dashboard</option>
-                        <option value="/matches">Matches</option>
-                        <option value="/players">Players</option>
+                        <option value="/profile/view">Player Profile (Personal)</option>
+                        <option value="/matches/my">My Matches</option>
+                        <option value="/matches">Play</option>
                         <option value="/ranking">Ranking</option>
-                        <option value="/rules">Rules</option>
+                        <option value="/rules">Padeladd Rules</option>
                         <option value="/terms">Terms</option>
-                        <option value="/partner-finder">Partner Finder</option>
-                        <option value="/profile">My Profile</option>
                     </select>
                 </div>
 
@@ -154,3 +169,20 @@
     </div>
 </div>
 
+<!-- Preview Modal (Mimics user view) -->
+<div id="preview-modal" class="modal-overlay" style="display:none;">
+    <div id="preview-modal-card" style="background:rgba(23, 23, 28, 0.85); backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+        
+        <!-- Premium Emoji Frame -->
+        <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
+            <div style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg, var(--c-primary), #6366f1); opacity:0.15; filter:blur(10px);"></div>
+            <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);"></div>
+            <div id="preview-emoji" style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">👋</div>
+        </div>
+
+        <h2 id="preview-heading" style="font-size:20px; font-weight:900; color:#fff; margin-bottom:10px; letter-spacing:-0.5px; line-height:1.2;">Heading</h2>
+        <div id="preview-body" style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.6; margin-bottom:28px; font-weight:400; padding:0 10px;">Body content goes here.</div>
+        
+        <button id="preview-button" class="btn-primary" style="width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; text-transform:uppercase; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25);" onclick="AdminControllers.messages.closePreviewModal()">Got it</button>
+    </div>
+</div>

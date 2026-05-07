@@ -35,8 +35,8 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $endpoint = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $requestUri);
 $endpoint = trim($endpoint, '/');
 
-// Only allow POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+// Only allow POST (except for specific system checks)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $endpoint !== 'system/check_in_app_messages') {
     jsonResponse(false, 'Only POST method is allowed.', null, 405);
 }
 
@@ -197,6 +197,9 @@ try {
             break;
         case 'ranking/list':
             require __DIR__ . '/ranking/list.php';
+            break;
+        case 'system/check_in_app_messages':
+            require __DIR__ . '/system/check_in_app_messages.php';
             break;
 
         default:

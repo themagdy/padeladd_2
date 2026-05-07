@@ -523,7 +523,7 @@ const DashboardController = {
             if (males && females) {
                 males.style.borderBottomColor = profile.gender === 'male' ? 'var(--c-primary)' : 'transparent';
                 males.style.color = profile.gender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
-                females.style.borderBottomColor = profile.gender === 'female' ? 'var(--c-primary)' : 'transparent';
+                females.style.borderBottomColor = profile.gender === 'female' ? '#D81B60' : 'transparent';
                 females.style.color = profile.gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
             }
         }

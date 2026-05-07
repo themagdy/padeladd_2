@@ -883,7 +883,7 @@ window.AdminControllers = {
             list.innerHTML = filtered.map(m => `
                 <tr>
                     <td>
-                        <div style="font-weight:700; color:#fff;">${m.heading}</div>
+                        <div style="font-weight:700; color:#fff;"><span style="margin-right:8px;">${m.emoji || '👋'}</span>${m.heading}</div>
                         <div style="font-size:12px; color:var(--c-text-muted); max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.body.replace(/<[^>]*>?/gm, '')}</div>
                     </td>
                     <td>
@@ -902,7 +902,9 @@ window.AdminControllers = {
                         </span>
                     </td>
                     <td style="font-size:12px; color:var(--c-text-muted);">${new Date(m.created_at).toLocaleDateString()}</td>
-                    <td style="text-align:right;">
+                    <td style="text-align:right; white-space:nowrap;">
+                        <button onclick="AdminControllers.messages.editMessage(${m.id})" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:var(--c-orange); border:1px solid rgba(241, 90, 41, 0.2); padding:6px 12px; margin-right:8px;">EDIT</button>
+                        <button onclick="AdminControllers.messages.previewMessage(${m.id})" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:#fff; border:1px solid rgba(255, 255, 255, 0.1); padding:6px 12px; margin-right:8px;">VIEW</button>
                         <button onclick="AdminControllers.messages.viewStats(${m.id})" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; margin-right:8px;">STATS</button>
                         <button onclick="AdminControllers.messages.deleteMessage(${m.id})" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px;">DELETE</button>
                     </td>
@@ -912,13 +914,58 @@ window.AdminControllers = {
 
         openModal() {
             document.getElementById('message-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = 'Create In-App Message';
+            document.getElementById('edit-message-id').value = '';
             document.getElementById('message-form').reset();
+            document.getElementById('message-body-editor').innerHTML = '';
             this.toggleTargetInput('all');
             this.toggleActionFields('close');
         },
 
         closeModal() {
             document.getElementById('message-modal').style.display = 'none';
+        },
+
+        editMessage(id) {
+            const msg = this.allMessages.find(m => m.id == id);
+            if (!msg) return;
+
+            document.getElementById('message-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = 'Edit In-App Message';
+            document.getElementById('edit-message-id').value = msg.id;
+
+            const form = document.getElementById('message-form');
+            form.elements['target_type'].value = msg.target_user_id ? 'specific' : 'all';
+            form.elements['target_player_code'].value = msg.target_code || '';
+            form.elements['heading'].value = msg.heading;
+            form.elements['emoji'].value = msg.emoji || '👋';
+            form.elements['button_text'].value = msg.button_text;
+            form.elements['action_type'].value = msg.action_type;
+            form.elements['page_route'].value = msg.page_route || '/dashboard';
+            form.elements['android_url'].value = msg.android_url || '';
+            form.elements['ios_url'].value = msg.ios_url || '';
+            form.elements['is_active'].checked = msg.is_active == 1;
+
+            document.getElementById('message-body-editor').innerHTML = msg.body;
+
+            this.toggleTargetInput(msg.target_user_id ? 'specific' : 'all');
+            this.toggleActionFields(msg.action_type);
+        },
+        
+        previewMessage(id) {
+            const msg = this.allMessages.find(m => m.id == id);
+            if (!msg) return;
+
+            document.getElementById('preview-emoji').innerText = msg.emoji || '👋';
+            document.getElementById('preview-heading').innerText = msg.heading;
+            document.getElementById('preview-body').innerHTML = msg.body;
+            document.getElementById('preview-button').innerText = msg.button_text || 'Got it';
+            
+            document.getElementById('preview-modal').style.display = 'flex';
+        },
+
+        closePreviewModal() {
+            document.getElementById('preview-modal').style.display = 'none';
         },
 
         toggleTargetInput(val) {
@@ -936,6 +983,10 @@ window.AdminControllers = {
             const form = e.target;
             const formData = new FormData(form);
             const token = localStorage.getItem('admin_token');
+            const editId = formData.get('id');
+            
+            // Sync Rich Text Editor to hidden input
+            const bodyContent = document.getElementById('message-body-editor').innerHTML;
             
             if (!token) {
                 AdminApp.toast('Admin session expired. Please login again.', 'error');
@@ -943,8 +994,10 @@ window.AdminControllers = {
             }
 
             const data = {
+                id: editId,
                 heading: formData.get('heading'),
-                body: formData.get('body'),
+                emoji: formData.get('emoji'),
+                body: bodyContent,
                 target_type: formData.get('target_type'),
                 target_player_code: formData.get('target_player_code'),
                 button_text: formData.get('button_text'),
@@ -952,13 +1005,14 @@ window.AdminControllers = {
                 page_route: formData.get('page_route'),
                 android_url: formData.get('android_url'),
                 ios_url: formData.get('ios_url'),
-                is_active: form.elements['is_active'] ? (form.elements['is_active'].checked ? 1 : 0) : 1
+                is_active: form.elements['is_active'].checked ? 1 : 0
             };
 
             console.log('Sending data:', data);
 
             try {
-                const res = await fetch(`../backend/api/admin/messages/create.php?admin_token=${token}`, {
+                const endpoint = editId ? 'update.php' : 'create.php';
+                const res = await fetch(`../backend/api/admin/messages/${endpoint}?admin_token=${token}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)

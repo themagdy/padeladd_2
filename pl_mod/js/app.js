@@ -10,9 +10,21 @@ window.AdminApp = {
         // Global Modal Dismissal (Click Outside to Close)
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal-overlay')) {
+                // Direct hide
+                e.target.style.display = 'none';
+
+                // Also trigger controller-specific close if it exists
                 const activePage = window.location.hash.replace('#', '') || 'dashboard';
-                if (AdminControllers[activePage] && typeof AdminControllers[activePage].closeModal === 'function') {
-                    AdminControllers[activePage].closeModal();
+                if (AdminControllers[activePage]) {
+                    if (typeof AdminControllers[activePage].closeModal === 'function') {
+                        AdminControllers[activePage].closeModal();
+                    }
+                    if (typeof AdminControllers[activePage].closeStatsModal === 'function') {
+                        AdminControllers[activePage].closeStatsModal();
+                    }
+                    if (typeof AdminControllers[activePage].closePreviewModal === 'function') {
+                        AdminControllers[activePage].closePreviewModal();
+                    }
                 }
             }
         });

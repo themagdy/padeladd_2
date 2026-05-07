@@ -83,7 +83,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...' }) {
+    show: function({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', icon: customIcon = null }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
             
@@ -95,14 +95,14 @@ var ConfirmModal = {
                     position:fixed; top:0; left:0; width:100%; height:100%;
                     background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
                     display:flex; align-items:center; justify-content:center;
-                    z-index:9999; opacity:0; pointer-events:none;
+                    z-index:100000; opacity:0; pointer-events:none;
                     transition:opacity 0.25s ease; padding:32px;
                 `;
                 document.body.appendChild(this._modal);
             }
 
             const isWarning = type === 'warning';
-            const icon = isWarning ? '⚡' : '👋';
+            const icon = customIcon || (isWarning ? '⚡' : '👋');
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             const inputHtml = showInput ? `
@@ -118,13 +118,24 @@ var ConfirmModal = {
             ` : '';
 
             this._modal.innerHTML = `
-                <div style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:32px; width:100%; max-width:400px; padding:40px 32px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.4); transform:scale(0.95); transition:transform 0.25s ease;" id="gcm-card">
-                    <div style="font-size:48px; margin-bottom:24px;">${icon}</div>
-                    <h2 style="font-size:24px; font-weight:800; margin-bottom:12px; color:var(--c-text);">${title}</h2>
-                    <p style="font-size:15px; color:var(--c-text-muted); line-height:1.6; margin-bottom:24px;">${message}</p>
+                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.85); backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                    
+                    <!-- Premium Emoji Frame -->
+                    <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
+                        <div style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg, var(--c-primary), #6366f1); opacity:0.15; filter:blur(10px);"></div>
+                        <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);"></div>
+                        <div style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">${icon}</div>
+                    </div>
+
+                    <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:10px; letter-spacing:-0.5px; line-height:1.2;">${title}</h2>
+                    <div style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.6; margin-bottom:28px; font-weight:400; padding:0 10px;">${message}</div>
+                    
                     ${inputHtml}
-                    <div style="display:flex; flex-direction:column; gap:12px;">
-                        <button id="gcm-confirm" class="btn" style="background:${confirmBtnColor}; color:white; border:none; padding:16px;">${confirmText}</button>
+
+                    <div style="display:flex; gap:12px; flex-direction:column;">
+                        <button id="gcm-confirm" class="btn" style="background:var(--c-primary); color:#fff; border:none; width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25); transition:transform 0.2s;">
+                            ${confirmText.toUpperCase()}
+                        </button>
                         ${thirdBtnHtml}
                         ${cancelBtnHtml}
                     </div>
@@ -165,7 +176,11 @@ var ConfirmModal = {
             this._modal.style.opacity = '1';
             this._modal.style.pointerEvents = 'auto';
             setTimeout(() => {
-                document.getElementById('gcm-card').style.transform = 'scale(1)';
+                const card = document.getElementById('gcm-card');
+                if (card) {
+                    card.style.transform = 'scale(1)';
+                    card.style.opacity = '1';
+                }
             }, 10);
         });
     },
@@ -185,7 +200,11 @@ var ConfirmModal = {
 
         this._modal.style.opacity = '0';
         this._modal.style.pointerEvents = 'none';
-        document.getElementById('gcm-card').style.transform = 'scale(0.95)';
+        const card = document.getElementById('gcm-card');
+        if (card) {
+            card.style.transform = 'scale(0.95)';
+            card.style.opacity = '0';
+        }
         setTimeout(() => {
             if (this._resolve) this._resolve(result);
         }, 250);
@@ -337,6 +356,7 @@ const InAppMessagesController = {
         ConfirmModal.show({
             title: msg.heading,
             message: msg.body,
+            icon: msg.emoji,
             confirmText: confirmText,
             showCancel: false, // In-app messages usually only have one primary action
             type: 'info'
@@ -344,7 +364,7 @@ const InAppMessagesController = {
             if (!confirmed) return;
 
             if (action === 'navigate' && msg.page_route) {
-                Router.go(msg.page_route);
+                Router.navigate(msg.page_route);
             } else if (action === 'external') {
                 const platform = window.Capacitor?.getPlatform() || 'web';
                 let url = msg.android_url;
