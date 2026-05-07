@@ -168,7 +168,8 @@
          FOOTER
     ═══════════════════════════════════════════ -->
     <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 20px; gap:20px;">
-      <button onclick="DashboardController.openReportModal()"
+      <button
+        onclick="DashboardController.reportProblem()"
         style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
         onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(-1px)'"
         onmouseout="this.style.background='var(--g-card)'; this.style.transform='translateY(0)'">Report a problem</button>
@@ -182,24 +183,6 @@
     </div>
 
   </div> <!-- end container -->
-
-  <!-- Report Problem Modal -->
-  <div id="report-problem-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:20px;">
-    <div style="background:var(--c-bg); width:100%; max-width:480px; border-radius:24px; border:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; box-shadow:0 24px 48px rgba(0,0,0,0.4);">
-      <div style="padding:24px 32px 16px; display:flex; align-items:center; gap:14px; border-bottom:1px solid rgba(255,255,255,0.04);">
-        <div style="width:38px; height:38px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); color:#f87171; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px;">⚠️</div>
-        <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0; letter-spacing:-0.3px;">Report a Problem</h2>
-      </div>
-      <div style="padding:24px 32px;">
-        <p style="color:var(--c-text-muted); font-size:14px; margin-bottom:20px; line-height:1.5;">Describe the issue you're experiencing or suggest an improvement. We appreciate your feedback!</p>
-        <textarea style="width:100%; min-height:120px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; color:#fff; font-size:14px; font-family:inherit; resize:vertical; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--c-primary)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" placeholder="Type your report here..."></textarea>
-      </div>
-      <div style="padding:0 32px 32px; display:flex; gap:12px;">
-        <button onclick="DashboardController.closeReportModal()" class="btn" style="flex:1; background:rgba(255,255,255,0.05); color:#fff;">Cancel</button>
-        <button onclick="DashboardController.submitReport()" class="btn btn-primary" style="flex:2;">Submit Report</button>
-      </div>
-    </div>
-  </div>
 
 </div>
 

@@ -1,29 +1,24 @@
 <?php
-require_once __DIR__ . '/../../core/db.php';
-require_once __DIR__ . '/../../helpers/response.php';
-require_once __DIR__ . '/../../helpers/auth_helper.php';
+/**
+ * POST /api/system/report
+ * Submit a general system report / problem.
+ */
+$pdo = getDB();
+$user = getAuthenticatedUser($pdo);
+$uid = (int)$user['id'];
 
-// Auth check
-$user = Auth::getAuthenticatedUser();
-if (!$user) {
-    jsonResponse(false, 'Unauthorized');
-}
+$message = trim($data['message'] ?? '');
 
-$data = json_decode(file_get_contents('php://input'), true);
-$reportText = trim($data['report_text'] ?? '');
-
-if (empty($reportText)) {
-    jsonResponse(false, 'Please describe the problem.');
+if (empty($message)) {
+    jsonResponse(false, 'Message cannot be empty.');
 }
 
 try {
-    $pdo = getDB();
-    $stmt = $pdo->prepare("INSERT INTO system_reports (user_id, report_text) VALUES (?, ?)");
-    $stmt->execute([$user['id'], $reportText]);
-
+    $stmt = $pdo->prepare("INSERT INTO system_reports (user_id, message) VALUES (?, ?)");
+    $stmt->execute([$uid, $message]);
+    
     jsonResponse(true, 'Report submitted successfully. Thank you for your feedback!');
 } catch (Exception $e) {
     error_log("System report error: " . $e->getMessage());
-    jsonResponse(false, 'Failed to submit report. Please try again later.');
+    jsonResponse(false, 'Failed to submit report.');
 }
-?>
