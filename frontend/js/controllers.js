@@ -631,7 +631,7 @@ const DashboardController = {
             `;
 
             return `
-                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:10px 0; margin-bottom:29px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border-radius:var(--r-lg); padding:10px 0; margin-bottom:29px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                 </div>
@@ -655,7 +655,7 @@ const DashboardController = {
         };
 
         return `
-        <div onclick="Router.navigate('/matches/${m.match_code}')" style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
+        <div onclick="Router.navigate('/matches/${m.match_code}')" style="background:var(--c-bg-card); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s;">
             <div style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">${m.venue || 'Venue TBD'} · ${dateStr}</div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; gap:16px; align-items:center;">
@@ -2121,7 +2121,7 @@ const MatchesController = {
             `;
 
             return `
-                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                     <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
@@ -2333,7 +2333,7 @@ const MatchesController = {
 
             titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
-                    <span class="match-code-badge">${matchCode}</span>
+                    <span class="match-code-badge" style="border:none;">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
                     ${typeBadges}
                 </div>
@@ -2361,7 +2361,7 @@ const MatchesController = {
                         <span>👤</span> Created by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
                         ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
                     </div>
-                    <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                    <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
                     </button>
                 </div>
@@ -2451,7 +2451,7 @@ const MatchesController = {
                     const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
 
                     combinedHtml += `
-                            <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
+                            <div style="background:rgba(255,59,48,0.04); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">⚠️</div>
                                     <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Withdrawal)</div>
@@ -2460,14 +2460,14 @@ const MatchesController = {
                                     ${clickableUser}${codeTag} left the match within the 6-hour policy.
                                     ${lwReason ? `<div style="margin-top:8px; padding-left:12px; border-left:2px solid rgba(255,59,48,0.2); font-style:italic; color:var(--c-text-muted); font-size:13px;">"${lwReason}"</div>` : ''}
                                 </div>
-                                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
+                                <div style="margin-top:12px; padding-top:10px; font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
                             </div>`;
                 }
 
                 // Case 2: Late Cancellation
                 if (match.status === 'cancelled' && match.is_policy_violation) {
                     combinedHtml += `
-                            <div style="background:rgba(255,59,48,0.04); border:1px solid rgba(255,59,48,0.1); border-radius:18px; padding:16px; margin-bottom:16px;">
+                            <div style="background:rgba(255,59,48,0.04); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">🚫</div>
                                     <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Cancellation)</div>
@@ -2475,7 +2475,7 @@ const MatchesController = {
                                 <div style="font-size:14px; line-height:1.4; color:var(--c-text);">
                                     This match was cancelled within the 6-hour policy by the creator.
                                 </div>
-                                <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,59,48,0.08); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
+                                <div style="margin-top:12px; padding-top:10px; font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Admins will investigate, player may face a ban.</div>
                             </div>`;
                 }
 
@@ -2649,7 +2649,7 @@ const MatchesController = {
                     // Secondary match submission (Multi-score support)
                     if (user_in_match && (scores || []).length === 1) {
                         scoringHtml += `
-                            <div style="margin-top:40px; padding-top:32px; border-top:1px solid rgba(255,255,255,0.05); text-align:center;">
+                            <div style="margin-top:40px; padding-top:32px; text-align:center;">
                                 <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; opacity:0.6;">Played another match?</div>
                                 <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:54px; border-radius:12px;">
                                     Submit Score #2
@@ -2672,7 +2672,7 @@ const MatchesController = {
                         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-secondary);border-radius:50%;font-weight:700;font-size:16px;">${reqInitial}</div>`;
 
                     actionArea.innerHTML = `
-                        <div style="background:var(--c-bg-card); border:1px solid rgba(247,148,29,0.25); border-radius:var(--r-lg); padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.15);">
+                        <div style="background:var(--c-bg-card); border-radius:var(--r-lg); padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.15);">
                             <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
                                 <div style="width:52px; height:52px; border:2px solid var(--c-orange); border-radius:50%; padding:2px; flex-shrink:0;">
                                     ${reqAvatar}
@@ -2708,12 +2708,12 @@ const MatchesController = {
                     actionArea.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
-                            <div style="flex-direction:column; background:rgba(247,148,29,0.06); border:1px solid rgba(247,148,29,0.15); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
+                            <div style="flex-direction:column; background:rgba(247,148,29,0.06); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
                                 <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;">
                                     <div style="font-size:14px; font-weight:700; color:var(--c-orange);"><span style="margin-right:8px;">⏳</span>Invitation sent to <strong>${partnerName}</strong></div>
-                                    <button onclick="MatchesController.cancelRequest(${my_pending_request.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); white-space:nowrap;">Cancel</button>
+                                    <button onclick="MatchesController.cancelRequest(${my_pending_request.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); white-space:nowrap;">Cancel</button>
                                 </div>
-                                <div style="font-size:12px; color:var(--c-text-muted); line-height:1.4; border-top:1px solid rgba(247,148,29,0.1); pt:10px; margin-top:4px;">
+                                <div style="font-size:12px; color:var(--c-text-muted); line-height:1.4; pt:10px; margin-top:4px;">
                                     <strong>Private Draft:</strong> This match is hidden from other players until your partner responds or you cancel this invitation.
                                 </div>
                             </div>
@@ -2734,7 +2734,7 @@ const MatchesController = {
                     actionHtml += `<div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>`;
 
                     if (showBanner) {
-                        actionHtml += `<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.15); border-radius:var(--r-md); padding:12px 16px;">`;
+                        actionHtml += `<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(76,175,80,0.08); border-radius:var(--r-md); padding:12px 16px;">`;
                         actionHtml += `<div style="font-size:13px; font-weight:600; color:var(--c-green);"><span style="margin-right:6px;">✅</span>${isPast ? 'You were in this match' : 'You are in this match'}</div>`;
                     } else {
                         actionHtml += `<div style="display:none;">`;
@@ -2742,10 +2742,10 @@ const MatchesController = {
                     actionHtml += `<div style="display:flex; gap:8px;">`;
 
                     if (isLiveMatch && !isCreator) {
-                        actionHtml += `<button onclick="MatchesController.leaveMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-sm); color:var(--c-orange); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">🚪 Leave</button>`;
+                        actionHtml += `<button onclick="MatchesController.leaveMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-orange); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">🚪 Leave</button>`;
                     }
                     if (isCreator && isLiveMatch) {
-                        actionHtml += `<button id="mv-cancel-btn" onclick="MatchesController.cancelMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:rgba(241,90,41,0.1); border:1px solid rgba(241,90,41,0.3); border-radius:var(--r-sm); color:var(--c-red); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">✕ Cancel</button>`;
+                        actionHtml += `<button id="mv-cancel-btn" onclick="MatchesController.cancelMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:rgba(241,90,41,0.1); border:none; border-radius:var(--r-sm); color:var(--c-red); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">✕ Cancel</button>`;
                     }
                     actionHtml += `</div></div></div>`;
                     actionArea.innerHTML = actionHtml;
@@ -2765,11 +2765,11 @@ const MatchesController = {
                     actionArea.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
-                            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(27,82,206,0.06); border:1px solid rgba(27,82,206,0.15); border-radius:var(--r-md); padding:12px 16px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(27,82,206,0.06); border-radius:var(--r-md); padding:12px 16px;">
                                 <div style="font-size:13px; font-weight:600; color:var(--c-text-muted);"><span style="margin-right:6px;">🕒</span>${wlNames}</div>
                                 <div style="display:flex; gap:8px;">
                                     ${(isLiveMatch && canJumpIn) ? `<button onclick="MatchesController.jumpIn(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:#1D8348; border:none; border-radius:var(--r-sm); color:#fff; font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); box-shadow:0 2px 8px rgba(29,131,72,0.2);">⚡ Jump In</button>` : ''}
-                                    ${isLiveMatch ? `<button onclick="MatchesController.withdraw(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">Withdraw</button>` : '<span style="font-size:11px; color:var(--c-text-muted); letter-spacing:0.5px; opacity:0.8;">MATCH ENDED</span>'}
+                                    ${isLiveMatch ? `<button onclick="MatchesController.withdraw(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">Withdraw</button>` : '<span style="font-size:11px; color:var(--c-text-muted); letter-spacing:0.5px; opacity:0.8;">MATCH ENDED</span>'}
                                 </div>
                             </div>
                         </div>`;
@@ -2781,9 +2781,10 @@ const MatchesController = {
 
                     if (isLiveMatch) {
                         if (player_eligible === false) {
-                            joinHtml += `<div style="text-align:center; padding:16px; background:rgba(255,100,100,0.05); border:1px solid rgba(255,100,100,0.2); border-radius:var(--r-md);">
+                            joinHtml += `<div style="text-align:center; padding:16px; background:rgba(255,100,100,0.05); border-radius:var(--r-md);">
                                             <div style="font-size:13px; font-weight:700; color:var(--c-red); letter-spacing:0.5px;">🚫 You are not eligible to join this match</div>
                                             <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px;">${eligibility_reason || 'Check the required gender or points range.'}</div>
+                                            <button onclick="Router.navigate('/rules')" class="btn btn-secondary" style="width:auto; padding:12px 20px; font-size:14px; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); margin: 12px auto 0;">View Eligibility Rules</button>
                                          </div>`;
                         } else {
                             joinHtml += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">`;
@@ -2797,7 +2798,7 @@ const MatchesController = {
                             joinHtml += `</div>`;
                         }
                     } else {
-                        joinHtml += `<div style="text-align:center; padding:12px; background:rgba(255,255,255,0.03); border:1px solid var(--c-border); border-radius:var(--r-md);">
+                        joinHtml += `<div style="text-align:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:var(--r-md);">
                                         <div style="font-size:13px; font-weight:700; color:var(--c-text-muted); letter-spacing:1px; text-transform:uppercase;">🏁 Match Ended</div>
                                      </div>`;
                     }
@@ -2822,7 +2823,7 @@ const MatchesController = {
                     const chatBtnHtml = `
                         <div style="margin-bottom:24px; padding: 0 4px;">
                             <!-- Premium Chat Button -->
-                            <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; border:1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                            <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
                                 <span style="font-size:20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));">💬</span> 
                                 <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                                 ${badgeHtml}
@@ -2831,10 +2832,10 @@ const MatchesController = {
                             <!-- Sub-Actions Grid -->
                             <div style="margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                                 ${match.venue_location_link ? `
-                                <a href="${match.venue_location_link}" target="_blank" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); border:1px solid rgba(27,82,206,0.25); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
+                                <a href="${match.venue_location_link}" target="_blank" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
                                     <span style="font-size:16px;">📍</span> Location
                                 </a>` : ''}
-                                <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.25); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
+                                <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
                                     <span style="font-size:16px;">🔗</span> Share
                                 </button>
                             </div>

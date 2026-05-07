@@ -11,12 +11,12 @@
         <h1 class="ranking-header-h1" style="font-size:36px; font-weight:800; color:#fff; margin:0; line-height:1.2;">Players Ranking</h1>
         <div class="ranking-trophy-wrapper" style="position:relative; width:120px; height:120px; margin-top:-35px; display:flex; align-items:center; justify-content:center;">
           <!-- Animated rotating ring -->
-          <div style="position:absolute; inset:0; border:2px dashed rgba(247,148,29,0.3); border-radius:50%; animation: trophySpin 15s linear infinite;"></div>
+          <div style="position:absolute; inset:0; border-radius:50%; animation: trophySpin 15s linear infinite;"></div>
           <!-- Inner glowing pulse -->
           <div style="position:absolute; inset:15px; background:radial-gradient(circle, rgba(247,148,29,0.2) 0%, transparent 70%); border-radius:50%; animation: trophyPulse 3s ease-in-out infinite;"></div>
           
           <!-- Main trophy glass -->
-          <div class="ranking-trophy" style="width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; font-size: 52px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05); backdrop-filter: blur(15px); position: relative; z-index: 2;">
+          <div class="ranking-trophy" style="width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 50%; font-size: 52px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05); backdrop-filter: blur(15px); position: relative; z-index: 2;">
             <span style="filter: drop-shadow(0 0 20px rgba(247,148,29,0.9));">🏆</span>
             <!-- Shimmer sparks -->
             <div style="position:absolute; top:10px; right:10px; font-size:12px; animation: trophyBlink 2s infinite;">✨</div>
@@ -32,12 +32,12 @@
   <div class="ranking-sticky-bundle">
     <!-- Controls Row -->
     <div class="ranking-controls-row" style="width:100%; max-width:900px; margin:0 auto; padding:0 20px 10px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">
-      <div class="rank-tabs-container" style="background:var(--c-bg-card); padding:6px; border-radius:12px; display:flex; gap:4px; border:1px solid var(--c-border);">
+      <div class="rank-tabs-container" style="background:var(--c-bg-card); padding:6px; border-radius:12px; display:flex; gap:4px;">
         <button id="rank-tab-male" onclick="RankingController.switchTab('male')" class="rank-tab-btn active">Males</button>
         <button id="rank-tab-female" onclick="RankingController.switchTab('female')" class="rank-tab-btn">Females</button>
       </div>
       <div class="rank-search-container" style="position:relative; width:100%; max-width:300px;">
-        <input type="text" id="rank-search" placeholder="Search player..." oninput="RankingController.handleSearch(this.value)" style="width:100%; background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:12px; padding:12px 40px 12px 40px; color:#fff; font-size:14px;">
+        <input type="text" id="rank-search" placeholder="Search player..." oninput="RankingController.handleSearch(this.value)" style="width:100%; background:var(--c-bg-card); border:none; border-radius:12px; padding:12px 40px 12px 40px; color:#fff; font-size:14px;">
         <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5;">🔍</span>
         <span id="rank-search-clear" onclick="RankingController.clearSearch()" style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; opacity:0.5; font-size:18px;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✕</span>
       </div>
@@ -45,7 +45,7 @@
 
     <!-- Table Header Row -->
     <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px;">
-        <div class="rank-grid-full rank-table-row header" style="padding:20px 15px 20px 10px; background:rgba(25, 30, 41, 0.98); border:1px solid var(--c-border); border-bottom:1px solid var(--c-border); color:var(--c-text-muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
+        <div class="rank-grid-full rank-table-row header" style="padding:20px 15px 20px 10px; background:rgba(25, 30, 41, 0.98); color:var(--c-text-muted); font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; backdrop-filter:blur(10px) !important; -webkit-backdrop-filter:blur(10px) !important; border-top-left-radius:var(--r-lg); border-top-right-radius:var(--r-lg);">
             <span style="text-align:center;">Rank</span>
             <span style="text-align:left;">Player</span>
             <span style="text-align:center;" class="hide-mobile">Age</span>
@@ -59,7 +59,7 @@
 
   <!-- 3. Table Content (Body only) -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:0 20px 20px; display:block !important; overflow:visible !important;">
-    <div style="background:var(--g-card); border:1px solid var(--c-border); border-top:none; border-radius: 0 0 var(--r-lg) var(--r-lg); overflow:visible !important;">
+    <div style="background:var(--g-card); border-radius: 0 0 var(--r-lg) var(--r-lg); overflow:visible !important;">
       <div id="ranking-full-list" style="min-height:400px;">
         <!-- Skeletons -->
         <div class="rank-row-skeleton"></div>
@@ -71,7 +71,7 @@
     </div>
 
     <!-- Info Footer -->
-    <div style="margin-top:32px; text-align:center; padding:24px; background:rgba(25, 25, 25, 0.2); border-radius:16px; border:1px dashed var(--c-border);">
+    <div style="margin-top:32px; text-align:center; padding:24px; background:rgba(25, 25, 25, 0.2); border-radius:16px;">
         <p style="font-size:14px; color:var(--c-text-muted); margin:0;">
             Ranking is updated after every match. <br> 
             Check the <a href="/rules" data-link style="color:var(--c-primary); font-weight:700;">Ranking Rules</a> to learn more.
@@ -146,11 +146,9 @@
     outline: none !important;
 }
 #rank-search:hover {
-    border-color: rgba(255,255,255,0.2) !important;
     background: var(--c-bg-secondary) !important;
 }
 #rank-search:focus {
-    border-color: var(--c-primary) !important;
     box-shadow: 0 0 0 4px var(--c-primary-glow) !important;
     background: var(--c-bg-secondary) !important;
 }

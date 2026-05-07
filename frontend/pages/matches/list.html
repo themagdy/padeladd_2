@@ -8,7 +8,7 @@
         <p id="ml-header-sub" style="color:var(--c-text-muted); font-size:14px;">&nbsp;</p>
       </div>
       <div style="display:flex; gap:10px;">
-        <button onclick="Router.navigate('/rules')" class="btn btn-secondary" style="width:auto; padding:12px 20px; font-size:14px; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); border:1px solid var(--c-border);">
+        <button onclick="Router.navigate('/rules')" class="btn btn-secondary" style="width:auto; padding:12px 20px; font-size:14px; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%); border:none; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
           📜 Rules
         </button>
         <button onclick="Router.navigate('/matches/create')" class="btn btn-primary" style="width:auto; padding:12px 24px; font-size:14px; display:flex; align-items:center; gap:8px;">
@@ -25,13 +25,13 @@
     <div id="ml-play-filters" style="display:none; margin-bottom:24px; animation:fadeIn 0.3s ease-out;">
       <div style="display:flex; gap:20px; align-items:center; justify-content:center;">
         <!-- Match Type Toggle -->
-        <div style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+        <div style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
           <button type="button" class="ml-type-filter-btn" data-val="friendly" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
           <button type="button" class="ml-type-filter-btn active" data-val="competition" style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
         </div>
 
         <!-- Gender Toggle -->
-        <div style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+        <div style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
           <button type="button" class="ml-gender-filter-btn" data-val="all" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'all', this)">All</button>
           <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active" data-val="same_gender" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Gender</button>
         </div>

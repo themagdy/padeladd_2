@@ -31,7 +31,7 @@
     </div>
 
     <div id="cm-add-venue-wrapper" style="margin-bottom:24px; display:none;">
-      <button type="button" id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="background:rgba(255,255,255,0.05); color:var(--c-primary); border:1.5px solid var(--c-primary); border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(52,152,219,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <button type="button" id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="background:rgba(255,255,255,0.05); color:var(--c-primary); border:0px; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(52,152,219,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
         <span style="font-size:16px; font-weight:400;">+</span> Add a Venue / Club
       </button>
     </div>
@@ -116,7 +116,7 @@
         Match Type
         <span onclick="MatchesController.showMatchTypeInfo()" style="cursor:pointer; font-size:16px; display:inline-flex; align-items:center; opacity:0.8; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">⚠️</span>
       </label>
-      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
         <button type="button" class="cm-type-btn" data-val="friendly" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('match_type', this)">Friendly</button>
         <button type="button" class="cm-type-btn active" data-val="competition" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setToggle('match_type', this)">Competition</button>
       </div>
@@ -126,7 +126,7 @@
     <!-- Gender Toggle -->
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Gender</label>
-      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px; border:1px solid var(--c-border);">
+      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
         <button type="button" class="cm-gender-btn" data-val="open" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Mixed</button>
         <button type="button" id="cm-gender-restricted-btn" class="cm-gender-btn active" data-val="same_gender" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Same Gender</button>
       </div>
@@ -140,14 +140,14 @@
     <div
       id="cm-partner-toggle-row"
       onclick="MatchesController.togglePartner()"
-      style="background:var(--c-bg-card); border:1px solid var(--c-border); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;"
+      style="background:var(--c-bg-card); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;"
     >
       <div>
         <div style="font-size:14px; font-weight:700; color:var(--c-text);">Bring a Partner</div>
         <div style="font-size:12px; color:var(--c-text-muted); margin-top:2px;">You and a partner fill Team 1 together</div>
       </div>
       <!-- Toggle switch -->
-      <div id="cm-partner-toggle-icon" style="width:44px; height:24px; background:var(--c-bg-secondary); border:1px solid var(--c-border); border-radius:var(--r-full); position:relative; transition:background 0.2s, border-color 0.2s; flex-shrink:0;">
+      <div id="cm-partner-toggle-icon" style="width:44px; height:24px; background:var(--c-bg-secondary); border-radius:var(--r-full); position:relative; transition:background 0.2s, border-color 0.2s; flex-shrink:0;">
         <div id="cm-partner-toggle-thumb" style="width:18px; height:18px; background:var(--c-text-dim); border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s;"></div>
       </div>
     </div>
@@ -168,7 +168,7 @@
           >
           
           <!-- Stylish Partner Badge Overlay -->
-          <div id="cm-partner-badge" style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); border:1px solid var(--c-primary); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
+          <div id="cm-partner-badge" style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <span id="cm-badge-code" style="font-weight:800; font-family:monospace; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;"></span>
               <span style="color:var(--c-text-muted); font-size:10px;">•</span>
