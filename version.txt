@@ -411,4 +411,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
         - Quick Resolution: Enabled one-click status toggling (Pending/Resolved) directly from the list.
         - Smart Filtering: Refined "Show Archived" toggle for exclusive view of historical vs active reports.
         - Advanced Sorting: Added dynamic sorting by Status and Date for efficient moderation.
-- Version: 1.5.0 (Build 150)
+- UI Modernization (Unified Boxes):
+    - Redesigned player statistics boxes on Dashboard and Profile views to use a border-only aesthetic with transparent fills.
+- Version: 1.5.1 (Build 151)

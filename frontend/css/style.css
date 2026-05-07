@@ -1945,6 +1945,21 @@ form {
   flex: 1;
 }
 
+.unified-stat-box {
+  background: transparent;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 20px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color var(--t-fast);
+}
+
+.unified-stat-box:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .stat-box .val {
   font-size: 38px;
   font-weight: 800;
