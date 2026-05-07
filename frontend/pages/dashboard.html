@@ -1,43 +1,53 @@
-<div class="page active" id="dashboard-page" style="background:var(--c-bg); overflow-x:hidden; padding-bottom: 60px; padding-top: 25px;">
+<div class="page active" id="dashboard-page" style="background:var(--c-bg); overflow-x:hidden; padding-bottom: 60px;">
 
   <div style="width:100%; max-width:1200px; margin:0 auto; padding:0 20px;">
 
     <!-- ═══════════════════════════════════════════
          WELCOME + STATS SECTION
     ═══════════════════════════════════════════ -->
-    <div class="dash-welcome" style="padding:60px 0 32px;">
+    <div class="dash-welcome">
       <div class="dash-hero">
-        <h1 class="dash-title" style="font-size:32px; font-weight:400; margin-bottom:6px; color:#fff; line-height:1.1;">Welcome back, <strong id="dash-name" style="font-weight:800;"></strong></h1>
+        <h1 class="dash-title" style="font-size:32px; font-weight:400; margin-bottom:6px; color:#fff; line-height:1.1;">
+          Welcome back, <strong id="dash-name" style="font-weight:800;"></strong></h1>
         <p style="color:var(--c-text-muted); font-size:15px; margin-bottom:32px;">Here's your padel overview</p>
       </div>
 
       <!-- Stats + Actions grid -->
-      <div class="dash-stats-grid" style="display:grid; grid-template-columns:repeat(4, 1fr) 320px; gap:12px; align-items:stretch;">
+      <div class="dash-stats-grid"
+        style="display:grid; grid-template-columns:repeat(4, 1fr) 320px; gap:12px; align-items:stretch;">
 
         <!-- Ranking -->
-        <div style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+        <div
+          style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
           <div>
-            <div id="dash-ranking" style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">—</div>
+            <div id="dash-ranking"
+              style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">—</div>
             <div style="font-size:13px; font-weight:600; color:#fff;">Ranking</div>
-            <div id="dash-highest-rank" style="font-size:11px; font-weight:700; color:var(--c-green); min-height:14px;"></div>
+            <div id="dash-highest-rank" style="font-size:11px; font-weight:700; color:var(--c-green); min-height:14px;">
+            </div>
           </div>
           <div style="font-size:24px;">🏆</div>
         </div>
 
         <!-- Points -->
-        <div style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+        <div
+          style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
           <div>
-            <div id="dash-points" style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+            <div id="dash-points"
+              style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
             <div style="font-size:13px; font-weight:600; color:#fff;">Points</div>
-            <div id="dash-points-week" style="font-size:11px; font-weight:700; color:var(--c-green); min-height:14px;"></div>
+            <div id="dash-points-week" style="font-size:11px; font-weight:700; color:var(--c-green); min-height:14px;">
+            </div>
           </div>
           <div style="font-size:24px;">🪙</div>
         </div>
 
         <!-- Matches -->
-        <div style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+        <div
+          style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
           <div>
-            <div id="dash-matches-count" style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
+            <div id="dash-matches-count"
+              style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
             <div style="font-size:13px; font-weight:600; color:#fff;">Matches</div>
             <div id="dash-wl" style="font-size:11px; color:var(--c-text-dim); font-weight:600; min-height:14px;"></div>
           </div>
@@ -45,9 +55,11 @@
         </div>
 
         <!-- Win Rate -->
-        <div style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
+        <div
+          style="background:var(--g-card); border-radius: var(--r-md); padding:20px 18px; display:flex; align-items:center; justify-content:space-between;">
           <div>
-            <div id="dash-winrate" style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0%</div>
+            <div id="dash-winrate"
+              style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0%</div>
             <div style="font-size:13px; font-weight:600; color:#fff;">Win rate</div>
             <div style="font-size:11px; min-height:14px;"></div>
           </div>
@@ -57,7 +69,11 @@
         <!-- Right action column -->
         <div class="dash-actions-col" style="display:flex; flex-direction:column; gap:12px; flex:1;">
           <!-- Upcoming Matches Banner -->
-          <button id="dash-upcoming-btn" onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')" class="btn" style="background:linear-gradient(135deg, #1b52ce, #0d3ba1); color:#fff; display:flex; align-items:center; justify-content:space-between; flex:1; padding:18px 24px; border-radius:var(--r-lg); border:none; box-shadow:0 8px 16px rgba(0,0,0,0.15); width:100%;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
+          <button id="dash-upcoming-btn"
+            onclick="sessionStorage.setItem('last_sub_tab_mine', 'mine_upcoming'); Router.navigate('/matches/my')"
+            class="btn"
+            style="background:linear-gradient(135deg, #1b52ce, #0d3ba1); color:#fff; display:flex; align-items:center; justify-content:space-between; flex:1; padding:18px 24px; border-radius:var(--r-lg); border:none; box-shadow:0 8px 16px rgba(0,0,0,0.15); width:100%;"
+            onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
             <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
               <div style="font-size:18px; font-weight:800; letter-spacing:-0.5px;">My Matches</div>
               <div style="font-size:12px; opacity:0.9; font-weight:600;">View your schedule</div>
@@ -66,11 +82,15 @@
           </button>
           <!-- Create / Join -->
           <div class="dash-action-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:0.8;">
-            <button onclick="Router.navigate('/matches/create')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+            <button onclick="Router.navigate('/matches/create')" class="btn"
+              style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);"
+              onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
               <span style="font-size:15px; font-weight:700;">Create</span>
               <span style="font-size:18px;">🎾</span>
             </button>
-            <button onclick="Router.navigate('/matches')" class="btn" style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);" onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
+            <button onclick="Router.navigate('/matches')" class="btn"
+              style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);"
+              onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
               <span style="font-size:15px; font-weight:700;">Join</span>
               <span style="font-size:18px;">🔍</span>
             </button>
@@ -93,13 +113,18 @@
 
         <!-- Gender Tabs -->
         <div style="display:flex; gap:32px; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
-          <span id="tab-males" onclick="DashboardController.switchRankTab('male')" style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Males</span>
-          <span id="tab-females" onclick="DashboardController.switchRankTab('female')" style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid transparent; color:var(--c-text-muted); margin-bottom:-1.5px;">Females</span>
+          <span id="tab-males" onclick="DashboardController.switchRankTab('male')"
+            style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Males</span>
+          <span id="tab-females" onclick="DashboardController.switchRankTab('female')"
+            style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid transparent; color:var(--c-text-muted); margin-bottom:-1.5px;">Females</span>
         </div>
 
         <!-- Table header -->
-        <div class="rank-grid-dash rank-table-header" style="padding:0 10px 14px 8px; color:var(--c-text-muted); font-size:11px; font-weight:700; margin-bottom:12px;">
-          <span style="text-align:center;">Rank</span><span>Player</span><span style="text-align:center;" class="hide-mobile">Age</span><span style="text-align:right;">Points</span><span style="text-align:right;" class="hide-mobile">+/-</span>
+        <div class="rank-grid-dash rank-table-header"
+          style="padding:0 10px 14px 8px; color:var(--c-text-muted); font-size:11px; font-weight:700; margin-bottom:12px;">
+          <span style="text-align:center;">Rank</span><span>Player</span><span style="text-align:center;"
+            class="hide-mobile">Age</span><span style="text-align:right;">Points</span><span style="text-align:right;"
+            class="hide-mobile">+/-</span>
         </div>
 
         <!-- Ranking rows -->
@@ -111,7 +136,8 @@
           <div class="skeleton" style="height:54px; border-radius: var(--r-md); margin-bottom:8px;"></div>
         </div>
 
-        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px;">Full Ranking</button>
+        <button onclick="Router.navigate('/ranking')" class="btn btn-primary" style="margin-top:24px;">Full
+          Ranking</button>
       </div>
 
       <!-- RIGHT: LATEST MATCHES -->
@@ -122,7 +148,8 @@
 
         <!-- Match Tabs -->
         <div style="display:flex; gap:32px; margin-bottom:24px;">
-          <span id="tab-completed" onclick="DashboardController.switchMatchTab('completed')" style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Scores</span>
+          <span id="tab-completed" onclick="DashboardController.switchMatchTab('completed')"
+            style="font-size:16px; font-weight:700; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Scores</span>
         </div>
 
         <!-- Match Cards -->
@@ -132,7 +159,8 @@
           <div class="skeleton" style="height:100px; border-radius: var(--r-md); margin-bottom:12px;"></div>
         </div>
 
-        <button onclick="sessionStorage.setItem('last_sub_tab_play', 'play_past'); Router.navigate('/matches')" class="btn btn-primary" style="margin-top:24px;">All Matches</button>
+        <button onclick="sessionStorage.setItem('last_sub_tab_play', 'play_past'); Router.navigate('/matches')"
+          class="btn btn-primary" style="margin-top:24px;">All Matches</button>
       </div>
     </div>
 
@@ -140,9 +168,17 @@
          FOOTER
     ═══════════════════════════════════════════ -->
     <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 20px; gap:20px;">
-      <button style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Report a problem</button>
-      <button style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact Padeladd</button>
-      <span class="footer-bottom-text" style="margin-left:auto; font-size:14px; color:var(--c-text-muted);">Check our <a href="terms" data-link style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of use</a></span>
+      <button
+        style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
+        onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Report a problem</button>
+      <button
+        style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
+        onmouseover="this.style.background='rgba(27,82,206,0.1)'; this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact Padeladd</button>
+      <span class="footer-bottom-text" style="margin-left:auto; font-size:14px; color:var(--c-text-muted);">Check our <a
+          href="terms" data-link style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of
+          use</a></span>
     </div>
 
   </div> <!-- end container -->
@@ -150,44 +186,68 @@
 </div>
 
 <style>
-#dashboard-page { padding-bottom: 50px !important; }
-@media (max-width: 992px) {
-  #dashboard-page { padding-bottom: 50px !important; }
-  .dash-stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+  #dashboard-page {
+    padding-bottom: 50px !important;
   }
-  .dash-actions-col {
-    grid-column: 1 / -1 !important;
-  }
-  .dash-main-grid {
-    grid-template-columns: 1fr !important;
-    gap: 40px !important;
-  }
-}
 
-@media (max-width: 600px) {
-  .dash-welcome {
-     padding: 24px 0 24px !important;
+  @media (max-width: 992px) {
+    #dashboard-page {
+      padding-bottom: 50px !important;
+    }
+
+    .dash-stats-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px !important;
+    }
+
+    .dash-actions-col {
+      grid-column: 1 / -1 !important;
+    }
+
+    .dash-main-grid {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
   }
-  .dash-welcome p {
-     margin-bottom: 24px !important;
+
+  @media (max-width: 600px) {
+    .dash-welcome {
+      padding: 24px 0 24px !important;
+    }
+
+    .dash-welcome p {
+      margin-bottom: 24px !important;
+    }
+
+    .dash-main-grid {
+      padding-top: 24px !important;
+      padding-bottom: 24px !important;
+    }
+
+    .dash-footer {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 12px !important;
+      padding-bottom: 20px !important;
+    }
+
+    .dash-footer .footer-bottom-text {
+      margin-left: 0 !important;
+      text-align: center;
+      margin-top: 10px;
+    }
   }
-  .dash-main-grid {
-    padding-top: 24px !important;
-    padding-bottom: 24px !important;
-  }
-  .dash-footer {
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 12px !important;
-    padding-bottom: 20px !important;
-  }
-  .dash-footer .footer-bottom-text {
-    margin-left: 0 !important;
-    text-align: center;
-    margin-top: 10px;
-  }
-}
 </style>
 
+
+<style>
+  .dash-welcome {
+    padding: 30px 0 32px;
+  }
+
+  @media (max-width: 480px) {
+    .dash-welcome {
+      padding: 50px 0 32px !important;
+    }
+  }
+</style>
