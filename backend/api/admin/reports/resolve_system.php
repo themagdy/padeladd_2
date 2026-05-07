@@ -7,22 +7,17 @@ header('Content-Type: application/json');
 validateAdmin();
 
 $pdo = getDB();
+$reportId = (int)($data['id'] ?? 0);
 
-$data = json_decode(file_get_contents('php://input'), true);
-$report_id = (int)($data['report_id'] ?? 0);
-$action = $data['action'] ?? ''; // 'resolve' or 'delete'
-
-if ($report_id <= 0 || !in_array($action, ['resolve', 'delete'])) {
-    jsonResponse(false, 'Invalid request parameters.');
+if (!$reportId) {
+    jsonResponse(false, 'Invalid report ID.');
 }
 
-if ($action === 'resolve') {
-    $stmt = $pdo->prepare("UPDATE system_reports SET status = 'resolved' WHERE id = ?");
-    $stmt->execute([$report_id]);
-    jsonResponse(true, 'Report marked as resolved.');
-} else {
-    $stmt = $pdo->prepare("DELETE FROM system_reports WHERE id = ?");
-    $stmt->execute([$report_id]);
-    jsonResponse(true, 'Report deleted.');
+try {
+    $stmt = $pdo->prepare("UPDATE system_reports SET status = 'resolved', resolved_at = CURRENT_TIMESTAMP WHERE id = ?");
+    $stmt->execute([$reportId]);
+    
+    jsonResponse(true, 'System report marked as resolved.');
+} catch (Exception $e) {
+    jsonResponse(false, 'Failed to resolve report.');
 }
-?>

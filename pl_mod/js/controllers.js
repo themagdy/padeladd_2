@@ -655,14 +655,17 @@ window.AdminControllers = {
                     return;
                 }
 
-                let reports = [];
                 if (this.currentTab === 'profile') reports = (this.allReports.profile_reports || []);
                 else if (this.currentTab === 'match') reports = (this.allReports.match_reports || []);
                 else if (this.currentTab === 'dispute') reports = (this.allReports.score_disputes || []);
                 else if (this.currentTab === 'system') reports = (this.allReports.system_reports || []);
                 
                 if (!this.showArchived) {
-                    reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
+                    if (this.currentTab === 'system') {
+                        reports = reports.filter(r => r.status === 'pending');
+                    } else {
+                        reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
+                    }
                 }
 
                 if (this.searchQuery) {
@@ -673,14 +676,12 @@ window.AdminControllers = {
                         const target = (r.target_name || '').toLowerCase();
                         const targetCode = (r.target_code || '').toLowerCase();
                         const match = (r.match_code || '').toLowerCase();
-                        const reportText = (r.report_text || '').toLowerCase();
                         return reporter.includes(this.searchQuery) || 
                                repCode.includes(this.searchQuery) ||
                                reason.includes(this.searchQuery) || 
                                target.includes(this.searchQuery) || 
                                targetCode.includes(this.searchQuery) ||
-                               match.includes(this.searchQuery) ||
-                               reportText.includes(this.searchQuery);
+                               match.includes(this.searchQuery);
                     });
                 }
 
@@ -754,18 +755,17 @@ window.AdminControllers = {
                         </tr>
                     `).join('');
                 } else if (this.currentTab === 'system') {
-                    head.innerHTML = `<tr><th>Reporter</th><th>Report</th><th>Status</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
+                    head.innerHTML = `<tr><th>Reporter</th><th>Message</th><th>Status</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
                     list.innerHTML = reports.map(r => `
                         <tr>
                             <td>${r.reporter_name || 'System'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
-                            <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.report_text || 'No description provided'}</td>
+                            <td style="max-width:500px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.message || 'No message provided'}</td>
                             <td><span class="status-tag ${r.status}">${r.status}</span></td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
-                                <div style="display:flex; justify-content:flex-end; gap:8px;">
-                                    ${r.status === 'open' ? `<button onclick="AdminControllers.reports.resolveSystemReport(${r.id}, 'resolve')" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">RESOLVE</button>` : ''}
-                                    <button onclick="AdminControllers.reports.resolveSystemReport(${r.id}, 'delete')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">DELETE</button>
-                                </div>
+                                ${r.status === 'pending' ? `
+                                    <button onclick="AdminControllers.reports.resolveSystem(${r.id})" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">RESOLVE</button>
+                                ` : '<span style="font-size:11px; color:var(--c-text-muted); font-weight:700;">Completed</span>'}
                             </td>
                         </tr>
                     `).join('');
@@ -780,6 +780,7 @@ window.AdminControllers = {
             const pUnarchived = (this.allReports.profile_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const mUnarchived = (this.allReports.match_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const dUnarchived = (this.allReports.score_disputes || []).filter(r => !r.is_archived || r.is_archived == 0).length;
+            const sUnarchived = (this.allReports.system_reports || []).filter(r => r.status === 'pending').length;
             
             const pCountEl = document.getElementById('count-profile-reports');
             const mCountEl = document.getElementById('count-match-reports');
@@ -789,7 +790,7 @@ window.AdminControllers = {
             if (pCountEl) pCountEl.innerText = pUnarchived;
             if (mCountEl) mCountEl.innerText = mUnarchived;
             if (dCountEl) dCountEl.innerText = dUnarchived;
-            if (sCountEl) sCountEl.innerText = (this.allReports.system_reports || []).filter(r => r.status === 'open').length;
+            if (sCountEl) sCountEl.innerText = sUnarchived;
         },
         toggleArchived(checked) {
             this.showArchived = checked;
@@ -842,23 +843,6 @@ window.AdminControllers = {
                     this.renderReports();
                 }
             } catch (e) { console.error('Archive error:', e); }
-        },
-        async resolveSystemReport(id, action) {
-            if (action === 'delete' && !confirm('Are you sure you want to delete this report?')) return;
-            const token = localStorage.getItem('admin_token');
-            try {
-                const res = await fetch(`../backend/api/admin/reports/resolve_system.php?admin_token=${token}`, {
-                    method: 'POST',
-                    body: JSON.stringify({ report_id: id, action: action })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    AdminApp.toast(data.message);
-                    await this.fetchReports();
-                } else {
-                    AdminApp.toast(data.message || 'Action failed.', 'error');
-                }
-            } catch (e) { console.error('Resolve system report error:', e); }
         },
         switchTab(tab) {
             console.log('Switching tab to:', tab);
