@@ -606,6 +606,8 @@ window.AdminControllers = {
         allReports: null,
         showArchived: false,
         searchQuery: '',
+        sortField: 'created_at',
+        sortOrder: 'DESC',
         async init() {
             console.log('--- Reports Init Start ---');
             this.searchQuery = '';
@@ -663,6 +665,8 @@ window.AdminControllers = {
                 
                 if (!this.showArchived) {
                     reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
+                } else {
+                    reports = reports.filter(r => r.is_archived == 1);
                 }
 
                 if (this.searchQuery) {
@@ -681,6 +685,29 @@ window.AdminControllers = {
                                match.includes(this.searchQuery);
                     });
                 }
+
+                // Apply Sorting
+                reports.sort((a, b) => {
+                    let valA = a[this.sortField];
+                    let valB = b[this.sortField];
+                    
+                    if (this.sortField === 'created_at') {
+                        valA = new Date(valA).getTime();
+                        valB = new Date(valB).getTime();
+                    } else if (typeof valA === 'string') {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
+                    
+                    if (valA < valB) return this.sortOrder === 'ASC' ? -1 : 1;
+                    if (valA > valB) return this.sortOrder === 'ASC' ? 1 : -1;
+                    return 0;
+                });
+
+                const sortIcon = (field) => {
+                    if (this.sortField !== field) return '<span style="opacity:0.2; margin-left:4px;">↕</span>';
+                    return `<span style="color:var(--c-primary); margin-left:4px;">${this.sortOrder === 'ASC' ? '↑' : '↓'}</span>`;
+                };
 
                 console.log(`Found ${reports.length} reports to render.`);
 
@@ -752,13 +779,15 @@ window.AdminControllers = {
                         </tr>
                     `).join('');
                 } else if (this.currentTab === 'system') {
-                    head.innerHTML = `<tr><th>Reporter</th><th>Reason</th><th>Status</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
+                    head.innerHTML = `<tr><th>Reporter</th><th>Reason</th><th onclick="AdminControllers.reports.toggleSort('status')" style="cursor:pointer;">Status ${sortIcon('status')}</th><th onclick="AdminControllers.reports.toggleSort('created_at')" style="cursor:pointer;">Date ${sortIcon('created_at')}</th><th style="text-align:right;">Actions</th></tr>`;
                     list.innerHTML = reports.map(r => `
                         <tr>
                             <td>${r.reporter_name || 'User'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
                             <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.reason_text || 'No reason provided'}</td>
                             <td>
-                                <span class="badge" style="background:${r.status === 'pending' ? 'rgba(255,149,0,0.1)' : 'rgba(16,185,129,0.1)'}; color:${r.status === 'pending' ? 'var(--c-orange)' : 'var(--c-green)'}; font-size:10px; font-weight:800; text-transform:uppercase; padding:4px 10px; border-radius:100px;">${r.status}</span>
+                                <span onclick="AdminControllers.reports.updateSystemStatus(${r.id}, '${r.status}')" class="badge" style="cursor:pointer; background:${r.status === 'pending' ? 'rgba(255,149,0,0.1)' : 'rgba(16,185,129,0.1)'}; color:${r.status === 'pending' ? 'var(--c-orange)' : 'var(--c-green)'}; font-size:10px; font-weight:800; text-transform:uppercase; padding:4px 10px; border-radius:100px;" title="Click to toggle status">
+                                    ${r.status}
+                                </span>
                             </td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
@@ -844,6 +873,38 @@ window.AdminControllers = {
                     this.renderReports();
                 }
             } catch (e) { console.error('Archive error:', e); }
+        },
+        toggleSort(field) {
+            if (this.sortField === field) {
+                this.sortOrder = (this.sortOrder === 'ASC') ? 'DESC' : 'ASC';
+            } else {
+                this.sortField = field;
+                this.sortOrder = 'ASC';
+            }
+            this.renderReports();
+        },
+        async updateSystemStatus(id, currentStatus) {
+            const token = localStorage.getItem('admin_token');
+            const newStatus = currentStatus === 'pending' ? 'resolved' : 'pending';
+            
+            if (!confirm(`Mark this report as ${newStatus.toUpperCase()}?`)) return;
+
+            try {
+                const res = await fetch(`../backend/api/admin/system/update_report_status.php?admin_token=${token}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id, status: newStatus })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Update local state
+                    const idx = this.allReports.system_reports.findIndex(r => r.id == id);
+                    if (idx !== -1) this.allReports.system_reports[idx].status = newStatus;
+                    this.renderReports();
+                    AdminApp.toast("Status updated", "success");
+                } else {
+                    AdminApp.toast(data.message || "Update failed", "error");
+                }
+            } catch (e) { console.error('Update status error:', e); }
         },
         switchTab(tab) {
             console.log('Switching tab to:', tab);
