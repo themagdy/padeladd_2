@@ -1,24 +1,24 @@
 <?php
 /**
  * POST /api/system/report
- * Submit a general system report / problem.
+ * Save a generic system/app problem report.
  */
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid = (int)$user['id'];
 
-$message = trim($data['message'] ?? '');
+$reason = trim($data['reason'] ?? '');
 
-if (empty($message)) {
-    jsonResponse(false, 'Message cannot be empty.');
+if (empty($reason)) {
+    jsonResponse(false, 'Please provide a description of the problem.');
 }
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO system_reports (user_id, message) VALUES (?, ?)");
-    $stmt->execute([$uid, $message]);
-    
-    jsonResponse(true, 'Report submitted successfully. Thank you for your feedback!');
+    $stmt = $pdo->prepare("INSERT INTO system_reports (user_id, reason_text) VALUES (?, ?)");
+    $stmt->execute([$uid, $reason]);
+
+    jsonResponse(true, 'Your report has been submitted. Our team will look into it. Thank you!');
 } catch (Exception $e) {
     error_log("System report error: " . $e->getMessage());
-    jsonResponse(false, 'Failed to submit report.');
+    jsonResponse(false, 'Failed to submit report. Please try again later.');
 }

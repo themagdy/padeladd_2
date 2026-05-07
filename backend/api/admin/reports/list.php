@@ -46,9 +46,9 @@ $scoreDisputes = $pdo->query($sqlDisputes)->fetchAll();
 
 // Fetch System Reports
 $sqlSystem = "
-    SELECT r.*, u.nickname as reporter_name, u.player_code as reporter_code
+    SELECT r.*, up.nickname as reporter_name, up.player_code as reporter_code
     FROM system_reports r
-    LEFT JOIN user_profiles u ON r.user_id = u.user_id
+    LEFT JOIN user_profiles up ON r.user_id = up.user_id
     ORDER BY r.created_at DESC
 ";
 $systemReports = $pdo->query($sqlSystem)->fetchAll();

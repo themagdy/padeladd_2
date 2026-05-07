@@ -463,19 +463,6 @@ const DashboardController = {
     _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
 
-    reportProblem: function() {
-        const msg = prompt("What problem are you facing?");
-        if (!msg || !msg.trim()) return;
-
-        API.post('/system/report', { message: msg.trim() }).then(res => {
-            if (res.success) {
-                alert(res.message);
-            } else {
-                alert(res.message || 'Failed to submit report.');
-            }
-        });
-    },
-
     init: async function (isSilent = false) {
         if (!isSilent) await UI.syncNav();
 
@@ -742,6 +729,26 @@ const DashboardController = {
             `;
         });
         listEl.innerHTML = html;
+    },
+
+    reportProblem: async function () {
+        const reason = await ConfirmModal.show({
+            title: 'Report a Problem',
+            message: 'Please describe the issue or problem you are facing with the app.',
+            showInput: true,
+            inputPlaceholder: 'Type your message here...',
+            confirmText: 'Submit Report',
+            type: 'warning'
+        });
+
+        if (!reason) return;
+
+        const res = await API.post('/system/report', { reason });
+        if (res && res.success) {
+            Toast.show(res.message, 'success');
+        } else {
+            Toast.show(res ? res.message : 'Report failed', 'error');
+        }
     }
 };
 
