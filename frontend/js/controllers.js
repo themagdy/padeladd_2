@@ -456,12 +456,54 @@ const AuthController = {
 //  DASHBOARD CONTROLLER
 // -------------------------------------------------------
 const DashboardController = {
-    _allMatches: [],
-    _currentMatchTab: 'completed',
-    _currentRankTab: 'male',
     _currentUser: null,
     _currentProfile: null,
-    _cache: {}, // Stores user profile and recent matches
+    _allMatches: [],
+    _currentMatchTab: 'open',
+    _currentRankTab: 'male',
+    _cache: { profile: null, matches: null, profile_json: '', matches_json: '' },
+
+    openReportModal: function() {
+        const modal = document.getElementById('report-problem-modal');
+        if (modal) modal.style.display = 'flex';
+    },
+    closeReportModal: function() {
+        const modal = document.getElementById('report-problem-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            const textarea = modal.querySelector('textarea');
+            if (textarea) textarea.value = '';
+        }
+    },
+    submitReport: async function() {
+        const textarea = document.querySelector('#report-problem-modal textarea');
+        const text = textarea ? textarea.value.trim() : '';
+        
+        if (!text) {
+            alert('Please describe the problem.');
+            return;
+        }
+
+        const btn = document.querySelector('#report-problem-modal .btn-primary');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        try {
+            const res = await API.post('/system/report', { report_text: text });
+            if (res.success) {
+                alert(res.message);
+                this.closeReportModal();
+            } else {
+                alert(res.message || 'Failed to submit report.');
+            }
+        } catch (e) {
+            alert('A server error occurred.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    },
 
     init: async function (isSilent = false) {
         if (!isSilent) await UI.syncNav();

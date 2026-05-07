@@ -44,8 +44,18 @@ $sqlDisputes = "
 ";
 $scoreDisputes = $pdo->query($sqlDisputes)->fetchAll();
 
+// Fetch System Reports
+$sqlSystem = "
+    SELECT r.*, reporter.nickname as reporter_name, reporter.player_code as reporter_code
+    FROM system_reports r
+    LEFT JOIN user_profiles reporter ON r.user_id = reporter.user_id
+    ORDER BY r.created_at DESC
+";
+$systemReports = $pdo->query($sqlSystem)->fetchAll();
+
 jsonResponse(true, 'Reports fetched.', [
     'profile_reports' => $profileReports,
     'match_reports' => $matchReports,
-    'score_disputes' => $scoreDisputes
+    'score_disputes' => $scoreDisputes,
+    'system_reports' => $systemReports
 ]);
