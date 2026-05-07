@@ -7,6 +7,7 @@ $sql = "CREATE TABLE IF NOT EXISTS system_reports (
     user_id INT NOT NULL,
     reason_text TEXT NOT NULL,
     status ENUM('pending', 'resolved') DEFAULT 'pending',
+    is_archived TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";

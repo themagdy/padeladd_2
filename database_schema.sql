@@ -364,4 +364,18 @@ CREATE TABLE `waiting_list` (
   CONSTRAINT `waiting_list_ibfk_3` FOREIGN KEY (`partner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Table structure for table `system_reports`
+DROP TABLE IF EXISTS `system_reports`;
+CREATE TABLE `system_reports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `reason_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('pending','resolved') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `is_archived` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `system_reports_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
