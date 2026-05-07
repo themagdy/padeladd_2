@@ -18,18 +18,18 @@ $offset = (int)($data['offset'] ?? 0);
 $stmt = $pdo->prepare("
     SELECT 
         MAX(n.id) as id, 
-        n.type, 
-        n.reference_id, 
-        n.sender_id, 
+        MAX(n.type) as type, 
+        MAX(n.reference_id) as reference_id, 
+        MAX(n.sender_id) as sender_id, 
         MAX(n.message_text) as message_text, 
         MIN(n.is_read) as is_read, 
         MAX(n.created_at) as created_at,
         COUNT(*) as count,
-        up.profile_image AS sender_avatar,
-        u.first_name AS sender_first_name, 
-        u.last_name AS sender_last_name, 
-        up.nickname AS sender_nickname,
-        m.match_code
+        MAX(up.profile_image) AS sender_avatar,
+        MAX(u.first_name) AS sender_first_name, 
+        MAX(u.last_name) AS sender_last_name, 
+        MAX(up.nickname) AS sender_nickname,
+        MAX(m.match_code) as match_code
     FROM notifications n
     LEFT JOIN users u ON n.sender_id = u.id
     LEFT JOIN user_profiles up ON n.sender_id = up.user_id
