@@ -655,17 +655,14 @@ window.AdminControllers = {
                     return;
                 }
 
+                let reports = [];
                 if (this.currentTab === 'profile') reports = (this.allReports.profile_reports || []);
                 else if (this.currentTab === 'match') reports = (this.allReports.match_reports || []);
                 else if (this.currentTab === 'dispute') reports = (this.allReports.score_disputes || []);
                 else if (this.currentTab === 'system') reports = (this.allReports.system_reports || []);
                 
                 if (!this.showArchived) {
-                    if (this.currentTab === 'system') {
-                        reports = reports.filter(r => r.status === 'pending');
-                    } else {
-                        reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
-                    }
+                    reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
                 }
 
                 if (this.searchQuery) {
@@ -755,17 +752,19 @@ window.AdminControllers = {
                         </tr>
                     `).join('');
                 } else if (this.currentTab === 'system') {
-                    head.innerHTML = `<tr><th>Reporter</th><th>Message</th><th>Status</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
+                    head.innerHTML = `<tr><th>Reporter</th><th>Reason</th><th>Status</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
                     list.innerHTML = reports.map(r => `
                         <tr>
-                            <td>${r.reporter_name || 'System'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
-                            <td style="max-width:500px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.message || 'No message provided'}</td>
-                            <td><span class="status-tag ${r.status}">${r.status}</span></td>
+                            <td>${r.reporter_name || 'User'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
+                            <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.reason_text || 'No reason provided'}</td>
+                            <td>
+                                <span class="badge" style="background:${r.status === 'pending' ? 'rgba(255,149,0,0.1)' : 'rgba(16,185,129,0.1)'}; color:${r.status === 'pending' ? 'var(--c-orange)' : 'var(--c-green)'}; font-size:10px; font-weight:800; text-transform:uppercase; padding:4px 10px; border-radius:100px;">${r.status}</span>
+                            </td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
-                                ${r.status === 'pending' ? `
-                                    <button onclick="AdminControllers.reports.resolveSystem(${r.id})" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">RESOLVE</button>
-                                ` : '<span style="font-size:11px; color:var(--c-text-muted); font-weight:700;">Completed</span>'}
+                                <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'system')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
+                                    ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
+                                </button>
                             </td>
                         </tr>
                     `).join('');
@@ -780,7 +779,7 @@ window.AdminControllers = {
             const pUnarchived = (this.allReports.profile_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const mUnarchived = (this.allReports.match_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const dUnarchived = (this.allReports.score_disputes || []).filter(r => !r.is_archived || r.is_archived == 0).length;
-            const sUnarchived = (this.allReports.system_reports || []).filter(r => r.status === 'pending').length;
+            const sUnarchived = (this.allReports.system_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             
             const pCountEl = document.getElementById('count-profile-reports');
             const mCountEl = document.getElementById('count-match-reports');
@@ -824,6 +823,7 @@ window.AdminControllers = {
             let apiType = 'profile_report';
             if (type === 'match') apiType = 'match_report';
             if (type === 'dispute') apiType = 'score_dispute';
+            if (type === 'system') apiType = 'system_report';
             
             try {
                 const res = await fetch(`../backend/api/admin/system/archive_item.php?admin_token=${token}`, {
@@ -836,6 +836,7 @@ window.AdminControllers = {
                     let listKey = 'profile_reports';
                     if (type === 'match') listKey = 'match_reports';
                     if (type === 'dispute') listKey = 'score_disputes';
+                    if (type === 'system') listKey = 'system_reports';
                     
                     const idx = this.allReports[listKey].findIndex(r => r.id == id);
                     if (idx !== -1) this.allReports[listKey][idx].is_archived = newStatus;
