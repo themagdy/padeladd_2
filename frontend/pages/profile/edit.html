@@ -100,7 +100,19 @@
             <textarea name="bio" class="form-textarea" rows="3" placeholder="A bit about your playstyle..."></textarea>
         </div>
         
-        <button id="edit-profile-submit" type="submit" class="btn btn-primary" style="margin-top: 20px;">Save Profile & Start Playing</button>
+        <!-- Read-only Contact Info -->
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.04);">
+            <div style="flex: 1.4; min-width: 200px;">
+                <label class="form-label" style="font-size: 11px; opacity: 0.6;">Email</label>
+                <div id="edit-email" style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); padding: 8px 0; word-break: break-all;">—</div>
+            </div>
+            <div style="flex: 1; min-width: 120px;">
+                <label class="form-label" style="font-size: 11px; opacity: 0.6;">Phone</label>
+                <div id="edit-phone" style="font-size: 13px; font-weight: 600; color: var(--c-text-muted); padding: 8px 0;">—</div>
+            </div>
+        </div>
+
+        <button id="edit-profile-submit" type="submit" class="btn btn-primary" style="margin-top: 12px; width: 100%;">Save Profile & Start Playing</button>
     </form>
 </div>
 
