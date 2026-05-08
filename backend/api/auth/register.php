@@ -70,7 +70,10 @@ try {
     $message = "Welcome to Padeladd! Please verify your email address to active your account and start your Padel journey.";
     sendEmail($email, "Welcome to Padeladd - Verify Your Email", $message, "Verify Email", $verifyLink);
 
-    jsonResponse(true, 'Registration successful. We\'ve sent a verification link to your email address.', ['user_id' => $userId]);
+    // Send WhatsApp OTP
+    sendWhatsAppOTP($mobile, $smsCode);
+
+    jsonResponse(true, 'Registration successful. We\'ve sent a verification link to your email and an OTP to your WhatsApp.', ['user_id' => $userId]);
 
 } catch (Exception $e) {
     $pdo->rollBack();

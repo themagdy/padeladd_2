@@ -71,8 +71,8 @@ const UI = {
             } else {
                 const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
                 if (UI._lastNavAvatar !== initials) {
-                    av.textContent = initials;
-                    av.style.background = 'var(--g-primary)';
+                    av.innerHTML = `<div class="avatar-placeholder" style="width:100%; height:100%; border-radius:50%; font-size: 14px;">${initials}</div>`;
+                    av.style.background = 'none';
                     UI._lastNavAvatar = initials;
                 }
             }
@@ -309,6 +309,25 @@ const AuthController = {
                 } else {
                     Toast.show(res ? res.message : 'Invalid code');
                 }
+            });
+        }
+
+        const resendBtn = document.getElementById('resend-codes');
+        if (resendBtn) {
+            resendBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                resendBtn.style.opacity = '0.5';
+                resendBtn.style.pointerEvents = 'none';
+                const res = await API.post('/auth/resend-otp', { user_id: userId });
+                if (res && res.success) {
+                    Toast.show('Code resent to WhatsApp!');
+                } else {
+                    Toast.show(res ? res.message : 'Failed to resend code');
+                }
+                setTimeout(() => {
+                    resendBtn.style.opacity = '1';
+                    resendBtn.style.pointerEvents = 'auto';
+                }, 30000); // 30s cooldown
             });
         }
 
