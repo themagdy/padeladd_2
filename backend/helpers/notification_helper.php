@@ -7,13 +7,13 @@ function createNotification(PDO $pdo, int $user_id, string $type, ?int $referenc
         $stmt->execute([$user_id, $type, $reference_id, $sender_id, $message_text]);
         $notif_id = (int)$pdo->lastInsertId();
 
-        // NEW LOGIC: Only one message allowed: "Check updates"
+        // NEW LOGIC: Only one message allowed: "Check Notifications."
         $title = "Padeladd";
-        $body = "Check updates";
+        $body = "Check Notifications.";
         $url = "/dashboard";
 
-        // Check if an unread "Check updates" already exists for this user to avoid duplicate push
-        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND message_text = 'Check updates' AND is_read = 0");
+        // Check if an unread "Check Notifications." already exists for this user to avoid duplicate push
+        $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND message_text = 'Check Notifications.' AND is_read = 0");
         $checkStmt->execute([$user_id]);
         $alreadyHasNotif = (int)$checkStmt->fetchColumn() > 0;
 
