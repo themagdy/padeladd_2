@@ -423,3 +423,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [MATCH_ID_HIDE] - 2026-05-08 04:45:00 +0300
 - UI Polish: Hid the match ID from the match details page using CSS (`display:none`) for a cleaner, more focused user experience while preserving it for internal navigation.
 - Version: 1.5.2 (Build 152)
+
+[DATE_YEAR_HIDE] - 2026-05-08 04:46:00 +0300
+- UI Refinement: Removed the year from the date display in match details to simplify the interface.
+- Version: 1.5.3 (Build 153)

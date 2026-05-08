@@ -2315,7 +2315,7 @@ const MatchesController = {
         let isAuthorized = false;
 
         const dt = new Date(match.match_datetime);
-        const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
         // Hide withdrawal warning for past matches
