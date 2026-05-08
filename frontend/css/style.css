@@ -1947,8 +1947,8 @@ form {
 }
 
 .stat-box {
-  background: var(--c-bg-card) !important;
-  border: 1px solid transparent !important;
+  background: transparent !important;
+  border: 1px solid var(--c-border) !important;
   border-radius: var(--r-md);
   padding: 20px 18px;
   display: flex;
@@ -3943,9 +3943,10 @@ form {
 
 /* Match Score Card Component - Precise Screenshot Matching */
 .match-score-card {
-  background: transparent;
-  padding: 12px 4px;
-  margin-bottom: 8px;
+  background: var(--c-bg-card);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 24px;
 }
 
 .msc-header {
@@ -3966,9 +3967,9 @@ form {
 }
 
 .pending-score-container {
-  background: transparent;
-  border: none;
-  padding: 0;
+  background: var(--c-bg-card);
+  border-radius: var(--r-lg);
+  padding: 16px;
   margin-bottom: 24px;
 }
 
@@ -4042,7 +4043,7 @@ form {
 
 .dash-match-card {
   background: var(--c-bg-card) !important;
-  border: 1px solid transparent !important;
+  border: none !important;
   border-radius: var(--r-lg);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
