@@ -1936,28 +1936,13 @@ form {
 }
 
 .stat-box {
-  background: var(--g-card);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-md);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.unified-stat-box {
-  background: transparent;
-  border: 1px solid var(--c-border);
+  background: transparent !important;
+  border: 1px solid var(--c-border) !important;
   border-radius: var(--r-md);
   padding: 20px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: border-color var(--t-fast);
-}
-
-.unified-stat-box:hover {
-  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .stat-box .val {
@@ -3998,9 +3983,9 @@ form {
 }
 
 .dash-match-card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%) !important;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background: transparent !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: var(--r-lg);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

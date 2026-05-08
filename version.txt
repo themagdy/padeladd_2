@@ -411,6 +411,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
         - Quick Resolution: Enabled one-click status toggling (Pending/Resolved) directly from the list.
         - Smart Filtering: Refined "Show Archived" toggle for exclusive view of historical vs active reports.
         - Advanced Sorting: Added dynamic sorting by Status and Date for efficient moderation.
-- UI Modernization (Unified Boxes):
-    - Redesigned player statistics boxes on Dashboard and Profile views to use a border-only aesthetic with transparent fills.
+- Version: 1.5.0 (Build 150)
+
+[UNIFIED_BOX_UI] - 2026-05-08 04:30:00 +0300
+- Dashboard & Profile Modernization:
+    - Unified Box System: Overhauled `.stat-box` and `.dash-match-card` to use a clean, border-only aesthetic (removed solid/gradient fills).
+    - Consistent UI: Applied the modernized border-only look to all stat cards, match cards, and interactive footer elements.
+    - Simplified Layout: Optimized horizontal box alignment and spacing for a more premium, airy feel.
 - Version: 1.5.1 (Build 151)
