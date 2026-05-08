@@ -447,3 +447,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [UI_STYLE_ALIGN] - 2026-05-08 06:15:00 +0300
 - Design Consistency: Restored the "fill-based" aesthetic for match score cards and dashboard results while preserving the modern "border-only" look for stats boxes. This ensures a clear visual distinction between player data and match outcomes.
 - Version: 1.6.1 (Build 161)
+
+[MOBILE_UI_TYPO] - 2026-05-08 06:20:00 +0300
+- Typography Refinement: Optimized the venue name font size for mobile devices in the match details view to prevent visual overcrowding and improve readability on smaller screens.
+- Version: 1.6.2 (Build 162)
