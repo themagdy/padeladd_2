@@ -212,6 +212,8 @@ jsonResponse(true, 'Match details loaded.', [
         'creator_gender' => $m['creator_gender'] ?? 'male',
         'cancellation_reason' => $m['cancellation_reason'] ?? null,
         'is_policy_violation' => (bool) ($m['is_policy_violation'] ?? 0),
+        'eligible_min' => (int) ($m['eligible_min'] ?? 0),
+        'eligible_max' => (int) ($m['eligible_max'] ?? 0),
     ],
     'slots' => $slots,
     'waiting_list' => $waiting_list,

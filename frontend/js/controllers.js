@@ -2315,7 +2315,9 @@ const MatchesController = {
         let isAuthorized = false;
 
         const dt = new Date(match.match_datetime);
-        const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
+        const now = new Date();
+        const isToday = dt.toDateString() === now.toDateString();
+        const dateStr = isToday ? 'Today' : dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
         // Hide withdrawal warning for past matches
@@ -2384,7 +2386,7 @@ const MatchesController = {
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
-                        <span>👤</span> Created by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
+                        <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
                         ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
                     </div>
                     <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
@@ -2410,6 +2412,14 @@ const MatchesController = {
         if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY';
         const t2p = document.getElementById('mv-team2-points');
         if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
+        
+        // Eligibility Range
+        const rangeEl = document.getElementById('mv-eligibility-range');
+        const rangeValEl = document.getElementById('mv-range-val');
+        if (rangeEl && rangeValEl && match.eligible_min !== undefined) {
+            rangeEl.style.display = 'flex';
+            rangeValEl.textContent = `${match.eligible_min} — ${match.eligible_max} pts`;
+        }
 
         // Render slot elements
         [[1, 1], [1, 2], [2, 1], [2, 2]].forEach(([team, slot]) => {
