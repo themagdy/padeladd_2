@@ -17,7 +17,7 @@
         style="display:grid; grid-template-columns:repeat(4, 1fr) 320px; gap:12px; align-items:stretch;">
 
         <!-- Ranking -->
-        <div class="unified-stat-box">
+        <div class="stat-box">
           <div>
             <div id="dash-ranking"
               style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">—</div>
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Points -->
-        <div class="unified-stat-box">
+        <div class="stat-box">
           <div>
             <div id="dash-points"
               style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
@@ -41,7 +41,7 @@
         </div>
 
         <!-- Matches -->
-        <div class="unified-stat-box">
+        <div class="stat-box">
           <div>
             <div id="dash-matches-count"
               style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0</div>
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Win Rate -->
-        <div class="unified-stat-box">
+        <div class="stat-box">
           <div>
             <div id="dash-winrate"
               style="font-size:32px; font-weight:700; color:var(--c-orange); line-height:1; margin-bottom:8px;">0%</div>
@@ -166,13 +166,13 @@
     <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 20px; gap:20px;">
       <button
         onclick="DashboardController.reportProblem()"
-        style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
+        style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
         onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(-1px)'"
-        onmouseout="this.style.background='var(--g-card)'; this.style.transform='translateY(0)'">Report a problem</button>
+        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Report a problem</button>
       <button
-        style="background:var(--g-card); border:none; border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
+        style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
         onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(-1px)'"
-        onmouseout="this.style.background='var(--g-card)'; this.style.transform='translateY(0)'">Contact Padeladd</button>
+        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact Padeladd</button>
       <span class="footer-bottom-text" style="margin-left:auto; font-size:14px; color:var(--c-text-muted);">Check our <a
           href="terms" data-link style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of
           use</a></span>
