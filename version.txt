@@ -432,3 +432,14 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Streamlined Labels: Simplified "Created by" to "by" and hid technical match IDs for a more human-centric interface.
     - Aesthetic Unification: Refined text colors and spacing within the match view to match the new bordered UI language.
 - Version: 1.5.4 (Build 154)
+
+[WHATSAPP_TWILIO_V1] - 2026-05-08 05:45:00 +0300
+- WhatsApp Verification System:
+    - Twilio Integration: Implemented a robust WhatsApp OTP delivery system using Twilio's REST API.
+    - Automated Formatting: Added smart E.164 number conversion for Egyptian mobile formats.
+    - Verification Resilience: Created a new `resend-otp` endpoint with frontend cooldown logic to ensure reliable delivery.
+- UI & UX Modernization:
+    - Mobile Auth Fixes: Resolved width and padding issues on Verify and Reset Password pages for smaller screens.
+    - Terms Page Refinement: Transitioned the "Agree" button from a sticky/floating footer to a standard layout for better readability.
+    - Nav Polish: Fixed initials background visibility in the mobile navbar by implementing a dedicated avatar placeholder wrapper.
+- Version: 1.6.0 (Build 160)

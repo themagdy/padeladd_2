@@ -26,6 +26,7 @@ require_once __DIR__ . '/../helpers/response.php';
 require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/mail_helper.php';
 require_once __DIR__ . '/../helpers/notification_helper.php';
+require_once __DIR__ . '/../helpers/twilio_helper.php';
 
 // Parse the request URI to determine endpoint
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -78,6 +79,9 @@ try {
             break;
         case 'reset-password':
             require __DIR__ . '/auth/reset_password.php';
+            break;
+        case 'auth/resend-otp':
+            require __DIR__ . '/auth/resend_otp.php';
             break;
         case 'profile/update':
             require __DIR__ . '/profile/update.php';
