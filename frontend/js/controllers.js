@@ -5184,8 +5184,10 @@ const RankingController = {
     init: async function () {
         UI.syncNav();
 
-        // Default to user's gender if available
-        if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
+        const savedGender = sessionStorage.getItem('ranking_gender');
+        if (savedGender) {
+            this._currentTab = savedGender;
+        } else if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
             this._currentTab = DashboardController._cache.profile.profile.gender || 'male';
         } else {
             const res = await API.post('/profile/get', {});
@@ -5207,6 +5209,7 @@ const RankingController = {
 
     switchTab: function (gender) {
         this._currentTab = gender;
+        sessionStorage.setItem('ranking_gender', gender);
 
         // Update UI buttons
         const mBtn = document.getElementById('rank-tab-male');
