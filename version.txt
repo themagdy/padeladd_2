@@ -455,3 +455,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [NOTIF_TEXT_UPDATE] - 2026-05-08 06:30:00 +0300
 - UX Polish: Updated the hardcoded push notification message from "Check updates" to "Check Notifications." to provide clearer context to users receiving background alerts.
 - Version: 1.6.3 (Build 163)
+
+[UI_LOADER_DEPTH] - 2026-05-09 20:32:00 +0300
+- Navigation Polish: Boosted the Global Loader's z-index to 20,000. This ensures the loader completely covers all page elements (including high-index sticky headers) during navigation, eliminating the "ghosting" effect when switching views.
+- Version: 1.6.4 (Build 164)
