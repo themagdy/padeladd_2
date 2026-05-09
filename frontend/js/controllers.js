@@ -1433,7 +1433,8 @@ const MatchesController = {
                     if (res && res.success && res.data.venues.length > 0) {
                         venueDrop.innerHTML = res.data.venues.map(v => `<li data-id="${v.id}">${v.name}</li>`).join('');
                         venueDrop.style.display = 'block';
-                        if (addBtnWrap) addBtnWrap.style.display = 'none';
+                        // Keep the add button visible so they can request a new one if the list doesn't have it
+                        if (addBtnWrap) addBtnWrap.style.display = 'block';
                     } else {
                         venueDrop.style.display = 'none';
                         if (addBtnWrap) addBtnWrap.style.display = 'block';
