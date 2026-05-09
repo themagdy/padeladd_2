@@ -377,23 +377,23 @@ const AuthController = {
         }
     },
 
-    initTerms: function() {
+    initTerms: function () {
         this._agreedOnce = false; // Reset confirmation state
         const btnText = document.getElementById('agree-btn-text');
         if (btnText) btnText.innerHTML = 'AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق';
-        
+
         const agreeContainer = document.getElementById('terms-agree-container');
         if (agreeContainer && !Auth.hasProfile()) {
             agreeContainer.style.display = 'block';
         }
     },
-    agreeTerms: function() {
+    agreeTerms: function () {
         const title = document.getElementById('terms-agree-title');
         const btnText = document.getElementById('agree-btn-text');
-        
+
         if (!this._agreedOnce) {
             this._agreedOnce = true;
-            
+
             if (title) {
                 // Animation: Bounce up and fade in
                 title.style.opacity = '1';
@@ -1070,7 +1070,7 @@ const ProfileController = {
                 if (u) {
                     if (form.first_name) form.first_name.value = u.first_name || '';
                     if (form.last_name) form.last_name.value = u.last_name || '';
-                    
+
                     // Populate read-only contact info
                     const emailEl = document.getElementById('edit-email');
                     const phoneEl = document.getElementById('edit-phone');
@@ -1495,7 +1495,7 @@ const MatchesController = {
                 partnerHelp.style.color = 'var(--c-text-muted)';
                 partnerInput.classList.remove('error');
 
-                if (q.length === 3 || q.length === 4) {
+                if (q.length >= 3 && q.length <= 7) {
                     partnerHelp.textContent = "Looking up player...";
                     partnerTimeout = setTimeout(async () => {
                         const res = await API.post('/profile/check_code', { code: q });
@@ -1577,7 +1577,7 @@ const MatchesController = {
                 if (code.includes(' (')) {
                     code = code.split(' (')[0].trim();
                 }
-                if (!code || (code.length !== 3 && code.length !== 4)) {
+                if (!code || code.length < 3 || code.length > 7) {
                     UI.showError('partner_player_code', "Enter a valid player code", form);
                     return;
                 }
@@ -2431,7 +2431,7 @@ const MatchesController = {
         if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY';
         const t2p = document.getElementById('mv-team2-points');
         if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
-        
+
         // Eligibility Range
         const rangeEl = document.getElementById('mv-eligibility-range');
         const rangeValEl = document.getElementById('mv-range-val');
@@ -3014,7 +3014,7 @@ const MatchesController = {
             help.style.color = 'var(--c-text-muted)';
             input.classList.remove('error');
 
-            if (q.length === 3 || q.length === 4) {
+            if (q.length >= 3 && q.length <= 7) {
                 help.textContent = "Looking up player...";
                 lookupTimeout = setTimeout(async () => {
                     const res = await API.post('/profile/check_code', { code: q });
@@ -3043,8 +3043,8 @@ const MatchesController = {
                         input.classList.add('error');
                     }
                 }, 400);
-            } else if (q.length > 4) {
-                e.target.value = q.substring(0, 4);
+            } else if (q.length > 7) {
+                e.target.value = q.substring(0, 7);
                 e.target.dispatchEvent(new Event('input'));
             } else {
                 if (badge) badge.style.display = 'none';
