@@ -1916,8 +1916,22 @@ const MatchesController = {
             payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         }
 
+        // Store expected state to prevent race conditions if user changes tabs/filters during fetch
+        const expectedTab = MatchesController._currentTab;
+        const expectedFilterType = MatchesController._playFilterType;
+        const expectedFilterGender = MatchesController._playFilterGender;
+
         if (!isSilent) MatchesController._isLoading = true;
         let res = await API.post(endpoint, payload);
+
+        // Discard response if user changed tabs or filters while we were waiting
+        if (
+            MatchesController._currentTab !== expectedTab ||
+            MatchesController._playFilterType !== expectedFilterType ||
+            MatchesController._playFilterGender !== expectedFilterGender
+        ) {
+            return;
+        }
 
         // Phase 6: Silent retry on first failure
         if ((!res || !res.success) && !isSilent) {
@@ -5215,8 +5229,14 @@ const RankingController = {
             this.render(hasCache);
         }
 
+        const expectedTab = this._currentTab;
         // Fetch larger list for the full page (limit 100)
-        const res = await API.post('/ranking/list', { gender: this._currentTab, limit: 100 });
+        const res = await API.post('/ranking/list', { gender: expectedTab, limit: 100 });
+
+        // Prevent race condition if user switched tabs during the fetch
+        if (this._currentTab !== expectedTab) {
+            return;
+        }
 
         if (!res || !res.success) {
             if (!isSilent && !hasCache) {
