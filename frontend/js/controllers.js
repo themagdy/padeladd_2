@@ -4168,16 +4168,27 @@ const ChatController = {
         if (!input) return;
         const text = input.value.trim();
         if (!text) return;
+
+        // Instant clear to prevent double-sends and provide fast feedback
+        input.value = '';
+        this.autoResize(input);
+
         this._sending = true;
         const btn = document.getElementById('chat-send-btn');
         if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+
         const res = await API.post('/chat/send', { match_id: this._matchId, message_text: text });
+
         this._sending = false;
         if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+
         if (res && res.success) {
-            input.value = '';
-            this.autoResize(input);
             await this.loadMessages(false, true);
+        } else {
+            // Restore text so the user doesn't lose their message on failure
+            input.value = text;
+            this.autoResize(input);
+            Toast.show(res ? res.message : 'Message failed to send', 'error');
         }
     },
 
