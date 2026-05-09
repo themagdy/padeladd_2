@@ -788,14 +788,15 @@ const DashboardController = {
 //  PROFILE VIEW CONTROLLER
 // -------------------------------------------------------
 const ProfileViewController = {
-    init: async function (params) {
+    _viewCache: {},
+    init: async function (params, isSilent = false) {
         // Guard: All profile views require authentication
         if (!Auth.isAuthenticated()) {
             Router.navigate('/login');
             return;
         }
 
-        UI.syncNav();
+        if (!isSilent) UI.syncNav();
 
         // ID could be user_id (numeric) or player_code (string)
         const payload = {};
@@ -804,7 +805,26 @@ const ProfileViewController = {
             else payload.player_code = params.id;
         }
 
-        const res = await API.post('/profile/get', payload);
+        const cacheKey = params && params.id ? params.id : 'self';
+        const hasCache = ProfileViewController._viewCache[cacheKey];
+
+        let res;
+
+        if (!isSilent && hasCache) {
+            // Render instantly from cache
+            res = { success: true, data: hasCache };
+            
+            // Trigger silent background fetch for SWR
+            setTimeout(() => {
+                ProfileViewController.init(params, true);
+            }, 10);
+        } else {
+            // Full network load
+            res = await API.post('/profile/get', payload);
+            if (res && res.success && res.data) {
+                ProfileViewController._viewCache[cacheKey] = res.data;
+            }
+        }
         if (!res || !res.success) {
             const pageEl = document.querySelector('.page.active');
             if (pageEl) {
