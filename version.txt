@@ -498,3 +498,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Polish: Reordered the ConfirmModal layout to position guidance text and reason lists underneath the input field.
 - Accessibility: Left-aligned the message text to improve readability of bulleted reason lists.
 - Version: 1.7.2 (Build 172)
+
+[GUIDANCE_TEXT_REFINEMENT] - 2026-05-09 21:32:00 +0300
+- Copy Update: Simplified the guidance tip for match reporting to be more concise.
+- Version: 1.7.3 (Build 173)

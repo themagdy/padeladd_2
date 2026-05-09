@@ -5086,7 +5086,7 @@ const ScoringController = {
             showInput: true,
             inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
             inputMaxLength: 300,
-            tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide specific details about the incident.',
+            tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide details about the incident.',
             confirmText: 'Submit Report',
             type: 'warning'
         });
