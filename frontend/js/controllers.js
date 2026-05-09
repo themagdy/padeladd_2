@@ -1403,10 +1403,12 @@ const MatchesController = {
         }
 
         if (timeScroller && timeInput) {
-            // Generate 30-min slots from 07:00 to 03:00 (next day)
+            // Generate 30-min slots from 07:00 to 02:00 (next day)
             let html = '';
-            for (let h = 7; h <= 27; h++) {
+            for (let h = 7; h <= 26; h++) {
                 ['00', '30'].forEach(m => {
+                    if (h === 26 && m === '30') return; // Max time is 2:00 AM
+
                     const actualHour = h % 24;
                     const h24 = actualHour.toString().padStart(2, '0');
                     const t = `${h24}:${m}`;
