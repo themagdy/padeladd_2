@@ -548,3 +548,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [DASHBOARD_RANKING_PERSISTENCE] - 2026-05-10 00:06:00 +0300
 - UX Improvement: The gender tab in the Dashboard Ranking section is now synchronized with your global preference. If you switch to "Females" on the main Ranking page, the Dashboard will also show the Female rankings by default.
 - Version: 1.8.8 (Build 188)
+
+[APP_VERSION_TRACKING_SUITE] - 2026-05-10 02:53:00 +03:00
+- Feature: Implemented App Build Version Tracking. Every time a user opens the app, their build version is logged.
+- Feature: Added "User Versions" page in Admin Panel for build distribution analytics.
+- Feature: Enhanced In-App Messages with Multi-Select Build Targeting. Admins can now target popups to specific app versions.
+- Version: 1.9.0 (Build 190)

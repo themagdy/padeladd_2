@@ -52,6 +52,13 @@
                         <option value="specific">Specific User (by Player Code)</option>
                     </select>
                 </div>
+
+                <div id="target-build-group" class="form-group">
+                    <label>Target Build Versions (Select none for all)</label>
+                    <div id="target-build-list" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; max-height:120px; overflow-y:auto; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px;">
+                        <div style="grid-column: 1 / -1; color: var(--c-text-muted); font-size: 12px; text-align: center; padding: 10px;">Loading builds...</div>
+                    </div>
+                </div>
                 
                 <div id="target-player-code-group" class="form-group" style="display:none;">
                     <label>Target Player Code</label>

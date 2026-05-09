@@ -15,15 +15,22 @@ $sql = "
     SELECT m.*
     FROM in_app_messages m
     LEFT JOIN in_app_message_views v ON m.id = v.message_id AND v.user_id = ?
+    JOIN users u ON u.id = ?
     WHERE m.is_active = 1
       AND v.user_id IS NULL
       AND (m.target_user_id = ? OR m.target_user_id IS NULL)
+      AND (
+          m.target_build_refs IS NULL 
+          OR m.target_build_refs = '' 
+          OR m.target_build_refs = '[]'
+          OR JSON_CONTAINS(m.target_build_refs, JSON_QUOTE(u.last_build_ref))
+      )
     ORDER BY m.target_user_id DESC, m.created_at DESC
     LIMIT 1
 ";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([$uid, $uid]);
+$stmt->execute([$uid, $uid, $uid]);
 $message = $stmt->fetch();
 
 if (!$message) {

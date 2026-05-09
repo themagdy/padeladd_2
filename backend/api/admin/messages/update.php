@@ -18,6 +18,7 @@ if (!isset($data['id'])) {
 
 $sql = "UPDATE in_app_messages SET 
         target_user_id = ?, 
+        target_build_refs = ?, 
         heading = ?, 
         emoji = ?, 
         body = ?, 
@@ -37,9 +38,12 @@ if ($data['target_type'] === 'specific' && !empty($data['target_player_code'])) 
     $target_user_id = $stmt->fetchColumn();
 }
 
+$target_build_refs = isset($data['target_build_refs']) ? json_encode($data['target_build_refs']) : null;
+
 $stmt = $pdo->prepare($sql);
 $success = $stmt->execute([
     $target_user_id,
+    $target_build_refs,
     $data['heading'],
     $data['emoji'],
     $data['body'],

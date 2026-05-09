@@ -35,15 +35,17 @@ if ($target_type === 'specific' && !empty($target_player_code)) {
     }
 }
 
+$target_build_refs = isset($data['target_build_refs']) ? json_encode($data['target_build_refs']) : null;
+
 try {
     $sql = "
         INSERT INTO in_app_messages 
-        (target_user_id, heading, emoji, body, button_text, action_type, page_route, android_url, ios_url, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (target_user_id, target_build_refs, heading, emoji, body, button_text, action_type, page_route, android_url, ios_url, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        $target_user_id, $heading, $emoji, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active
+        $target_user_id, $target_build_refs, $heading, $emoji, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active
     ]);
 
     jsonResponse(true, 'Message created successfully.');
