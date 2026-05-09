@@ -541,20 +541,25 @@ const DashboardController = {
         DashboardController._currentUser = user;
         DashboardController._currentProfile = profile;
 
-        // Default ranking tab to user's gender
-        if (profile && profile.gender) {
+        // Default ranking tab to user's gender or saved preference
+        const savedRankGender = sessionStorage.getItem('ranking_gender');
+        if (savedRankGender) {
+            DashboardController._currentRankTab = savedRankGender;
+        } else if (profile && profile.gender) {
             DashboardController._currentRankTab = profile.gender;
+        }
+
+        const currentGender = DashboardController._currentRankTab;
 
             // Update UI buttons in dashboard
             const males = document.getElementById('tab-males');
             const females = document.getElementById('tab-females');
             if (males && females) {
-                males.style.borderBottomColor = profile.gender === 'male' ? 'var(--c-primary)' : 'transparent';
-                males.style.color = profile.gender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
-                females.style.borderBottomColor = profile.gender === 'female' ? '#D81B60' : 'transparent';
-                females.style.color = profile.gender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
+                males.style.borderBottomColor = currentGender === 'male' ? 'var(--c-primary)' : 'transparent';
+                males.style.color = currentGender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
+                females.style.borderBottomColor = currentGender === 'female' ? '#D81B60' : 'transparent';
+                females.style.color = currentGender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
             }
-        }
 
         if (matchData) {
             DashboardController._allMatches = matchData;
@@ -573,6 +578,7 @@ const DashboardController = {
 
     switchRankTab: function (gender) {
         DashboardController._currentRankTab = gender;
+        sessionStorage.setItem('ranking_gender', gender);
         const males = document.getElementById('tab-males');
         const females = document.getElementById('tab-females');
         if (males) {
