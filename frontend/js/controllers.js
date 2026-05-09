@@ -1322,6 +1322,7 @@ const MatchesController = {
     _playFilterType: 'competition',
     _playFilterGender: 'same_gender',
     _cache: {}, // Stores lists per tab/filters
+    _viewCache: {}, // Stores match details by ID
     _lastMatchId: null,
     _lastMatchState: null,
     _partnerEnabled: false,
@@ -2289,11 +2290,34 @@ const MatchesController = {
 
         const skeleton = document.getElementById('mv-skeleton');
         const content = document.getElementById('mv-content');
-        if (!isSilent && skeleton) skeleton.style.display = 'block';
-        if (!isSilent && content) content.style.display = 'none';
+        
+        const cacheKey = query.match_id ? `id_${query.match_id}` : `code_${query.match_code}`;
+        const hasCache = MatchesController._viewCache[cacheKey];
 
-        const res = await API.post('/match/details', query);
-        if (!isSilent && skeleton) skeleton.style.display = 'none';
+        let res;
+
+        if (!isSilent && hasCache && !query._isSWR) {
+            // Render instantly from cache
+            res = { success: true, data: hasCache };
+            if (skeleton) skeleton.style.display = 'none';
+            
+            // Trigger silent background fetch for SWR
+            setTimeout(() => {
+                query._isSWR = true;
+                MatchesController.loadDetails(query, true);
+            }, 10);
+        } else {
+            // Full network load
+            if (!isSilent && skeleton) skeleton.style.display = 'block';
+            if (!isSilent && content) content.style.display = 'none';
+            
+            res = await API.post('/match/details', query);
+            if (!isSilent && skeleton) skeleton.style.display = 'none';
+            
+            if (res && res.success && res.data) {
+                MatchesController._viewCache[cacheKey] = res.data;
+            }
+        }
 
         if (!res || !res.success || !res.data) {
             Toast.show(res ? res.message : 'Could not load match', 'error');

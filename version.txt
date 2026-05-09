@@ -511,3 +511,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [REASON_TEXT_UPDATE] - 2026-05-09 21:35:00 +0300
 - Copy Update: Renamed "App tech issue" to "Technical issue" in reporting reason lists for better terminology consistency.
 - Version: 1.7.5 (Build 175)
+
+[INSTANT_NAVIGATION_SWR_CACHE] - 2026-05-09 21:48:00 +0300
+- Performance: Implemented a global Javascript memory cache (_templateCache) for all HTML views, eliminating network requests when navigating back.
+- Performance: Implemented Stale-While-Revalidate (SWR) for Match Details (initView), allowing instant UI rendering while silently fetching updates.
+- Performance: Verified and optimized existing SWR caching in Dashboard, Ranking, and Match List controllers to prevent skeleton loaders on back-navigation.
+- Data Integrity: All memory caches are intentionally kept out of localStorage so they automatically and cleanly flush on app restart/refresh.
+- Version: 1.8.0 (Build 180)

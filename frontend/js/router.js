@@ -27,6 +27,7 @@ const Router = {
     },
     
     navDepth: 0,
+    _templateCache: {},
     
     init: function() {
         // Initialize depth if not present (direct landing)
@@ -238,13 +239,20 @@ const Router = {
         
         if (route) {
             try {
-                // Ensure we fetch relative to the base URL
-                const v = new Date().getTime(); 
-                const targetUrl = CONFIG.BASE_PATH + '/' + route.template + '?v=' + v;
-                
-                const response = await fetch(targetUrl, { cache: 'no-cache' });
-                if (!response.ok) throw new Error('Template not found');
-                const html = await response.text();
+                let html;
+                if (this._templateCache[route.template]) {
+                    html = this._templateCache[route.template];
+                } else {
+                    // Ensure we fetch relative to the base URL
+                    const v = new Date().getTime(); 
+                    const targetUrl = CONFIG.BASE_PATH + '/' + route.template + '?v=' + v;
+                    
+                    const response = await fetch(targetUrl, { cache: 'no-cache' });
+                    if (!response.ok) throw new Error('Template not found');
+                    html = await response.text();
+                    
+                    this._templateCache[route.template] = html;
+                }
                 
                 appDiv.innerHTML = html;
                 
