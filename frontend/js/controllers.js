@@ -3246,7 +3246,7 @@ const MatchesController = {
         if (res && res.success) {
             Toast.show('You joined the match!', 'success');
             SoundManager.play('success');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Join failed');
             if (btn) {
@@ -3285,7 +3285,7 @@ const MatchesController = {
         if (res && res.success) {
             Toast.show('Request sent! Waiting for partner approval.', 'success');
             if (form) form.style.display = 'none';
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Request failed');
             if (btn) {
@@ -3339,7 +3339,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show('Approved! Both players are now in the match.', 'success');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Approve failed');
             if (btn) {
@@ -3359,7 +3359,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show('Request denied.', 'info');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Deny failed');
             if (btn) {
@@ -3379,7 +3379,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show(res.message, 'info');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Block failed');
             if (btn) {
@@ -3399,7 +3399,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show('Invitation cancelled.', 'info');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Cancel failed');
             if (btn) {
@@ -3419,7 +3419,7 @@ const MatchesController = {
 
         if (res && res.success) {
             Toast.show('Withdrawn from waiting list', 'success');
-            await MatchesController.loadDetails({ match_id });
+            await MatchesController.loadDetails({ match_id }, true);
         } else {
             MatchesController.showActionError(res ? res.message : 'Error withdrawing');
             if (btn) { btn.disabled = false; btn.innerText = oldText; }
@@ -3532,7 +3532,7 @@ const MatchesController = {
         if (res && res.success) {
             Toast.show('You joined the match! ⚡', 'success');
             // Refresh view
-            this.initView({ id: match_id });
+            await MatchesController.loadDetails({ match_id: match_id }, true);
         } else {
             Toast.show(res ? res.message : 'Could not jump in', 'error');
             btn.disabled = false;
@@ -5007,7 +5007,7 @@ const ScoringController = {
         if (res && res.success) {
             Toast.show('Score approved! Points updated.', 'success');
             SoundManager.play('success');
-            MatchesController.loadDetails({ match_id: MatchesController._currentMatchId });
+            MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);
             UI.syncNav();
         } else {
             Toast.show(res ? res.message : 'Approval failed', 'error');
@@ -5029,7 +5029,7 @@ const ScoringController = {
         const res = await API.post('/score/dispute', { score_id: scoreId, reason });
         if (res && res.success) {
             Toast.show('Dispute recorded. Our team will review it.', 'warning');
-            MatchesController.loadDetails({ match_id: MatchesController._currentMatchId });
+            MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);
         } else {
             Toast.show(res ? res.message : 'Dispute failed', 'error');
         }
