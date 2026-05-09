@@ -492,7 +492,7 @@ const DashboardController = {
     _cache: {}, // Stores user profile and recent matches
 
     init: async function (isSilent = false) {
-        if (!isSilent) await UI.syncNav();
+        if (!isSilent) UI.syncNav();
 
         // Use cache for instant render if available
         if (!isSilent && DashboardController._cache.profile) {
@@ -795,7 +795,7 @@ const ProfileViewController = {
             return;
         }
 
-        await UI.syncNav();
+        UI.syncNav();
 
         // ID could be user_id (numeric) or player_code (string)
         const payload = {};
@@ -1707,7 +1707,7 @@ const MatchesController = {
         MatchesController._currentTab = savedTab || defaultSubTab;
         MatchesController._lastMode = mode;
 
-        await UI.syncNav();
+        UI.syncNav();
         const skeleton = document.getElementById('ml-skeleton');
         const list = document.getElementById('ml-list');
         const headerTitleEl = document.getElementById('ml-header-title');
@@ -2252,7 +2252,7 @@ const MatchesController = {
 
     // ── View (detail) ──────────────────────────────────
     initView: async function (params, autoOpenChat = false) {
-        await UI.syncNav();
+        UI.syncNav();
         let match_id = parseInt(params?.id || 0);
         const match_code = params?.matchCode || '';
 
@@ -5135,7 +5135,7 @@ const RankingController = {
     _cache: {}, // Stores ranking data per gender
 
     init: async function () {
-        await UI.syncNav();
+        UI.syncNav();
 
         // Default to user's gender if available
         if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
