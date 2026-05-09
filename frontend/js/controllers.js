@@ -2664,6 +2664,12 @@ const MatchesController = {
                 if (isPastMatch && match.status !== 'cancelled' && canScore) {
                     let scoringHtml = '';
 
+                    const getOrdinal = (n) => {
+                        const s = ["th", "st", "nd", "rd"];
+                        const v = n % 100;
+                        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+                    };
+
                     if ((scores || []).length > 0) {
                         (scores || []).forEach((s, idx) => {
                             if (idx > 0) {
@@ -2682,7 +2688,7 @@ const MatchesController = {
                                     <div class="approved-score-wrapper" style="margin-bottom:24px;">
                                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
                                             <div style="font-size:15px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:6px;">
-                                                🏆 ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
+                                                🏆 ${(scores || []).length > 1 ? `${getOrdinal(idx + 1)} Match Score` : 'Match Score'}
                                             </div>
                                         </div>
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
@@ -2736,7 +2742,7 @@ const MatchesController = {
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
                                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:0 20px;">
                                             <div style="font-size:15px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:6px;">
-                                                🏆 ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
+                                                🏆 ${(scores || []).length > 1 ? `${getOrdinal(idx + 1)} Match Score` : 'Match Score'}
                                             </div>
                                             <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending</div>
                                         </div>
