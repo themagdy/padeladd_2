@@ -464,3 +464,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX Optimization: Implemented "Silent Updates" for match actions (Join, Leave, Approve, etc.). Match details now refresh seamlessly in the background without triggering the skeleton loader, providing a faster, app-like feedback loop.
 - Platform Standardization: Updated partner player code validation to support lengths from 3 to 7 characters, accommodating a wider range of player identifiers.
 - Version: 1.6.5 (Build 165)
+
+[FORM_SECURITY_RESTRICTIONS] - 2026-05-09 21:00:00 +0300
+- Data Integrity: Implemented strict character length restrictions (maxlength) across all platform forms (Register, Profile, Matches, and Auth) to prevent database overflows and UI breakage.
+- Security Polish: Introduced a name sanitization utility to strip emojis and special symbols from First/Last names and Nicknames, maintaining a professional leaderboard aesthetic.
+- Global Validation: Standardized modal input limits (Max 300 chars) for reports and disputes.
+- Version: 1.6.6 (Build 166)

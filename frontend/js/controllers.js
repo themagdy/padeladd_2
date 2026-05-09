@@ -96,6 +96,15 @@ const UI = {
     }
 };
 
+const Sanitizer = {
+    // Strips emojis and special symbols to keep text professional
+    cleanName: function (str) {
+        if (!str) return '';
+        // Trim and remove common emojis/symbols
+        return str.trim().replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+    }
+};
+
 const AuthController = {
     initLogin: function () {
         if (Auth.isAuthenticated()) {
@@ -172,10 +181,10 @@ const AuthController = {
             if (!form.password.value || form.password.value.length < 8) { UI.showError('password', 'Password must be at least 8 chars', form); return; }
 
             const payload = {
-                first_name: form.first_name.value,
-                last_name: form.last_name.value,
-                mobile: form.mobile.value,
-                email: form.email.value,
+                first_name: Sanitizer.cleanName(form.first_name.value),
+                last_name: Sanitizer.cleanName(form.last_name.value),
+                mobile: form.mobile.value.trim(),
+                email: form.email.value.trim().toLowerCase(),
                 password: form.password.value
             };
 
@@ -1244,14 +1253,14 @@ const ProfileController = {
             const dob = `${form.dob_year.value}-${form.dob_month.value}-${form.dob_day.value}`;
 
             const payload = {
-                first_name: form.first_name.value.trim(),
-                last_name: form.last_name.value.trim(),
+                first_name: Sanitizer.cleanName(form.first_name.value),
+                last_name: Sanitizer.cleanName(form.last_name.value),
                 date_of_birth: dob,
                 gender: form.gender.value,
                 playing_side: form.playing_side.value,
-                nickname: form.nickname.value,
+                nickname: Sanitizer.cleanName(form.nickname.value),
                 location: form.location.value,
-                bio: form.bio.value
+                bio: form.bio.value.trim()
             };
 
             const res = await API.post('/profile/update', payload);
