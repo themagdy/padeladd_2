@@ -542,3 +542,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [MATCH_CREATION_TIME_LIMIT] - 2026-05-10 00:00:00 +0300
 - Policy Update: Restricted the maximum selectable time in the Create Match page to 2:00 AM.
 - Version: 1.8.6 (Build 186)
+[RANKING_TAB_PERSISTENCE] - 2026-05-10 00:04:00 +0300
+- UX Improvement: Selected gender tab in the Ranking page now persists when navigating back from a profile.
+- Version: 1.8.7 (Build 187)
