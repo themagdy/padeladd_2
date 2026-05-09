@@ -131,10 +131,11 @@ var ConfirmModal = {
                         <div style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">${icon}</div>
                     </div>
 
-                    <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:10px; letter-spacing:-0.5px; line-height:1.2;">${title}</h2>
-                    <div style="font-size:13px; color:rgba(255,255,255,0.6); line-height:1.6; margin-bottom:28px; font-weight:400; padding:0 10px;">${message}</div>
+                    <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:20px; letter-spacing:-0.5px; line-height:1.2;">${title}</h2>
                     
                     ${inputHtml}
+
+                    <div style="font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:24px; font-weight:400; text-align:left; padding:0 8px;">${message.replace(/\n/g, '<br>')}</div>
 
                     <div style="display:flex; gap:12px; flex-direction:column;">
                         <button id="gcm-confirm" class="btn" style="background:var(--c-primary); color:#fff; border:none; width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25); transition:transform 0.2s;">
