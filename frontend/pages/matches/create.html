@@ -14,24 +14,20 @@
 
     <div class="form-group" style="position:relative; margin-bottom:12px;">
       <label class="form-label" for="cm-venue">Venue / Club *</label>
-      <input
-        type="text"
-        name="venue_name"
-        id="cm-venue"
-        class="form-input"
-        placeholder="Select from list..."
-        maxlength="255"
-        autocomplete="off"
-      >
+      <input type="text" name="venue_name" id="cm-venue" class="form-input" placeholder="Select from list..."
+        maxlength="255" autocomplete="off">
       <!-- Autocomplete Dropdown -->
       <ul id="cm-venue-dropdown" class="autocomplete-dropdown" style="display:none;"></ul>
-      
+
       <input type="hidden" id="cm-venue-is-db" value="0">
       <input type="hidden" name="venue_id" id="cm-venue-id" value="">
     </div>
 
     <div id="cm-add-venue-wrapper" style="margin-bottom:24px; display:none;">
-      <button type="button" id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()" style="background:rgba(255,255,255,0.05); color:var(--c-primary); border:0px; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(52,152,219,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <button type="button" id="cm-add-venue-btn" onclick="MatchesController.showVenueRequest()"
+        style="background:rgba(255,255,255,0.05); color:var(--c-primary); border:0px; border-radius:12px; padding:10px 16px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px;"
+        onmouseover="this.style.background='rgba(52,152,219,0.1)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.05)'">
         <span style="font-size:16px; font-weight:400;">+</span> Add a Venue / Club
       </button>
     </div>
@@ -40,26 +36,21 @@
     <!-- Court Name -->
     <div class="form-group">
       <label class="form-label" for="cm-court">Court Name / Number *</label>
-      <input
-        type="text"
-        name="court_name"
-        id="cm-court"
-        class="form-input"
-        placeholder="e.g. Court 3"
-        maxlength="100"
-        autocomplete="off"
-      >
+      <input type="text" name="court_name" id="cm-court" class="form-input" placeholder="e.g. Court 3" maxlength="100"
+        autocomplete="off">
     </div>
 
     <!-- Date Selection (Mobile-First Scroller) -->
     <div class="form-group" style="margin-bottom:24px; position:relative;">
       <label class="form-label">Select Date *</label>
       <div class="scroller-wrapper">
-        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-date-scroller', -1)">‹</button>
+        <button type="button" class="scroller-arrow left"
+          onclick="MatchesController.scroll('cm-date-scroller', -1)">‹</button>
         <div id="cm-date-scroller" class="pill-scroller">
           <!-- Date pills injected by JS -->
         </div>
-        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-date-scroller', 1)">›</button>
+        <button type="button" class="scroller-arrow right"
+          onclick="MatchesController.scroll('cm-date-scroller', 1)">›</button>
       </div>
       <input type="hidden" name="date" id="cm-date" value="">
     </div>
@@ -68,11 +59,13 @@
     <div class="form-group" style="margin-bottom:24px; position:relative;">
       <label class="form-label">Select Time *</label>
       <div class="scroller-wrapper">
-        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-time-scroller', -1)">‹</button>
+        <button type="button" class="scroller-arrow left"
+          onclick="MatchesController.scroll('cm-time-scroller', -1)">‹</button>
         <div id="cm-time-scroller" class="pill-scroller">
           <!-- Time pills injected by JS -->
         </div>
-        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-time-scroller', 1)">›</button>
+        <button type="button" class="scroller-arrow right"
+          onclick="MatchesController.scroll('cm-time-scroller', 1)">›</button>
       </div>
       <input type="hidden" name="time" id="cm-time" value="">
     </div>
@@ -81,7 +74,8 @@
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Match Duration *</label>
       <div class="scroller-wrapper">
-        <button type="button" class="scroller-arrow left" onclick="MatchesController.scroll('cm-duration-scroller', -1)">‹</button>
+        <button type="button" class="scroller-arrow left"
+          onclick="MatchesController.scroll('cm-duration-scroller', -1)">‹</button>
         <div id="cm-duration-scroller" class="pill-scroller">
           <div class="pill" data-value="60" onclick="MatchesController._selectPill(this, 'cm-duration')">
             <span class="pill-main">1h</span>
@@ -99,7 +93,8 @@
             <span class="pill-main">3h</span>
           </div>
         </div>
-        <button type="button" class="scroller-arrow right" onclick="MatchesController.scroll('cm-duration-scroller', 1)">›</button>
+        <button type="button" class="scroller-arrow right"
+          onclick="MatchesController.scroll('cm-duration-scroller', 1)">›</button>
       </div>
       <input type="hidden" name="duration_minutes" id="cm-duration" value="120">
     </div>
@@ -114,11 +109,17 @@
     <div class="form-group" style="margin-bottom:20px;">
       <label class="form-label" style="display:flex; align-items:center; gap:8px;">
         Match Type
-        <span onclick="MatchesController.showMatchTypeInfo()" style="cursor:pointer; font-size:16px; display:inline-flex; align-items:center; opacity:0.8; transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">⚠️</span>
+        <span onclick="MatchesController.showMatchTypeInfo()"
+          style="cursor:pointer; font-size:16px; display:inline-flex; align-items:center; opacity:0.8; transition:opacity 0.2s;"
+          onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">⚠️</span>
       </label>
       <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
-        <button type="button" class="cm-type-btn" data-val="friendly" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('match_type', this)">Friendly</button>
-        <button type="button" class="cm-type-btn active" data-val="competition" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setToggle('match_type', this)">Competition</button>
+        <button type="button" class="cm-type-btn" data-val="friendly"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;"
+          onclick="MatchesController.setToggle('match_type', this)">Friendly</button>
+        <button type="button" class="cm-type-btn active" data-val="competition"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;"
+          onclick="MatchesController.setToggle('match_type', this)">Competition</button>
       </div>
       <input type="hidden" name="match_type" id="cm-match-type" value="competition">
     </div>
@@ -127,8 +128,12 @@
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Gender</label>
       <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
-        <button type="button" class="cm-gender-btn" data-val="open" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Mixed</button>
-        <button type="button" id="cm-gender-restricted-btn" class="cm-gender-btn active" data-val="same_gender" style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setToggle('gender_type', this)">Same Gender</button>
+        <button type="button" class="cm-gender-btn" data-val="open"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;"
+          onclick="MatchesController.setToggle('gender_type', this)">Mixed</button>
+        <button type="button" id="cm-gender-restricted-btn" class="cm-gender-btn active" data-val="same_gender"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;"
+          onclick="MatchesController.setToggle('gender_type', this)">Same Gender</button>
       </div>
       <input type="hidden" name="gender_type" id="cm-gender-type" value="same_gender">
     </div>
@@ -137,18 +142,19 @@
     <div class="divider">Partner (optional)</div>
 
     <!-- Partner Toggle Row -->
-    <div
-      id="cm-partner-toggle-row"
-      onclick="MatchesController.togglePartner()"
-      style="background:var(--c-bg-card); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;"
-    >
+    <div id="cm-partner-toggle-row" onclick="MatchesController.togglePartner()"
+      style="background:var(--c-bg-card); border-radius:var(--r-md); padding:14px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; user-select:none;">
       <div>
         <div style="font-size:14px; font-weight:700; color:var(--c-text);">Bring a Partner</div>
-        <div style="font-size:12px; color:var(--c-text-muted); margin-top:2px;">You and a partner fill Team 1 together</div>
+        <div style="font-size:12px; color:var(--c-text-muted); margin-top:2px;">You and a partner fill Team 1 together
+        </div>
       </div>
       <!-- Toggle switch -->
-      <div id="cm-partner-toggle-icon" style="width:44px; height:24px; background:var(--c-bg-secondary); border-radius:var(--r-full); position:relative; transition:background 0.2s, border-color 0.2s; flex-shrink:0;">
-        <div id="cm-partner-toggle-thumb" style="width:18px; height:18px; background:var(--c-text-dim); border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s;"></div>
+      <div id="cm-partner-toggle-icon"
+        style="width:44px; height:24px; background:var(--c-bg-secondary); border-radius:var(--r-full); position:relative; transition:background 0.2s, border-color 0.2s; flex-shrink:0;">
+        <div id="cm-partner-toggle-thumb"
+          style="width:18px; height:18px; background:var(--c-text-dim); border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.2s;">
+        </div>
       </div>
     </div>
 
@@ -157,24 +163,20 @@
       <div class="form-group">
         <label class="form-label" for="cm-partner-code">Partner Player Code</label>
         <div style="position:relative;">
-          <input
-            type="text"
-            name="partner_player_code"
-            id="cm-partner-code"
-            class="form-input"
-            placeholder="e.g. a123"
-            maxlength="10"
-            autocomplete="off"
-          >
-          
+          <input type="text" name="partner_player_code" id="cm-partner-code" class="form-input" placeholder="e.g. A123"
+            maxlength="10" autocomplete="off">
+
           <!-- Stylish Partner Badge Overlay -->
-          <div id="cm-partner-badge" style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
+          <div id="cm-partner-badge"
+            style="display:none; position:absolute; inset:0; background:var(--c-bg-card); border-radius:var(--r-md); z-index:10; align-items:center; justify-content:space-between; padding:0 14px;">
             <div style="display:flex; align-items:center; gap:8px;">
-              <span id="cm-badge-code" style="font-weight:800; font-family:monospace; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;"></span>
+              <span id="cm-badge-code"
+                style="font-weight:800; font-family:monospace; color:var(--c-primary); text-transform:uppercase; letter-spacing:1px;"></span>
               <span style="color:var(--c-text-muted); font-size:10px;">•</span>
               <span id="cm-badge-name" style="font-weight:600; color:#fff; font-size:14px;"></span>
             </div>
-            <div id="cm-badge-clear" style="color:var(--c-text-muted); cursor:pointer; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--c-bg-secondary); font-size:12px; transition:color 0.2s;">
+            <div id="cm-badge-clear"
+              style="color:var(--c-text-muted); cursor:pointer; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--c-bg-secondary); font-size:12px; transition:color 0.2s;">
               ✕
             </div>
           </div>
