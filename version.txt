@@ -507,3 +507,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Copy Update: Streamlined modal messages by removing redundant introductory sentences.
 - UI Polish: Replaced "Common reasons:" with a bold version (<b>Common reasons:</b>) for better visual hierarchy and scannability.
 - Version: 1.7.4 (Build 174)
+
+[REASON_TEXT_UPDATE] - 2026-05-09 21:35:00 +0300
+- Copy Update: Renamed "App tech issue" to "Technical issue" in reporting reason lists for better terminology consistency.
+- Version: 1.7.5 (Build 175)

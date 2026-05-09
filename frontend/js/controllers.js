@@ -762,7 +762,7 @@ const DashboardController = {
     reportProblem: async function () {
         const reason = await ConfirmModal.show({
             title: 'Report a Problem',
-            message: '<b>Common reasons:</b>\n• App tech issue\n• Bug report\n• Feature request',
+            message: '<b>Common reasons:</b>\n• Technical issue\n• Bug report\n• Feature request',
             showInput: true,
             inputPlaceholder: 'Type your message here...',
             inputMaxLength: 300,
@@ -5082,7 +5082,7 @@ const ScoringController = {
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
             title: targetUserId ? 'Report player conduct' : 'What happened during the match?',
-            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level' + (targetUserId ? '' : '\n• App tech issue'),
+            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level' + (targetUserId ? '' : '\n• Technical issue'),
             showInput: true,
             inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
             inputMaxLength: 300,
