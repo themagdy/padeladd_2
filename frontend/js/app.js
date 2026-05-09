@@ -83,10 +83,10 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', icon: customIcon = null }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, icon: customIcon = null }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
-            
+
             // Create container if not exists
             if (!this._modal) {
                 this._modal = document.createElement('div');
@@ -106,7 +106,7 @@ var ConfirmModal = {
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             const inputHtml = showInput ? `
-                <textarea id="gcm-input" placeholder="${inputPlaceholder}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:24px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
+                <textarea id="gcm-input" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:24px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
             ` : '';
 
             const thirdBtnHtml = thirdText ? `
