@@ -526,3 +526,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [INSTANT_NAVIGATION_PROFILE] - 2026-05-09 22:07:00 +0300
 - Performance: Implemented Stale-While-Revalidate (SWR) cache in ProfileViewController to prevent "My Profile" from reloading on every visit.
 - Version: 1.8.2 (Build 182)
+
+[PROFILE_LOADER_FIX] - 2026-05-09 22:13:00 +0300
+- Bug Fix: Decoupled the match history fetching from the main ProfileView initialization. Previously, the global loader would stay visible until both the profile data and the artificially-delayed match history data finished loading. Now, the main profile renders and hides the global loader instantly, while matches load asynchronously in the background.
+- Version: 1.8.3 (Build 183)
