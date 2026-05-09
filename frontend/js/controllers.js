@@ -2798,12 +2798,13 @@ const MatchesController = {
                     }
 
                     // Secondary match submission (Multi-score support)
-                    if (user_in_match && (scores || []).length === 1) {
+                    if (user_in_match && (scores || []).length >= 1) {
+                        const nextScoreNum = (scores || []).length + 1;
                         scoringHtml += `
                             <div style="margin-top:40px; padding-top:32px; text-align:center;">
                                 <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; opacity:0.6;">Played another match?</div>
                                 <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:54px; border-radius:12px;">
-                                    Submit Score #2
+                                    Submit Score #${nextScoreNum}
                                 </button>
                             </div>
                         `;
