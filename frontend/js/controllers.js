@@ -1573,7 +1573,7 @@ const MatchesController = {
 
             if (MatchesController._partnerEnabled) {
                 let code = form.partner_player_code.value.trim();
-                // Strip the name if it was appended (e.g. "a123 (Ahmed Magdy)" -> "a123")
+                // Strip the name if it was appended (e.g. "A123 (Ahmed Magdy)" -> "A123")
                 if (code.includes(' (')) {
                     code = code.split(' (')[0].trim();
                 }
