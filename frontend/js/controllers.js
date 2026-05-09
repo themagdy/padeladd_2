@@ -762,7 +762,7 @@ const DashboardController = {
     reportProblem: async function () {
         const reason = await ConfirmModal.show({
             title: 'Report a Problem',
-            message: 'Please describe the issue below. Common reasons:\n• App tech issue\n• Bug report\n• Feature request',
+            message: '<b>Common reasons:</b>\n• App tech issue\n• Bug report\n• Feature request',
             showInput: true,
             inputPlaceholder: 'Type your message here...',
             inputMaxLength: 300,
@@ -961,7 +961,7 @@ const ProfileController = {
     reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({
             title: 'Report player conduct',
-            message: 'Please describe the issue with this player. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level',
+            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level',
             showInput: true,
             inputPlaceholder: 'Unfair behavior / Inappropriate conduct...',
             inputMaxLength: 300,
@@ -3466,7 +3466,7 @@ const MatchesController = {
         if (isLate && isFull) {
             modalOpts = {
                 title: 'Reason for leaving',
-                message: 'Provide a reason for your late withdrawal. Common reasons:\n• Injury / Emergency\n• Work / Traffic',
+                message: '<b>Common reasons:</b>\n• Injury / Emergency\n• Work / Traffic',
                 confirmText: 'Confirm Withdrawal',
                 cancelText: 'Don\'t Leave',
                 type: 'warning',
@@ -3519,7 +3519,7 @@ const MatchesController = {
         if (isLate && isFull) {
             modalOpts = {
                 title: 'Reason for leaving',
-                message: 'Provide a reason for your late cancellation. Common reasons:\n• Injury / Emergency\n• Work / Traffic',
+                message: '<b>Common reasons:</b>\n• Injury / Emergency\n• Work / Traffic',
                 confirmText: 'Confirm Cancellation',
                 cancelText: 'Don\'t Cancel',
                 type: 'warning',
@@ -5059,7 +5059,7 @@ const ScoringController = {
     disputeScore: async function (scoreId) {
         const reason = await ConfirmModal.show({
             title: 'What is wrong with the score?',
-            message: 'Explain why you are disputing this result. Common reasons:\n• Wrong score entered\n• I was in a different team',
+            message: '<b>Common reasons:</b>\n• Wrong score entered\n• I was in a different team',
             showInput: true,
             inputPlaceholder: 'Wrong score / I was in a different team...',
             inputMaxLength: 250,
@@ -5082,7 +5082,7 @@ const ScoringController = {
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
             title: targetUserId ? 'Report player conduct' : 'What happened during the match?',
-            message: targetUserId ? 'Please describe the issue with this player. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level' : 'Please describe the issue below. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level\n• App tech issue',
+            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level' + (targetUserId ? '' : '\n• App tech issue'),
             showInput: true,
             inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
             inputMaxLength: 300,
