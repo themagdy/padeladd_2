@@ -762,9 +762,11 @@ const DashboardController = {
     reportProblem: async function () {
         const reason = await ConfirmModal.show({
             title: 'Report a Problem',
-            message: 'Please describe the issue or problem you are facing with the app.',
+            message: 'Please describe the issue below. Common reasons:\n• App tech issue\n• Bug report\n• Feature request',
             showInput: true,
             inputPlaceholder: 'Type your message here...',
+            inputMaxLength: 300,
+            tipText: 'Help us improve by being specific.',
             confirmText: 'Submit Report',
             type: 'warning'
         });
@@ -958,10 +960,12 @@ const ProfileController = {
 
     reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({
-            title: 'Report Player',
-            message: 'Please describe the issue you encountered with this player.',
+            title: 'Report player conduct',
+            message: 'Please describe the issue with this player. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level',
             showInput: true,
             inputPlaceholder: 'Unfair behavior / Inappropriate conduct...',
+            inputMaxLength: 300,
+            tipText: 'Tell us exactly what this player did.',
             confirmText: 'Submit Report',
             type: 'warning'
         });
@@ -1644,11 +1648,13 @@ const MatchesController = {
 
     showVenueRequest: function () {
         ConfirmModal.show({
-            title: 'Add a New Venue',
+            title: 'Venue details',
             message: 'Enter the name and location of the venue you would like to add.',
             confirmText: 'Submit Request',
             showInput: true,
             inputPlaceholder: 'Venue Name, City',
+            inputMaxLength: 100,
+            tipText: 'Format: Club Name, City',
             type: 'info'
         }).then(res => {
             // 'res' is the string input if confirmed, or false/null if cancelled
@@ -3459,13 +3465,15 @@ const MatchesController = {
 
         if (isLate && isFull) {
             modalOpts = {
-                title: 'Policy Warning',
-                message: 'You are leaving a full match less than 6 hours before it starts. This violates our policy and may lead to a ban.',
+                title: 'Reason for leaving',
+                message: 'Provide a reason for your late withdrawal. Common reasons:\n• Injury / Emergency\n• Work / Traffic',
                 confirmText: 'Confirm Withdrawal',
                 cancelText: 'Don\'t Leave',
                 type: 'warning',
                 showInput: true,
-                inputPlaceholder: 'Please provide a reason...'
+                inputPlaceholder: 'Please provide a reason...',
+                inputMaxLength: 200,
+                tipText: 'Providing a reason helps avoid potential bans.'
             };
         }
 
@@ -3510,13 +3518,15 @@ const MatchesController = {
         // Late cancellation warning for full matches
         if (isLate && isFull) {
             modalOpts = {
-                title: 'Policy Warning',
-                message: 'You are cancelling a full match less than 6 hours before it starts. This violates our policy and may lead to a ban.',
+                title: 'Reason for leaving',
+                message: 'Provide a reason for your late cancellation. Common reasons:\n• Injury / Emergency\n• Work / Traffic',
                 confirmText: 'Confirm Cancellation',
                 cancelText: 'Don\'t Cancel',
                 type: 'warning',
                 showInput: true,
-                inputPlaceholder: 'Please provide a reason...'
+                inputPlaceholder: 'Please provide a reason...',
+                inputMaxLength: 200,
+                tipText: 'Providing a reason helps avoid potential bans.'
             };
         }
 
@@ -5048,10 +5058,12 @@ const ScoringController = {
 
     disputeScore: async function (scoreId) {
         const reason = await ConfirmModal.show({
-            title: 'Dispute Score',
-            message: 'Please provide a brief reason why you are disputing this result.',
+            title: 'What is wrong with the score?',
+            message: 'Explain why you are disputing this result. Common reasons:\n• Wrong score entered\n• I was in a different team',
             showInput: true,
             inputPlaceholder: 'Wrong score / I was in a different team...',
+            inputMaxLength: 250,
+            tipText: 'State the correct score clearly.',
             confirmText: 'Send Dispute',
             type: 'warning'
         });
@@ -5069,10 +5081,12 @@ const ScoringController = {
 
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
-            title: targetUserId ? 'Report Player' : 'Report Match Issue',
-            message: 'Please describe the issue you encountered.',
+            title: targetUserId ? 'Report player conduct' : 'What happened during the match?',
+            message: targetUserId ? 'Please describe the issue with this player. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level' : 'Please describe the issue below. Common reasons:\n• No show\n• Rude behavior\n• Wrong skill level\n• App tech issue',
             showInput: true,
-            inputPlaceholder: 'Unfair behavior / App issue...',
+            inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
+            inputMaxLength: 300,
+            tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide specific details about the incident.',
             confirmText: 'Submit Report',
             type: 'warning'
         });

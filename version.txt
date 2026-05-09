@@ -487,3 +487,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [VENUE_AUTO_LINKING] - 2026-05-09 21:11:00 +0300
 - Data Intelligence: Implemented auto-linking for venue names. If a user types a venue name that exactly matches an entry in the database (case-insensitive), the system now automatically links it to the official record, reducing the need for manual selection and preventing duplicate entries.
 - Version: 1.7.0 (Build 170)
+
+[POPUP_MODAL_ENHANCEMENTS] - 2026-05-09 21:30:00 +0300
+- UX Polish: Standardized all global popup input modals (ConfirmModal) with rephrased titles and clear bulleted lists of common reasons to guide users.
+- Helper UI: Added real-time character counters (e.g., 0/300) and helper tips underneath input fields for better transparency and guidance.
+- Data Integrity: Tailored character limits for each specific reporting use case (Disputes, Reports, Venue requests).
+- Version: 1.7.1 (Build 171)
