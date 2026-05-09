@@ -539,3 +539,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Polish: Increased the font size and visibility of the "Match Result" headlines on the Match Details page.
 - Copy Update: Changed the format from "Match Result #1" to "1st Match Score" and "2nd Match Score" for better readability, and prepended a trophy emoji to the headline.
 - Version: 1.8.5 (Build 185)
+[MATCH_CREATION_TIME_LIMIT] - 2026-05-10 00:00:00 +0300
+- Policy Update: Restricted the maximum selectable time in the Create Match page to 2:00 AM.
+- Version: 1.8.6 (Build 186)
