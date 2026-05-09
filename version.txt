@@ -522,3 +522,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [INSTANT_NAVIGATION_FIX] - 2026-05-09 22:04:00 +0300
 - Bug Fix: Removed 'await' from UI.syncNav() calls across all controllers. Previously, the app waited for the top navigation bar to fetch the user's avatar from the server before it allowed the instant memory cache to render. This caused the skeleton loaders to appear on slow connections (e.g. Slow 4G) despite the data being cached.
 - Version: 1.8.1 (Build 181)
+
+[INSTANT_NAVIGATION_PROFILE] - 2026-05-09 22:07:00 +0300
+- Performance: Implemented Stale-While-Revalidate (SWR) cache in ProfileViewController to prevent "My Profile" from reloading on every visit.
+- Version: 1.8.2 (Build 182)
