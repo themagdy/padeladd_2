@@ -1482,7 +1482,7 @@ const MatchesController = {
                     partnerBadge.style.display = 'none';
                     partnerInput.value = '';
                     partnerInput.focus();
-                    partnerHelp.textContent = "Enter your partner's 4-character player code";
+                    partnerHelp.textContent = "Enter your partner's player code";
                     partnerHelp.style.color = 'var(--c-text-muted)';
                 });
             }
@@ -1491,7 +1491,7 @@ const MatchesController = {
                 clearTimeout(partnerTimeout);
 
                 const q = e.target.value.trim();
-                partnerHelp.textContent = "Enter your partner's 4-character player code";
+                partnerHelp.textContent = "Enter your partner's player code";
                 partnerHelp.style.color = 'var(--c-text-muted)';
                 partnerInput.classList.remove('error');
 
