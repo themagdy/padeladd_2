@@ -83,7 +83,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, icon: customIcon = null }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
 
@@ -106,7 +106,11 @@ var ConfirmModal = {
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             const inputHtml = showInput ? `
-                <textarea id="gcm-input" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:24px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
+                <textarea id="gcm-input" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:4px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
+                <div style="display:flex; justify-content:space-between; margin-bottom:24px; padding:0 4px;">
+                    <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
+                    <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
+                </div>
             ` : '';
 
             const thirdBtnHtml = thirdText ? `
@@ -150,6 +154,17 @@ var ConfirmModal = {
                 const val = showInput ? this._modal.querySelector('#gcm-input').value.trim() : true;
                 this.close(val);
             };
+
+            if (showInput) {
+                const inp = this._modal.querySelector('#gcm-input');
+                const count = this._modal.querySelector('#gcm-counter');
+                inp.oninput = () => {
+                    count.innerText = `${inp.value.length}/${inputMaxLength}`;
+                };
+                // Auto-focus with slight delay for transition
+                setTimeout(() => inp.focus(), 300);
+            }
+
             if (thirdText) {
                 this._modal.querySelector('#gcm-third').onclick = () => this.close('third');
             }
