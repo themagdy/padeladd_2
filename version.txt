@@ -459,3 +459,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [UI_LOADER_DEPTH] - 2026-05-09 20:32:00 +0300
 - Navigation Polish: Boosted the Global Loader's z-index to 20,000. This ensures the loader completely covers all page elements (including high-index sticky headers) during navigation, eliminating the "ghosting" effect when switching views.
 - Version: 1.6.4 (Build 164)
+
+[SILENT_MATCH_UPDATES] - 2026-05-09 20:50:00 +0300
+- UX Optimization: Implemented "Silent Updates" for match actions (Join, Leave, Approve, etc.). Match details now refresh seamlessly in the background without triggering the skeleton loader, providing a faster, app-like feedback loop.
+- Platform Standardization: Updated partner player code validation to support lengths from 3 to 7 characters, accommodating a wider range of player identifiers.
+- Version: 1.6.5 (Build 165)
