@@ -501,7 +501,7 @@ const DashboardController = {
 
         // Use Promise.all for initial data
         const [res, matchRes] = await Promise.all([
-            API.post('/profile/get', {}),
+            API.post('/profile/get', { app_build_ref: CONFIG.APP_BUILD_REF }),
             API.post('/matches/recent', { limit: 10 })
         ]);
 

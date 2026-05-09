@@ -923,6 +923,36 @@ window.AdminControllers = {
 
         async init() {
             await this.fetchMessages();
+            await this.fetchBuilds();
+        },
+
+        async fetchBuilds() {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/get_unique_builds.php?admin_token=${token}`);
+                const data = await res.json();
+                if (data.success) {
+                    this.availableBuilds = data.data;
+                    this.renderBuildList();
+                }
+            } catch (err) { console.error('Fetch Builds Error:', err); }
+        },
+
+        renderBuildList(selectedBuilds = []) {
+            const container = document.getElementById('target-build-list');
+            if (!container) return;
+
+            if (!this.availableBuilds || this.availableBuilds.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1 / -1; color: var(--c-text-muted); font-size: 12px; text-align: center; padding: 10px;">No builds found in database.</div>';
+                return;
+            }
+
+            container.innerHTML = this.availableBuilds.map(build => `
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:12px; color:#fff;">
+                    <input type="checkbox" name="target_builds" value="${build}" ${selectedBuilds.includes(build) ? 'checked' : ''}>
+                    <span>${build}</span>
+                </label>
+            `).join('');
         },
 
         async fetchMessages() {
@@ -1002,6 +1032,7 @@ window.AdminControllers = {
             document.getElementById('edit-message-id').value = '';
             document.getElementById('message-form').reset();
             document.getElementById('message-body-editor').innerHTML = '';
+            this.renderBuildList();
             this.toggleTargetInput('all');
             this.toggleActionFields('close');
         },
@@ -1031,6 +1062,14 @@ window.AdminControllers = {
             form.elements['is_active'].checked = msg.is_active == 1;
 
             document.getElementById('message-body-editor').innerHTML = msg.body;
+
+            let selectedBuilds = [];
+            if (msg.target_build_refs) {
+                try {
+                    selectedBuilds = JSON.parse(msg.target_build_refs);
+                } catch (e) { console.error('Parse build refs error:', e); }
+            }
+            this.renderBuildList(selectedBuilds);
 
             this.toggleTargetInput(msg.target_user_id ? 'specific' : 'all');
             this.toggleActionFields(msg.action_type);
@@ -1077,6 +1116,8 @@ window.AdminControllers = {
                 return;
             }
 
+            const selectedBuilds = Array.from(form.querySelectorAll('input[name="target_builds"]:checked')).map(cb => cb.value);
+
             const data = {
                 id: editId,
                 heading: formData.get('heading'),
@@ -1084,6 +1125,7 @@ window.AdminControllers = {
                 body: bodyContent,
                 target_type: formData.get('target_type'),
                 target_player_code: formData.get('target_player_code'),
+                target_build_refs: selectedBuilds,
                 button_text: formData.get('button_text'),
                 action_type: formData.get('action_type'),
                 page_route: formData.get('page_route'),
@@ -1789,6 +1831,89 @@ window.AdminControllers = {
                 btn.disabled = false;
                 btn.innerText = originalText;
             }
+        }
+    },
+
+    // ── User Versions Controller ───────────────────────────────────────────
+    versions: {
+        allUsers: [],
+        searchQuery: '',
+
+        async init() {
+            await this.fetchVersions();
+        },
+
+        async fetchVersions() {
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await fetch(`../backend/api/admin/get_user_versions.php?admin_token=${token}`);
+                const data = await res.json();
+                if (data.success) {
+                    this.allUsers = data.data;
+                    this.render();
+                }
+            } catch (err) { console.error('Fetch Versions Error:', err); }
+        },
+
+        setSearch(query) {
+            this.searchQuery = query.toLowerCase().trim();
+            this.render();
+        },
+
+        render() {
+            const list = document.getElementById('versions-list');
+            const empty = document.getElementById('versions-empty');
+            if (!list) return;
+
+            let filtered = this.allUsers;
+            if (this.searchQuery) {
+                filtered = filtered.filter(u => 
+                    (u.first_name + ' ' + u.last_name).toLowerCase().includes(this.searchQuery) ||
+                    (u.nickname || '').toLowerCase().includes(this.searchQuery) ||
+                    (u.player_code || '').toLowerCase().includes(this.searchQuery) ||
+                    (u.last_build_ref || '').toLowerCase().includes(this.searchQuery)
+                );
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = filtered.map(u => `
+                <tr>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="player-avatar-small">
+                                ${u.profile_image_thumb 
+                                    ? `<img src="../${u.profile_image_thumb}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
+                                    : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(u.nickname || u.first_name || 'S')[0]}</div>`
+                                }
+                            </div>
+                            <div class="player-info-cell">
+                                <span class="player-name">${u.first_name} ${u.last_name}</span>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="player-nickname">${u.nickname || '---'}</span>
+                                    <span class="player-code">${u.player_code || '---'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="icon" style="font-size:16px;">📱</span>
+                            <span style="font-weight:800; color:#fff; font-family:monospace; background:rgba(27, 82, 206, 0.1); color:var(--c-primary); padding:4px 10px; border-radius:6px; border:1px solid rgba(27, 82, 206, 0.2);">
+                                ${u.last_build_ref || 'N/A'}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size:13px; color:var(--c-text-muted);">${u.last_activity ? new Date(u.last_activity).toLocaleString() : 'Never'}</div>
+                    </td>
+                </tr>
+            `).join('');
         }
     }
 };

@@ -2,6 +2,12 @@
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 
+// Update last build used if provided (only for self)
+if (isset($data['app_build_ref']) && !isset($data['target_id']) && !isset($data['player_code'])) {
+    $stmtUp = $pdo->prepare("UPDATE users SET last_build_ref = ? WHERE id = ?");
+    $stmtUp->execute([$data['app_build_ref'], $user['id']]);
+}
+
 // Logic: If target_id or player_code is provided, fetch THAT user. Otherwise, fetch self.
 $targetId = $data['target_id'] ?? null;
 $playerCode = isset($data['player_code']) ? strtoupper(trim($data['player_code'])) : null;

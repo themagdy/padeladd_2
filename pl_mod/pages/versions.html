@@ -1,0 +1,30 @@
+<div class="page-header-actions">
+    <div id="page-search-source">
+        <div class="search-box">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="Search players or versions..." onkeyup="AdminControllers.versions.setSearch(this.value)">
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>App Build Version</th>
+                    <th>Last Activity</th>
+                </tr>
+            </thead>
+            <tbody id="versions-list">
+                <!-- Loaded via JS -->
+            </tbody>
+        </table>
+        <div id="versions-empty" class="empty-state" style="display:none;">
+            <div class="empty-icon">📱</div>
+            <h3>No data found</h3>
+            <p>Once users start using the native app, their versions will appear here.</p>
+        </div>
+    </div>
+</div>
