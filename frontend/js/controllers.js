@@ -935,44 +935,49 @@ const ProfileViewController = {
         // Stats cards
         StatsUI.update(stats, 'pv');
 
-        // Wait to showcase placeholder loaders for matches
-        await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
-
-        // Matches list
-        const matchPayload = { target_id: user.id };
-        const matchRes = await API.post('/matches/user', matchPayload);
-        const listEl = document.getElementById('pv-matches-list');
-        if (listEl) {
-            // Filter: only completed matches (history)
-            const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
-
-            if (historyMatches.length === 0) {
-                listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
-            } else {
-                // Limit to latest 50 results (matching API limit)
-                let scoreCount = 0;
-                let html = '';
-                for (const m of historyMatches) {
-                    if (scoreCount >= 50) break;
-
-                    if (m.scores && m.scores.length > 0) {
-                        for (const s of m.scores) {
-                            if (scoreCount >= 50) break;
-                            html += DashboardController.renderMatchCard(m, user.id, s);
-                            scoreCount++;
-                        }
-                    } else {
-                        html += DashboardController.renderMatchCard(m, user.id);
-                        scoreCount++;
-                    }
-                }
-                listEl.innerHTML = html;
-            }
-        }
-
-        // Final reveal
+        // Final reveal for the profile header and stats
         const contentEl = document.getElementById('prof-view-content');
         if (contentEl) contentEl.style.opacity = '1';
+
+        // Load matches list asynchronously so it doesn't block the instant navigation
+        (async () => {
+            if (!isSilent) {
+                // Wait to showcase placeholder loaders for matches
+                await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
+            }
+
+            const matchPayload = { target_id: user.id };
+            const matchRes = await API.post('/matches/user', matchPayload);
+            const listEl = document.getElementById('pv-matches-list');
+            
+            if (listEl) {
+                // Filter: only completed matches (history)
+                const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
+
+                if (historyMatches.length === 0) {
+                    listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
+                } else {
+                    // Limit to latest 50 results (matching API limit)
+                    let scoreCount = 0;
+                    let html = '';
+                    for (const m of historyMatches) {
+                        if (scoreCount >= 50) break;
+
+                        if (m.scores && m.scores.length > 0) {
+                            for (const s of m.scores) {
+                                if (scoreCount >= 50) break;
+                                html += DashboardController.renderMatchCard(m, user.id, s);
+                                scoreCount++;
+                            }
+                        } else {
+                            html += DashboardController.renderMatchCard(m, user.id);
+                            scoreCount++;
+                        }
+                    }
+                    listEl.innerHTML = html;
+                }
+            }
+        })();
     }
 };
 
