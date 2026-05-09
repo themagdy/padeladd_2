@@ -2680,9 +2680,9 @@ const MatchesController = {
                             if (s.status === 'approved') {
                                 scoringHtml += `
                                     <div class="approved-score-wrapper" style="margin-bottom:24px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
-                                            <div style="font-size:10px; color:var(--c-text-muted); font-weight:900; text-transform:uppercase; letter-spacing:1.5px; opacity:0.6;">
-                                                ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding:0 20px;">
+                                            <div style="font-size:16px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:8px;">
+                                                🏆 ${(scores || []).length > 1 ? `Match Result #${idx + 1}` : 'Match Result'}
                                             </div>
                                         </div>
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
