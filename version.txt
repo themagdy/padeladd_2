@@ -483,3 +483,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [VENUE_SEARCH_FIX] - 2026-05-09 21:10:00 +0300
 - UX Fix: Corrected the behavior of the "Add Venue / Club" button in the match creation form. The button now remains visible while typing, even if database suggestions are present, allowing users to request new venues more intuitively.
 - Version: 1.6.9 (Build 169)
+
+[VENUE_AUTO_LINKING] - 2026-05-09 21:11:00 +0300
+- Data Intelligence: Implemented auto-linking for venue names. If a user types a venue name that exactly matches an entry in the database (case-insensitive), the system now automatically links it to the official record, reducing the need for manual selection and preventing duplicate entries.
+- Version: 1.7.0 (Build 170)

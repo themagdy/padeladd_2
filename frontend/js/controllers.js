@@ -1429,17 +1429,28 @@ const MatchesController = {
                 venueTimeout = setTimeout(async () => {
                     const res = await API.post('/match/venues', { q: q });
                     const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
+                    const dbFlag = document.getElementById('cm-venue-is-db');
+                    const idInput = document.getElementById('cm-venue-id');
 
                     if (res && res.success && res.data.venues.length > 0) {
                         venueDrop.innerHTML = res.data.venues.map(v => `<li data-id="${v.id}">${v.name}</li>`).join('');
                         venueDrop.style.display = 'block';
-                        // Keep the add button visible so they can request a new one if the list doesn't have it
-                        if (addBtnWrap) addBtnWrap.style.display = 'block';
+
+                        // Auto-link if exact case-insensitive match is found
+                        const exactMatch = res.data.venues.find(v => v.name.trim().toLowerCase() === q.toLowerCase());
+                        if (exactMatch) {
+                            if (dbFlag) dbFlag.value = '1';
+                            if (idInput) idInput.value = exactMatch.id;
+                            if (addBtnWrap) addBtnWrap.style.display = 'none';
+                        } else {
+                            if (dbFlag) dbFlag.value = '0';
+                            if (idInput) idInput.value = '';
+                            if (addBtnWrap) addBtnWrap.style.display = 'block';
+                        }
                     } else {
                         venueDrop.style.display = 'none';
                         if (addBtnWrap) addBtnWrap.style.display = 'block';
-                        // Reset ID if no matches
-                        const idInput = document.getElementById('cm-venue-id');
+                        if (dbFlag) dbFlag.value = '0';
                         if (idInput) idInput.value = '';
                     }
                 }, 300);
