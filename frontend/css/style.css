@@ -126,7 +126,7 @@ body.is-mobile-app *::-webkit-scrollbar-track {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 500;
+  z-index: 20000;
   gap: 20px;
 }
 
