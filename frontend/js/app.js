@@ -20,6 +20,16 @@ var SoundManager = {
     },
     play: function (type) {
         if (typeof Audio === 'undefined') return;
+
+        // Native OS tap feedback for mobile
+        if (type === 'tap' && window.Capacitor && window.Capacitor.isNativePlatform()) {
+            const Haptics = window.Capacitor.Plugins.Haptics;
+            if (Haptics) {
+                Haptics.impact({ style: 'LIGHT' }).catch(() => {});
+                return; // Use native feedback instead of tap.mp3
+            }
+        }
+
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
