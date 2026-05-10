@@ -605,3 +605,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Data Consistency: Updated backend to fetch scores for all past match views.
 - UI Logic: Refactored frontend to render score cards in the "Past" tab exactly like the "Scores" tab.
 - Version: 1.9.7 (Build 197)
+
+[MATCH_TAG_REFINEMENT] - 2026-05-10 17:07:00 +0300
+- UI Refinement: Changed the "Completed" tag color to green specifically for the "Past" matches tab as requested.
+- UI Consistency: Restored standard match card layout for scored matches in the "Past" tab to ensure tags remain visible.
+- Version: 1.9.8 (Build 198)
