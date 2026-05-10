@@ -563,3 +563,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Performance: Added cache-busting headers and query parameters to message checks to prevent stale data display on refresh.
 - Bug Fix: Fixed data decoding in core API endpoints to ensure build version tracking and message dismissal payloads are processed correctly.
 - Version: 1.9.1 (Build 191)
+
+[ADMIN_MODAL_UX] - 2026-05-10 04:30:00 +0300
+- Admin UX: Implemented a robust "Nuclear Scroll-Lock" that freezes the entire viewport (html, body, and .admin-main) when modals are open to prevent background scrolling.
+- Admin UI: Added dynamic sidebar states (dim, blur, or hide) during modal interaction to focus user attention and prevent accidental background clicks.
+- Layout Stability: Resolved layout shift issues by compensating for scrollbar disappearance when locking the viewport.
+- Version: 1.9.2 (Build 192)
