@@ -285,6 +285,8 @@ select.form-input, select.admin-input {
 
 .modal-body {
     padding: 32px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 /* Form Styles inside Modals */
