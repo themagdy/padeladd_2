@@ -134,12 +134,22 @@ window.AdminApp = {
     updateModalScrollLock() {
         let isAnyModalVisible = false;
         document.querySelectorAll('.modal-overlay').forEach(modal => {
-            // Check if display is not none AND the element is visible in the layout
-            const style = window.getComputedStyle(modal);
-            if (style.display !== 'none' && style.visibility !== 'hidden') {
+            // Check inline style first as it's what we change in JS
+            if (modal.style.display !== 'none' && modal.style.display !== '') {
                 isAnyModalVisible = true;
+            } else {
+                // Fallback to computed style
+                const style = window.getComputedStyle(modal);
+                if (style.display !== 'none' && style.visibility !== 'hidden') {
+                    isAnyModalVisible = true;
+                }
             }
         });
+
+        const main = document.querySelector('.admin-main');
+        if (main) {
+            main.style.overflowY = isAnyModalVisible ? 'hidden' : 'auto';
+        }
         document.body.classList.toggle('modal-open', isAnyModalVisible);
     },
     
