@@ -212,8 +212,8 @@ select.form-input, select.admin-input {
 }
 
 /* Modal System */
-body.modal-open {
-    overflow: hidden !important;
+body.modal-open .admin-main {
+    overflow-y: hidden !important;
 }
 
 .modal-overlay {
