@@ -22,15 +22,19 @@ var SoundManager = {
         if (typeof Audio === 'undefined') return;
 
         // Native OS tap feedback for mobile
-        const isNative = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || 
+        // 1. Precise check for native environment (not mobile web)
+        const isNative = (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web') || 
                          (window.location.protocol === 'capacitor:');
 
         if (type === 'tap' && isNative) {
+            // Priority: Capacitor Haptics (requires @capacitor/haptics)
             const Haptics = window.Capacitor?.Plugins?.Haptics;
             if (Haptics) {
                 Haptics.impact({ style: 'LIGHT' }).catch(() => {});
-                return; // Use native feedback instead of tap.mp3
             }
+            
+            // CRITICAL: We return here to ensure tap.mp3 is NEVER played on native mobile
+            return; 
         }
 
         const s = this._sounds[type];

@@ -631,3 +631,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Infrastructure: Added missing <script src="capacitor.js"></script> to index.html, which is critical for Capacitor plugins to initialize correctly.
 - Bug Fix: Refined native platform detection in SoundManager to ensure tap.mp3 is properly bypassed in favor of OS haptics on mobile devices.
 - Version: 2.0.1 (Build 201)
+
+[MOBILE_AUDIO_REFINEMENT] - 2026-05-10 18:09:00 +0300
+- Critical Fix: Enforced a strict early return in SoundManager for native platforms to prevent tap.mp3 from playing.
+- Platform Detection: Optimized native platform detection using Capacitor.getPlatform() to ensure accurate behavior in native apps vs mobile web.
+- Version: 2.0.2 (Build 202)
