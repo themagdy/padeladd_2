@@ -594,3 +594,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Performance: Optimized dashboard ranking cache for instant back-navigation.
 - Cache Management: Incremented asset versions to v=196 for immediate global deployment.
 - Version: 1.9.6 (Build 196)
+
+[RANKING_IDENTITY_V1.0] - 2026-05-10 07:10:00 +0300
+- Branding: Renamed "Players Ranking" to "The Padel Ladder" globally.
+- Navigation: Updated main navbar label from "Matches" to "Mine" for better user personalization.
+- Version: 1.9.6 (No Build Increment)
