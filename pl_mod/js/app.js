@@ -6,6 +6,7 @@ window.AdminApp = {
         this.checkAuth();
         this.handleRouting();
         window.addEventListener('hashchange', () => this.handleRouting());
+        this.initModalObserver();
 
         // Global Modal Dismissal (Click Outside to Close)
         document.addEventListener('click', (e) => {
@@ -127,6 +128,22 @@ window.AdminApp = {
             toast.classList.add('removing');
             setTimeout(() => toast.remove(), 400);
         }, 4000);
+    },
+    
+    initModalObserver() {
+        const observer = new MutationObserver(() => {
+            let isAnyModalVisible = false;
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (modal.style.display !== 'none') isAnyModalVisible = true;
+            });
+            document.body.classList.toggle('modal-open', isAnyModalVisible);
+        });
+
+        observer.observe(document.body, { 
+            attributes: true, 
+            subtree: true, 
+            attributeFilter: ['style', 'class'] 
+        });
     }
 };
 
