@@ -21,49 +21,56 @@ var SoundManager = {
     play: function (type) {
         if (typeof Audio === 'undefined') return;
 
-        // Native OS tap feedback for mobile
-        // 1. Precise check for native environment (not mobile web)
-        const isNative = (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web') || 
-                         (window.location.protocol === 'capacitor:');
+        // 1. Better platform detection
+        const isNative = (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web');
+        const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
+        const Haptics = window.Capacitor?.Plugins?.Haptics;
 
-        if (type === 'tap' && isNative) {
-            // Priority 1: Native Audio Engine for zero-vibration, low-latency "tick" sound
-            const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
-            if (NativeAudio) {
-                NativeAudio.play({ assetId: 'tap' }).catch(() => {});
-            }
-            
-            // CRITICAL: We return here to ensure the standard Web Audio tap.mp3 is NEVER played on native mobile
-            return; 
-        }
-        
-        // Also use Native Audio for success/notify if on mobile
-        if (isNative && (type === 'success' || type === 'notify')) {
-             const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
-             if (NativeAudio) {
-                 NativeAudio.play({ assetId: type }).catch(() => {});
-                 return;
-             }
+        // 2. Try Native Sound (Zero-latency / No-vibration engine)
+        if (isNative && NativeAudio) {
+            NativeAudio.play({ assetId: type }).then(() => {
+                // If it's a tap, also trigger subtle haptic if available
+                if (type === 'tap' && Haptics) Haptics.selectionChanged().catch(() => {});
+            }).catch(() => {
+                // Fallback to Web Audio if Native Audio fails (e.g. not preloaded)
+                this._playWeb(type);
+            });
+            return;
         }
 
+        // 3. Fallback to standard Web Audio (Desktop & Mobile Web)
+        this._playWeb(type);
+    },
+    _playWeb: function(type) {
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
-            s.play().catch(e => { }); // Silent fail if blocked by browser
+            s.play().catch(e => { });
         }
     },
     init: function () {
         if (typeof Audio === 'undefined') return;
 
         // Preload sounds for Native Audio engine (Mobile only)
-        if (window.Capacitor && window.Capacitor.Plugins.NativeAudio) {
-            const NativeAudio = window.Capacitor.Plugins.NativeAudio;
-            NativeAudio.preload({ assetId: 'tap', assetPath: 'assets/sounds/tap.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
-            NativeAudio.preload({ assetId: 'success', assetPath: 'assets/sounds/success.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
-            NativeAudio.preload({ assetId: 'notify', assetPath: 'assets/sounds/notify.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
+        // Uses full Capacitor.Plugins path for maximum reliability
+        const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
+        if (NativeAudio) {
+            const sounds = [
+                { id: 'tap', path: 'assets/sounds/tap.mp3' },
+                { id: 'success', path: 'assets/sounds/success.mp3' },
+                { id: 'notify', path: 'assets/sounds/notify.mp3' }
+            ];
+            sounds.forEach(s => {
+                NativeAudio.preload({ 
+                    assetId: s.id, 
+                    assetPath: s.path, 
+                    audioChannelNum: 1, 
+                    isRaw: false 
+                }).catch(err => console.log(`[SoundManager] Preload failed for ${s.id}:`, err));
+            });
         }
 
-        // Global tap listener for all buttons, links and clickable items
+        // Global tap listener
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
