@@ -14,14 +14,14 @@ a28060d - 2026-04-24 16:46:13 +0300
 - Completely refactored Ranking page structure to optimize sticky positioning for filters and headers.
 - Fine-tuned sticky offsets to prevent header cropping on both mobile and desktop views.
 - Updated Dashboard "All Matches" navigation to directly target the "Completed" matches tab.
-17: 323d7f8 - 2026-04-25 05:12:00 +0300
+323d7f8 - 2026-04-25 05:12:00 +0300
 - Excluded waiting-list-only entries from match history lists (Past/Completed) in dashboard and profile.
 - Implemented "Empty" label for teams with no players in match details.
 - Redesigned "VS" divider with custom gold-gradient SVG and premium styling.
 - Overhauled mobile match slots: centered avatars, row-aligned identity and stats, and optimized spacing.
 - Restored original orange-themed player code styling globally.
 - Fine-tuned mobile alignment (baseline) and compacted layout (reduced padding/font sizes).
-24: 77a3d55 - 2026-04-28 19:58:00 +0300
+77a3d55 - 2026-04-28 19:58:00 +0300
 - Enhanced Profile Reporting UI to mirror existing app aesthetics.
 - Added backend endpoint (report.php) for processing player reports.
 
@@ -52,7 +52,7 @@ f9e2b8a - 2026-04-29 03:12:00 +0300
 - Enhanced Router protection to check for both hasProfile and hasLevel flags.
 - Backed up the complete database schema to database_schema.sql for repository persistence.
 - Smart Date Display: Match cards now show the specific date (e.g., 26 Mar) for matches older than 7 days, while keeping relative days (Today/Thursday) for recent games.
-55: 22841c6 - 2026-04-29 21:22:00 +0300
+22841c6 - 2026-04-29 21:22:00 +0300
 - Simplified Play Filters: Combined Match Type and Gender toggles into a single row, removed labels, and moved filtering logic to the server-side for more robust data retrieval.
 - Filter UI Refinement: Shortened labels to 'Males'/'Females', optimized mobile spacing with a 20px gap, and implemented dynamic gender-aware labeling.
 - Database Synchronization: Updated all upcoming matches to new standard defaults (Competition & Same Gender) to ensure visibility with active filters.
