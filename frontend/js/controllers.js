@@ -942,8 +942,31 @@ const ProfileViewController = {
         StatsUI.update(stats, 'pv');
 
         // Final reveal for the profile header and stats
-        const contentEl = document.getElementById('prof-view-content');
-        if (contentEl) contentEl.style.opacity = '1';
+        // Header Elements Cleanup (Remove skeletons before applying data)
+        const headerSkeletons = [
+            'prof-avatar', 'prof-nickname', 'prof-fullname', 'prof-code', 
+            'pv-ranking', 'pv-points', 'pv-matches', 'pv-winrate', 'prof-bio'
+        ];
+        headerSkeletons.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('skeleton');
+                el.style.height = '';
+                el.style.width = '';
+                el.style.background = '';
+            }
+        });
+
+        const nickEl = document.getElementById('prof-nickname');
+        if (nickEl) {
+            nickEl.style.fontSize = ''; // Restore from CSS
+            nickEl.style.fontWeight = '700';
+            nickEl.style.letterSpacing = '-1px';
+            nickEl.style.color = '#fff';
+            nickEl.style.lineHeight = '1.1';
+            nickEl.style.margin = '0 0 8px 0';
+        }
+
 
         // Load matches list asynchronously so it doesn't block the instant navigation
         (async () => {
