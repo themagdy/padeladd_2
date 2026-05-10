@@ -490,6 +490,7 @@ const DashboardController = {
     _currentUser: null,
     _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
+    _rankingCache: {}, // Stores dashboard-specific ranking lists
 
     init: async function (isSilent = false) {
         if (!isSilent) UI.syncNav();
@@ -709,21 +710,43 @@ const DashboardController = {
         const listEl = document.getElementById('dash-ranking-list');
         if (!listEl) return;
 
-        // Show skeletons ONLY if it's not a silent update AND the list is empty
-        if (!isSilent && listEl.innerHTML.trim() === '') {
-            listEl.innerHTML = RankingUI.renderSkeleton(5);
-        }
-
         // Use current tab gender
         const gender = DashboardController._currentRankTab || 'male';
 
+        // Check cache for instant render
+        const cached = DashboardController._rankingCache[gender];
+        const cachedJson = DashboardController._rankingCache[gender + '_json'];
+
+        if (cached) {
+            DashboardController._renderRankingList(cached);
+        } else if (!isSilent && listEl.innerHTML.trim() === '') {
+            listEl.innerHTML = RankingUI.renderSkeleton(5);
+        }
+
         const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
         if (!res || !res.success) {
-            listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
+            if (!cached) {
+                listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
+            }
             return;
         }
 
         const ranking = res.data.ranking;
+        const rankingJson = JSON.stringify(ranking);
+
+        // Prevent redundant render if data hasn't changed
+        if (cachedJson === rankingJson) return;
+
+        // Update cache and render
+        DashboardController._rankingCache[gender] = ranking;
+        DashboardController._rankingCache[gender + '_json'] = rankingJson;
+        DashboardController._renderRankingList(ranking);
+    },
+
+    _renderRankingList: function (ranking) {
+        const listEl = document.getElementById('dash-ranking-list');
+        if (!listEl) return;
+
         if (ranking.length === 0) {
             listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`;
             return;
