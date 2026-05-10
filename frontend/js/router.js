@@ -170,7 +170,7 @@ const Router = {
 
         // Skip global loader ONLY for main list tabs to prevent flickering (they handle their own skeletons/cache)
         // Detail pages (Matches/Profiles) will show the global loader for a better user experience
-        const isMainTab = (nPath === '/dashboard' || nPath === '/matches' || nPath === '/matches/my' || nPath === '/ranking' || nPath.startsWith('/profile/view') || nPath.startsWith('/p/'));
+        const isMainTab = (nPath === '/dashboard' || nPath === '/matches' || nPath === '/matches/my' || nPath === '/ranking');
 
         const loader = document.getElementById('global-loader');
         if (loader && !isMainTab) loader.style.display = 'flex';

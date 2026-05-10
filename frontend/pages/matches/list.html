@@ -40,9 +40,48 @@
 
     <!-- Loading skeletons -->
     <div id="ml-skeleton">
-      <div class="skeleton" style="height:120px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
-      <div class="skeleton" style="height:120px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
-      <div class="skeleton" style="height:120px; border-radius:var(--r-lg);"></div>
+      <div style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; gap:8px;">
+            <div class="skeleton" style="width:100px; height:12px; border-radius:4px;"></div>
+            <div class="skeleton" style="width:40px; height:12px; border-radius:4px; opacity:0.3;"></div>
+          </div>
+          <div class="skeleton" style="width:60px; height:20px; border-radius:10px; opacity:0.2;"></div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 40px 1fr; align-items:center; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+          </div>
+          <div style="display:flex; justify-content:center; opacity:0.1;">
+             <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden; opacity:0.6;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; gap:8px;">
+            <div class="skeleton" style="width:120px; height:12px; border-radius:4px;"></div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 40px 1fr; align-items:center; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+          </div>
+          <div style="display:flex; justify-content:center; opacity:0.1;">
+             <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+            <div class="skeleton" style="height:40px; border-radius:12px;"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Match cards list -->

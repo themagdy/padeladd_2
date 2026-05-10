@@ -528,6 +528,84 @@ const ScoreUI = {
                 </div>
             </div>
         `;
+    },
+
+    /**
+     * Renders a premium skeleton loader for match score cards.
+     * @param {Number} count - Number of skeleton cards to render
+     */
+    renderSkeleton: function (count = 3) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+            html += `
+                <div style="margin-bottom:12px; padding:16px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; padding:0 4px;">
+                        <div class="skeleton" style="width:80px; height:10px; border-radius:4px; opacity:0.6;"></div>
+                        <div style="width:4px; height:4px; border-radius:50%; background:var(--c-border); opacity:0.3;"></div>
+                        <div class="skeleton" style="width:60px; height:10px; border-radius:4px; opacity:0.4;"></div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div style="width:10px; height:10px; border-radius:2px; background:var(--c-border); opacity:0.2;"></div>
+                                <div style="display:flex; gap:6px;">
+                                    <div class="skeleton" style="width:90px; height:12px; border-radius:4px;"></div>
+                                    <div class="skeleton" style="width:36px; height:12px; border-radius:4px; opacity:0.5;"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <div class="skeleton" style="width:14px; height:16px; border-radius:4px; opacity:0.8;"></div>
+                                <div class="skeleton" style="width:14px; height:16px; border-radius:4px; opacity:0.4;"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div style="width:10px; height:10px; border-radius:2px; background:transparent;"></div>
+                                <div style="display:flex; gap:6px;">
+                                    <div class="skeleton" style="width:110px; height:12px; border-radius:4px;"></div>
+                                    <div class="skeleton" style="width:36px; height:12px; border-radius:4px; opacity:0.5;"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <div class="skeleton" style="width:14px; height:16px; border-radius:4px; opacity:0.4;"></div>
+                                <div class="skeleton" style="width:14px; height:16px; border-radius:4px; opacity:0.8;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        return html;
+    }
+};
+
+const RankingUI = {
+    /**
+     * Renders a premium skeleton loader for ranking rows.
+     * @param {Number} count - Number of skeleton rows to render
+     */
+    renderSkeleton: function (count = 5) {
+        let html = '';
+        for (let i = 0; i < count; i++) {
+            html += `
+                <div style="padding:14px 10px; display:grid; grid-template-columns: 40px 1fr 60px; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.05); overflow:hidden;">
+                    <div style="display:flex; justify-content:center;">
+                        <div class="skeleton" style="width:24px; height:24px; border-radius:50%; opacity:0.3;"></div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div class="skeleton" style="width:36px; height:36px; border-radius:50%; flex-shrink:0;"></div>
+                        <div style="display:flex; flex-direction:column; gap:6px; flex:1;">
+                            <div class="skeleton" style="width:120px; height:12px; border-radius:4px;"></div>
+                            <div class="skeleton" style="width:80px; height:10px; border-radius:4px; opacity:0.5;"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <div class="skeleton" style="width:40px; height:14px; border-radius:4px;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        return html;
     }
 };
 
