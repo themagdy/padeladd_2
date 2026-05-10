@@ -22,8 +22,11 @@ var SoundManager = {
         if (typeof Audio === 'undefined') return;
 
         // Native OS tap feedback for mobile
-        if (type === 'tap' && window.Capacitor && window.Capacitor.isNativePlatform()) {
-            const Haptics = window.Capacitor.Plugins.Haptics;
+        const isNative = (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) || 
+                         (window.location.protocol === 'capacitor:');
+
+        if (type === 'tap' && isNative) {
+            const Haptics = window.Capacitor?.Plugins?.Haptics;
             if (Haptics) {
                 Haptics.impact({ style: 'LIGHT' }).catch(() => {});
                 return; // Use native feedback instead of tap.mp3
