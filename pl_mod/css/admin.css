@@ -20,7 +20,6 @@
     flex-direction: column;
     flex-shrink: 0;
     z-index: 110;
-    transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
 body.modal-open .admin-sidebar {
@@ -71,7 +70,7 @@ body.modal-open .admin-sidebar {
     color: var(--c-text-muted);
     font-weight: 600;
     font-size: 14px;
-    transition: all 0.2s;
+    font-size: 14px;
     border: 1px solid transparent;
 }
 
@@ -109,7 +108,6 @@ body.modal-open .admin-sidebar {
     justify-content: center;
     gap: 8px;
     border: 1px solid rgba(241, 90, 41, 0.1);
-    transition: all 0.2s;
 }
 
 /* Main Content */
@@ -164,12 +162,12 @@ body.modal-open .admin-sidebar {
     color: #fff;
     border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
-    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
     line-height: 1;
 }
 
 .btn-badge:hover, .btn-primary:hover {
-    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
@@ -188,7 +186,9 @@ body.modal-open .admin-sidebar {
     color: #fff;
     font-size: 14px;
     font-family: inherit;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
     appearance: none;
     box-sizing: border-box;
 }
@@ -247,13 +247,8 @@ body.modal-open .admin-main {
     align-items: center;
     justify-content: center;
     padding: 24px;
-    animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
 
 .modal-card {
     background: #111827;
@@ -263,13 +258,9 @@ body.modal-open .admin-main {
     max-width: 540px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
 }
 
-@keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
 
 .modal-header {
     padding: 24px 32px;
@@ -297,12 +288,10 @@ body.modal-open .admin-main {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .btn-close-modal:hover {
     background: rgba(255,255,255,0.1);
-    transform: scale(1.1);
 }
 
 .modal-body {
@@ -352,7 +341,6 @@ body.modal-open .admin-main {
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .btn-secondary:hover {
@@ -423,7 +411,8 @@ body.modal-open .admin-main {
     height: 20px;
     background-color: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
-    transition: .3s;
+    background-color: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 100px;
 }
 .switch-slider:before {
@@ -434,7 +423,7 @@ body.modal-open .admin-main {
     left: 3px;
     bottom: 3px;
     background-color: #fff;
-    transition: .3s;
+    background-color: #fff;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -472,7 +461,8 @@ input:checked + .switch-slider:before {
     gap: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     min-width: 280px;
-    animation: toastSlideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    min-width: 280px;
 }
 
 .admin-toast.error {
@@ -484,22 +474,14 @@ input:checked + .switch-slider:before {
 }
 
 .admin-toast.removing {
-    animation: toastSlideOut 0.4s forwards;
+    display: none;
 }
 
 .toast-icon {
     font-size: 18px;
 }
 
-@keyframes toastSlideIn {
-    from { transform: translateX(120%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
 
-@keyframes toastSlideOut {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(120%); opacity: 0; }
-}
 
 /* Tab System */
 .admin-tabs {
@@ -523,7 +505,6 @@ input:checked + .switch-slider:before {
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .admin-tab:hover {
@@ -534,7 +515,6 @@ input:checked + .switch-slider:before {
 .admin-tab.active {
     background: var(--c-primary);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(27, 82, 206, 0.2);
 }
 
 .tab-badge {
@@ -591,7 +571,6 @@ input:checked + .switch-slider:before {
     color: #fff;
     font-size: 14px;
     outline: none;
-    transition: all 0.2s;
 }
 
 .search-box input:focus {
