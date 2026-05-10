@@ -27,16 +27,27 @@ var SoundManager = {
                          (window.location.protocol === 'capacitor:');
 
         if (type === 'tap' && isNative) {
-            // Priority: Capacitor Haptics (requires @capacitor/haptics)
+            // Priority 1: Capacitor Haptics (selectionChanged for iOS "tick")
             const Haptics = window.Capacitor?.Plugins?.Haptics;
-            if (Haptics) {
-                // selectionChanged often triggers the native OS "tick/click" sound on iOS/Android
-                Haptics.selectionChanged().catch(() => {});
-                return; // Use native feedback instead of tap.mp3
+            if (Haptics) Haptics.selectionChanged().catch(() => {});
+
+            // Priority 2: Native Audio Engine (for Android/iOS low-latency "tick")
+            const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
+            if (NativeAudio) {
+                NativeAudio.play({ assetId: 'tap' }).catch(() => {});
             }
             
-            // CRITICAL: We return here to ensure tap.mp3 is NEVER played on native mobile
+            // CRITICAL: We return here to ensure the standard Web Audio tap.mp3 is NEVER played on native mobile
             return; 
+        }
+        
+        // Also use Native Audio for success/notify if on mobile
+        if (isNative && (type === 'success' || type === 'notify')) {
+             const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
+             if (NativeAudio) {
+                 NativeAudio.play({ assetId: type }).catch(() => {});
+                 return;
+             }
         }
 
         const s = this._sounds[type];
@@ -47,6 +58,15 @@ var SoundManager = {
     },
     init: function () {
         if (typeof Audio === 'undefined') return;
+
+        // Preload sounds for Native Audio engine (Mobile only)
+        if (window.Capacitor && window.Capacitor.Plugins.NativeAudio) {
+            const NativeAudio = window.Capacitor.Plugins.NativeAudio;
+            NativeAudio.preload({ assetId: 'tap', assetPath: 'assets/sounds/tap.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
+            NativeAudio.preload({ assetId: 'success', assetPath: 'assets/sounds/success.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
+            NativeAudio.preload({ assetId: 'notify', assetPath: 'assets/sounds/notify.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
+        }
+
         // Global tap listener for all buttons, links and clickable items
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
