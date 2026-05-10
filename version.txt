@@ -626,3 +626,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Web Consistency: Maintained tap.mp3 for the web version to preserve standard audio feedback.
 - Assets: Corrected success.mp3 filename and updated the sound file.
 - Version: 1.9.9 (Build 199)
+
+[CAPACITOR_FIX_V1.1] - 2026-05-10 17:43:00 +0300
+- Infrastructure: Added missing <script src="capacitor.js"></script> to index.html, which is critical for Capacitor plugins to initialize correctly.
+- Bug Fix: Refined native platform detection in SoundManager to ensure tap.mp3 is properly bypassed in favor of OS haptics on mobile devices.
+- Version: 2.0.1 (Build 201)
