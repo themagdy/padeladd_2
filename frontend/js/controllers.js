@@ -670,9 +670,24 @@ const DashboardController = {
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
 
             const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
+
+            let typeBadges = '';
+            if (m.match_type === 'competition') {
+                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
+            } else if (m.match_type === 'friendly') {
+                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
+            }
+            if (m.gender_type === 'same_gender') {
+                const genderStr = (m.creator_gender || 'male') === 'female' ? 'Women' : 'Men';
+                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27,82,206,0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; margin-right:4px;">${genderStr}</span>`;
+            } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
+                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
+            }
+
             const dashHeader = `
-                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px;">
-                    ${venueTitle} &nbsp;·&nbsp; ${dayStr}
+                <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>${venueTitle} &nbsp;·&nbsp; ${dayStr}</span>
+                    <div style="text-transform:none;">${typeBadges}</div>
                 </div>
             `;
 
@@ -2304,11 +2319,16 @@ const MatchesController = {
         let typeBadges = '';
         if (m.match_type === 'competition') {
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
+        } else if (m.match_type === 'friendly') {
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
         }
+
         if (m.gender_type === 'same_gender') {
             const genderStr = (m.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
             const genderIcon = (m.creator_gender || 'male') === 'female' ? '👩' : '👨';
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27,82,206,0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
+        } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
         }
 
         const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
@@ -2560,15 +2580,20 @@ const MatchesController = {
             const subTitle = venueParts.length > 1 ? venueParts.slice(1).join('-').trim() : '';
 
             let typeBadges = '';
-            if (match.match_type === 'competition' || match.gender_type === 'same_gender') {
+            if (match.match_type === 'competition' || match.match_type === 'friendly' || match.gender_type === 'same_gender' || match.gender_type === 'mixed') {
                 typeBadges = `<div style="display:flex; align-items:center; gap:8px;">`;
                 if (match.match_type === 'competition') {
                     typeBadges += `<span class="status-badge-pill" style="background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
+                } else if (match.match_type === 'friendly') {
+                    typeBadges += `<span class="status-badge-pill" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted);">🤝 Friendly</span>`;
                 }
+
                 if (match.gender_type === 'same_gender') {
                     const genderStr = (match.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
                     const genderIcon = (match.creator_gender || 'male') === 'female' ? '👩' : '👨';
                     typeBadges += `<span class="status-badge-pill" style="background:rgba(27,82,206,0.1); color:var(--c-primary);">${genderIcon} ${genderStr}</span>`;
+                } else if (match.gender_type === 'mixed' || match.gender_type === 'open') {
+                    typeBadges += `<span class="status-badge-pill" style="background:rgba(147,112,219,0.1); color:#9370DB;">👫 Mixed</span>`;
                 }
                 typeBadges += `</div>`;
             }
