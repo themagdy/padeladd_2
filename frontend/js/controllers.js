@@ -2133,7 +2133,7 @@ const MatchesController = {
             } else {
                 let html = '';
                 matches.forEach(m => {
-                    const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+                    const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past' || MatchesController._currentTab === 'mine_past';
                     if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
                         m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
                     } else {
@@ -2145,7 +2145,7 @@ const MatchesController = {
         } else {
             let html = '';
             matches.forEach(m => {
-                const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+                const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past' || MatchesController._currentTab === 'mine_past';
                 if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
                     m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
                 } else {
