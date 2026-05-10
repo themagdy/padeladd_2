@@ -5,9 +5,41 @@
 
     <!-- Loading skeleton -->
     <div id="mv-skeleton">
-      <div class="skeleton" style="height:60px; border-radius:var(--r-md); margin-bottom:12px;"></div>
-      <div class="skeleton" style="height:260px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
-      <div class="skeleton" style="height:120px; border-radius:var(--r-lg);"></div>
+      <div style="margin-bottom:24px;">
+        <div class="skeleton" style="width:100px; height:24px; border-radius:12px; margin-bottom:12px; opacity:0.2;"></div>
+        <div class="skeleton" style="width:70%; height:32px; border-radius:8px; margin-bottom:8px;"></div>
+        <div class="skeleton" style="width:40%; height:16px; border-radius:4px; opacity:0.5;"></div>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.02); border-radius:var(--r-lg); padding:24px; border:1px solid rgba(255,255,255,0.05); margin-bottom:20px;">
+        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:center; margin-bottom:32px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
+                <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
+            </div>
+            <div></div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
+                <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
+            </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:center;">
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="skeleton" style="height:60px; border-radius:16px;"></div>
+            <div class="skeleton" style="height:60px; border-radius:16px;"></div>
+          </div>
+          <div style="display:flex; justify-content:center; opacity:0.1;">
+            <div style="width:36px; height:36px; background:var(--c-border); border-radius:50%;"></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="skeleton" style="height:60px; border-radius:16px;"></div>
+            <div class="skeleton" style="height:60px; border-radius:16px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="skeleton" style="height:100px; border-radius:var(--r-lg); opacity:0.3;"></div>
     </div>
 
     <!-- Content (hidden until loaded) -->

@@ -528,7 +528,7 @@ const DashboardController = {
             DashboardController._cache.matches_json = matchesJson;
         }
 
-        DashboardController.applyData(res.data, matchRes?.success ? matchRes.data.matches : []);
+        DashboardController.applyData(res.data, matchRes?.success ? matchRes.data.matches : [], isSilent);
 
         // Start polling if this is the first load
         if (!isSilent && typeof PollManager !== 'undefined') {
@@ -536,7 +536,7 @@ const DashboardController = {
         }
     },
 
-    applyData: function (profileData, matchData) {
+    applyData: function (profileData, matchData, isSilent = false) {
         const { user, profile, stats } = profileData;
         DashboardController._currentUser = user;
         DashboardController._currentProfile = profile;
@@ -573,7 +573,7 @@ const DashboardController = {
         StatsUI.update(stats, 'dash');
 
         DashboardController.renderMatches();
-        DashboardController.renderRanking();
+        DashboardController.renderRanking(isSilent);
     },
 
     switchRankTab: function (gender) {
@@ -705,9 +705,14 @@ const DashboardController = {
         </div>`;
     },
 
-    renderRanking: async function () {
+    renderRanking: async function (isSilent = false) {
         const listEl = document.getElementById('dash-ranking-list');
         if (!listEl) return;
+
+        // Show skeletons ONLY if it's not a silent update AND the list is empty
+        if (!isSilent && listEl.innerHTML.trim() === '') {
+            listEl.innerHTML = RankingUI.renderSkeleton(5);
+        }
 
         // Use current tab gender
         const gender = DashboardController._currentRankTab || 'male';
@@ -942,46 +947,23 @@ const ProfileViewController = {
         StatsUI.update(stats, 'pv');
 
         // Final reveal for the profile header and stats
-        // Header Elements Cleanup (Remove skeletons before applying data)
-        const headerSkeletons = [
-            'prof-avatar', 'prof-nickname', 'prof-fullname', 'prof-code', 
-            'pv-ranking', 'pv-points', 'pv-matches', 'pv-winrate', 'prof-bio'
-        ];
-        headerSkeletons.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.remove('skeleton');
-                el.style.height = '';
-                el.style.width = '';
-                el.style.background = '';
-            }
-        });
-
-        const nickEl = document.getElementById('prof-nickname');
-        if (nickEl) {
-            nickEl.style.fontSize = ''; // Restore from CSS
-            nickEl.style.fontWeight = '700';
-            nickEl.style.letterSpacing = '-1px';
-            nickEl.style.color = '#fff';
-            nickEl.style.lineHeight = '1.1';
-            nickEl.style.margin = '0 0 8px 0';
-        }
-
+        const contentEl = document.getElementById('prof-view-content');
+        if (contentEl) contentEl.style.opacity = '1';
 
         // Load matches list asynchronously so it doesn't block the instant navigation
         (async () => {
-            const listEl = document.getElementById('pv-matches-list');
-            if (!isSilent && listEl) {
-                listEl.innerHTML = `
-                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
-                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
-                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg);"></div>
-                `;
+            if (!isSilent) {
                 // Wait to showcase placeholder loaders for matches
                 await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
             }
 
             const matchPayload = { target_id: user.id };
+            const listEl = document.getElementById('pv-matches-list');
+
+            if (listEl && !isSilent && listEl.innerHTML.trim() === '') {
+                listEl.innerHTML = ScoreUI.renderSkeleton(2);
+            }
+
             const matchRes = await API.post('/matches/user', matchPayload);
             
             if (listEl) {
@@ -2000,6 +1982,8 @@ const MatchesController = {
                         existing[idx] = nm; // Replace with fresh data
                     }
                 });
+                // Only re-render if data has changed (simple length check or deep compare)
+                // For now, re-render is fine but we must NOT show skeletons
                 MatchesController.renderList(existing);
             }
             return;
@@ -5265,7 +5249,7 @@ const RankingController = {
 
         // Only show skeletons if we have no cache
         if (!isSilent && !hasCache) {
-            listEl.innerHTML = '<div class="rank-row-skeleton"></div>'.repeat(8);
+            listEl.innerHTML = RankingUI.renderSkeleton(10);
         }
 
         // If we have cache, render it immediately
@@ -5292,7 +5276,7 @@ const RankingController = {
 
         // Compare with cache to prevent redundant render
         const responseJson = JSON.stringify(res.data.ranking);
-        if (isSilent && this._cache[cacheKey + '_json'] === responseJson) {
+        if (this._cache[cacheKey + '_json'] === responseJson) {
             return;
         }
 
