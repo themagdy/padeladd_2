@@ -17,27 +17,20 @@ var SoundManager = {
     _isNativeReady: false,
     _isUnlocked: false,
     
-    // 1. Initialize with ultra-robust paths
     init: async function () {
         if (typeof Audio === 'undefined') return;
 
-        // Path normalization for all platforms
-        const getPath = (p) => {
-            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-            return base + p;
-        };
-
-        const soundFiles = {
+        // 1. Pre-init Browser Audio Objects (Classic Web Logic)
+        const sounds = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
             notify: 'assets/sounds/notify.mp3'
         };
 
-        // Create browser audio objects immediately
-        for (const [id, path] of Object.entries(soundFiles)) {
-            this._sounds[id] = new Audio(getPath(path));
+        for (const [id, path] of Object.entries(sounds)) {
+            // Use absolute-looking relative paths for maximum WebView compatibility
+            this._sounds[id] = new Audio('./' + path);
             this._sounds[id].preload = 'auto';
-            this._sounds[id].load();
         }
 
         const Capacitor = window.Capacitor;
@@ -45,11 +38,11 @@ var SoundManager = {
         const Plugins = Capacitor?.Plugins;
         const NativeAudio = Plugins?.NativeAudio;
 
-        // 2. Native Bridge Warmup (Android focus)
+        // 2. Native Bridge Warmup (Android/iOS Hardware Engine)
         if (isNative && NativeAudio) {
-            // Give bridge 2s to breathe
+            // Wait for bridge (Android fix)
             setTimeout(async () => {
-                for (const [id, path] of Object.entries(soundFiles)) {
+                for (const [id, path] of Object.entries(sounds)) {
                     try {
                         await NativeAudio.preload({ 
                             assetId: id, 
@@ -57,29 +50,30 @@ var SoundManager = {
                             audioChannelNum: 1, 
                             isRaw: false 
                         });
-                        console.log(`[SoundManager] Native Preloaded: ${id}`);
-                    } catch (e) {}
+                        // Force full volume on native channel
+                        await NativeAudio.setVolume({ assetId: id, volume: 1.0 });
+                        console.log(`[SoundManager] Native Ready: ${id}`);
+                    } catch (e) {
+                        console.log(`[SoundManager] Native ${id} already loaded or failed.`);
+                    }
                 }
                 this._isNativeReady = true;
             }, 2000);
         }
 
-        // 3. Audio Unlocker (Crucial for iOS/Android WebView)
+        // 3. Audio Unlocker for WebViews
         const unlock = () => {
             if (this._isUnlocked) return;
             for (const s of Object.values(this._sounds)) {
-                s.play().then(() => {
-                    s.pause();
-                    s.currentTime = 0;
-                }).catch(() => {});
+                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
             }
             this._isUnlocked = true;
+            document.removeEventListener('click', unlock);
             document.removeEventListener('touchstart', unlock);
-            document.removeEventListener('mousedown', unlock);
-            console.log('[SoundManager] Audio Unlocked');
+            console.log('[SoundManager] Unlocked');
         };
+        document.addEventListener('click', unlock, { passive: true });
         document.addEventListener('touchstart', unlock, { passive: true });
-        document.addEventListener('mousedown', unlock, { passive: true });
 
         // 4. Global Tap Listener
         document.addEventListener('click', (e) => {
@@ -94,18 +88,20 @@ var SoundManager = {
         if (typeof Audio === 'undefined') return;
 
         const Capacitor = window.Capacitor;
-        const isNative = (Capacitor && Capacitor.getPlatform && Capacitor.getPlatform() !== 'web');
         const Plugins = Capacitor?.Plugins;
         const NativeAudio = Plugins?.NativeAudio;
         const Haptics = Plugins?.Haptics;
 
-        // Try Native Engine First
-        if (isNative && NativeAudio && this._isNativeReady) {
-            NativeAudio.play({ assetId: type }).then(() => {
-                if (type === 'tap' && Haptics) Haptics.selectionChanged().catch(() => {});
-            }).catch((err) => {
-                console.warn(`[SoundManager] Native fail, falling back:`, err);
-                this._playWeb(type);
+        // Always trigger Haptics immediately (Parallel to sound)
+        if (Haptics) {
+            if (type === 'tap') Haptics.selectionChanged().catch(() => {});
+            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => {});
+        }
+
+        // Try Native Hardware Engine First
+        if (NativeAudio && this._isNativeReady) {
+            NativeAudio.play({ assetId: type }).catch(() => {
+                this._playWeb(type); // Fallback on failure
             });
             return;
         }
@@ -117,12 +113,8 @@ var SoundManager = {
     _playWeb: function (type) {
         const s = this._sounds[type];
         if (s) {
-            // Force reload if not ready
-            if (s.readyState < 2) s.load();
             s.currentTime = 0;
-            s.play().catch(e => {
-                console.warn(`[SoundManager] Web Audio blocked for ${type}`);
-            });
+            s.play().catch(() => {});
         }
     }
 };
