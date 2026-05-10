@@ -651,3 +651,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX: Eliminated avatar flickering in the Dashboard Ranking by implementing a "smart render" system. The DOM now only updates if the data has actually changed.
 - Infrastructure: Implemented persistent localStorage for the ranking cache, allowing the dashboard to show real data instantly upon app launch even before the first API call finishes.
 - Version: 2.0.5 (Build 205)
+
+[SMART_RENDER_V1.1] - 2026-05-11 00:52:00 +0300
+- Performance: Extended the "Smart Render" system to all match lists (Play, My Matches, Scores).
+- UX: Eliminated periodic flickering during background polling. The app now only updates the DOM if a match's status, score, or players have actually changed.
+- Version: 2.0.6 (Build 206)

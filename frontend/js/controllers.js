@@ -2099,7 +2099,7 @@ const MatchesController = {
                 icon = '🌘';
             }
 
-            list.innerHTML = `
+            const emptyHtml = `
                 <div class="empty-state" style="padding:40px 20px; text-align:center; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px dashed var(--c-border);">
                     <div style="font-size:42px; margin-bottom:12px; opacity:0.4;">${icon}</div>
                     <h3 style="font-size:16px; font-weight:700; margin-bottom:4px; color:var(--c-text);">${msg}</h3>
@@ -2108,6 +2108,8 @@ const MatchesController = {
                         <button onclick="Router.navigate('/matches/create')" class="btn btn-primary" style="margin-top:16px; width:auto; padding:10px 20px; font-size:13px; height:auto;">🎾 Create Match</button>
                     ` : ''}
                 </div>`;
+            
+            if (list.innerHTML !== emptyHtml) list.innerHTML = emptyHtml;
             return;
         }
 
@@ -2137,7 +2139,10 @@ const MatchesController = {
                 MatchesController._currentFilter = 'all';
             }
 
-            list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
+            const currentFullHtml = filterBar + '<div id="ml-filtered-results"></div>';
+            if (list.innerHTML !== currentFullHtml) {
+                list.innerHTML = currentFullHtml;
+            }
 
 
             // Filter logic
@@ -2153,19 +2158,23 @@ const MatchesController = {
             }
 
             const resultsContainer = document.getElementById('ml-filtered-results');
-            if (matches.length === 0) {
-                resultsContainer.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
-            } else {
-                let html = '';
-                matches.forEach(m => {
-                    const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
-                    if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
-                        m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
-                    } else {
-                        html += MatchesController.renderMatchCard(m);
-                    }
-                });
-                resultsContainer.innerHTML = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
+            if (resultsContainer) {
+                if (matches.length === 0) {
+                    const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
+                    if (resultsContainer.innerHTML !== emptyResultsHtml) resultsContainer.innerHTML = emptyResultsHtml;
+                } else {
+                    let html = '';
+                    matches.forEach(m => {
+                        const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+                        if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
+                            m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
+                        } else {
+                            html += MatchesController.renderMatchCard(m);
+                        }
+                    });
+                    const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
+                    if (resultsContainer.innerHTML !== finalHtml) resultsContainer.innerHTML = finalHtml;
+                }
             }
         } else {
             let html = '';
@@ -2177,7 +2186,8 @@ const MatchesController = {
                     html += MatchesController.renderMatchCard(m);
                 }
             });
-            list.innerHTML = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
+            const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
+            if (list.innerHTML !== finalHtml) list.innerHTML = finalHtml;
         }
     },
 
