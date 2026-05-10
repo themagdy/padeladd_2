@@ -2122,7 +2122,6 @@ const MatchesController = {
                 on_hold: matches.filter(m => m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester)).length
             };
 
-            // Count how many specific categories have matches
             const activeCats = ['joined', 'waiting', 'on_hold'].filter(k => counts[k] > 0);
 
             let filterBar = '';
@@ -2135,15 +2134,27 @@ const MatchesController = {
                     ${counts.on_hold > 0 ? `<button onclick="MatchesController.setFilter('on_hold')" class="status-filter-btn ${MatchesController._currentFilter === 'on_hold' ? 'active' : ''}">On hold (${counts.on_hold})</button>` : ''}
                 </div>`;
             } else {
-                // Only 0 or 1 category, so reset filter to all and hide bar
                 MatchesController._currentFilter = 'all';
             }
 
-            const currentFullHtml = filterBar + '<div id="ml-filtered-results"></div>';
-            if (list.innerHTML !== currentFullHtml) {
-                list.innerHTML = currentFullHtml;
+            // Surgical DOM update for Filter Bar & Container
+            let resultsContainer = document.getElementById('ml-filtered-results');
+            if (!resultsContainer) {
+                list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
+                resultsContainer = document.getElementById('ml-filtered-results');
+            } else {
+                // Update filter bar ONLY if it changed
+                const existingBar = list.querySelector('.status-filter-bar');
+                const barHtml = filterBar.trim();
+                if (existingBar) {
+                    if (existingBar.outerHTML.trim() !== barHtml) {
+                        if (barHtml === '') existingBar.remove();
+                        else existingBar.outerHTML = barHtml;
+                    }
+                } else if (barHtml !== '') {
+                    list.insertAdjacentHTML('afterbegin', barHtml);
+                }
             }
-
 
             // Filter logic
             if (MatchesController._currentFilter !== 'all') {
@@ -2157,7 +2168,6 @@ const MatchesController = {
                 });
             }
 
-            const resultsContainer = document.getElementById('ml-filtered-results');
             if (resultsContainer) {
                 if (matches.length === 0) {
                     const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;

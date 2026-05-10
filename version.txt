@@ -656,3 +656,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Performance: Extended the "Smart Render" system to all match lists (Play, My Matches, Scores).
 - UX: Eliminated periodic flickering during background polling. The app now only updates the DOM if a match's status, score, or players have actually changed.
 - Version: 2.0.6 (Build 206)
+
+[SMART_RENDER_V1.2] - 2026-05-11 00:55:00 +0300
+- UX: Refined the surgical DOM update logic for My Matches. The filter bar and results list are now updated independently.
+- Optimization: Guaranteed zero-flicker during polling by using specific child-node targeting instead of full innerHTML replacement when only minor state changes occur.
+- Version: 2.0.7 (Build 207)
