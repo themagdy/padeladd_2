@@ -680,8 +680,8 @@ const DashboardController = {
             if (m.gender_type === 'same_gender') {
                 const isFemale = (m.creator_gender || 'male') === 'female';
                 const genderStr = isFemale ? 'Females Only' : 'Males Only';
-                const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
-                const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+                const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
+                const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
                 typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderStr}</span>`;
             } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
                 typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
@@ -1449,7 +1449,7 @@ const MatchesController = {
                 const isFemale = p.gender.toLowerCase() === 'female';
                 genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
                 if (isFemale && genderBtn.classList.contains('active')) {
-                    genderBtn.style.background = '#FF69B4';
+                    genderBtn.style.background = 'var(--c-pink)';
                 }
             };
 
@@ -1752,7 +1752,7 @@ const MatchesController = {
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        if (btn.textContent.includes('Females Only')) activeBg = '#FF69B4';
+        if (btn.textContent.includes('Females Only')) activeBg = 'var(--c-pink)';
         btn.style.background = activeBg;
         btn.style.color = '#fff';
     },
@@ -2335,8 +2335,8 @@ const MatchesController = {
             const isFemale = (m.creator_gender || 'male') === 'female';
             const genderStr = isFemale ? 'Females Only' : 'Males Only';
             const genderIcon = isFemale ? '👩' : '👨';
-            const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
-            const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+            const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
+            const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
         } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
@@ -2603,8 +2603,8 @@ const MatchesController = {
                     const isFemale = (match.creator_gender || 'male') === 'female';
                     const genderStr = isFemale ? 'Females Only' : 'Males Only';
                     const genderIcon = isFemale ? '👩' : '👨';
-                    const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
-                    const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+                    const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
+                    const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
                     typeBadges += `<span class="status-badge-pill" style="background:${genderBg}; color:${genderColor};">${genderIcon} ${genderStr}</span>`;
                 } else if (match.gender_type === 'mixed' || match.gender_type === 'open') {
                     typeBadges += `<span class="status-badge-pill" style="background:rgba(147,112,219,0.1); color:#9370DB;">👫 Mixed</span>`;
