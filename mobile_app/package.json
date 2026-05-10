@@ -1,6 +1,6 @@
 {
   "name": "padeladd-mobile",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "description": "Padeladd Mobile App",
   "main": "index.js",
   "scripts": {

@@ -392,12 +392,10 @@ const InAppMessagesController = {
             undismissable: msg.is_undismissable == 1,
             closeOnOverlayClick: false
         }).then(async (confirmed) => {
-            if (!confirmed) return;
+            // Mark as seen upon dismissal
+            await API.post('/system/mark_message_seen', { message_id: msg.id });
 
-            // Mark as seen (only if not undismissable)
-            if (msg.is_undismissable != 1) {
-                await API.post('/system/mark_message_seen', { message_id: msg.id });
-            }
+            if (!confirmed) return;
 
             if (action === 'navigate' && msg.page_route) {
                 Router.navigate(msg.page_route);

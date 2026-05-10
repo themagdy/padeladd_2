@@ -569,3 +569,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Admin UI: Added dynamic sidebar states (dim, blur, or hide) during modal interaction to focus user attention and prevent accidental background clicks.
 - Layout Stability: Resolved layout shift issues by compensating for scrollbar disappearance when locking the viewport.
 - Version: 1.9.2 (Build 192)
+
+[IN_APP_MSG_LOGIC_V1.2] - 2026-05-10 04:55:00 +0300
+- Admin UI: Optimized modal footer spacing by removing redundant padding and ensuring buttons sit flush against the bottom.
+- UX Refinement: Refactored in-app message tracking to trigger "seen" status only upon explicit dismissal/action, preventing premature marking when the popup first appears.
+- Bug Fix: Resolved a critical logic error where undismissable messages were excluded from "seen" tracking, causing them to reappear indefinitely.
+- Version: 1.9.3 (Build 193)
