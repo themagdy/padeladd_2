@@ -678,8 +678,11 @@ const DashboardController = {
                 typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
             }
             if (m.gender_type === 'same_gender') {
-                const genderStr = (m.creator_gender || 'male') === 'female' ? 'Women' : 'Men';
-                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27,82,206,0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; margin-right:4px;">${genderStr}</span>`;
+                const isFemale = (m.creator_gender || 'male') === 'female';
+                const genderStr = isFemale ? 'Females Only' : 'Males Only';
+                const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
+                const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderStr}</span>`;
             } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
                 typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
             }
@@ -2324,9 +2327,12 @@ const MatchesController = {
         }
 
         if (m.gender_type === 'same_gender') {
-            const genderStr = (m.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
-            const genderIcon = (m.creator_gender || 'male') === 'female' ? '👩' : '👨';
-            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27,82,206,0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
+            const isFemale = (m.creator_gender || 'male') === 'female';
+            const genderStr = isFemale ? 'Females Only' : 'Males Only';
+            const genderIcon = isFemale ? '👩' : '👨';
+            const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
+            const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
         } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
         }
@@ -2589,9 +2595,12 @@ const MatchesController = {
                 }
 
                 if (match.gender_type === 'same_gender') {
-                    const genderStr = (match.creator_gender || 'male') === 'female' ? 'Women Only' : 'Men Only';
-                    const genderIcon = (match.creator_gender || 'male') === 'female' ? '👩' : '👨';
-                    typeBadges += `<span class="status-badge-pill" style="background:rgba(27,82,206,0.1); color:var(--c-primary);">${genderIcon} ${genderStr}</span>`;
+                    const isFemale = (match.creator_gender || 'male') === 'female';
+                    const genderStr = isFemale ? 'Females Only' : 'Males Only';
+                    const genderIcon = isFemale ? '👩' : '👨';
+                    const genderColor = isFemale ? '#FF69B4' : 'var(--c-primary)';
+                    const genderBg = isFemale ? 'rgba(255,105,180,0.1)' : 'rgba(27,82,206,0.1)';
+                    typeBadges += `<span class="status-badge-pill" style="background:${genderBg}; color:${genderColor};">${genderIcon} ${genderStr}</span>`;
                 } else if (match.gender_type === 'mixed' || match.gender_type === 'open') {
                     typeBadges += `<span class="status-badge-pill" style="background:rgba(147,112,219,0.1); color:#9370DB;">👫 Mixed</span>`;
                 }
