@@ -636,3 +636,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Critical Fix: Enforced a strict early return in SoundManager for native platforms to prevent tap.mp3 from playing.
 - Platform Detection: Optimized native platform detection using Capacitor.getPlatform() to ensure accurate behavior in native apps vs mobile web.
 - Version: 2.0.2 (Build 202)
+
+[NATIVE_SOUND_REFINEMENT] - 2026-05-11 00:33:00 +0300
+- Mobile UX: Switched Haptic feedback from 'impact' to 'selectionChanged' to better trigger the native OS "tick" sound on iOS and Android.
+- Version: 2.0.3 (Build 203)

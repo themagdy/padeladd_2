@@ -30,7 +30,9 @@ var SoundManager = {
             // Priority: Capacitor Haptics (requires @capacitor/haptics)
             const Haptics = window.Capacitor?.Plugins?.Haptics;
             if (Haptics) {
-                Haptics.impact({ style: 'LIGHT' }).catch(() => {});
+                // selectionChanged often triggers the native OS "tick/click" sound on iOS/Android
+                Haptics.selectionChanged().catch(() => {});
+                return; // Use native feedback instead of tap.mp3
             }
             
             // CRITICAL: We return here to ensure tap.mp3 is NEVER played on native mobile
