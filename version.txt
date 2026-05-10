@@ -553,4 +553,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Feature: Implemented App Build Version Tracking. Every time a user opens the app, their build version is logged.
 - Feature: Added "User Versions" page in Admin Panel for build distribution analytics.
 - Feature: Enhanced In-App Messages with Multi-Select Build Targeting. Admins can now target popups to specific app versions.
+- Feature: Added "Undismissable" option for In-App Messages. Critical alerts (like force updates) cannot be closed by the user.
 - Version: 1.9.0 (Build 190)
+
+[IN_APP_MSGS_STABILITY] - 2026-05-10 04:05:00 +0300
+- In-App Messages Fix: Resolved persistence issues where messages reappeared after dismissal. Fixed API routing and ensured dismissal is correctly awaited before UI closure.
+- Notification Sync: Fixed a bug where the notification counter persisted after viewing the panel due to grouped chat message logic. The server now marks all messages in a chat as read simultaneously.
+- Targeting Hardening: Improved in-app message targeting with robust NULL handling and server-side NOT EXISTS queries for better reliability.
+- Performance: Added cache-busting headers and query parameters to message checks to prevent stale data display on refresh.
+- Bug Fix: Fixed data decoding in core API endpoints to ensure build version tracking and message dismissal payloads are processed correctly.
+- Version: 1.9.1 (Build 191)

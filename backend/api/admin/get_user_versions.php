@@ -1,12 +1,10 @@
 <?php
 require_once __DIR__ . '/../../core/db.php';
-require_once __DIR__ . '/../../helpers/auth_helper.php';
+require_once __DIR__ . '/../../helpers/admin_auth.php';
 require_once __DIR__ . '/../../helpers/response.php';
 
 $pdo = getDB();
-if (!validateAdmin($pdo)) {
-    jsonResponse(false, 'Unauthorized');
-}
+validateAdmin();
 
 $sql = "
     SELECT 
