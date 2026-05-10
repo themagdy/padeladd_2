@@ -646,3 +646,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Sound Optimization: Switched mobile sound delivery to the Native Audio Engine, which uses the system's SoundPool (Android) for an instant, native response time.
 - Feedback: Combined Haptics and Native Audio to replicate the OS tap experience.
 - Version: 2.0.4 (Build 204)
+
+[DASHBOARD_PERFORMANCE_V1.0] - 2026-05-11 00:44:00 +0300
+- UX: Eliminated avatar flickering in the Dashboard Ranking by implementing a "smart render" system. The DOM now only updates if the data has actually changed.
+- Infrastructure: Implemented persistent localStorage for the ranking cache, allowing the dashboard to show real data instantly upon app launch even before the first API call finishes.
+- Version: 2.0.5 (Build 205)

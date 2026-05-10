@@ -497,6 +497,13 @@ const DashboardController = {
 
         // Use cache for instant render if available
         if (!isSilent && DashboardController._cache.profile) {
+            // Restore ranking cache from localStorage if empty
+            if (Object.keys(DashboardController._rankingCache).length === 0) {
+                try {
+                    const savedRanking = localStorage.getItem('dash_ranking_cache');
+                    if (savedRanking) DashboardController._rankingCache = JSON.parse(savedRanking);
+                } catch (e) { console.error('Ranking cache restore failed', e); }
+            }
             DashboardController.applyData(DashboardController._cache.profile, DashboardController._cache.matches);
         }
 
@@ -635,7 +642,11 @@ const DashboardController = {
                 html += DashboardController.renderMatchCard(m, uid);
             });
         }
-        listEl.innerHTML = html;
+        
+        // Prevent flicker: only update DOM if HTML changed
+        if (listEl.innerHTML !== html) {
+            listEl.innerHTML = html;
+        }
     },
 
     renderMatchCard: function (m, userId, specificScore = null) {
@@ -718,7 +729,11 @@ const DashboardController = {
         const cachedJson = DashboardController._rankingCache[gender + '_json'];
 
         if (cached) {
-            DashboardController._renderRankingList(cached);
+            // Only render if list is empty or gender changed to avoid flickering avatars
+            const currentRenderedGender = listEl.getAttribute('data-rendered-gender');
+            if (listEl.innerHTML.trim() === '' || currentRenderedGender !== gender) {
+                DashboardController._renderRankingList(cached);
+            }
         } else if (!isSilent && listEl.innerHTML.trim() === '') {
             listEl.innerHTML = RankingUI.renderSkeleton(5);
         }
@@ -740,6 +755,12 @@ const DashboardController = {
         // Update cache and render
         DashboardController._rankingCache[gender] = ranking;
         DashboardController._rankingCache[gender + '_json'] = rankingJson;
+        
+        // Persist to localStorage for next app load
+        try {
+            localStorage.setItem('dash_ranking_cache', JSON.stringify(DashboardController._rankingCache));
+        } catch(e) {}
+
         DashboardController._renderRankingList(ranking);
     },
 
@@ -790,7 +811,11 @@ const DashboardController = {
                 </div>
             `;
         });
-        listEl.innerHTML = html;
+        // Only update innerHTML if it's different to prevent image flickering/re-fading
+        if (listEl.innerHTML !== html) {
+            listEl.innerHTML = html;
+            listEl.setAttribute('data-rendered-gender', DashboardController._currentRankTab || 'male');
+        }
     },
 
     reportProblem: async function () {
