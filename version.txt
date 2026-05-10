@@ -620,3 +620,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX Improvement: Replaced "Completed" tag trophy icon with a Military Medal icon (🎖) for a more premium look.
 - Performance: Removed smooth scroll animation to make page navigation feel instant and more responsive.
 - Version: 1.9.8 (Build 198)
+
+[NATIVE_TAP_V1.0] - 2026-05-10 17:35:00 +0300
+- Mobile UX: Integrated Capacitor Haptics for button taps, providing a native OS feel on iOS and Android.
+- Web Consistency: Maintained tap.mp3 for the web version to preserve standard audio feedback.
+- Assets: Corrected success.mp3 filename and updated the sound file.
+- Version: 1.9.9 (Build 199)
