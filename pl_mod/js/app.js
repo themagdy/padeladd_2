@@ -80,6 +80,7 @@ window.AdminApp = {
 
             // Re-initialize any page-specific logic
             await this.initPageScripts(page);
+            this.updateModalScrollLock();
         } catch (error) {
             console.error(`Error loading page ${page}:`, error);
             this.contentDiv.innerHTML = `<div class="card" style="padding:40px; text-align:center;"><h3 style="color:var(--c-red)">Error Loading Page</h3></div>`;
@@ -130,18 +131,25 @@ window.AdminApp = {
         }, 4000);
     },
     
-    initModalObserver() {
-        const observer = new MutationObserver(() => {
-            let isAnyModalVisible = false;
-            document.querySelectorAll('.modal-overlay').forEach(modal => {
-                if (modal.style.display !== 'none') isAnyModalVisible = true;
-            });
-            document.body.classList.toggle('modal-open', isAnyModalVisible);
+    updateModalScrollLock() {
+        let isAnyModalVisible = false;
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            // Check if display is not none AND the element is visible in the layout
+            const style = window.getComputedStyle(modal);
+            if (style.display !== 'none' && style.visibility !== 'hidden') {
+                isAnyModalVisible = true;
+            }
         });
+        document.body.classList.toggle('modal-open', isAnyModalVisible);
+    },
+    
+    initModalObserver() {
+        const observer = new MutationObserver(() => this.updateModalScrollLock());
 
         observer.observe(document.body, { 
             attributes: true, 
             subtree: true, 
+            childList: true, // Watch for new modals being added to the DOM
             attributeFilter: ['style', 'class'] 
         });
     }
