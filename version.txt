@@ -575,3 +575,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX Refinement: Refactored in-app message tracking to trigger "seen" status only upon explicit dismissal/action, preventing premature marking when the popup first appears.
 - Bug Fix: Resolved a critical logic error where undismissable messages were excluded from "seen" tracking, causing them to reappear indefinitely.
 - Version: 1.9.3 (Build 193)
+
+[PREMIUM_SKELETON_V1.0] - 2026-05-10 06:15:00 +0300
+- Premium Skeleton System: Implemented high-fidelity, shimmer-animated skeleton loaders across Profile, Dashboard, Ranking, and Match views.
+- UX Performance: Optimized content loading to show structured "ghost" layouts instead of simple pulse blocks.
+- Flicker Elimination: Refactored background updates (polling) to keep current content visible until new data is ready, completely removing the "double-load" flicker for avatars.
+- Smart Rendering: Skeletons now only appear on empty initial loads, providing a seamless transition for returning users.
+- Version: 1.9.4 (Build 194)
