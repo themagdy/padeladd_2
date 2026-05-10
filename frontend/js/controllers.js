@@ -1448,6 +1448,9 @@ const MatchesController = {
                 if (!p || !p.gender) return;
                 const isFemale = p.gender.toLowerCase() === 'female';
                 genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
+                if (isFemale && genderBtn.classList.contains('active')) {
+                    genderBtn.style.background = '#FF69B4';
+                }
             };
 
             if (DashboardController._currentProfile) {
@@ -1748,7 +1751,9 @@ const MatchesController = {
             b.style.color = 'var(--c-text-muted)';
         });
         btn.classList.add('active');
-        btn.style.background = 'var(--c-primary)';
+        let activeBg = 'var(--c-primary)';
+        if (btn.textContent.includes('Females Only')) activeBg = '#FF69B4';
+        btn.style.background = activeBg;
         btn.style.color = '#fff';
     },
 
