@@ -295,9 +295,13 @@ body.modal-open .admin-main {
 }
 
 .modal-body {
-    padding: 32px;
+    padding: 32px 32px 12px;
     max-height: 70vh;
     overflow-y: auto;
+}
+
+.modal-body > *:last-child {
+    margin-bottom: 0 !important;
 }
 
 /* Form Styles inside Modals */
@@ -322,7 +326,7 @@ body.modal-open .admin-main {
 }
 
 .modal-footer {
-    padding: 24px 32px;
+    padding: 20px 32px;
     background: rgba(15, 23, 42, 0.4);
     border-top: 1px solid rgba(255,255,255,0.05);
     display: flex;
