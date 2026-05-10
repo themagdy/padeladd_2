@@ -644,9 +644,9 @@ const DashboardController = {
         }
         
         // Prevent flicker: only update DOM if HTML changed
-        if (listEl.innerHTML !== html) {
-            listEl.innerHTML = html;
-        }
+        if (listEl._lastHtml === html) return;
+        listEl.innerHTML = html;
+        listEl._lastHtml = html;
     },
 
     renderMatchCard: function (m, userId, specificScore = null) {
@@ -812,10 +812,10 @@ const DashboardController = {
             `;
         });
         // Only update innerHTML if it's different to prevent image flickering/re-fading
-        if (listEl.innerHTML !== html) {
-            listEl.innerHTML = html;
-            listEl.setAttribute('data-rendered-gender', DashboardController._currentRankTab || 'male');
-        }
+        if (listEl._lastHtml === html) return;
+        listEl.innerHTML = html;
+        listEl._lastHtml = html;
+        listEl.setAttribute('data-rendered-gender', DashboardController._currentRankTab || 'male');
     },
 
     reportProblem: async function () {
@@ -2025,14 +2025,20 @@ const MatchesController = {
             if (MatchesController._cache[cacheKey]) {
                 // Merge fresh top 10 into existing list
                 const existing = MatchesController._cache[cacheKey];
+                let hasChanges = false;
                 newMatches.forEach((nm, idx) => {
                     if (idx < existing.length) {
-                        existing[idx] = nm; // Replace with fresh data
+                        // Compare data to prevent unnecessary re-renders
+                        if (JSON.stringify(existing[idx]) !== JSON.stringify(nm)) {
+                            existing[idx] = nm;
+                            hasChanges = true;
+                        }
                     }
                 });
-                // Only re-render if data has changed (simple length check or deep compare)
-                // For now, re-render is fine but we must NOT show skeletons
-                MatchesController.renderList(existing);
+                // Only re-render if data has changed
+                if (hasChanges) {
+                    MatchesController.renderList(existing);
+                }
             }
             return;
         }
@@ -2108,8 +2114,9 @@ const MatchesController = {
                         <button onclick="Router.navigate('/matches/create')" class="btn btn-primary" style="margin-top:16px; width:auto; padding:10px 20px; font-size:13px; height:auto;">🎾 Create Match</button>
                     ` : ''}
                 </div>`;
-            
-            if (list.innerHTML !== emptyHtml) list.innerHTML = emptyHtml;
+            if (list._lastHtml === emptyHtml) return;
+            list.innerHTML = emptyHtml;
+            list._lastHtml = emptyHtml;
             return;
         }
 
@@ -2171,7 +2178,10 @@ const MatchesController = {
             if (resultsContainer) {
                 if (matches.length === 0) {
                     const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
-                    if (resultsContainer.innerHTML !== emptyResultsHtml) resultsContainer.innerHTML = emptyResultsHtml;
+                    if (resultsContainer._lastHtml !== emptyResultsHtml) {
+                        resultsContainer.innerHTML = emptyResultsHtml;
+                        resultsContainer._lastHtml = emptyResultsHtml;
+                    }
                 } else {
                     let html = '';
                     matches.forEach(m => {
@@ -2183,7 +2193,10 @@ const MatchesController = {
                         }
                     });
                     const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
-                    if (resultsContainer.innerHTML !== finalHtml) resultsContainer.innerHTML = finalHtml;
+                    if (resultsContainer._lastHtml !== finalHtml) {
+                        resultsContainer.innerHTML = finalHtml;
+                        resultsContainer._lastHtml = finalHtml;
+                    }
                 }
             }
         } else {
@@ -2197,7 +2210,10 @@ const MatchesController = {
                 }
             });
             const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
-            if (list.innerHTML !== finalHtml) list.innerHTML = finalHtml;
+            if (list._lastHtml !== finalHtml) {
+                list.innerHTML = finalHtml;
+                list._lastHtml = finalHtml;
+            }
         }
     },
 
