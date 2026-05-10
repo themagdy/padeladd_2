@@ -20,6 +20,13 @@
     flex-direction: column;
     flex-shrink: 0;
     z-index: 110;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+body.modal-open .admin-sidebar {
+    opacity: 0.4;
+    filter: blur(2px);
+    pointer-events: none;
 }
 
 .sidebar-header {
@@ -220,15 +227,9 @@ body.modal-open {
     position: fixed !important;
 }
 
-body.modal-open .admin-sidebar {
-    display: none !important;
-}
-
 body.modal-open .admin-main {
     overflow: hidden !important;
     position: fixed !important;
-    width: 100% !important;
-    left: 0 !important;
 }
 
 .modal-overlay {
