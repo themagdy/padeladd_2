@@ -27,15 +27,9 @@ var SoundManager = {
                          (window.location.protocol === 'capacitor:');
 
         if (type === 'tap' && isNative) {
-            // Priority 1: Capacitor Haptics (selectionChanged for iOS "tick")
+            // Capacitor Haptics provides the native OS interaction feedback
             const Haptics = window.Capacitor?.Plugins?.Haptics;
             if (Haptics) Haptics.selectionChanged().catch(() => {});
-
-            // Priority 2: Native Audio Engine (for Android/iOS low-latency "tick")
-            const NativeAudio = window.Capacitor?.Plugins?.NativeAudio;
-            if (NativeAudio) {
-                NativeAudio.play({ assetId: 'tap' }).catch(() => {});
-            }
             
             // CRITICAL: We return here to ensure the standard Web Audio tap.mp3 is NEVER played on native mobile
             return; 
@@ -62,7 +56,6 @@ var SoundManager = {
         // Preload sounds for Native Audio engine (Mobile only)
         if (window.Capacitor && window.Capacitor.Plugins.NativeAudio) {
             const NativeAudio = window.Capacitor.Plugins.NativeAudio;
-            NativeAudio.preload({ assetId: 'tap', assetPath: 'assets/sounds/tap.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
             NativeAudio.preload({ assetId: 'success', assetPath: 'assets/sounds/success.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
             NativeAudio.preload({ assetId: 'notify', assetPath: 'assets/sounds/notify.mp3', audioChannelNum: 1, isRaw: false }).catch(() => {});
         }
