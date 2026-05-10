@@ -151,6 +151,7 @@ window.AdminApp = {
             main.style.overflowY = isAnyModalVisible ? 'hidden' : 'auto';
         }
         document.body.classList.toggle('modal-open', isAnyModalVisible);
+        document.documentElement.classList.toggle('modal-open', isAnyModalVisible);
     },
     
     initModalObserver() {
