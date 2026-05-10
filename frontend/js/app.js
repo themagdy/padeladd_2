@@ -27,9 +27,7 @@ var SoundManager = {
                          (window.location.protocol === 'capacitor:');
 
         if (type === 'tap' && isNative) {
-            // Capacitor Haptics provides the native OS interaction feedback
-            const Haptics = window.Capacitor?.Plugins?.Haptics;
-            if (Haptics) Haptics.selectionChanged().catch(() => {});
+            // Rely solely on the WebView's default OS touch sounds (no forced vibration)
             
             // CRITICAL: We return here to ensure the standard Web Audio tap.mp3 is NEVER played on native mobile
             return; 
