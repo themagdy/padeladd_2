@@ -32,6 +32,7 @@
   --c-green: #00CE00;
   --c-red: #F15A29;
   --c-gold: #F5C518;
+  --c-pink: #D81B60;
 
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
