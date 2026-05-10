@@ -2207,6 +2207,7 @@ const MatchesController = {
         let label = m.status.charAt(0).toUpperCase() + m.status.slice(1);
         if (m.status === 'on_hold') label = 'Pending Partner';
         if (m.status === 'open' && isPast) label = 'Incomplete';
+        if (m.status === 'completed') label = '🏆 Completed';
         const statusLabel = label;
 
         let myBadge = '';
