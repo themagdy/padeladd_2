@@ -205,6 +205,9 @@ try {
         case 'system/check_in_app_messages':
             require __DIR__ . '/system/check_in_app_messages.php';
             break;
+        case 'system/mark_message_seen':
+            require __DIR__ . '/system/mark_message_seen.php';
+            break;
         case 'system/report':
             require __DIR__ . '/system/report.php';
             break;

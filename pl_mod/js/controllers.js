@@ -1060,6 +1060,7 @@ window.AdminControllers = {
             form.elements['android_url'].value = msg.android_url || '';
             form.elements['ios_url'].value = msg.ios_url || '';
             form.elements['is_active'].checked = msg.is_active == 1;
+            form.elements['is_undismissable'].checked = msg.is_undismissable == 1;
 
             document.getElementById('message-body-editor').innerHTML = msg.body;
 
@@ -1131,7 +1132,8 @@ window.AdminControllers = {
                 page_route: formData.get('page_route'),
                 android_url: formData.get('android_url'),
                 ios_url: formData.get('ios_url'),
-                is_active: form.elements['is_active'].checked ? 1 : 0
+                is_active: form.elements['is_active'].checked ? 1 : 0,
+                is_undismissable: form.elements['is_undismissable'].checked ? 1 : 0
             };
 
             console.log('Sending data:', data);
@@ -1838,6 +1840,8 @@ window.AdminControllers = {
     versions: {
         allUsers: [],
         searchQuery: '',
+        sortKey: 'last_activity', // Default sort
+        sortOrder: 'desc',
 
         async init() {
             await this.fetchVersions();
@@ -1860,12 +1864,38 @@ window.AdminControllers = {
             this.render();
         },
 
+        setSort(key) {
+            if (this.sortKey === key) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortOrder = 'desc';
+            }
+            this.render();
+        },
+
         render() {
             const list = document.getElementById('versions-list');
             const empty = document.getElementById('versions-empty');
             if (!list) return;
 
-            let filtered = this.allUsers;
+            let filtered = [...this.allUsers];
+
+            // Sort
+            filtered.sort((a, b) => {
+                let valA = a[this.sortKey] || '';
+                let valB = b[this.sortKey] || '';
+
+                if (this.sortKey === 'last_activity') {
+                    valA = valA ? new Date(valA).getTime() : 0;
+                    valB = valB ? new Date(valB).getTime() : 0;
+                }
+
+                if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
             if (this.searchQuery) {
                 filtered = filtered.filter(u => 
                     (u.first_name + ' ' + u.last_name).toLowerCase().includes(this.searchQuery) ||
@@ -1885,19 +1915,11 @@ window.AdminControllers = {
             list.innerHTML = filtered.map(u => `
                 <tr>
                     <td>
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <div class="player-avatar-small">
-                                ${u.profile_image_thumb 
-                                    ? `<img src="../${u.profile_image_thumb}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
-                                    : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(u.nickname || u.first_name || 'S')[0]}</div>`
-                                }
-                            </div>
-                            <div class="player-info-cell">
-                                <span class="player-name">${u.first_name} ${u.last_name}</span>
-                                <div style="display:flex; align-items:center; gap:8px;">
-                                    <span class="player-nickname">${u.nickname || '---'}</span>
-                                    <span class="player-code">${u.player_code || '---'}</span>
-                                </div>
+                        <div class="player-info-cell">
+                            <span class="player-name">${u.first_name} ${u.last_name}</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="player-nickname">${u.nickname || '---'}</span>
+                                <span class="player-code">${u.player_code || '---'}</span>
                             </div>
                         </div>
                     </td>
@@ -1910,7 +1932,12 @@ window.AdminControllers = {
                         </div>
                     </td>
                     <td>
-                        <div style="font-size:13px; color:var(--c-text-muted);">${u.last_activity ? new Date(u.last_activity).toLocaleString() : 'Never'}</div>
+                        <div style="font-size:13px; color:var(--c-text-muted);">
+                            ${u.last_activity 
+                                ? new Date(u.last_activity).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) 
+                                : 'Never'
+                            }
+                        </div>
                     </td>
                 </tr>
             `).join('');

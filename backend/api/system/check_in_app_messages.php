@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../helpers/auth_helper.php';
 require_once __DIR__ . '/../../helpers/response.php';
 
 header('Content-Type: application/json');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
@@ -14,10 +17,12 @@ $uid = $user['id'];
 $sql = "
     SELECT m.*
     FROM in_app_messages m
-    LEFT JOIN in_app_message_views v ON m.id = v.message_id AND v.user_id = ?
     JOIN users u ON u.id = ?
     WHERE m.is_active = 1
-      AND v.user_id IS NULL
+      AND NOT EXISTS (
+          SELECT 1 FROM in_app_message_views v 
+          WHERE v.message_id = m.id AND v.user_id = ?
+      )
       AND (m.target_user_id = ? OR m.target_user_id IS NULL)
       AND (
           m.target_build_refs IS NULL 
@@ -37,9 +42,5 @@ if (!$message) {
     jsonResponse(true, 'No new messages.', null);
 }
 
-// Mark as seen immediately (optional: can be done via another API when user clicks button)
-// We'll do it here to ensure it only pops up once per message definition.
-$pdo->prepare("INSERT IGNORE INTO in_app_message_views (user_id, message_id) VALUES (?, ?)")
-    ->execute([$uid, $message['id']]);
-
+// No longer marking as seen here. We mark as seen only when they click the button in the UI.
 jsonResponse(true, 'New in-app message found.', $message);

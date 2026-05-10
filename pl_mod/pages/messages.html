@@ -129,10 +129,14 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="display:flex; flex-direction:column; gap:12px; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
                     <label class="checkbox-container" style="display:flex; align-items:center; gap:8px; cursor:pointer;">
                         <input type="checkbox" name="is_active" checked>
                         <span>Active (Visible to users)</span>
+                    </label>
+                    <label class="checkbox-container" style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--c-red); font-weight:700;">
+                        <input type="checkbox" name="is_undismissable" id="is-undismissable">
+                        <span>🛑 Undismissable (Must take action)</span>
                     </label>
                 </div>
             </div>

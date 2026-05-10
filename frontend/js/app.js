@@ -1,10 +1,10 @@
 var FX = {
-    ignite: function(el) {
+    ignite: function (el) {
         if (!el) return;
         el.classList.remove('ignite');
         void el.offsetWidth; // Trigger reflow
         el.classList.add('ignite');
-        
+
         // Remove class after animation
         setTimeout(() => {
             el.classList.remove('ignite');
@@ -18,15 +18,15 @@ var SoundManager = {
         success: new Audio('assets/sounds/success.mp3'),
         notify: new Audio('assets/sounds/notify.mp3')
     },
-    play: function(type) {
+    play: function (type) {
         if (typeof Audio === 'undefined') return;
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
-            s.play().catch(e => {}); // Silent fail if blocked by browser
+            s.play().catch(e => { }); // Silent fail if blocked by browser
         }
     },
-    init: function() {
+    init: function () {
         if (typeof Audio === 'undefined') return;
         // Global tap listener for all buttons, links and clickable items
         document.addEventListener('click', (e) => {
@@ -39,7 +39,7 @@ var SoundManager = {
 };
 
 var Toast = {
-    show: function(message, type = 'info', duration = 5000) {
+    show: function (message, type = 'info', duration = 5000) {
         // Create container if not exists
         let container = document.getElementById('toast-container');
         if (!container) {
@@ -51,10 +51,10 @@ var Toast = {
         // Create the toast element
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        
+
         let icon = '🔔';
         if (type === 'success') icon = '✅';
-        if (type === 'error')   icon = '❌';
+        if (type === 'error') icon = '❌';
         if (type === 'warning') icon = '⚠️';
 
         toast.innerHTML = `
@@ -83,9 +83,11 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
+            this._undismissable = undismissable;
+            this._closeOnOverlayClick = closeOnOverlayClick;
 
             // Create container if not exists
             if (!this._modal) {
@@ -93,7 +95,7 @@ var ConfirmModal = {
                 this._modal.id = 'global-confirm-modal';
                 this._modal.style.cssText = `
                     position:fixed; top:0; left:0; width:100%; height:100%;
-                    background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+                    background:rgba(0,0,0,0.8);
                     display:flex; align-items:center; justify-content:center;
                     z-index:100000; opacity:0; pointer-events:none;
                     transition:opacity 0.25s ease; padding:32px;
@@ -122,7 +124,7 @@ var ConfirmModal = {
             ` : '';
 
             this._modal.innerHTML = `
-                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.85); backdrop-filter:blur(25px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
                     
                     <!-- Premium Emoji Frame -->
                     <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
@@ -149,7 +151,7 @@ var ConfirmModal = {
 
             // Setup listeners
             this._modal.onclick = (e) => {
-                if (e.target === this._modal) this.close(false);
+                if (e.target === this._modal && !this._undismissable && this._closeOnOverlayClick) this.close(false);
             };
             this._modal.querySelector('#gcm-confirm').onclick = () => {
                 const val = showInput ? this._modal.querySelector('#gcm-input').value.trim() : true;
@@ -201,8 +203,19 @@ var ConfirmModal = {
         });
     },
 
-    close: function(result) {
+    close: function (result) {
         if (!this._modal) return;
+
+        if (this._undismissable) {
+            // If undismissable, we still resolve the promise so the action can happen,
+            // but we DON'T hide the modal and DON'T restore scroll.
+            if (this._resolve) {
+                const tempResolve = this._resolve;
+                this._resolve = null; // Prevent double resolve
+                tempResolve(result);
+            }
+            return;
+        }
 
         // Restore scroll
         document.documentElement.style.overflow = '';
@@ -231,7 +244,7 @@ var PollManager = {
     _timer: null,
     _activeTask: null,
 
-    start: function(taskName, callback, interval = 15000) {
+    start: function (taskName, callback, interval = 15000) {
         this.stop();
         this._activeTask = taskName;
         this._timer = setInterval(() => {
@@ -240,7 +253,7 @@ var PollManager = {
         }, interval);
     },
 
-    stop: function() {
+    stop: function () {
         if (this._timer) {
             console.log(`[PollManager] Stopping: ${this._activeTask}`);
             clearInterval(this._timer);
@@ -252,7 +265,7 @@ var PollManager = {
 
 var PushNotificationsController = {
     _isStartingUp: true,
-    init: async function() {
+    init: async function () {
         const PushNotifications = window.Capacitor?.Plugins?.PushNotifications;
         if (!PushNotifications) {
             console.log('[PushNotifications] Not a native app or plugin missing');
@@ -286,7 +299,7 @@ var PushNotificationsController = {
             // Safe Registration
             console.log('[PushNotifications] Registering...');
             await PushNotifications.register();
-            
+
             // Listeners
             this.setupListeners(PushNotifications);
 
@@ -295,7 +308,7 @@ var PushNotificationsController = {
         }
     },
 
-    setupListeners: function(PushNotifications) {
+    setupListeners: function (PushNotifications) {
         if (!PushNotifications) return;
 
         try {
@@ -334,7 +347,7 @@ var PushNotificationsController = {
         }
     },
 
-    updateServerToken: async function(token) {
+    updateServerToken: async function (token) {
         if (typeof Auth !== 'undefined' && !Auth.isAuthenticated()) return;
         const platform = window.Capacitor.getPlatform();
         console.log('[PushNotifications] Updating server token...');
@@ -347,16 +360,16 @@ var PushNotificationsController = {
 
 
 const InAppMessagesController = {
-    init: async function() {
+    init: async function () {
         if (!Auth.isAuthenticated()) return;
-        
-        // Delay slightly to not overwhelm the user on startup
-        setTimeout(() => this.check(), 2000);
+
+        // Instant check as requested
+        this.check();
     },
 
-    check: async function() {
+    check: async function () {
         try {
-            const res = await API.get('/system/check_in_app_messages');
+            const res = await API.get('/system/check_in_app_messages?t=' + Date.now());
             if (res.success && res.data) {
                 this.display(res.data);
             }
@@ -365,7 +378,7 @@ const InAppMessagesController = {
         }
     },
 
-    display: function(msg) {
+    display: async function (msg) {
         let confirmText = msg.button_text || 'Got it';
         let action = msg.action_type;
 
@@ -374,10 +387,17 @@ const InAppMessagesController = {
             message: msg.body,
             icon: msg.emoji,
             confirmText: confirmText,
-            showCancel: false, // In-app messages usually only have one primary action
-            type: 'info'
-        }).then((confirmed) => {
+            showCancel: false,
+            type: 'info',
+            undismissable: msg.is_undismissable == 1,
+            closeOnOverlayClick: false
+        }).then(async (confirmed) => {
             if (!confirmed) return;
+
+            // Mark as seen (only if not undismissable)
+            if (msg.is_undismissable != 1) {
+                await API.post('/system/mark_message_seen', { message_id: msg.id });
+            }
 
             if (action === 'navigate' && msg.page_route) {
                 Router.navigate(msg.page_route);
@@ -385,7 +405,7 @@ const InAppMessagesController = {
                 const platform = window.Capacitor?.getPlatform() || 'web';
                 let url = msg.android_url;
                 if (platform === 'ios') url = msg.ios_url || msg.android_url;
-                
+
                 if (url) {
                     window.open(url, '_blank');
                 }
@@ -404,11 +424,11 @@ const ScoreUI = {
      * @param {Array} players - Optional explicit player list
      * @param {Boolean} showHeader - Whether to show the Venue/Date header
      */
-    renderMatchScore: function(match, approvedScore = null, players = null, showHeader = true) {
+    renderMatchScore: function (match, approvedScore = null, players = null, showHeader = true) {
         if (!approvedScore && match.scores) {
             approvedScore = match.scores.find(s => s.status === 'approved');
         }
-        
+
         if (!approvedScore) return '';
 
         // Process sets and winner
@@ -419,7 +439,7 @@ const ScoreUI = {
             const s2 = parseInt(approvedScore[`t2_set${i}`]);
             if (isNaN(s1) || isNaN(s2)) continue;
             if (i > 1 && s1 === 0 && s2 === 0) continue; // Skip 0-0 sets after the first one (not played)
-            
+
             const winner = s1 > s2 ? 1 : (s2 > s1 ? 2 : 0);
             if (winner === 1) t1Sets++; else if (winner === 2) t2Sets++;
             sets.push({ s1, s2, winner });
@@ -429,15 +449,15 @@ const ScoreUI = {
         // Map players to teams (handle different data structures)
         let team1 = [], team2 = [];
         const allPlayers = players || [...(match.team_a || []), ...(match.team_b || [])];
-        
+
         // Handle custom composition (team switches)
         let customComp = null;
         if (approvedScore.composition_json) {
             try {
-                customComp = typeof approvedScore.composition_json === 'string' 
-                    ? JSON.parse(approvedScore.composition_json) 
+                customComp = typeof approvedScore.composition_json === 'string'
+                    ? JSON.parse(approvedScore.composition_json)
                     : approvedScore.composition_json;
-            } catch(e) {}
+            } catch (e) { }
         }
 
         allPlayers.forEach(p => {
@@ -446,7 +466,7 @@ const ScoreUI = {
                 const compMatch = customComp.find(c => parseInt(c.user_id) === parseInt(p.user_id || p.id));
                 if (compMatch) finalPlayer = { ...p, ...compMatch };
             }
-            
+
             const pData = {
                 name: finalPlayer.nickname || finalPlayer.name || (finalPlayer.first_name + ' ' + finalPlayer.last_name) || '—',
                 code: finalPlayer.player_code || finalPlayer.code || '',
@@ -460,7 +480,7 @@ const ScoreUI = {
         const renderTeamRow = (teamPlayers, isWinner) => {
             const p1 = teamPlayers[0] || { name: '—' };
             const p2 = teamPlayers[1] || { name: '—' };
-            
+
             return `
                 <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.1)' : 'transparent'};">
                     <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
@@ -489,7 +509,7 @@ const ScoreUI = {
         };
 
         const headerVenue = (match.venue || 'Venue TBD').split(' - ')[0].trim();
-        const headerDate = match.scheduled_at 
+        const headerDate = match.scheduled_at
             ? new Date(match.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })
             : '';
 
@@ -519,7 +539,7 @@ const StatsUI = {
      * @param {Object} stats - The stats object from the API
      * @param {String} prefix - The ID prefix for the elements (e.g., 'dash' or 'pv')
      */
-    update: function(stats, prefix) {
+    update: function (stats, prefix) {
         if (!stats) return;
 
         const upIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';

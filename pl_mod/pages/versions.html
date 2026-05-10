@@ -13,8 +13,8 @@
             <thead>
                 <tr>
                     <th>Player</th>
-                    <th>App Build Version</th>
-                    <th>Last Activity</th>
+                    <th style="cursor:pointer;" onclick="AdminControllers.versions.setSort('last_build_ref')">App Build Version ↕️</th>
+                    <th style="cursor:pointer;" onclick="AdminControllers.versions.setSort('last_activity')">Last Activity ↕️</th>
                 </tr>
             </thead>
             <tbody id="versions-list">

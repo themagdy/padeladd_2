@@ -20,6 +20,7 @@ $page_route = $data['page_route'] ?? null;
 $android_url = $data['android_url'] ?? null;
 $ios_url = $data['ios_url'] ?? null;
 $is_active = isset($data['is_active']) ? (int)$data['is_active'] : 1;
+$is_undismissable = isset($data['is_undismissable']) ? (int)$data['is_undismissable'] : 0;
 
 if (empty($heading) || empty($body)) {
     jsonResponse(false, 'Heading and Body are required.', null, 422);
@@ -40,12 +41,12 @@ $target_build_refs = isset($data['target_build_refs']) ? json_encode($data['targ
 try {
     $sql = "
         INSERT INTO in_app_messages 
-        (target_user_id, target_build_refs, heading, emoji, body, button_text, action_type, page_route, android_url, ios_url, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (target_user_id, target_build_refs, heading, emoji, body, button_text, action_type, page_route, android_url, ios_url, is_active, is_undismissable)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        $target_user_id, $target_build_refs, $heading, $emoji, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active
+        $target_user_id, $target_build_refs, $heading, $emoji, $body, $button_text, $action_type, $page_route, $android_url, $ios_url, $is_active, $is_undismissable
     ]);
 
     jsonResponse(true, 'Message created successfully.');
