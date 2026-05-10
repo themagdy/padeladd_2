@@ -640,3 +640,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 [NATIVE_SOUND_REFINEMENT] - 2026-05-11 00:33:00 +0300
 - Mobile UX: Switched Haptic feedback from 'impact' to 'selectionChanged' to better trigger the native OS "tick" sound on iOS and Android.
 - Version: 2.0.3 (Build 203)
+
+[MOBILE_AUDIO_NATIVE_ENGINE] - 2026-05-11 00:35:00 +0300
+- Infrastructure: Installed @capacitor-community/native-audio to enable low-latency native sound effects on Android and iOS.
+- Sound Optimization: Switched mobile sound delivery to the Native Audio Engine, which uses the system's SoundPool (Android) for an instant, native response time.
+- Feedback: Combined Haptics and Native Audio to replicate the OS tap experience.
+- Version: 2.0.4 (Build 204)
