@@ -947,14 +947,19 @@ const ProfileViewController = {
 
         // Load matches list asynchronously so it doesn't block the instant navigation
         (async () => {
-            if (!isSilent) {
+            const listEl = document.getElementById('pv-matches-list');
+            if (!isSilent && listEl) {
+                listEl.innerHTML = `
+                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg); margin-bottom:12px;"></div>
+                    <div class="skeleton" style="height:90px; border-radius:var(--r-lg);"></div>
+                `;
                 // Wait to showcase placeholder loaders for matches
                 await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
             }
 
             const matchPayload = { target_id: user.id };
             const matchRes = await API.post('/matches/user', matchPayload);
-            const listEl = document.getElementById('pv-matches-list');
             
             if (listEl) {
                 // Filter: only completed matches (history)
