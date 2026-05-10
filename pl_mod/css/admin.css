@@ -230,6 +230,8 @@ body.modal-open {
 body.modal-open .admin-main {
     overflow: hidden !important;
     position: fixed !important;
+    left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
 }
 
 .modal-overlay {
