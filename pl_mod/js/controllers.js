@@ -1035,10 +1035,12 @@ window.AdminControllers = {
             this.renderBuildList();
             this.toggleTargetInput('all');
             this.toggleActionFields('close');
+            AdminApp.updateModalScrollLock();
         },
 
         closeModal() {
             document.getElementById('message-modal').style.display = 'none';
+            AdminApp.updateModalScrollLock();
         },
 
         editMessage(id) {
@@ -1086,10 +1088,12 @@ window.AdminControllers = {
             document.getElementById('preview-button').innerText = msg.button_text || 'Got it';
             
             document.getElementById('preview-modal').style.display = 'flex';
+            AdminApp.updateModalScrollLock();
         },
 
         closePreviewModal() {
             document.getElementById('preview-modal').style.display = 'none';
+            AdminApp.updateModalScrollLock();
         },
 
         toggleTargetInput(val) {
