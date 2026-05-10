@@ -13,12 +13,83 @@ var FX = {
 };
 
 var SoundManager = {
-    _sounds: {
-        tap: new Audio('assets/sounds/tap.mp3'),
-        success: new Audio('assets/sounds/success.mp3'),
-        notify: new Audio('assets/sounds/notify.mp3')
-    },
+    _sounds: {},
     _isNativeReady: false,
+    _isUnlocked: false,
+    
+    // 1. Initialize with ultra-robust paths
+    init: async function () {
+        if (typeof Audio === 'undefined') return;
+
+        // Path normalization for all platforms
+        const getPath = (p) => {
+            const base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            return base + p;
+        };
+
+        const soundFiles = {
+            tap: 'assets/sounds/tap.mp3',
+            success: 'assets/sounds/success.mp3',
+            notify: 'assets/sounds/notify.mp3'
+        };
+
+        // Create browser audio objects immediately
+        for (const [id, path] of Object.entries(soundFiles)) {
+            this._sounds[id] = new Audio(getPath(path));
+            this._sounds[id].preload = 'auto';
+            this._sounds[id].load();
+        }
+
+        const Capacitor = window.Capacitor;
+        const isNative = (Capacitor && Capacitor.getPlatform && Capacitor.getPlatform() !== 'web');
+        const Plugins = Capacitor?.Plugins;
+        const NativeAudio = Plugins?.NativeAudio;
+
+        // 2. Native Bridge Warmup (Android focus)
+        if (isNative && NativeAudio) {
+            // Give bridge 2s to breathe
+            setTimeout(async () => {
+                for (const [id, path] of Object.entries(soundFiles)) {
+                    try {
+                        await NativeAudio.preload({ 
+                            assetId: id, 
+                            assetPath: path, 
+                            audioChannelNum: 1, 
+                            isRaw: false 
+                        });
+                        console.log(`[SoundManager] Native Preloaded: ${id}`);
+                    } catch (e) {}
+                }
+                this._isNativeReady = true;
+            }, 2000);
+        }
+
+        // 3. Audio Unlocker (Crucial for iOS/Android WebView)
+        const unlock = () => {
+            if (this._isUnlocked) return;
+            for (const s of Object.values(this._sounds)) {
+                s.play().then(() => {
+                    s.pause();
+                    s.currentTime = 0;
+                }).catch(() => {});
+            }
+            this._isUnlocked = true;
+            document.removeEventListener('touchstart', unlock);
+            document.removeEventListener('mousedown', unlock);
+            console.log('[SoundManager] Audio Unlocked');
+        };
+        document.addEventListener('touchstart', unlock, { passive: true });
+        document.addEventListener('mousedown', unlock, { passive: true });
+
+        // 4. Global Tap Listener
+        document.addEventListener('click', (e) => {
+            const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
+            if (el && !el.hasAttribute('data-no-sound')) {
+                this.play('tap');
+            }
+        }, true);
+    },
+
     play: function (type) {
         if (typeof Audio === 'undefined') return;
 
@@ -28,71 +99,31 @@ var SoundManager = {
         const NativeAudio = Plugins?.NativeAudio;
         const Haptics = Plugins?.Haptics;
 
-        // Try Native Engine if ready
+        // Try Native Engine First
         if (isNative && NativeAudio && this._isNativeReady) {
             NativeAudio.play({ assetId: type }).then(() => {
                 if (type === 'tap' && Haptics) Haptics.selectionChanged().catch(() => {});
             }).catch((err) => {
-                console.warn(`[SoundManager] Native play failed for ${type}, falling back to Web:`, err);
+                console.warn(`[SoundManager] Native fail, falling back:`, err);
                 this._playWeb(type);
             });
             return;
         }
 
-        // Fallback to Web Audio
+        // Standard Web Fallback
         this._playWeb(type);
     },
-    _playWeb: function(type) {
+
+    _playWeb: function (type) {
         const s = this._sounds[type];
         if (s) {
+            // Force reload if not ready
+            if (s.readyState < 2) s.load();
             s.currentTime = 0;
-            s.play().catch(e => { 
-                console.log(`[SoundManager] Web play blocked or failed for ${type}`);
+            s.play().catch(e => {
+                console.warn(`[SoundManager] Web Audio blocked for ${type}`);
             });
         }
-    },
-    init: async function () {
-        if (typeof Audio === 'undefined') return;
-
-        // 1. Give the native bridge time to initialize (Critical for Android)
-        const Capacitor = window.Capacitor;
-        if (Capacitor && Capacitor.getPlatform && Capacitor.getPlatform() !== 'web') {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-
-        // 2. Preload sounds for Native Audio engine
-        const NativeAudio = Capacitor?.Plugins?.NativeAudio;
-        if (NativeAudio) {
-            const sounds = [
-                { id: 'tap', path: 'assets/sounds/tap.mp3' },
-                { id: 'success', path: 'assets/sounds/success.mp3' },
-                { id: 'notify', path: 'assets/sounds/notify.mp3' }
-            ];
-
-            for (const s of sounds) {
-                try {
-                    // Preload with explicitly relative path (no leading slash)
-                    await NativeAudio.preload({ 
-                        assetId: s.id, 
-                        assetPath: s.path, 
-                        audioChannelNum: 1, 
-                        isRaw: false 
-                    });
-                    console.log(`[SoundManager] Preloaded ${s.id}`);
-                } catch (err) {
-                    console.log(`[SoundManager] Preload skip for ${s.id} (likely already loaded)`);
-                }
-            }
-            this._isNativeReady = true;
-        }
-
-        // 3. Global tap listener
-        document.addEventListener('click', (e) => {
-            const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
-            if (el && !el.hasAttribute('data-no-sound')) {
-                this.play('tap');
-            }
-        }, true);
     }
 };
 
