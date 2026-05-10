@@ -587,3 +587,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Performance: Implemented Stale-While-Revalidate (SWR) for Dashboard Ranking.
 - Instant Navigation: Going back to the dashboard now renders the last known ranking list instantly from memory.
 - Version: 1.9.5 (Build 195)
+
+[SKELETON_ANIMATION_V2.0] - 2026-05-10 06:21:00 +0300
+- Premium Aesthetics: Upgraded skeleton animation with high-contrast shimmer and subtle opacity pulsing.
+- UI Stability: Fixed a critical CSS syntax error that was breaking the skeleton display.
+- Performance: Optimized dashboard ranking cache for instant back-navigation.
+- Cache Management: Incremented asset versions to v=196 for immediate global deployment.
+- Version: 1.9.6 (Build 196)
