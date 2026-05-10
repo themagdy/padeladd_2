@@ -615,3 +615,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Enhancement: Updated the "Completed" status tag color to Green for better visual feedback.
 - Navigation Refinement: Restored the standard match card layout for the "Past" matches tab, ensuring the "Completed" tag is clearly visible for scored games.
 - Version: 1.9.8 (Build 198)
+
+[UI_REFINEMENTS_V1.1] - 2026-05-10 17:15:00 +0300
+- UX Improvement: Replaced "Completed" tag trophy icon with a Military Medal icon (🎖) for a more premium look.
+- Performance: Removed smooth scroll animation to make page navigation feel instant and more responsive.
+- Version: 1.9.8 (Build 198)
