@@ -859,19 +859,29 @@ form {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--c-bg-card) 25%, #232D40 50%, var(--c-bg-card) 75%);
+  background: linear-gradient(
+    90deg, 
+    rgba(255, 255, 255, 0.03) 25%, 
+    rgba(255, 255, 255, 0.08) 50%, 
+    rgba(255, 255, 255, 0.03) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+  animation: shimmer 2s infinite linear;
   border-radius: var(--r-sm);
+  opacity: 0.8;
 }
 
 @keyframes shimmer {
-  from {
+  0% {
     background-position: 200% 0;
+    opacity: 0.6;
   }
-
-  to {
+  50% {
+    opacity: 0.8;
+  }
+  100% {
     background-position: -200% 0;
+    opacity: 0.6;
   }
 }
 
