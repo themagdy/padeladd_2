@@ -755,3 +755,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.8 (Build 228) - 2026-05-12
 - Layout Refinement: Increased top padding for 'My Matches' and 'Play' listing pages to improve vertical balance and breathing room.
 - Version: 2.2.8 (Build 228)
+
+2.2.9 (Build 229) - 2026-05-12
+- UX: Updated the match reporting prompt to 'Tell us what happened?' for a more direct and conversational user experience.
+- Version: 2.2.9 (Build 229)

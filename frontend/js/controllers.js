@@ -5347,7 +5347,7 @@ const ScoringController = {
 
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
-            title: targetUserId ? 'Report player conduct' : 'What happened during the match?',
+            title: targetUserId ? 'Report player conduct' : 'Tell us what happened?',
             message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level' + (targetUserId ? '' : '\n• Technical issue'),
             showInput: true,
             inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
