@@ -2672,7 +2672,7 @@ const MatchesController = {
 
             metaEl.innerHTML = `
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
-                    ${match.court_name ? `<div class="court-label-white" style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
+                    ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
                     <span style="opacity:0.15; margin:0 2px;">|</span>
                     <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
