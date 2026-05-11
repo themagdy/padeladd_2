@@ -779,3 +779,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.14 (Build 214) - 2026-05-12
 - UI Refinement: Grouped match date and time into a single non-breaking block to ensure they stay on the same line.
 - Version: 2.2.14 (Build 214)
+
+2.2.15 (Build 215) - 2026-05-12
+- UI Refinement: Harmonized 'Court' font style with other metadata for a more consistent and balanced look.
+- Version: 2.2.15 (Build 215)
