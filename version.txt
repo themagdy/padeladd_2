@@ -718,3 +718,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Mobile Optimization: Reduced dashboard top padding by 10px to ensure a more compact and immediate interface on smaller viewports.
 - Maintenance: Unified design tokens and class structures (rank-grid-full) across the ranking table header, rows, and skeleton loaders.
 - Version: 2.2.1 (Build 221)
+
+2.2.2 (Build 222) - 2026-05-11
+- Notifications: Removed dispute reasons from match dispute alerts for a cleaner and more direct communication experience.
+- Match Chat: Enlarged player avatars in the player bar (42px) and timeline (38px) for significantly improved visibility and UX.
+- UI Stability: Implemented a fixed height (66px) for the chat avatar bar to prevent layout shifts and ensure vertical centering.
+- Version: 2.2.2 (Build 222)
