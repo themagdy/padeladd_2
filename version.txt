@@ -667,6 +667,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Optimization: Implemented deep data comparison in MatchesController polling to prevent re-rendering when the incoming match data is identical to the cached state.
 - Version: 2.0.9 (Build 209)
 
+2.1.5 (Build 215) - 2026-05-11
+- UX: Launched "Bulletproof Sound Manager" - Simplified architecture for 100% reliability.
+- UX: Switched to persistent Web Audio singleton for 'tap' sounds to prevent bridge saturation.
+- UX: Updated index.html versioning (v215) to force-clear mobile WebView cache.
+- Version: 2.1.5 (Build 215)
+
 2.1.4 (Build 214) - 2026-05-11
 - UX: Hardened "Sound Manager V4" with mandatory channel cleanup (unload before preload).
 - UX: Implemented a 150ms race-condition fallback to Web Audio to prevent silent failures on Android.
