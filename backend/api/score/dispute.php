@@ -89,7 +89,7 @@ try {
     $me = $meStmt->fetch();
     $myName = getDisplayName($me);
 
-    $msg = "{$myName} disputed the submitted score for your match: \"{$reason}\"";
+    $msg = "{$myName} disputed the submitted score for your match";
     notifyMatchParticipants($pdo, $match_id, 'score_disputed', $msg, $uid);
 
     jsonResponse(true, 'Score disputed successfully.');
