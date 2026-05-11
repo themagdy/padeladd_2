@@ -933,14 +933,24 @@ const ProfileViewController = {
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
 
             if (profile && thumb) {
-                av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>';
+                av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + `
+                    <div class="avatar-scan-overlay"></div>
+                    <div class="avatar-shimmer-overlay"></div>
+                `;
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = initials + '<div class="avatar-scan-overlay"></div>';
+                av.innerHTML = initials + `
+                    <div class="avatar-scan-overlay"></div>
+                    <div class="avatar-shimmer-overlay"></div>
+                `;
                 av.classList.add('avatar-placeholder');
                 av.style.background = 'var(--g-primary)';
             }
+            // Trigger animations
+            av.classList.remove('scan-active');
+            void av.offsetWidth; // Force reflow
+            av.classList.add('scan-active');
         }
 
         // Action cards visibility (only for self)
