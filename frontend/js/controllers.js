@@ -3923,7 +3923,7 @@ const ChatController = {
                 // Non-clickable representation
                 return `
                     <div class="chat-player-avatar" 
-                         style="position:relative; z-index:5; flex-shrink:0; width:36px; height:36px; border-radius:50%; ${isMe ? 'border-color:var(--c-primary);' : ''} ${isRestricted ? 'cursor:default;' : ''}"
+                         style="position:relative; z-index:5; flex-shrink:0; width:42px; height:42px; border-radius:50%; ${isMe ? 'border-color:var(--c-primary);' : ''} ${isRestricted ? 'cursor:default;' : ''}"
                          title="${displayName}${isMe ? ' (You)' : ''}">
                         ${UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         ${onlineDot}
@@ -3939,7 +3939,7 @@ const ChatController = {
                          data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
                          data-code="${p.player_code || ''}"
                          data-gender="${p.gender || 'male'}"
-                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0; width:36px; height:36px; border-radius:50%;"
+                         style="position:relative; z-index:5; cursor:pointer; flex-shrink:0; width:42px; height:42px; border-radius:50%;"
                          title="${displayName}">
                         ${UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         ${onlineDot}
@@ -4288,7 +4288,7 @@ const ChatController = {
                             : (name[0] || '?').toUpperCase();
 
                         group.innerHTML = `
-                            <div class="chat-group-avatar" style="width:34px; height:34px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex-shrink:0; overflow:hidden;">${avatar}</div>
+                            <div class="chat-group-avatar" style="width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;">${avatar}</div>
                             <div class="chat-msg-column" style="max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}">
                                 ${!isMe ? `<div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;">${name} ${code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;">${code}</span>` : ''}</div>` : ''}
                             </div>
