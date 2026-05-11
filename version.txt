@@ -668,9 +668,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.0.9 (Build 209)
 
 2.1.6 (Build 216) - 2026-05-11
-- UX: Restored Native Hardware Engine for all sounds (Tap, Success, Notify) for consistent high-performance playback.
-- UX: Switched global tap listener to 'pointerdown' for instant, zero-delay response on mobile devices.
-- UX: Forced cache refresh (v216) for all core application scripts.
+- UX: Implemented "Identical Sound Logic" - Tap now uses the exact same loading/playing pattern as Success/Notify.
+- UX: Updated index.html versioning (v216) to bypass mobile WebView cache.
 - Version: 2.1.6 (Build 216)
 
 2.1.5 (Build 215) - 2026-05-11

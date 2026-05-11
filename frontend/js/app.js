@@ -14,63 +14,36 @@ var FX = {
 
 var SoundManager = {
     _sounds: {},
-    _isNativeReady: false,
-    _isUnlocked: false,
+    _unlocked: false,
 
-    init: async function () {
+    init: function () {
         if (typeof Audio === 'undefined') return;
 
-        // 1. Setup Browser Audio (Always ready as fallback)
-        const sounds = {
+        // 1. Identical Loading for all 3 sounds
+        const list = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
             notify: 'assets/sounds/notify.mp3'
         };
 
-        for (const [id, path] of Object.entries(sounds)) {
+        for (const [id, path] of Object.entries(list)) {
             this._sounds[id] = new Audio('./' + path);
             this._sounds[id].preload = 'auto';
         }
 
-        const Capacitor = window.Capacitor;
-        const Plugins = Capacitor?.Plugins;
-        const NativeAudio = Plugins?.NativeAudio;
-
-        // 2. Native Hardware Engine Warmup
-        if (Capacitor && Capacitor.getPlatform() !== 'web' && NativeAudio) {
-            const setupNative = async () => {
-                for (const [id, path] of Object.entries(sounds)) {
-                    try {
-                        await NativeAudio.unload({ assetId: id }).catch(() => { });
-                        await NativeAudio.preload({
-                            assetId: id,
-                            assetPath: path,
-                            audioChannelNum: 1,
-                            isRaw: false
-                        });
-                        await NativeAudio.setVolume({ assetId: id, volume: 1.0 });
-                    } catch (e) { }
-                }
-                this._isNativeReady = true;
-                console.log('[SoundManager] Native Engine Ready');
-            };
-
-            setupNative();
-            setTimeout(setupNative, 2000);
-        }
-
-        // 3. Web Audio Unlocker
+        // 2. Identical Unlock for all 3 sounds
         const unlock = () => {
-            if (this._isUnlocked) return;
+            if (this._unlocked) return;
             for (const s of Object.values(this._sounds)) {
-                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => { });
+                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
             }
-            this._isUnlocked = true;
+            this._unlocked = true;
+            console.log('[SoundManager] All Sounds Unlocked');
         };
-        ['pointerdown', 'touchstart', 'click'].forEach(evt => document.addEventListener(evt, unlock, { passive: true }));
+        ['touchstart', 'click', 'mousedown'].forEach(e => document.addEventListener(e, unlock, { passive: true }));
 
-        // 4. Global Tap Listener (Using pointerdown for instant response)
-        document.addEventListener('pointerdown', (e) => {
+        // 3. Global Listener for Tap
+        document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
                 this.play('tap');
@@ -79,34 +52,17 @@ var SoundManager = {
     },
 
     play: function (type) {
-        if (typeof Audio === 'undefined') return;
-
-        const Plugins = window.Capacitor?.Plugins;
-        const NativeAudio = Plugins?.NativeAudio;
-        const Haptics = Plugins?.Haptics;
-
-        // Parallel Haptics (Immediate)
-        if (Haptics) {
-            if (type === 'tap') Haptics.selectionChanged().catch(() => { });
-            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => { });
-        }
-
-        // Try Native Engine First
-        if (NativeAudio && this._isNativeReady) {
-            NativeAudio.play({ assetId: type }).catch(() => {
-                this._playWeb(type);
-            });
-            return;
-        }
-
-        this._playWeb(type);
-    },
-
-    _playWeb: function (type) {
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
-            s.play().catch(() => { });
+            s.play().catch(() => {});
+        }
+
+        // Haptics (Same way for all)
+        const Haptics = window.Capacitor?.Plugins?.Haptics;
+        if (Haptics) {
+            if (type === 'tap') Haptics.selectionChanged().catch(() => {});
+            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => {});
         }
     }
 };
