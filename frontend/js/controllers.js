@@ -2675,9 +2675,9 @@ const MatchesController = {
                     ${match.court_name ? `<div class="court-label-white" style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
                     <span style="opacity:0.15; margin:0 2px;">|</span>
-                    <div style="display:flex; align-items:center; gap:6px;"><span>🗓</span> ${dateStr}</div>
-                    <span style="opacity:0.3; margin:0 -2px;">•</span>
-                    <div style="display:flex; align-items:center; gap:6px;">${timeStr}</div>
+                    <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
+                        <span>🗓</span> ${dateStr} <span style="opacity:0.3; margin:0 2px;">•</span> ${timeStr}
+                    </div>
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">

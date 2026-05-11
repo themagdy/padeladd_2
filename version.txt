@@ -775,3 +775,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.13 (Build 213) - 2026-05-12
 - UI Refinement: Added a subtle dot separator (•) between match date and time for better visual grouping.
 - Version: 2.2.13 (Build 213)
+
+2.2.14 (Build 214) - 2026-05-12
+- UI Refinement: Grouped match date and time into a single non-breaking block to ensure they stay on the same line.
+- Version: 2.2.14 (Build 214)
