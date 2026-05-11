@@ -1428,6 +1428,7 @@ const MatchesController = {
     _currentTab: 'play_upcoming',
     _playFilterType: 'competition',
     _playFilterGender: 'same_gender',
+    _lastRequestId: 0,
     _cache: {}, // Stores lists per tab/filters
     _viewCache: {}, // Stores match details by ID
     _lastMatchId: null,
@@ -2009,15 +2010,17 @@ const MatchesController = {
         const expectedTab = MatchesController._currentTab;
         const expectedFilterType = MatchesController._playFilterType;
         const expectedFilterGender = MatchesController._playFilterGender;
+        const reqId = ++MatchesController._lastRequestId;
 
         if (!isSilent) MatchesController._isLoading = true;
         let res = await API.post(endpoint, payload);
 
-        // Discard response if user changed tabs or filters while we were waiting
+        // Discard response if user changed tabs/filters OR if a newer request for the SAME state started
         if (
             MatchesController._currentTab !== expectedTab ||
             MatchesController._playFilterType !== expectedFilterType ||
-            MatchesController._playFilterGender !== expectedFilterGender
+            MatchesController._playFilterGender !== expectedFilterGender ||
+            reqId !== MatchesController._lastRequestId
         ) {
             return;
         }
@@ -2066,11 +2069,14 @@ const MatchesController = {
             return;
         }
 
-        // Normal load (not polling)
+        // Normal load (not polling): Merge uniquely by ID
         if (MatchesController._offset === 0) {
             MatchesController._cache[cacheKey] = newMatches;
         } else {
-            MatchesController._cache[cacheKey] = (MatchesController._cache[cacheKey] || []).concat(newMatches);
+            const current = MatchesController._cache[cacheKey] || [];
+            const seenIds = new Set(current.map(m => m.id));
+            const uniqueNew = newMatches.filter(m => !seenIds.has(m.id));
+            MatchesController._cache[cacheKey] = current.concat(uniqueNew);
         }
 
         MatchesController._hasMore = res.data.has_more;
