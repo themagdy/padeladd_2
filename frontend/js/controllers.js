@@ -559,15 +559,15 @@ const DashboardController = {
 
         const currentGender = DashboardController._currentRankTab;
 
-            // Update UI buttons in dashboard
-            const males = document.getElementById('tab-males');
-            const females = document.getElementById('tab-females');
-            if (males && females) {
-                males.style.borderBottomColor = currentGender === 'male' ? 'var(--c-primary)' : 'transparent';
-                males.style.color = currentGender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
-                females.style.borderBottomColor = currentGender === 'female' ? '#D81B60' : 'transparent';
-                females.style.color = currentGender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
-            }
+        // Update UI buttons in dashboard
+        const males = document.getElementById('tab-males');
+        const females = document.getElementById('tab-females');
+        if (males && females) {
+            males.style.borderBottomColor = currentGender === 'male' ? 'var(--c-primary)' : 'transparent';
+            males.style.color = currentGender === 'male' ? 'var(--c-text)' : 'var(--c-text-muted)';
+            females.style.borderBottomColor = currentGender === 'female' ? '#D81B60' : 'transparent';
+            females.style.color = currentGender === 'female' ? 'var(--c-text)' : 'var(--c-text-muted)';
+        }
 
         if (matchData) {
             DashboardController._allMatches = matchData;
@@ -642,7 +642,7 @@ const DashboardController = {
                 html += DashboardController.renderMatchCard(m, uid);
             });
         }
-        
+
         // Prevent flicker: only update DOM if HTML changed
         if (listEl._lastHtml === html) return;
         listEl.innerHTML = html;
@@ -773,11 +773,11 @@ const DashboardController = {
         // Update cache and render
         DashboardController._rankingCache[gender] = ranking;
         DashboardController._rankingCache[gender + '_json'] = rankingJson;
-        
+
         // Persist to localStorage for next app load
         try {
             localStorage.setItem('dash_ranking_cache', JSON.stringify(DashboardController._rankingCache));
-        } catch(e) {}
+        } catch (e) { }
 
         DashboardController._renderRankingList(ranking);
     },
@@ -890,7 +890,7 @@ const ProfileViewController = {
         if (!isSilent && hasCache) {
             // Render instantly from cache
             res = { success: true, data: hasCache };
-            
+
             // Trigger silent background fetch for SWR
             setTimeout(() => {
                 ProfileViewController.init(params, true);
@@ -982,7 +982,7 @@ const ProfileViewController = {
         if (codeEl) {
             if (profile?.player_code) {
                 codeEl.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">ID</div>
+                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 12px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">ID</div>
                     <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
                 `;
                 codeEl.style.display = 'inline-flex';
@@ -1063,7 +1063,7 @@ const ProfileViewController = {
             }
 
             const matchRes = await API.post('/matches/user', matchPayload);
-            
+
             if (listEl) {
                 // Filter: only completed matches (history)
                 const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
@@ -2503,7 +2503,7 @@ const MatchesController = {
 
         const skeleton = document.getElementById('mv-skeleton');
         const content = document.getElementById('mv-content');
-        
+
         const cacheKey = query.match_id ? `id_${query.match_id}` : `code_${query.match_code}`;
         const hasCache = MatchesController._viewCache[cacheKey];
 
@@ -2513,7 +2513,7 @@ const MatchesController = {
             // Render instantly from cache
             res = { success: true, data: hasCache };
             if (skeleton) skeleton.style.display = 'none';
-            
+
             // Trigger silent background fetch for SWR
             setTimeout(() => {
                 query._isSWR = true;
@@ -2523,10 +2523,10 @@ const MatchesController = {
             // Full network load
             if (!isSilent && skeleton) skeleton.style.display = 'block';
             if (!isSilent && content) content.style.display = 'none';
-            
+
             res = await API.post('/match/details', query);
             if (!isSilent && skeleton) skeleton.style.display = 'none';
-            
+
             if (res && res.success && res.data) {
                 MatchesController._viewCache[cacheKey] = res.data;
             }
