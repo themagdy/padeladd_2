@@ -220,11 +220,9 @@ try {
     $ins->execute([$match_id, $uid, $targetTeam, $targetSlot, $user_side, (int)($ptsRow['rank_points'] ?? 0), (int)($ptsRow['current_buffer'] ?? 100)]);
 
 
-    // Cleanup: Cancel any existing waiting list entries for this user in this match
-    $pdo->prepare("
-        UPDATE waiting_list SET request_status = 'joined'
-        WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
-    ")->execute([$match_id, $uid, $uid]);
+    // Cleanup: Use the helper to ensure waitlist is consistent for this match
+    require_once __DIR__ . '/../../helpers/waitlist_helper.php';
+    cleanupWaitlist($pdo, $match_id);
 
     // Ensure player_stats row (starting points = 100 for beginners)
     $pdo->prepare("INSERT IGNORE INTO player_stats (user_id, current_buffer, initial_buffer, buffer_matches_left, rank_points) VALUES (?, 100, 100, 20, 0)")->execute([$uid]);

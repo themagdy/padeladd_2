@@ -324,6 +324,7 @@ foreach ($matches as $m) {
         'match_type'           => $m['match_type'],
         'eligible_min'         => $eligible_min,
         'eligible_max'         => $eligible_max,
+        'duration_minutes'     => (int)($m['duration_minutes'] ?? 0),
         'player_eligible'      => $playerEligible,
         'match_label'          => $matchLabel,
         'sort_key'             => $sortKey,

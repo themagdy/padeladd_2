@@ -1468,9 +1468,9 @@ const MatchesController = {
         const timeInput = document.getElementById('cm-time');
 
         if (dateScroller && dateInput) {
-            // Generate next 10 days
+            // Generate next 4 days (Today + 3)
             let html = '';
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 4; i++) {
                 const d = new Date();
                 d.setDate(d.getDate() + i);
                 const iso = d.toISOString().slice(0, 10);
@@ -2502,6 +2502,7 @@ const MatchesController = {
 
         const { match, slots, waiting_list, user_in_match, pending_for_me, my_pending_request, my_waitlist_entry, is_creator, scores, disputes, viewer_id, player_eligible, eligibility_reason } = res.data;
         const myUserId = viewer_id || (user_in_match ? parseInt(user_in_match.user_id) : 0);
+        const approvedCount = (scores || []).filter(s => s.status === 'approved').length;
 
         if (!match || !slots) {
             Toast.show('Incomplete match data', 'error');
@@ -2636,6 +2637,7 @@ const MatchesController = {
                     ${match.court_name ? `<div class="court-label-white" style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     <div style="display:flex; align-items:center; gap:6px;"><span>🗓</span> ${dateStr}</div>
                     <div style="display:flex; align-items:center; gap:6px;"><span>⏰</span> ${timeStr}</div>
+                    ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
@@ -2919,13 +2921,22 @@ const MatchesController = {
                                 `;
                             } else if (s.status === 'disputed') {
                                 scoringHtml += `
-                                    <div class="results-banner" style="border-color:var(--c-red); margin-bottom:24px;">
-                                        <div class="results-header">
-                                            <div class="results-title">Match Disputed</div>
-                                            <div class="status-tag disputed">Under Review</div>
+                                    <div class="disputed-score-container" style="margin-bottom:32px; border:1px solid rgba(255,59,48,0.2); border-radius:var(--r-lg); padding:4px; background:rgba(255,59,48,0.02);">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:12px 16px 0;">
+                                            <div style="font-size:15px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:6px;">
+                                                🏆 ${(scores || []).length > 1 ? `${getOrdinal(idx + 1)} Match Score` : 'Match Score'}
+                                            </div>
+                                            <div class="status-tag disputed" style="background:rgba(255,59,48,0.1); color:var(--c-red); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Disputed</div>
                                         </div>
-                                        <p style="font-size:13px; color:var(--c-text); text-align:center; margin:10px 0;">This match result has been disputed. Admins are reviewing the logs.</p>
-                                        ${user_in_match ? `<button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Correct Score</button>` : ''}
+                                        
+                                        <div style="opacity:0.6; filter:grayscale(0.5);">
+                                            ${ScoreUI.renderMatchScore(match, s, slots, false)}
+                                        </div>
+
+                                        <div style="padding:16px; text-align:center;">
+                                            <p style="font-size:12px; color:var(--c-text-muted); margin-bottom:12px;">This result is under review by admins.</p>
+                                            ${(user_in_match && approvedCount < 2) ? `<button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:44px;">Submit Correct Score</button>` : ''}
+                                        </div>
                                     </div>
                                 `;
                             }
@@ -4620,11 +4631,7 @@ const NotificationsController = {
         const panel = document.getElementById('notif-panel');
         if (!panel) return;
 
-        // 1. Mark everything as read IMMEDIATELY (Silent)
-        // This satisfies the user expectation that opening the panel clears the count
-        this.markAllRead(true);
-
-        // 2. Render preloaded data immediately if we have it
+        // Render preloaded data immediately if we have it
         if (this._notifications.length > 0) {
             this.renderList();
         } else {
@@ -4634,7 +4641,7 @@ const NotificationsController = {
             this.loadMore();
         }
 
-        // Hide badge immediately (redundant but safe)
+        // Hide badge immediately
         const badge = document.getElementById('nav-notif-badge');
         if (badge) badge.style.display = 'none';
 
@@ -4644,7 +4651,7 @@ const NotificationsController = {
         if (this._notifications.length > 0) {
             this._offset = 0;
             this._hasMore = true;
-            this._notifications = []; 
+            this._notifications = []; // Clear for fresh sync, but only AFTER renderList was called above
             this.loadMore(true); // silent load
         }
     },
@@ -4920,14 +4927,14 @@ const NotificationsController = {
         }
     },
 
-    markAllRead: async function (isSilent = false) {
+    markAllRead: async function () {
         const res = await API.post('/notifications/read', { all: true });
         if (res && res.success) {
             this._notifications.forEach(n => n.is_read = true);
             this._visuallyUnreadIds.clear(); // Clear visual persistent state on manual "Mark all read"
             const badge = document.getElementById('nav-notif-badge');
             if (badge) badge.style.display = 'none';
-            if (!isSilent) this.renderList();
+            this.renderList();
         }
     },
 

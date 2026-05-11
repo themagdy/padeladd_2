@@ -100,7 +100,8 @@ foreach ($matches as $m) {
         'team_a'         => $teamA,
         'team_b'         => $teamB,
         'user_team'      => $userTeam,
-        'scores'         => $scoresByMatch[$mid] ?? []
+        'scores'         => $scoresByMatch[$mid] ?? [],
+        'duration_minutes' => (int)($m['duration_minutes'] ?? 0)
     ];
 }
 

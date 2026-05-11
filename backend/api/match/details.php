@@ -214,6 +214,7 @@ jsonResponse(true, 'Match details loaded.', [
         'is_policy_violation' => (bool) ($m['is_policy_violation'] ?? 0),
         'eligible_min' => (int) ($m['eligible_min'] ?? 0),
         'eligible_max' => (int) ($m['eligible_max'] ?? 0),
+        'duration_minutes' => (int) ($m['duration_minutes'] ?? 0),
     ],
     'slots' => $slots,
     'waiting_list' => $waiting_list,

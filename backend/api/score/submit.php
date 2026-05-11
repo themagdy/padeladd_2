@@ -116,7 +116,7 @@ try {
     $me = $meStmt->fetch();
     $myName = getDisplayName($me);
 
-    $msg = "{$myName} submitted a score for your match. Please review and approve.";
+    $msg = "{$myName} submitted a score for your match. Please review.";
     notifyMatchParticipants($pdo, $match_id, 'score_submitted', $msg, $uid);
 
     jsonResponse(true, 'Score submitted successfully. Pending opponent approval.', ['score_id' => $score_id]);
