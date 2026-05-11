@@ -2674,7 +2674,7 @@ const MatchesController = {
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
-                    <span style="opacity:0.15; margin:0 2px;">|</span>
+                    <span class="match-meta-sep">|</span>
                     <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
                         <span>🗓</span> ${dateStr} <span style="opacity:0.3; margin:0 2px;">•</span> ${timeStr}
                     </div>
