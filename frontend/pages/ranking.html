@@ -102,7 +102,7 @@
         <div style="background:var(--g-card); border-radius: 0 0 var(--r-lg) var(--r-lg); overflow:visible !important;">
             <div id="ranking-full-list" style="min-height:400px;">
                 <!-- Skeletons -->
-                <div
+                <div class="rank-grid-full"
                     style="padding:14px 10px; display:grid; grid-template-columns: 40px 1fr 60px; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.05); overflow:hidden;">
                     <div style="display:flex; justify-content:center;">
                         <div class="skeleton" style="width:24px; height:24px; border-radius:50%; opacity:0.3;"></div>
@@ -119,7 +119,7 @@
                         <div class="skeleton" style="width:40px; height:14px; border-radius:4px;"></div>
                     </div>
                 </div>
-                <div
+                <div class="rank-grid-full"
                     style="padding:14px 10px; display:grid; grid-template-columns: 40px 1fr 60px; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.05); overflow:hidden;">
                     <div style="display:flex; justify-content:center;">
                         <div class="skeleton" style="width:24px; height:24px; border-radius:50%; opacity:0.3;"></div>
@@ -312,6 +312,11 @@
     }
 
     @media (min-width: 769px) {
+        .page#ranking-page .rank-grid-full {
+            padding-left: 30px !important;
+            padding-right: 30px !important;
+        }
+
         .ranking-header-top-row {
             margin-bottom: -4px !important;
         }

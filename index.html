@@ -160,8 +160,14 @@
 
 
 
-    <!-- Capacitor Core -->
-    <script src="capacitor.js"></script>
+    <!-- Capacitor Core (Only load on native) -->
+    <script>
+        if (window.location.protocol === 'capacitor:') {
+            var script = document.createElement('script');
+            script.src = 'capacitor.js';
+            document.head.appendChild(script);
+        }
+    </script>
     <script src="frontend/js/config.js?v=220"></script>
     <script src="frontend/js/auth.js?v=220"></script>
     <script src="frontend/js/api.js?v=220"></script>
