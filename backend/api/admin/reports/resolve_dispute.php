@@ -13,6 +13,7 @@ header('Content-Type: application/json');
 validateAdmin();
 
 $pdo = getDB();
+$data = json_decode(file_get_contents('php://input'), true);
 
 $dispute_id = (int)($data['dispute_id'] ?? 0);
 $action = $data['action'] ?? ''; // 'approve' or 'reject'
@@ -42,7 +43,7 @@ $pdo->beginTransaction();
 try {
     if ($action === 'approve') {
         // OVERRIDE: Force approve the score
-        $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = 0 WHERE id = ?"); // 0 for Admin
+        $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = NULL WHERE id = ?");
         $upd->execute([$score_id]);
 
         // Trigger Ranking Update

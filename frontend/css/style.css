@@ -3432,6 +3432,15 @@ form {
   font-family: monospace;
 }
 
+@media (max-width: 768px) {
+  .status-badge-pill {
+    font-size: 11px;
+  }
+  .badge {
+    font-size: 10px;
+  }
+}
+
 .player-mini-slot {
   display: flex;
   align-items: center;
