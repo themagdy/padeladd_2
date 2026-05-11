@@ -730,3 +730,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Race-Condition Protection: Implemented request ID tracking in MatchesController to ensure only the most recent asynchronous data is processed and rendered.
 - Data Integrity: Added unique ID merging for the match list cache, ensuring no redundant UI cards appear even during network overlaps.
 - Version: 2.2.3 (Build 223)
+
+2.2.4 (Build 224) - 2026-05-11
+- UI Accessibility: Made Location and Share buttons universally visible in Match Details for all players, regardless of match participation.
+- Version: 2.2.4 (Build 224)
