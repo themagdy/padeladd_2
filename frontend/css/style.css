@@ -4519,7 +4519,7 @@ body {
   to { opacity: 1; }
 }
 @keyframes rankPulseDot {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(0.7); filter: brightness(1.4); }
-  100% { transform: scale(1); filter: brightness(1); }
+  0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 8px rgba(0, 206, 0, 0.5); }
+  50% { transform: scale(0.6); filter: brightness(2); box-shadow: 0 0 15px rgba(0, 206, 0, 0.8); }
+  100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 8px rgba(0, 206, 0, 0.5); }
 }

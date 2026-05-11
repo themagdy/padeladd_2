@@ -743,3 +743,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Rich Profile Animation: Upgraded profile picture reveal to a multi-layered 'Data Reveal' sequence with orange scanning beams, scale-in pops, and mid-scan glow pulses.
 - Visual Depth: Added data-grid flicker effects to the profile avatar for a more compelling high-tech aesthetic.
 - Version: 2.2.6 (Build 226)
+
+2.2.7 (Build 227) - 2026-05-12
+- Ranking Header Overhaul: Modernized the 'The Padel Ladder' title with a premium metallic horizon gradient and sharpened typography.
+- Pro League Styling: Redesigned 'PRO LEAGUE' label as a high-tech cyber-badge with glassmorphism and neon accents.
+- Animation Refinement: Enhanced the 'Live' status dot with a more aggressive inward pulse and faster heartbeat for better visibility.
+- Visual Impact: Scaled up the ranking trophy glass and optimized header spacing for a bolder competitive feel.
+- Layout Optimization: Fine-tuned padding and margins across the ranking header for a more cohesive desktop/mobile experience.
+- Version: 2.2.7 (Build 227)
