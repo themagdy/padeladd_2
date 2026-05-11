@@ -763,3 +763,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.10 (Build 210) - 2026-05-12
 - UX: Optimized match details font size for mobile devices (reduced to 13px) for better fit and readability on smaller screens.
 - Version: 2.2.10 (Build 210)
+
+2.2.11 (Build 211) - 2026-05-12
+- UI Refinement: Reordered match details for better logical flow (Court, Duration, Date, Time) and added a subtle visual separator.
+- Version: 2.2.11 (Build 211)
