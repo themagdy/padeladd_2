@@ -1846,7 +1846,7 @@ const MatchesController = {
                 }
             } else {
                 headerTitleEl.textContent = 'My Matches';
-                headerSubEl.textContent = 'View your upcoming matches and history';
+                headerSubEl.textContent = 'Your upcoming matches and history';
 
                 const isUpcoming = MatchesController._currentTab === 'mine_upcoming';
                 const isPast = MatchesController._currentTab === 'mine_past';
