@@ -995,14 +995,37 @@ const ProfileViewController = {
         const metaEl = document.getElementById('prof-meta');
         if (metaEl) {
             const items = [];
-            if (profile?.location) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>📍 ${profile.location}</span>`);
-            if (profile?.playing_side) {
-                const h = profile.playing_side.charAt(0).toUpperCase() + profile.playing_side.slice(1);
-                const label = profile.playing_side === 'flexible' ? 'Flexible' : h + ' side';
-                items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>🎾 ${label}</span>`);
+            const metaStyle = `display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:6px 14px 6px 6px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
+            const iconCircle = `width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);`;
+            const labelStyle = `font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px;`;
+
+            if (profile?.location) {
+                items.push(`
+                    <div style="${metaStyle}">
+                        <div style="${iconCircle}">📍</div>
+                        <span style="${labelStyle}">${profile.location}</span>
+                    </div>
+                `);
             }
-            if (profile?.age) items.push(`<span style='font-size:13px; color:var(--c-text-muted); display:flex; align-items:center; gap:6px;'>🎂 Age ${profile.age}</span>`);
+            if (profile?.playing_side) {
+                const label = profile.playing_side === 'flexible' ? 'Flexible' : profile.playing_side + ' side';
+                items.push(`
+                    <div style="${metaStyle}">
+                        <div style="${iconCircle}">🎾</div>
+                        <span style="${labelStyle}">${label}</span>
+                    </div>
+                `);
+            }
+            if (profile?.age) {
+                items.push(`
+                    <div style="${metaStyle}">
+                        <div style="${iconCircle}">🎂</div>
+                        <span style="${labelStyle}">Age ${profile.age}</span>
+                    </div>
+                `);
+            }
             metaEl.innerHTML = items.join('');
+            metaEl.style.gap = '12px';
         }
 
         // Bio
