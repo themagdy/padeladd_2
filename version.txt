@@ -706,4 +706,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Details UI: Added match duration (⏱) to the metadata section for clearer game information.
 - Mobile UI: Reduced font size of tags and pills by 1px specifically for mobile devices to improve layout fit.
 - Infrastructure: Implemented real-time waitlist cleanup via waitlist_helper.php and resolved admin panel foreign key issues in moderator approvals.
+- Privacy: Launched a standalone, premium Privacy Policy page (privacy.html) with independent glassmorphic styling and official brand identity.
+- Maintenance: Safely removed scores and disputes for match M-H640 to allow for re-submission.
 - Version: 2.2.0 (Build 220)
