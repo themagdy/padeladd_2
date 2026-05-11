@@ -3374,6 +3374,16 @@ form {
   font-weight: 800;
 }
 
+.match-meta-row {
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .match-meta-row {
+    font-size: 13px;
+  }
+}
+
 .status-badge-pill {
   display: inline-flex;
   align-items: center;
