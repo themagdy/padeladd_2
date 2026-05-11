@@ -1,11 +1,3 @@
-65c6f8c - 2026-05-11 09:23:00 +0300
-- Refined Ranking header aesthetic with Montserrat 900, metallic gradients, and staggered animations.
-- Fixed Ranking table inner padding (30px) on desktop for better horizontal spacing and balance.
-- Resolved "capacitor.js" syntax error on web by implementing conditional script loading.
-- Restyled "Play" and "My Matches" headers with premium Montserrat typography and metallic gradients.
-- Optimized Dashboard layout on mobile by reducing top margin by 10px for a more compact view.
-- Bumped application version to 2.2.1.
-
 a28060d - 2026-04-24 16:46:13 +0300
 - Resolved Match Chat Permalink auto-open issues.
 - Fixed back button logic to return to match details from chat.
@@ -717,3 +709,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Privacy: Launched a standalone, premium Privacy Policy page (privacy.html) with independent glassmorphic styling and official brand identity.
 - Maintenance: Safely removed scores and disputes for match M-H640 to allow for re-submission.
 - Version: 2.2.0 (Build 220)
+
+2.2.1 (Build 221) - 2026-05-11
+- UI/UX: Overhauled the Ranking page header with premium Montserrat typography, metallic gradients, and staggered entrance animations.
+- UI/UX: Restyled "Play" and "My Matches" headers with a matching premium aesthetic and refined subtitle spacing.
+- Desktop Layout: Optimized the ranking table with 30px inner horizontal padding for improved visual balance on larger screens.
+- Web Stability: Implemented conditional capacitor.js loading to eliminate 404-related syntax errors in web environments (MAMP).
+- Mobile Optimization: Reduced dashboard top padding by 10px to ensure a more compact and immediate interface on smaller viewports.
+- Maintenance: Unified design tokens and class structures (rank-grid-full) across the ranking table header, rows, and skeleton loaders.
+- Version: 2.2.1 (Build 221)
