@@ -667,15 +667,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Optimization: Implemented deep data comparison in MatchesController polling to prevent re-rendering when the incoming match data is identical to the cached state.
 - Version: 2.0.9 (Build 209)
 
-2.1.7 (Build 217) - 2026-05-11
-- Backend: Hardened match dispute resolution with composition-aware validation (Fixes partner-swap dispute bug).
-- Backend: Implemented real-time waitlist cleanup triggered by user actions, retiring all cronjobs.
-- UI: Enhanced Disputed Score view to show the submitted result with a faded style/tag for better context.
-- UI: Added Match Duration (⏱) to the Match Details page.
-- UI: Restricted match creation dates to Today + 3 days and reduced mobile tag font sizes for better fit.
-- Infrastructure: Resolved Admin resolve_dispute JSON parsing and DB foreign key constraint issues.
-- Version: 2.1.7 (Build 217)
-
 2.1.6 (Build 216) - 2026-05-11
 - UX: Implemented "Identical Sound Logic" - Tap now uses the exact same loading/playing pattern as Success/Notify.
 - UX: Updated index.html versioning (v216) to bypass mobile WebView cache.
@@ -707,3 +698,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX: Launched "Ultimate Sound Manager" with global audio unlocking for 100% reliability on mobile.
 - UX: Fixed Android sound issues with robust NativeAudio fallback and restored Haptics.
 - UX: Guaranteed zero-vibration 'tick' sound for mobile app buttons.
+
+2.2.0 (Build 220) - 2026-05-11
+- Match Integrity: Hardened match dispute resolution with composition-aware validation, correctly handling partner swaps during score submission.
+- UX Improvement: Disputed scores are now visible in Match Details with a faded style to provide transparency, and the "Submit Correct Score" button is hidden if two results are already approved.
+- Scheduling Policy: Restricted match creation to a 4-day window (Today + 3 days) to ensure better schedule management.
+- Match Details UI: Added match duration (⏱) to the metadata section for clearer game information.
+- Mobile UI: Reduced font size of tags and pills by 1px specifically for mobile devices to improve layout fit.
+- Infrastructure: Implemented real-time waitlist cleanup via waitlist_helper.php and resolved admin panel foreign key issues in moderator approvals.
+- Version: 2.2.0 (Build 220)
