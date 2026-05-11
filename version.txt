@@ -738,3 +738,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.5 (Build 225) - 2026-05-11
 - UI Refinement: Simplified the player code tag in the profile page for a more playful and approachable look, using soft orange tones and cleaner typography.
 - Version: 2.2.5 (Build 225)
+
+2.2.6 (Build 226) - 2026-05-12
+- Rich Profile Animation: Upgraded profile picture reveal to a multi-layered 'Data Reveal' sequence with orange scanning beams, scale-in pops, and mid-scan glow pulses.
+- Visual Depth: Added data-grid flicker effects to the profile avatar for a more compelling high-tech aesthetic.
+- Version: 2.2.6 (Build 226)
