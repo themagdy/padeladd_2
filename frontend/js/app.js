@@ -14,13 +14,12 @@ var FX = {
 
 var SoundManager = {
     _sounds: {},
-    _isNativeReady: false,
     _isUnlocked: false,
-    
-    init: async function () {
+
+    init: function () {
         if (typeof Audio === 'undefined') return;
 
-        // 1. Setup Browser Audio (Always ready as fallback)
+        // 1. Setup Persistent Audio Objects
         const sounds = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
@@ -28,50 +27,28 @@ var SoundManager = {
         };
 
         for (const [id, path] of Object.entries(sounds)) {
-            this._sounds[id] = new Audio('./' + path);
-            this._sounds[id].preload = 'auto';
+            if (!this._sounds[id]) {
+                this._sounds[id] = new Audio('./' + path);
+                this._sounds[id].preload = 'auto';
+            }
         }
 
-        const Capacitor = window.Capacitor;
-        const Plugins = Capacitor?.Plugins;
-        const NativeAudio = Plugins?.NativeAudio;
-
-        // 2. Native Hardware Engine Warmup
-        if (Capacitor && Capacitor.getPlatform() !== 'web' && NativeAudio) {
-            // Immediate attempt + 2s delay attempt (Double coverage)
-            const setupNative = async () => {
-                for (const [id, path] of Object.entries(sounds)) {
-                    try {
-                        await NativeAudio.unload({ assetId: id }).catch(() => {});
-                        await NativeAudio.preload({ 
-                            assetId: id, 
-                            assetPath: path, 
-                            audioChannelNum: 1, 
-                            isRaw: false 
-                        });
-                        await NativeAudio.setVolume({ assetId: id, volume: 1.0 });
-                    } catch (e) {}
-                }
-                this._isNativeReady = true;
-                console.log('[SoundManager] Native Engine Ready');
-            };
-
-            setupNative(); // Try immediately
-            setTimeout(setupNative, 2000); // Retry after bridge stabilization
-        }
-
-        // 3. Robust Unlocker
+        // 2. The "Bulletproof" Unlocker (Crucial for Mobile)
         const unlock = () => {
             if (this._isUnlocked) return;
             for (const s of Object.values(this._sounds)) {
-                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
+                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => { });
             }
             this._isUnlocked = true;
-            console.log('[SoundManager] Web Audio Unlocked');
+            console.log('[SoundManager] Audio Unlocked Globally');
+            // Keep listeners for a few more taps to be sure
+            setTimeout(() => {
+                ['click', 'touchstart', 'mousedown'].forEach(evt => document.removeEventListener(evt, unlock));
+            }, 1000);
         };
         ['click', 'touchstart', 'mousedown'].forEach(evt => document.addEventListener(evt, unlock, { passive: true }));
 
-        // 4. Global Listener
+        // 3. Global Click Listener
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
@@ -83,40 +60,20 @@ var SoundManager = {
     play: function (type) {
         if (typeof Audio === 'undefined') return;
 
-        const Plugins = window.Capacitor?.Plugins;
-        const NativeAudio = Plugins?.NativeAudio;
-        const Haptics = Plugins?.Haptics;
-
-        // Parallel Haptics (Immediate)
+        // 1. Haptics (Very reliable on Native)
+        const Haptics = window.Capacitor?.Plugins?.Haptics;
         if (Haptics) {
-            if (type === 'tap') Haptics.selectionChanged().catch(() => {});
-            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => {});
+            if (type === 'tap') Haptics.selectionChanged().catch(() => { });
+            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => { });
         }
 
-        // Race Condition Fallback: If Native doesn't play in 150ms, fire Web
-        let nativePlayed = false;
-        if (NativeAudio && this._isNativeReady) {
-            NativeAudio.play({ assetId: type }).then(() => {
-                nativePlayed = true;
-            }).catch(() => {
-                if (!nativePlayed) this._playWeb(type);
-            });
-
-            // Safety timeout for silent failures
-            setTimeout(() => {
-                if (!nativePlayed) this._playWeb(type);
-            }, 150);
-            return;
-        }
-
-        this._playWeb(type);
-    },
-
-    _playWeb: function (type) {
+        // 2. Play Web Audio
         const s = this._sounds[type];
         if (s) {
             s.currentTime = 0;
-            s.play().catch(() => {});
+            s.play().catch(err => {
+                console.log(`[SoundManager] Play failed for ${type}:`, err);
+            });
         }
     }
 };
