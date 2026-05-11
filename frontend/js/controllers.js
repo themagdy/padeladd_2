@@ -949,17 +949,21 @@ const ProfileViewController = {
             actionCards.style.display = res.data.is_self ? 'flex' : 'none';
         }
 
-        // Report player button (only for others)
-        const reportContainer = document.getElementById('prof-report-container');
-        if (reportContainer) {
+        // Report player button in Top Bar (only for others)
+        const tactions = document.getElementById('top-bar-actions');
+        if (tactions) {
             if (!res.data.is_self) {
-                reportContainer.style.display = 'block';
+                tactions.innerHTML = `
+                    <button id="prof-report-btn" style="background:transparent; border:none; color:rgba(255,255,255,0.4); font-size:10px; font-weight:800; cursor:pointer; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; padding:4px 0;">
+                        <span style="font-size:14px; opacity:0.8;">🚩</span> Report
+                    </button>
+                `;
                 const reportBtn = document.getElementById('prof-report-btn');
                 if (reportBtn) {
                     reportBtn.onclick = () => ProfileController.reportPlayer(user.id);
                 }
             } else {
-                reportContainer.style.display = 'none';
+                tactions.innerHTML = '';
             }
         }
 
