@@ -983,7 +983,7 @@ const ProfileViewController = {
             if (profile?.player_code) {
                 codeEl.innerHTML = `
                     <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">ID</div>
-                    <span style="color:var(--c-orange); font-weight:800; font-size: 20px; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
+                    <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
                 `;
                 codeEl.style.display = 'inline-flex';
             } else {
