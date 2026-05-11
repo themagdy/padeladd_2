@@ -1,3 +1,11 @@
+65c6f8c - 2026-05-11 09:23:00 +0300
+- Refined Ranking header aesthetic with Montserrat 900, metallic gradients, and staggered animations.
+- Fixed Ranking table inner padding (30px) on desktop for better horizontal spacing and balance.
+- Resolved "capacitor.js" syntax error on web by implementing conditional script loading.
+- Restyled "Play" and "My Matches" headers with premium Montserrat typography and metallic gradients.
+- Optimized Dashboard layout on mobile by reducing top margin by 10px for a more compact view.
+- Bumped application version to 2.2.1.
+
 a28060d - 2026-04-24 16:46:13 +0300
 - Resolved Match Chat Permalink auto-open issues.
 - Fixed back button logic to return to match details from chat.
