@@ -454,7 +454,7 @@ input:checked + .switch-slider:before {
 
 .admin-toast {
     pointer-events: auto;
-    background: #16263D;
+    background: #1e2535;
     border: 1px solid rgba(255,255,255,0.1);
     padding: 12px 20px;
     border-radius: 12px;

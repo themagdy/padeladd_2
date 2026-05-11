@@ -981,7 +981,10 @@ const ProfileViewController = {
         const codeEl = document.getElementById('prof-code');
         if (codeEl) {
             if (profile?.player_code) {
-                codeEl.innerHTML = `<span>🆔</span> <span style="color:var(--c-orange); font-weight:800;">${profile.player_code}</span>`;
+                codeEl.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">ID</div>
+                    <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
+                `;
                 codeEl.style.display = 'inline-flex';
             } else {
                 codeEl.style.display = 'none';
@@ -2421,7 +2424,6 @@ const MatchesController = {
                <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
             </div>
           </div>
-
           <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; margin-top:20px; border:1px solid rgba(255,255,255,0.03);">
              <div>
                 <div style="font-size:10px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 1</div>
