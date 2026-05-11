@@ -995,9 +995,9 @@ const ProfileViewController = {
         const metaEl = document.getElementById('prof-meta');
         if (metaEl) {
             const items = [];
-            const metaStyle = `display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.02); padding:6px 14px 6px 6px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
-            const iconCircle = `width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);`;
-            const labelStyle = `font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px;`;
+            const metaStyle = `display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.02); padding:4px 12px 4px 4px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
+            const iconCircle = `width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);`;
+            const labelStyle = `font-size:9px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px;`;
 
             if (profile?.location) {
                 items.push(`
@@ -1025,7 +1025,7 @@ const ProfileViewController = {
                 `);
             }
             metaEl.innerHTML = items.join('');
-            metaEl.style.gap = '12px';
+            metaEl.style.gap = '8px';
         }
 
         // Bio
