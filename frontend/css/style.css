@@ -3378,9 +3378,20 @@ form {
   font-size: 14px;
 }
 
+.match-meta-sep {
+  opacity: 0.15;
+  margin: 0 2px;
+}
+
 @media (max-width: 768px) {
   .match-meta-row {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  .match-meta-sep {
+    display: none;
   }
 }
 
