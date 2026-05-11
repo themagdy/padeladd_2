@@ -1012,6 +1012,12 @@ const ProfileViewController = {
         // Stats cards
         StatsUI.update(stats, 'pv');
 
+        // Update achievements empty msg based on context
+        const achMsg = document.getElementById('prof-achievements-empty-msg');
+        if (achMsg) {
+            achMsg.textContent = is_self ? 'Complete matches to earn trophies and special badges!' : 'This player hasn\'t earned any trophies yet.';
+        }
+
         // Final reveal for the profile header and stats
         const contentEl = document.getElementById('prof-view-content');
         if (contentEl) contentEl.style.opacity = '1';
@@ -1037,7 +1043,8 @@ const ProfileViewController = {
                 const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
 
                 if (historyMatches.length === 0) {
-                    listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>Complete matches to see them in history.</p></div>`;
+                    const emptySub = is_self ? 'Complete matches to see them in history.' : 'This player hasn\'t completed any matches yet.';
+                    listEl.innerHTML = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>${emptySub}</p></div>`;
                 } else {
                     // Limit to latest 50 results (matching API limit)
                     let scoreCount = 0;
