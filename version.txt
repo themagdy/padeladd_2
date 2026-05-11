@@ -734,3 +734,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.4 (Build 224) - 2026-05-11
 - UI Accessibility: Made Location and Share buttons universally visible in Match Details for all players, regardless of match participation.
 - Version: 2.2.4 (Build 224)
+
+2.2.5 (Build 225) - 2026-05-11
+- UI Refinement: Simplified the player code tag in the profile page for a more playful and approachable look, using soft orange tones and cleaner typography.
+- Version: 2.2.5 (Build 225)
