@@ -3127,40 +3127,44 @@ const MatchesController = {
                 }
 
                 // Phase 5: Chat access logic
+                // Phase 5: Chat access logic
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
                 const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
                 isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
 
-                // Only allow chat access if player is in a slot or on the waiting list
-                if (isAuthorized) {
-                    const unreadCount = res.data.unread_count || 0;
-                    const badgeHtml = unreadCount > 0 ? `
-                        <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
-                            ${unreadCount > 99 ? '99+' : unreadCount}
-                        </span>` : '';
+                let chatBtnHtml = '';
+                const unreadCount = res.data.unread_count || 0;
+                const badgeHtml = unreadCount > 0 ? `
+                    <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
+                        ${unreadCount > 99 ? '99+' : unreadCount}
+                    </span>` : '';
 
-                    const chatBtnHtml = `
-                        <div style="margin-bottom:24px; padding: 0 4px;">
-                            <!-- Premium Chat Button -->
-                            <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
-                                <span style="font-size:20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));">💬</span> 
-                                <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
-                                ${badgeHtml}
-                            </button>
-                            
-                            <!-- Sub-Actions Grid -->
-                            <div style="margin-top:14px; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                                ${match.venue_location_link ? `
-                                <a href="${match.venue_location_link}" target="_blank" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
-                                    <span style="font-size:16px;">📍</span> Location
-                                </a>` : ''}
-                                <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
-                                    <span style="font-size:16px;">🔗</span> Share
-                                </button>
-                            </div>
-                        </div>
+                if (isAuthorized) {
+                    chatBtnHtml += `
+                        <!-- Premium Chat Button -->
+                        <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                            <span style="font-size:20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));">💬</span> 
+                            <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
+                            ${badgeHtml}
+                        </button>
                     `;
-                    if (chatArea) chatArea.innerHTML = chatBtnHtml;
+                }
+
+                // Sub-Actions Grid (Always visible)
+                chatBtnHtml += `
+                    <div style="margin-top: ${isAuthorized ? '14px' : '0'}; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        ${match.venue_location_link ? `
+                        <a href="${match.venue_location_link}" target="_blank" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
+                            <span style="font-size:16px;">📍</span> Location
+                        </a>` : ''}
+                        <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
+                            <span style="font-size:16px;">🔗</span> Share
+                        </button>
+                    </div>
+                `;
+
+                if (chatArea) {
+                    chatArea.innerHTML = `<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`;
                 }
             }
         }
