@@ -2,31 +2,39 @@
 
   <!-- 1. Top Section (Non-sticky) -->
   <div style="width:100%; max-width:900px; margin:0 auto; padding:40px 20px 20px; display:block !important; overflow:visible !important;">
-    <div style="margin-bottom:20px;">
-      <!-- 1. Redesigned Official Badge -->
-      <div class="ranking-header-top-row" style="display:inline-flex; align-items:center; gap:8px; background:rgba(27, 82, 206, 0.1); border:1px solid rgba(27, 82, 206, 0.2); padding:4px 12px 4px 6px; border-radius:100px; margin-bottom:16px;">
-        <div style="width:22px; height:22px; background:var(--c-primary); border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 0 10px rgba(27, 82, 206, 0.4);">
-          <img src="assets/logo_ico.png" style="height:12px; width:auto; filter:brightness(0) invert(1);">
+      <!-- Premium Tag -->
+      <div style="margin-bottom: 24px; display: flex; align-items: center; gap: 12px; animation: fadeInDown 0.8s ease-out;">
+        <div style="padding: 6px 14px; background: rgba(27, 82, 206, 0.1); border: 1px solid rgba(27, 82, 206, 0.2); border-radius: 100px; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 20px rgba(27, 82, 206, 0.1);">
+          <img src="assets/logo_ico.png" style="height: 14px; width: auto; filter: drop-shadow(0 0 5px rgba(27, 82, 206, 0.5));">
+          <span style="font-size: 10px; font-weight: 800; color: #5B8BFF; text-transform: uppercase; letter-spacing: 2.5px;">Official Leaderboard</span>
         </div>
-        <span style="font-size:10px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:1.5px;">Official Leaderboard</span>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:20px;">
-        <div style="flex:1;">
-          <!-- 2. Cinematic Title -->
-          <h1 class="ranking-header-h1" style="font-size:42px; font-weight:900; background:linear-gradient(135deg, #FFFFFF 0%, #A5B4FC 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:0; line-height:1.0; letter-spacing:-1.5px;">The Padel Ladder</h1>
-          <!-- 3. Refined Subtitle -->
-          <p class="ranking-header-p" style="color:var(--c-text-muted); font-size:16px; font-weight:500; margin-top:8px; opacity:0.8;">The community's elite performance tracking.</p>
+      <!-- Title & Trophy Duo -->
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; position: relative;">
+        <div style="flex: 1; padding-bottom: 10px;">
+          <h1 style="font-family: 'Outfit', sans-serif; font-size: 48px; font-weight: 800; color: #fff; line-height: 0.95; letter-spacing: -2px; margin: 0; background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.6) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            The Padel<br>Ladder
+          </h1>
+          <p style="color: var(--c-text-muted); font-size: 16px; margin: 16px 0 0; font-weight: 500; letter-spacing: 0.2px; opacity: 0.8;">
+            Honoring the community's <span style="color: var(--c-orange); font-weight: 700;">finest players</span>.
+          </p>
         </div>
 
-        <div class="ranking-trophy-wrapper" style="position:relative; width:100px; height:100px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-          <div style="position:absolute; inset:0; background:radial-gradient(circle, rgba(27, 82, 206, 0.15) 0%, transparent 70%); border-radius:50%; animation: trophyPulse 3s ease-in-out infinite;"></div>
-          <div class="ranking-trophy" style="width:74px; height:74px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:50%; font-size:40px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); position:relative; z-index:2; box-shadow:0 15px 30px rgba(0,0,0,0.4);">
-            <span style="filter: drop-shadow(0 0 15px rgba(247,148,29,0.6));">🏆</span>
+        <!-- Premium Floating Trophy -->
+        <div style="position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; transform: translateY(-10px);">
+          <!-- Dynamic Aura -->
+          <div style="position: absolute; inset: 0; background: radial-gradient(circle, rgba(247,148,29,0.15) 0%, transparent 70%); border-radius: 50%; animation: trophyGlow 4s ease-in-out infinite;"></div>
+          
+          <!-- Glass Vessel -->
+          <div style="width: 100px; height: 100px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.05); transform: rotate(-5deg); animation: trophyFloat 6s ease-in-out infinite;">
+            <span style="font-size: 56px; filter: drop-shadow(0 10px 25px rgba(247,148,29,0.6));">🏆</span>
+            <!-- Micro Sparks -->
+            <div style="position: absolute; top: 15px; right: 15px; font-size: 14px; animation: trophyBlink 2s infinite;">✨</div>
+            <div style="position: absolute; bottom: 20px; left: 10px; font-size: 12px; animation: trophyBlink 3.5s infinite 1.2s;">✨</div>
           </div>
         </div>
       </div>
-    </div>
   </div>
 
   <!-- 2. Consolidated Sticky Block (Filters + Header) -->
@@ -206,25 +214,23 @@
     50% { transform: scale(1.1); opacity: 0.7; }
 }
 @keyframes trophyFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-12px) rotate(-2deg); }
+}
+@keyframes trophyGlow {
+    0%, 100% { transform: scale(1); opacity: 0.15; }
+    50% { transform: scale(1.15); opacity: 0.25; }
 }
 @keyframes trophyBlink {
     0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
     50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
 }
-
-@media (min-width: 769px) {
-    .ranking-header-top-row { margin-bottom: -4px !important; }
-    .ranking-header-h1 { line-height: 1.0 !important; margin-bottom: -10px !important; }
-    .ranking-header-p { margin-top: -5px !important; margin-bottom: 0px !important; }
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
-    .ranking-header-top-row { margin-bottom: 12px !important; }
-    .ranking-header-h1 { line-height: 1.2 !important; }
-    .ranking-trophy-wrapper {
-        display: none !important;
-    }
+    /* Optional: Small adjustments for mobile hero if needed */
 }
 </style>
