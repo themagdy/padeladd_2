@@ -667,6 +667,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Optimization: Implemented deep data comparison in MatchesController polling to prevent re-rendering when the incoming match data is identical to the cached state.
 - Version: 2.0.9 (Build 209)
 
+2.1.7 (Build 217) - 2026-05-11
+- UX: Implemented automatic 'Mark All as Read' when opening the notification panel to ensure badges clear instantly.
+- UX: Updated index.html versioning (v217) to bypass mobile WebView cache.
+- Fix: Resolved issue where unread counter would persist after opening the panel.
+- Version: 2.1.7 (Build 217)
+
 2.1.6 (Build 216) - 2026-05-11
 - UX: Implemented "Identical Sound Logic" - Tap now uses the exact same loading/playing pattern as Success/Notify.
 - UX: Updated index.html versioning (v216) to bypass mobile WebView cache.

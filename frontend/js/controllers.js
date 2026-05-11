@@ -4620,7 +4620,11 @@ const NotificationsController = {
         const panel = document.getElementById('notif-panel');
         if (!panel) return;
 
-        // Render preloaded data immediately if we have it
+        // 1. Mark everything as read IMMEDIATELY (Silent)
+        // This satisfies the user expectation that opening the panel clears the count
+        this.markAllRead(true);
+
+        // 2. Render preloaded data immediately if we have it
         if (this._notifications.length > 0) {
             this.renderList();
         } else {
@@ -4630,7 +4634,7 @@ const NotificationsController = {
             this.loadMore();
         }
 
-        // Hide badge immediately
+        // Hide badge immediately (redundant but safe)
         const badge = document.getElementById('nav-notif-badge');
         if (badge) badge.style.display = 'none';
 
@@ -4640,7 +4644,7 @@ const NotificationsController = {
         if (this._notifications.length > 0) {
             this._offset = 0;
             this._hasMore = true;
-            this._notifications = []; // Clear for fresh sync, but only AFTER renderList was called above
+            this._notifications = []; 
             this.loadMore(true); // silent load
         }
     },
@@ -4916,14 +4920,14 @@ const NotificationsController = {
         }
     },
 
-    markAllRead: async function () {
+    markAllRead: async function (isSilent = false) {
         const res = await API.post('/notifications/read', { all: true });
         if (res && res.success) {
             this._notifications.forEach(n => n.is_read = true);
             this._visuallyUnreadIds.clear(); // Clear visual persistent state on manual "Mark all read"
             const badge = document.getElementById('nav-notif-badge');
             if (badge) badge.style.display = 'none';
-            this.renderList();
+            if (!isSilent) this.renderList();
         }
     },
 
