@@ -751,3 +751,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Visual Impact: Scaled up the ranking trophy glass and optimized header spacing for a bolder competitive feel.
 - Layout Optimization: Fine-tuned padding and margins across the ranking header for a more cohesive desktop/mobile experience.
 - Version: 2.2.7 (Build 227)
+
+2.2.8 (Build 228) - 2026-05-12
+- Layout Refinement: Increased top padding for 'My Matches' and 'Play' listing pages to improve vertical balance and breathing room.
+- Version: 2.2.8 (Build 228)
