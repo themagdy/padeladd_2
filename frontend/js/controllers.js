@@ -982,8 +982,8 @@ const ProfileViewController = {
         if (codeEl) {
             if (profile?.player_code) {
                 codeEl.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">ID</div>
-                    <span style="color:var(--c-orange); font-weight:800; font-size: 18px; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
+                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 3px 8px; border-radius: 7px; font-size: 12px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">ID</div>
+                    <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; font-size: 19px;">${profile.player_code}</span>
                 `;
                 codeEl.style.display = 'inline-flex';
             } else {
