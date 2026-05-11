@@ -14,7 +14,7 @@
   /* Colors */
   --c-bg: #11161E;
   --c-nav-bg: #171C26;
-  --c-bg-card: #122444;
+  --c-bg-card: #16263D;
   --c-bg-input: #212A3A;
   --c-bg-secondary: #293342;
   --c-border: #3B475B;
@@ -36,7 +36,7 @@
 
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
-  --g-card: linear-gradient(145deg, #122444 0%, #1A2030 100%);
+  --g-card: linear-gradient(145deg, #16263D 0%, #1A2030 100%);
   --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
 
   /* Typography */
