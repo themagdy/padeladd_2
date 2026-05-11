@@ -1,10 +1,4 @@
 <div class="page active" style="background:var(--c-bg);">
-  
-  <div id="prof-report-container" style="display:none; position:absolute; right:20px; top:15px; z-index:10;">
-    <button id="prof-report-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,0,0,0.1)'; this.style.color='#f87171'; this.style.borderColor='rgba(255,0,0,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--c-text-muted)'; this.style.borderColor='rgba(255,255,255,0.1)';">
-      <span>🚩</span> Report player
-    </button>
-  </div>
 
 
   <div id="prof-view-content" style="width:100%; max-width:1200px; margin:0 auto; padding:15px 20px 100px; opacity:0; transition:opacity 0.2s;">
@@ -34,6 +28,13 @@
         </div>
         
         
+        <div id="prof-report-container" style="display:none; margin-left:auto; margin-top:8px;">
+          <button id="prof-report-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,0,0,0.1)'; this.style.color='#f87171'; this.style.borderColor='rgba(255,0,0,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--c-text-muted)'; this.style.borderColor='rgba(255,255,255,0.1)';">
+            <span>🚩</span> Report player
+          </button>
+        </div>
+
+
       </div>
 
       <!-- Stats Grid (Dashboard style) -->
@@ -201,14 +202,6 @@
   #prof-view-content {
     padding-bottom: 30px !important;
   }
-  #prof-report-container {
-    position: fixed !important;
-    top: 15px !important;
-    right: 16px !important;
-    z-index: 9999 !important;
-    margin: 0 !important;
-    display: none;
-  }
 }
 
 
@@ -227,29 +220,58 @@
     overflow: hidden;
 }
 
+.v-avatar.scan-active {
+    animation: borderGlow 1.5s ease-out 0.3s forwards;
+}
+
 .avatar-scan-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 200%;
   background: linear-gradient(to bottom, 
     transparent 0%, 
-    rgba(27, 82, 206, 0) 40%, 
-    rgba(27, 82, 206, 0.4) 50%, 
-    rgba(255, 255, 255, 0.2) 51%, 
-    rgba(27, 82, 206, 0.4) 52%, 
-    rgba(27, 82, 206, 0) 60%, 
+    rgba(0, 149, 255, 0) 45%, 
+    rgba(0, 149, 255, 0.8) 50%, 
+    rgba(255, 255, 255, 1) 50.2%, 
+    rgba(0, 149, 255, 0.8) 50.4%, 
+    rgba(0, 149, 255, 0) 55%, 
     transparent 100%
   );
+  filter: blur(1px);
   transform: translateY(-100%);
-  animation: scanReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  animation: scanRevealRich 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.3s forwards;
   pointer-events: none;
-  z-index: 2;
+  z-index: 10;
 }
 
-@keyframes scanReveal {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+.avatar-shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 149, 255, 0.4) 0%, transparent 70%);
+  opacity: 0;
+  animation: shimmerPulse 1.5s ease-out 0.3s forwards;
+  z-index: 9;
+  pointer-events: none;
+}
+
+@keyframes scanRevealRich {
+  0% { transform: translateY(-100%); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(50%); opacity: 0; }
+}
+
+@keyframes shimmerPulse {
+  0% { transform: scale(0.5); opacity: 0; }
+  30% { opacity: 0.6; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes borderGlow {
+  0% { box-shadow: 0 15px 45px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.03); }
+  50% { box-shadow: 0 15px 45px rgba(0,0,0,0.4), 0 0 30px 10px rgba(0, 149, 255, 0.4); }
+  100% { box-shadow: 0 15px 45px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.03); }
 }
 </style>
