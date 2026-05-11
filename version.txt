@@ -767,3 +767,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.11 (Build 211) - 2026-05-12
 - UI Refinement: Reordered match details for better logical flow (Court, Duration, Date, Time) and added a subtle visual separator.
 - Version: 2.2.11 (Build 211)
+
+2.2.12 (Build 212) - 2026-05-12
+- UI Refinement: Removed the time icon for a cleaner, more streamlined metadata display in match details.
+- Version: 2.2.12 (Build 212)
