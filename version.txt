@@ -787,3 +787,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.16 (Build 216) - 2026-05-12
 - UI Refinement: Responsive separator management; hidden on mobile viewports to ensure a clean layout when match details wrap.
 - Version: 2.2.16 (Build 216)
+
+2.2.17 (Build 217) - 2026-05-12
+- UI Refinement: Replaced 'ID' label with 'CODE' in player profile for better consistency with the app's player code system.
+- Version: 2.2.17 (Build 217)
