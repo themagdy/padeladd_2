@@ -3,24 +3,15 @@
  * POST /api/admin/matches/withdraw_player
  * Admin-only: Forcefully withdraw any player from an upcoming match.
  */
-require_once __DIR__ . '/../../../helpers/auth_helper.php';
+require_once __DIR__ . '/../../../core/db.php';
+require_once __DIR__ . '/../../../helpers/admin_auth.php';
 require_once __DIR__ . '/../../../helpers/notif_helper.php';
+require_once __DIR__ . '/../../../helpers/response.php';
 
 $pdo = getDB();
 
-// Admin Auth check
-$admin_token = $_GET['admin_token'] ?? '';
-if (empty($admin_token)) {
-    jsonResponse(false, 'Admin token required.');
-}
-
-$stmt = $pdo->prepare("SELECT id FROM admins WHERE token = ?");
-$stmt->execute([$admin_token]);
-$admin = $stmt->fetch();
-
-if (!$admin) {
-    jsonResponse(false, 'Unauthorized admin.');
-}
+// Modern Admin Auth check
+$admin = validateAdmin();
 
 $data = json_decode(file_get_contents('php://input'), true);
 $match_id = isset($data['match_id']) ? (int)$data['match_id'] : 0;

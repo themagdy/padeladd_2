@@ -86,7 +86,7 @@ var Toast = {
         if (type === 'error') icon = '❌';
         if (type === 'warning') icon = '⚠️';
 
-        toast.innerHTML = `
+        toast.innerHTML = safeHTML(`
             <span class="toast-icon">${icon}</span>
             <span class="toast-message">${message}</span>
             <span class="toast-close" style="margin-left:12px; cursor:pointer; opacity:0.6; font-weight:900; font-size:12px;" onclick="this.parentElement.remove()">✕</span>
@@ -152,7 +152,7 @@ var ConfirmModal = {
                 <button id="gcm-cancel" class="btn" style="background:none; border:none; color:var(--c-text-muted); padding:12px; font-size:14px; font-weight:600;">${cancelText}</button>
             ` : '';
 
-            this._modal.innerHTML = `
+            this._modal.innerHTML = safeHTML(`
                 <div id="gcm-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
                     
                     <!-- Premium Emoji Frame -->
@@ -662,7 +662,7 @@ const StatsUI = {
             const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
             if (el) {
                 if (key === 'points' && stats.current_buffer !== undefined) {
-                    el.innerHTML = `${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;">
+                    el.innerHTML = safeHTML(`${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;">
                         <span style="font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;">+ ${stats.current_buffer}</span>
                         <span style="font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;">Buffer</span>
                     </span>`;
@@ -676,21 +676,21 @@ const StatsUI = {
         const rcEl = document.getElementById(`${prefix}-ranking-change`) || document.getElementById(`${prefix}-highest-rank`);
         if (rcEl) {
             if (stats.ranking_change > 0) {
-                rcEl.innerHTML = `<span class="stat-trend up">${upIcon} ${stats.ranking_change} POSITIONS</span>`;
+                rcEl.innerHTML = safeHTML(`<span class="stat-trend up">${upIcon} ${stats.ranking_change} POSITIONS</span>`);
             } else if (stats.ranking_change < 0) {
-                rcEl.innerHTML = `<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`;
+                rcEl.innerHTML = safeHTML(`<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`);
             } else {
-                rcEl.innerHTML = `<span class="stat-trend neutral">STABLE RANK</span>`;
+                rcEl.innerHTML = safeHTML(`<span class="stat-trend neutral">STABLE RANK</span>`);
             }
         }
 
         const pwEl = document.getElementById(`${prefix}-points-week`);
         if (pwEl && stats.points_this_week !== undefined) {
             if (stats.points_this_week > 0) {
-                pwEl.innerHTML = `<span class="stat-trend up">${upIcon} +${stats.points_this_week} THIS WEEK</span>`;
+                pwEl.innerHTML = safeHTML(`<span class="stat-trend up">${upIcon} +${stats.points_this_week} THIS WEEK</span>`);
                 pwEl.style.color = '';
             } else if (stats.points_this_week < 0) {
-                pwEl.innerHTML = `<span class="stat-trend down">${downIcon} ${stats.points_this_week} THIS WEEK</span>`;
+                pwEl.innerHTML = safeHTML(`<span class="stat-trend down">${downIcon} ${stats.points_this_week} THIS WEEK</span>`);
                 pwEl.style.color = '';
             } else {
                 pwEl.textContent = '';

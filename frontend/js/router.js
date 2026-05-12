@@ -254,7 +254,7 @@ const Router = {
                     this._templateCache[route.template] = html;
                 }
                 
-                appDiv.innerHTML = html;
+                appDiv.innerHTML = safeHTML(html);
                 
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
@@ -266,7 +266,7 @@ const Router = {
             } catch (err) {
                 console.error(err);
                 if (loader) loader.style.display = 'none';
-                appDiv.innerHTML = `
+                appDiv.innerHTML = safeHTML(`
                     <div class="test-page" style="text-align: center; padding: 50px 20px;">
                         <h2 style="color: #fff; margin-bottom: 20px;">Oops! Error loading page</h2>
                         <p style="color: var(--c-text-muted); margin-bottom: 30px;">${err.message}</p>
@@ -336,7 +336,7 @@ const Router = {
             // Special case for logout on profile edit (only if new user)
             if (nPath === '/profile/edit' && tactions) {
                 if (!Auth.hasProfile()) {
-                    tactions.innerHTML = `<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`;
+                    tactions.innerHTML = safeHTML(`<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`);
                 } else {
                     tactions.innerHTML = '';
                 }

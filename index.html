@@ -171,13 +171,39 @@
     <!-- DOMPurify: XSS sanitization for innerHTML -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
     <script>
-        // safeHTML: sanitize user-generated HTML while preserving our own
-        // app template event handlers (onerror for avatar fallback, onclick
-        // for navigation, onmouseover/onmouseout for hover effects).
-        // Script injection, iframes, and malicious tags are still blocked.
+        // safeHTML: sanitize user-generated HTML while only allowing verified
+        // safe event handlers (like avatar fallbacks and router navigation).
+        // Malicious scripts in event handlers are blocked by regex pattern matching.
+        DOMPurify.addHook('uponTagAttr', function(el, data) {
+            const attr = data.attrName.toLowerCase();
+            const val = data.attrValue;
+            
+            // Allow list for event handlers with strict pattern matching
+            if (attr === 'onerror' || attr === 'onload' || attr === 'onclick' || attr === 'onmouseover' || attr === 'onmouseout') {
+                const isSafe = (
+                    // Avatar fallback pattern
+                    (attr === 'onerror' && /this\.(onerror=null;?\s*)?src\s*=\s*['"][^'"]+['"]/i.test(val)) ||
+                    // Router navigation pattern
+                    (attr === 'onclick' && /^Router\.navigate\(['"]\/[^'"]+['"]\)$/i.test(val)) ||
+                    // App UI specific interactions
+                    /^(DashboardController|MatchesController|StatsController|ProfileController|RankingUI)\.[a-z0-9_]+\(.*\)$/i.test(val)
+                );
+                
+                if (!isSafe) {
+                    data.forceKeepAttr = false;
+                    delete data.attrValue; // Effectively strips the dangerous attribute
+                } else {
+                    data.forceKeepAttr = true; // explicitly keep verified safe handlers
+                }
+            }
+        });
+
         window.safeHTML = function(html) {
+            if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout']
+                // We no longer use ADD_ATTR here because our hook handles them securely
+                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br', 'p', 'div', 'span', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr'],
+                ALLOWED_ATTR: ['href', 'src', 'class', 'id', 'style', 'alt', 'title', 'target', 'data-*', 'onerror', 'onclick', 'onmouseover', 'onmouseout', 'onload']
             });
         };
     </script>
