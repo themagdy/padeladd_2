@@ -2633,9 +2633,9 @@ const MatchesController = {
             if (match.match_type === 'competition' || match.match_type === 'friendly' || match.gender_type === 'same_gender' || match.gender_type === 'mixed') {
                 typeBadges = `<div style="display:flex; align-items:center; gap:8px;">`;
                 if (match.match_type === 'competition') {
-                    typeBadges += `<span class="status-badge-pill" style="background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
+                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
                 } else if (match.match_type === 'friendly') {
-                    typeBadges += `<span class="status-badge-pill" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted);">🤝 Friendly</span>`;
+                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted);">🤝 Friendly</span>`;
                 }
 
                 if (match.gender_type === 'same_gender') {
@@ -2644,9 +2644,9 @@ const MatchesController = {
                     const genderIcon = isFemale ? '👩' : '👨';
                     const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
                     const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
-                    typeBadges += `<span class="status-badge-pill" style="background:${genderBg}; color:${genderColor};">${genderIcon} ${genderStr}</span>`;
+                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:${genderBg}; color:${genderColor};">${genderIcon} ${genderStr}</span>`;
                 } else if (match.gender_type === 'mixed' || match.gender_type === 'open') {
-                    typeBadges += `<span class="status-badge-pill" style="background:rgba(147,112,219,0.1); color:#9370DB;">👫 Mixed</span>`;
+                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB;">👫 Mixed</span>`;
                 }
                 typeBadges += `</div>`;
             }
@@ -2654,7 +2654,7 @@ const MatchesController = {
             titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                     <span class="match-code-badge" style="border:none;">${matchCode}</span>
-                    <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
+                    <span class="status-badge-pill status-${statusClass}" style="font-weight:700;">${statusLabel}</span>
                     ${typeBadges}
                 </div>
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
