@@ -836,3 +836,14 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Removed GET fallback for admin_token in admin_auth.php — token must be sent via header only, preventing exposure in server logs and browser history.
 - Security: Added DOMPurify v3.1.6 — 9 innerHTML assignments rendering user-generated content (names, venues, match data) are now sanitized against XSS attacks.
 - Version: 2.2.25 (Build 225)
+
+2.2.26 (Build 226) - 2026-05-12
+- Security: Deleted debug_headers.php — was publicly exposing all request headers including auth tokens with no authentication.
+- Security: Deleted check_user.php — was a hardcoded debug query exposing real user data without authentication.
+- Security: Added rate limiting to admin login (5 attempts / 15 min per IP) — prevents admin credential brute-forcing.
+- Security: Fixed email enumeration in forgot_password — now always returns the same response whether the email exists or not.
+- Security: Added rate limiting to forgot_password (3/hour per IP) and register (5/hour per IP) endpoints.
+- Security: Enforced minimum 8-character password requirement on registration.
+- Security: Added 24-hour expiry to admin sessions — stolen admin tokens can no longer be used indefinitely.
+- Fix: Replaced DOMPurify.sanitize() with safeHTML() wrapper that allows onerror/onload/onclick/onmouseover/onmouseout — restores avatar loading and player profile navigation broken by DOMPurify's default stripping of event attributes.
+- Version: 2.2.26 (Build 226)
