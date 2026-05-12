@@ -113,53 +113,6 @@
         </div>
     </div>
 
-    <!-- Core App Logic -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!-- Capacitor Core (Only load on native) -->
     <script>
         if (window.location.protocol === 'capacitor:') {
@@ -174,7 +127,7 @@
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout']
+                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'target', 'rel']
             });
         };
 
