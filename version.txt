@@ -881,3 +881,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Implemented HSTS (Strict-Transport-Security) for mandatory HTTPS enforcement on web.
 - Security: Added Subresource Integrity (SRI) for DOMPurify to ensure CDN library safety.
 - Version: 2.2.32 (Build 232)
+
+2.2.33 (Build 233) - 2026-05-13
+- Security: Implemented Content Security Policy (CSP) to block unauthorized data exfiltration and cross-site scripting.
+- Version: 2.2.33 (Build 233)
