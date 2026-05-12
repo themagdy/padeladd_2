@@ -806,3 +806,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Content Update: Refreshed dashboard greeting to 'Hey [Name] 👋🏼' and updated overview text to 'Let the matches begin!' with a slightly larger font.
 - Link Update: Changed dashboard 'Contact Padeladd' button to link directly to the official Instagram profile.
 - Version: 2.2.20 (Build 220)
+
+2.2.21 (Build 221) - 2026-05-12
+- Bug Fix: Fixed a race condition in the notifications panel where background polling would overwrite user scrolling.
+- Bug Fix: Added a loading lock to the chat controller to prevent duplicate message rendering caused by concurrent data fetching.
+- Version: 2.2.21 (Build 221)
