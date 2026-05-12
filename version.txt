@@ -830,3 +830,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Replaced mt_rand() with random_int() for cryptographically secure OTP generation.
 - Security: Hardened profile image upload — file extension now derived from MIME type, upload folder permissions tightened to 0755.
 - Version: 2.2.24 (Build 224)
+
+2.2.25 (Build 225) - 2026-05-12
+- Security: Removed admin_token from URL query parameters — all 27 admin API calls now use Authorization: Bearer header via _admFetch() wrapper.
+- Security: Removed GET fallback for admin_token in admin_auth.php — token must be sent via header only, preventing exposure in server logs and browser history.
+- Security: Added DOMPurify v3.1.6 — 9 innerHTML assignments rendering user-generated content (names, venues, match data) are now sanitized against XSS attacks.
+- Version: 2.2.25 (Build 225)
