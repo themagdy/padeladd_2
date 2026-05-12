@@ -234,7 +234,10 @@ try {
             break;
 
         default:
-            jsonResponse(false, 'Endpoint not found: ' . $endpoint, null, 404);
+            $notFoundMsg = (defined('APP_ENV') && APP_ENV === 'development')
+                ? 'Endpoint not found: ' . $endpoint
+                : 'Endpoint not found.';
+            jsonResponse(false, $notFoundMsg, null, 404);
     }
 } catch (\Throwable $e) {
     error_log("API Error [" . $endpoint . "]: " . $e->getMessage());
