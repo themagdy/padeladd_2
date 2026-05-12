@@ -885,7 +885,3 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.33 (Build 233) - 2026-05-13
 - Security: Implemented Content Security Policy (CSP) to block unauthorized data exfiltration and cross-site scripting.
 - Version: 2.2.33 (Build 233)
-
-2.2.34 (Build 234) - 2026-05-13
-- Security: Final Clean Sweep of innerHTML assignments. 100% coverage for all user-data-driven UI components (Waitlists, Notifications, Match Headers).
-- Version: 2.2.34 (Build 234)
