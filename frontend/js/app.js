@@ -90,7 +90,7 @@ var Toast = {
             <span class="toast-icon">${icon}</span>
             <span class="toast-message">${message}</span>
             <span class="toast-close" style="margin-left:12px; cursor:pointer; opacity:0.6; font-weight:900; font-size:12px;" onclick="this.parentElement.remove()">✕</span>
-        `;
+        `);
 
         container.appendChild(toast);
 
@@ -176,7 +176,7 @@ var ConfirmModal = {
                         ${cancelBtnHtml}
                     </div>
                 </div>
-            `;
+            `);
 
             // Setup listeners
             this._modal.onclick = (e) => {
@@ -665,7 +665,7 @@ const StatsUI = {
                     el.innerHTML = safeHTML(`${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;">
                         <span style="font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;">+ ${stats.current_buffer}</span>
                         <span style="font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;">Buffer</span>
-                    </span>`;
+                    </span>`);
                 } else {
                     el.textContent = val;
                 }

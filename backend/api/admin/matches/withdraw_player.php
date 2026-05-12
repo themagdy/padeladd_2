@@ -3,15 +3,15 @@
  * POST /api/admin/matches/withdraw_player
  * Admin-only: Forcefully withdraw any player from an upcoming match.
  */
-require_once __DIR__ . '/../../../core/db.php';
 require_once __DIR__ . '/../../../helpers/admin_auth.php';
-require_once __DIR__ . '/../../../helpers/notif_helper.php';
 require_once __DIR__ . '/../../../helpers/response.php';
+require_once __DIR__ . '/../../../helpers/notif_helper.php';
 
 $pdo = getDB();
 
 // Modern Admin Auth check
-$admin = validateAdmin();
+validateAdmin();
+$admin = $_SESSION['admin'] ?? ['id' => 0]; // validateAdmin ensures we have a valid session
 
 $data = json_decode(file_get_contents('php://input'), true);
 $match_id = isset($data['match_id']) ? (int)$data['match_id'] : 0;

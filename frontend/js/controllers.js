@@ -64,7 +64,7 @@ const UI = {
             if (profile && thumb) {
                 // Only update DOM if the image changed to prevent flickering/re-loading
                 if (UI._lastNavAvatar !== thumb) {
-                    av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;'));
+                    av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;');
                     av.style.background = 'none';
                     UI._lastNavAvatar = thumb;
                 }
@@ -389,7 +389,7 @@ const AuthController = {
     initTerms: function () {
         this._agreedOnce = false; // Reset confirmation state
         const btnText = document.getElementById('agree-btn-text');
-        if (btnText) btnText.innerHTML = safeHTML('AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق');
+        if (btnText) btnText.innerHTML = 'AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق';
 
         const agreeContainer = document.getElementById('terms-agree-container');
         if (agreeContainer && !Auth.hasProfile()) {
@@ -412,7 +412,7 @@ const AuthController = {
             if (btnText) {
                 btnText.style.opacity = '0';
                 setTimeout(() => {
-                    btnText.innerHTML = safeHTML('YES <span style="opacity:0.4; font-weight:300;">|</span> أكيد');
+                    btnText.innerHTML = 'YES <span style="opacity:0.4; font-weight:300;">|</span> أكيد';
                     btnText.style.opacity = '1';
                 }, 200);
             }
@@ -753,13 +753,13 @@ const DashboardController = {
                 DashboardController._renderRankingList(cached);
             }
         } else if (!isSilent && listEl.innerHTML.trim() === '') {
-            listEl.innerHTML = safeHTML(RankingUI.renderSkeleton(5));
+            listEl.innerHTML = RankingUI.renderSkeleton(5);
         }
 
         const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
         if (!res || !res.success) {
             if (!cached) {
-                listEl.innerHTML = safeHTML(`<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`);
+                listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
             }
             return;
         }
@@ -787,7 +787,7 @@ const DashboardController = {
         if (!listEl) return;
 
         if (ranking.length === 0) {
-            listEl.innerHTML = safeHTML(`<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`);
+            listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`;
             return;
         }
 
@@ -905,7 +905,7 @@ const ProfileViewController = {
         if (!res || !res.success) {
             const pageEl = document.querySelector('.page.active');
             if (pageEl) {
-                pageEl.innerHTML = safeHTML(`
+                pageEl.innerHTML = `
                     <div style="width:100%; max-width:500px; margin:0 auto; padding:90px 20px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                         <div style="font-size:64px; margin-bottom:20px;">🎾🔎</div>
                         <h1 style="font-size:32px; font-weight:800; color:#fff; margin-bottom:12px;">Player Not Found</h1>
@@ -933,11 +933,11 @@ const ProfileViewController = {
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
 
             if (profile && thumb) {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>';
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = safeHTML(initials + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = initials + '<div class="avatar-scan-overlay"></div>';
                 av.classList.add('avatar-placeholder');
                 av.style.background = 'var(--g-primary)';
             }
@@ -981,7 +981,7 @@ const ProfileViewController = {
         const codeEl = document.getElementById('prof-code');
         if (codeEl) {
             if (profile?.player_code) {
-                codeEl.innerHTML = safeHTML(`
+                codeEl.innerHTML = `
                     <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
                     <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; padding: 0 8px;">${profile.player_code}</span>
                 `;
@@ -1024,7 +1024,7 @@ const ProfileViewController = {
                     </div>
                 `);
             }
-            metaEl.innerHTML = safeHTML(items.join(''));
+            metaEl.innerHTML = items.join('');
             metaEl.style.gap = '8px';
         }
 
@@ -1059,7 +1059,7 @@ const ProfileViewController = {
             const listEl = document.getElementById('pv-matches-list');
 
             if (listEl && !isSilent && listEl.innerHTML.trim() === '') {
-                listEl.innerHTML = safeHTML(ScoreUI.renderSkeleton(2));
+                listEl.innerHTML = ScoreUI.renderSkeleton(2);
             }
 
             const matchRes = await API.post('/matches/user', matchPayload);
@@ -1163,7 +1163,7 @@ const ProfileController = {
             if (res && res.success) {
                 const displayImg = res.data.profile_image_thumb || res.data.profile_image;
                 const avContainer = document.getElementById('edit-avatar-container');
-                avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
+                avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
 
                 if (removeBtn) removeBtn.style.display = 'block';
                 Toast.show('Photo updated', 'success');
@@ -1282,12 +1282,12 @@ const ProfileController = {
 
                 const displayImg = p.profile_image_thumb || p.profile_image;
                 if (displayImg) {
-                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
+                    avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
                     if (removeBtn) removeBtn.style.display = 'block';
                 } else if (u) {
                     // Show initials if no photo
                     const initials = (u.first_name[0] + u.last_name[0]).toUpperCase();
-                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials));
+                    avContainer.innerHTML = UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials);
                     if (removeBtn) removeBtn.style.display = 'none';
                 }
             }
@@ -1848,7 +1848,7 @@ const MatchesController = {
                 headerTitleEl.textContent = 'Play';
                 headerSubEl.textContent = 'Join matches nearby or with friends';
                 if (tabsContainer) {
-                    tabsContainer.innerHTML = safeHTML(`
+                    tabsContainer.innerHTML = `
                       <button id="ml-tab-play_upcoming" onclick="MatchesController.switchTab('play_upcoming')"
                         style="flex:1; background:none; border:none; color:${MatchesController._currentTab === 'play_upcoming' ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:15px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${MatchesController._currentTab === 'play_upcoming' ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s;">
                         ⏳ Upcoming
@@ -1867,7 +1867,7 @@ const MatchesController = {
                 const isPast = MatchesController._currentTab === 'mine_past';
                 const isCompleted = MatchesController._currentTab === 'mine_completed';
 
-                tabsContainer.innerHTML = safeHTML(`
+                tabsContainer.innerHTML = `
                   <button id="ml-tab-mine_upcoming" onclick="MatchesController.switchTab('mine_upcoming')" 
                     style="flex:1; background:none; border:none; color:${isUpcoming ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:14px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${isUpcoming ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s; white-space:nowrap;">
                     ⏳ Upcoming
@@ -2158,7 +2158,7 @@ const MatchesController = {
                     ` : ''}
                 </div>`;
             if (list._lastHtml === emptyHtml) return;
-            list.innerHTML = safeHTML(emptyHtml);
+            list.innerHTML = emptyHtml;
             list._lastHtml = emptyHtml;
             return;
         }
@@ -2190,7 +2190,7 @@ const MatchesController = {
             // Surgical DOM update for Filter Bar & Container
             let resultsContainer = document.getElementById('ml-filtered-results');
             if (!resultsContainer) {
-                list.innerHTML = safeHTML(filterBar + '<div id="ml-filtered-results"></div>');
+                list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
                 resultsContainer = document.getElementById('ml-filtered-results');
             } else {
                 // Update filter bar ONLY if it changed
@@ -2222,7 +2222,7 @@ const MatchesController = {
                 if (matches.length === 0) {
                     const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
                     if (resultsContainer._lastHtml !== emptyResultsHtml) {
-                        resultsContainer.innerHTML = safeHTML(emptyResultsHtml);
+                        resultsContainer.innerHTML = emptyResultsHtml;
                         resultsContainer._lastHtml = emptyResultsHtml;
                     }
                 } else {
@@ -2632,7 +2632,7 @@ const MatchesController = {
                 typeBadges += `</div>`;
             }
 
-            titleEl.innerHTML = safeHTML(`
+            titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                     <span class="match-code-badge" style="border:none;">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}" style="font-weight:700;">${statusLabel}</span>
@@ -2651,7 +2651,7 @@ const MatchesController = {
             metaEl.style.alignItems = 'flex-start';
             metaEl.style.gap = '8px';
 
-            metaEl.innerHTML = safeHTML(`
+            metaEl.innerHTML = `
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
@@ -2685,9 +2685,9 @@ const MatchesController = {
         const team2Sum = getTeamSum(2);
 
         const t1p = document.getElementById('mv-team1-points');
-        if (t1p) t1p.innerHTML = safeHTML((team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY');
+        if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY';
         const t2p = document.getElementById('mv-team2-points');
-        if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY');
+        if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
 
         // Eligibility Range
         const rangeEl = document.getElementById('mv-eligibility-range');
@@ -2717,7 +2717,7 @@ const MatchesController = {
                 const rawName = s.nickname || s.first_name;
                 const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
-                el.innerHTML = safeHTML(`
+                el.innerHTML = `
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
                         ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                     </div>
@@ -2737,7 +2737,7 @@ const MatchesController = {
             } else {
                 el.className = 'mv-slot slot-empty';
                 el.style.cursor = 'default';
-                el.innerHTML = safeHTML('Open');
+                el.innerHTML = 'Open';
                 el.onclick = null;
             }
         });
@@ -2792,13 +2792,13 @@ const MatchesController = {
                 }
 
                 if (policyArea.innerHTML !== combinedHtml) {
-                    policyArea.innerHTML = safeHTML(combinedHtml);
+                    policyArea.innerHTML = combinedHtml;
                 }
             }
 
 
             if (match.status === 'cancelled') {
-                actionArea.innerHTML = safeHTML(`
+                actionArea.innerHTML = `
                         <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
                             <div style="flex:1; text-align:left;">
@@ -2806,7 +2806,7 @@ const MatchesController = {
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
-                        </div>`);
+                        </div>`;
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
                 return;
@@ -2998,7 +2998,7 @@ const MatchesController = {
                         ? `<img src="${CONFIG.ASSET_BASE}/${pending_for_me.req_profile_thumb || pending_for_me.req_profile}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-secondary);border-radius:50%;font-weight:700;font-size:16px;">${reqInitial}</div>`;
 
-                    actionArea.innerHTML = safeHTML(`
+                    actionArea.innerHTML = `
                         <div style="background:var(--c-bg-card); border-radius:var(--r-lg); padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.15);">
                             <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
                                 <div style="width:52px; height:52px; border:2px solid var(--c-orange); border-radius:50%; padding:2px; flex-shrink:0;">
@@ -3029,10 +3029,10 @@ const MatchesController = {
                                     <span style="font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">Block</span>
                                 </button>
                             </div>
-                        </div>`);
+                        </div>`;
                 } else if (my_pending_request) {
                     const partnerName = my_pending_request.par_nickname || my_pending_request.par_first;
-                    actionArea.innerHTML = safeHTML(`
+                    actionArea.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
                             <div style="flex-direction:column; background:rgba(247,148,29,0.06); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
@@ -3044,7 +3044,7 @@ const MatchesController = {
                                     <strong>Private Draft:</strong> This match is hidden from other players until your partner responds or you cancel this invitation.
                                 </div>
                             </div>
-                        </div>`);
+                        </div>`;
                 } else if (user_in_match) {
                     const isCreator = !!is_creator;
                     const isLate = diffHrs < 6;
@@ -3075,7 +3075,7 @@ const MatchesController = {
                         actionHtml += `<button id="mv-cancel-btn" onclick="MatchesController.cancelMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:rgba(241,90,41,0.1); border:none; border-radius:var(--r-sm); color:var(--c-red); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">✕ Cancel</button>`;
                     }
                     actionHtml += `</div></div></div>`;
-                    actionArea.innerHTML = safeHTML(actionHtml);
+                    actionArea.innerHTML = actionHtml;
                 } else if (my_waitlist_entry) {
                     const isSolo = !my_waitlist_entry.partner_id;
                     const otherPerson = (parseInt(my_waitlist_entry.requester_id) === myUserId)
@@ -3089,7 +3089,7 @@ const MatchesController = {
                     const s22 = slots.find(s => s.team_no == 2 && s.slot_no == 2);
                     const canJumpIn = isSolo ? (slots.length < 4) : ((!s11 && !s12) || (!s21 && !s22));
 
-                    actionArea.innerHTML = safeHTML(`
+                    actionArea.innerHTML = `
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
                             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(27,82,206,0.06); border-radius:var(--r-md); padding:12px 16px;">
@@ -3099,7 +3099,7 @@ const MatchesController = {
                                     ${isLiveMatch ? `<button onclick="MatchesController.withdraw(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">Withdraw</button>` : '<span style="font-size:11px; color:var(--c-text-muted); letter-spacing:0.5px; opacity:0.8;">MATCH ENDED</span>'}
                                 </div>
                             </div>
-                        </div>`);
+                        </div>`;
                 } else {
                     const slotsCount = slots.length;
 
@@ -3131,7 +3131,7 @@ const MatchesController = {
                     }
 
                     joinHtml += `</div>`;
-                    actionArea.innerHTML = safeHTML(joinHtml);
+                    actionArea.innerHTML = joinHtml;
                 }
 
                 // Phase 5: Chat access logic
@@ -3185,7 +3185,7 @@ const MatchesController = {
         const isMatchPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
         if (!isMatchPast && match.status !== 'cancelled' && (is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
             wlSection.style.display = 'block';
-            wlList.innerHTML = safeHTML(activeWl.map(w => {
+            wlList.innerHTML = activeWl.map(w => {
                 const isSolo = !w.partner_id;
                 const reqName = w.req_nickname || w.req_first;
                 const parName = w.par_nickname || w.par_first;
@@ -3324,7 +3324,7 @@ const MatchesController = {
                 noticeEl = document.createElement('div');
                 noticeEl.id = 'mv-team-waitlist-notice';
                 noticeEl.style.cssText = 'background:rgba(247,148,29,0.07); border:1px solid rgba(247,148,29,0.2); border-radius:10px; padding:10px 14px; font-size:12px; color:var(--c-orange); font-weight:600; margin-bottom:14px; line-height:1.4;';
-                noticeEl.innerHTML = safeHTML('🕒 <strong>Match is full.</strong> Your request will be added to the waitlist. You and your partner will be notified when a team slot opens up.');
+                noticeEl.innerHTML = '🕒 <strong>Match is full.</strong> Your request will be added to the waitlist. You and your partner will be notified when a team slot opens up.';
                 form.insertBefore(noticeEl, form.firstChild);
             } else {
                 noticeEl.style.display = 'block';
@@ -3360,7 +3360,7 @@ const MatchesController = {
             help.style.color = 'var(--c-text-muted)';
         }
         if (btn) {
-            btn.innerHTML = safeHTML('Send Request');
+            btn.innerHTML = 'Send Request';
             btn.disabled = false;
         }
     },
@@ -4018,7 +4018,7 @@ const ChatController = {
         const codeHtml = pCode ? `<span style="font-family:monospace; font-size:11px; background:rgba(247,148,29,0.15); color:var(--c-orange); padding:2px 6px; border-radius:6px; letter-spacing:0.5px; font-weight:800;">${pCode}</span>` : '';
         const nameDisplay = `<span style="text-transform:uppercase; font-weight:900;">${nickname}</span>`;
         nameEl.innerHTML = safeHTML(`${nameDisplay} ${codeHtml}`);
-        listEl.innerHTML = safeHTML(btnContent);
+        listEl.innerHTML = btnContent;
 
 
         actionBar.style.setProperty('display', 'flex', 'important');
@@ -4230,7 +4230,7 @@ const ChatController = {
                 // Nothing to show, make sure empty state is visible
                 let emptyState = document.getElementById('chat-empty-state');
                 if (!emptyState) {
-                    inner.innerHTML = safeHTML(`
+                    inner.innerHTML = `
                       <div id="chat-empty-state" style="display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:13px; text-align:center; padding:40px 0; flex:1;">
                         No messages yet.<br>Be the first to say something! 🎾
                       </div>`;
@@ -4298,7 +4298,7 @@ const ChatController = {
                             ? '<img src="' + CONFIG.ASSET_BASE + '/' + thumb + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
                             : (name[0] || '?').toUpperCase();
 
-                        group.innerHTML = safeHTML(`
+                        group.innerHTML = `
                             <div class="chat-group-avatar" style="width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;">${avatar}</div>
                             <div class="chat-msg-column" style="max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}">
                                 ${!isMe ? `<div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;">${name} ${code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;">${code}</span>` : ''}</div>` : ''}
@@ -4332,7 +4332,7 @@ const ChatController = {
                         : `<div style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:12px; font-weight:800; flex-shrink:0; border:2px solid var(--c-bg-card);">${initials}</div>`;
                     const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(247,148,29,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
 
-                    el.innerHTML = safeHTML(`
+                    el.innerHTML = `
                         <div style="display:flex; align-items:center; gap:10px;">
                             <div style="position:relative;">
                                 ${avatarHtml}
@@ -4373,7 +4373,7 @@ const ChatController = {
             el.id = notifId;
             el.className = 'chat-system-msg';
             el.style.cssText = 'background:rgba(var(--c-primary-rgb,59,130,246),0.1); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; width:100%;';
-            el.innerHTML = safeHTML(
+            el.innerHTML =
                 '<div style="font-size:13px; color:var(--c-text); flex:1;">📞 <strong>' + requesterName + '</strong> wants your phone number</div>' +
                 '<div style="display:flex; gap:8px; flex-shrink:0;">' +
                 '<button onclick="PhoneController.respond(' + pr.id + ',\'approve\')" style="background:var(--g-primary); border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; color:#fff; cursor:pointer;">Allow</button>' +
@@ -4546,7 +4546,7 @@ const PhoneController = {
         const notif = document.getElementById('phone-notif-pending-' + request_id);
         if (action === 'approve' && res.data.phone) {
             if (notif) {
-                notif.innerHTML = safeHTML('<span style="color:var(--c-orange);font-weight:700;">✅ Approved — <a href="tel:' + res.data.phone + '" style="color:inherit; text-decoration:underline;">' + res.data.phone + '</a></span>');
+                notif.innerHTML = '<span style="color:var(--c-orange);font-weight:700;">✅ Approved — <a href="tel:' + res.data.phone + '" style="color:inherit; text-decoration:underline;">' + res.data.phone + '</a></span>';
                 notif.classList.add('notif-handled');
             }
         } else {
@@ -4562,12 +4562,12 @@ const PhoneController = {
         btn.style.pointerEvents = 'auto';
 
         if (status === 'pending') {
-            btn.innerHTML = safeHTML('Cancel request');
+            btn.innerHTML = 'Cancel request';
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:var(--c-primary); color:#fff; border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = () => ChatController.cancelPhone(target_user_id, btn);
         }
         else if (status === 'approved' && phone) {
-            btn.innerHTML = safeHTML('📞 ' + phone);
+            btn.innerHTML = '📞 ' + phone;
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = (e) => {
                 e.stopPropagation();
@@ -4575,7 +4575,7 @@ const PhoneController = {
             };
         }
         else { // Denied, Cancelled, or otherwise invalid
-            btn.innerHTML = safeHTML('📞 Request Phone');
+            btn.innerHTML = '📞 Request Phone';
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(255,255,255,0.1); color:#fff; border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = () => ChatController.requestPhone(target_user_id, btn);
         }
@@ -4729,7 +4729,7 @@ const NotificationsController = {
         try {
             const notifications = this._notifications;
             if (notifications.length === 0) {
-                listEl.innerHTML = safeHTML(`
+                listEl.innerHTML = `
                     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; gap:16px; color:var(--c-text-muted);">
                         <div style="font-size:40px;">🔔</div>
                         <div style="font-size:14px; font-weight:600;">No notifications yet</div>
@@ -4839,7 +4839,7 @@ const NotificationsController = {
                 `;
             };
 
-            listEl.innerHTML = safeHTML(renderGroup('Today', todayItems) + renderGroup('Earlier', earlierItems));
+            listEl.innerHTML = renderGroup('Today', todayItems) + renderGroup('Earlier', earlierItems);
 
             // Phase 6: Add loading indicator and scroll listener
             if (this._isLoading) {
@@ -4865,7 +4865,7 @@ const NotificationsController = {
 
         } catch (e) {
             console.error('Notification render failed:', e);
-            listEl.innerHTML = safeHTML('<div style="padding:40px; text-align:center; opacity:0.5;">Load error.</div>');
+            listEl.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.5;">Load error.</div>';
         }
     },
 
@@ -4960,7 +4960,7 @@ const NotificationsController = {
         if (document.getElementById('notif-panel')) return;
         const panel = document.createElement('div');
         panel.id = 'notif-panel';
-        panel.innerHTML = safeHTML(`
+        panel.innerHTML = `
             <div id="notif-panel-overlay" onclick="NotificationsController.close()" style="position:fixed; inset:0; z-index:8998; background:rgba(0,0,0,0.5); display:none;"></div>
             <div id="notif-panel-inner" style="
                 position:fixed; top:0; right:0; height:100dvh; width:min(380px, 100vw);
@@ -5018,7 +5018,7 @@ const ScoringController = {
         modal.className = 'loading-overlay';
         modal.style.zIndex = '10000';
         modal.onclick = (e) => { if (e.target === modal) this.closeModal(); };
-        modal.innerHTML = safeHTML(`
+        modal.innerHTML = `
             <div class="scoring-modal">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
                     <h2 style="font-size:20px; font-weight:800; margin:0;">Submit Match Score</h2>
@@ -5146,7 +5146,7 @@ const ScoringController = {
         const list = document.getElementById('comp-players-list');
         if (!list) return;
 
-        list.innerHTML = safeHTML(this._composition.map((p, idx) => `
+        list.innerHTML = this._composition.map((p, idx) => `
             <div class="comp-player-card ${p.team_no == 1 ? 'active-t1' : 'active-t2'}" onclick="ScoringController.switchPlayerTeam(${idx})">
                 <div style="font-size:10px; font-weight:800; color:${p.team_no == 1 ? 'var(--c-primary)' : 'var(--c-orange)'}">${p.team_no == 1 ? 'A' : 'B'}</div>
                 <div style="font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
@@ -5402,7 +5402,7 @@ const RankingController = {
 
         // Only show skeletons if we have no cache
         if (!isSilent && !hasCache) {
-            listEl.innerHTML = safeHTML(RankingUI.renderSkeleton(10));
+            listEl.innerHTML = RankingUI.renderSkeleton(10);
         }
 
         // If we have cache, render it immediately
@@ -5422,7 +5422,7 @@ const RankingController = {
 
         if (!res || !res.success) {
             if (!isSilent && !hasCache) {
-                listEl.innerHTML = safeHTML('<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>');
+                listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
             }
             return;
         }
@@ -5472,7 +5472,7 @@ const RankingController = {
         if (!listEl) return;
 
         if (list.length === 0) {
-            listEl.innerHTML = safeHTML('<div style="padding:100px 20px; text-align:center; color:var(--c-text-muted);"><div style="font-size:40px; margin-bottom:16px;">🔍</div>No players found.</div>');
+            listEl.innerHTML = '<div style="padding:100px 20px; text-align:center; color:var(--c-text-muted);"><div style="font-size:40px; margin-bottom:16px;">🔍</div>No players found.</div>';
             return;
         }
 
