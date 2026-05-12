@@ -645,7 +645,7 @@ const DashboardController = {
 
         // Prevent flicker: only update DOM if HTML changed
         if (listEl._lastHtml === html) return;
-        listEl.innerHTML = html;
+        listEl.innerHTML = DOMPurify.sanitize(html);
         listEl._lastHtml = html;
     },
 
@@ -831,7 +831,7 @@ const DashboardController = {
         });
         // Only update innerHTML if it's different to prevent image flickering/re-fading
         if (listEl._lastHtml === html) return;
-        listEl.innerHTML = html;
+        listEl.innerHTML = DOMPurify.sanitize(html);
         listEl._lastHtml = html;
         listEl.setAttribute('data-rendered-gender', DashboardController._currentRankTab || 'male');
     },
@@ -1089,7 +1089,7 @@ const ProfileViewController = {
                             scoreCount++;
                         }
                     }
-                    listEl.innerHTML = html;
+                    listEl.innerHTML = DOMPurify.sanitize(html);
                 }
             }
         })();
@@ -1518,7 +1518,7 @@ const MatchesController = {
                 </div>`;
                 if (i === 0) dateInput.value = iso;
             }
-            dateScroller.innerHTML = html;
+            dateScroller.innerHTML = DOMPurify.sanitize(html);
         }
 
         if (timeScroller && timeInput) {
@@ -1544,7 +1544,7 @@ const MatchesController = {
                     </div>`;
                 });
             }
-            timeScroller.innerHTML = html;
+            timeScroller.innerHTML = DOMPurify.sanitize(html);
 
             // Scroll to 4:00 PM (16:00) by default as a starting point, but don't select it
             const defaultTime = '16:00';
@@ -1584,7 +1584,7 @@ const MatchesController = {
                     const idInput = document.getElementById('cm-venue-id');
 
                     if (res && res.success && res.data.venues.length > 0) {
-                        venueDrop.innerHTML = res.data.venues.map(v => `<li data-id="${v.id}">${v.name}</li>`).join('');
+                        venueDrop.innerHTML = DOMPurify.sanitize(res.data.venues.map(v => `<li data-id="${v.id}">${v.name}</li>`).join(''));
                         venueDrop.style.display = 'block';
 
                         // Auto-link if exact case-insensitive match is found
@@ -1661,8 +1661,7 @@ const MatchesController = {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
                             partnerInput.value = q; // Standardize value to just the code
-                            partnerHelp.innerHTML = `✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`;
-                            partnerHelp.style.color = "var(--c-primary)";
+                            partnerHelp.innerHTML = DOMPurify.sanitize(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`);                            partnerHelp.style.color = "var(--c-primary)";
                         } else {
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
@@ -3966,7 +3965,7 @@ const ChatController = {
             html += otherUsers.map(p => buildAvatar(p, false)).join('');
         }
 
-        bar.innerHTML = html;
+        bar.innerHTML = DOMPurify.sanitize(html);
     },
 
 
@@ -5516,6 +5515,6 @@ const RankingController = {
                 </div>
             `;
         });
-        listEl.innerHTML = html;
+        listEl.innerHTML = DOMPurify.sanitize(html);
     }
 };
