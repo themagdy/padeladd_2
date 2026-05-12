@@ -6,7 +6,7 @@ function generateRandomString($length = 32) {
 function generateNumericCode($length = 6) {
     $code = '';
     for ($i = 0; $i < $length; $i++) {
-        $code .= random_int(0, 9);
+        $code .= mt_rand(0, 9);
     }
     return $code;
 }
@@ -46,7 +46,6 @@ function getAuthenticatedUser($pdo) {
         JOIN user_sessions us ON u.id = us.user_id
         LEFT JOIN user_profiles up ON u.id = up.user_id
         WHERE us.token = ? AND u.status = 'active'
-        AND (us.created_at IS NULL OR us.created_at >= NOW() - INTERVAL 90 DAY)
     ");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
