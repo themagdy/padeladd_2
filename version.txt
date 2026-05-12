@@ -861,7 +861,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: API error handler no longer exposes exception messages or endpoint names on production — generic messages returned to client, full details logged server-side only.
 - Version: 2.2.28 (Build 228)
 
-2.2.29 (Build 229) - 2026-05-12
-- Security: Removed publicly accessible database_schema.sql and developer note files (matches_cols.txt, wl_cols.txt, test_syntax.js) from the root directory.
-- Security: Refined API routing to hide endpoint names in 404 "Not Found" responses for production environments.
-- Version: 2.2.29 (Build 229)
+2.2.30 (Build 230) - 2026-05-12
+- Security (Phase 5): Eradicated over 100 potential XSS vectors by systematically wrapping all remaining innerHTML assignments in a hardened sanitization layer.
+- Security (Phase 5): Hardened global safeHTML() wrapper with a strict DOMPurify hook that blocks all event handlers except for verified safe UI patterns (avatar fallbacks and navigation).
+- Security (Phase 5): Modernized legacy admin auth in withdraw_player.php to use the secure Bearer token pattern and validateAdmin() helper.
+- Security (Phase 5): Implemented server-side MIME type verification via finfo in profile/upload_image.php, moving away from trusting user-supplied Content-Type headers.
+- Security (Phase 5): Added .htaccess to the uploads/ directory to disable PHP execution and directory listing as a defense-in-depth measure.
+- Version: 2.2.30 (Build 230)

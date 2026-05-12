@@ -7,8 +7,11 @@ if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
 }
 
 $file = $_FILES['image'];
+$finfo = new finfo(FILEINFO_MIME_TYPE);
+$realMimeType = $finfo->file($file['tmp_name']);
+
 $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-if (!in_array($file['type'], $allowedTypes)) {
+if (!in_array($realMimeType, $allowedTypes)) {
     jsonResponse(false, 'Invalid file type. Only JPG, PNG and WEBP are allowed.');
 }
 
@@ -18,9 +21,7 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
-// Derive extension from MIME type (not user-supplied filename)
-$mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-$ext = $mimeToExt[$file['type']] ?? 'jpg';
+// Derive filenames
 $baseName = $user['id'] . '_' . time();
 $filename = $baseName . '.' . $ext;
 $thumbFilename = $baseName . '_thumb.' . $ext;
@@ -29,9 +30,9 @@ $thumbPath = $uploadDir . $thumbFilename;
 
 // Process Image
 $image = null;
-if ($file['type'] === 'image/jpeg') $image = @imagecreatefromjpeg($file['tmp_name']);
-elseif ($file['type'] === 'image/png') $image = @imagecreatefrompng($file['tmp_name']);
-elseif ($file['type'] === 'image/webp') $image = @imagecreatefromwebp($file['tmp_name']);
+if ($realMimeType === 'image/jpeg') $image = @imagecreatefromjpeg($file['tmp_name']);
+elseif ($realMimeType === 'image/png') $image = @imagecreatefrompng($file['tmp_name']);
+elseif ($realMimeType === 'image/webp') $image = @imagecreatefromwebp($file['tmp_name']);
 
 if (!$image) {
     // If GD failed, fallback to basic move
@@ -72,9 +73,9 @@ if (!$image) {
     }
 
     // Save Main (700px)
-    resizeAndSave($image, $targetPath, $file['type'], 700, $width, $height);
+    resizeAndSave($image, $targetPath, $realMimeType, 700, $width, $height);
     // Save Thumb (150px)
-    resizeAndSave($image, $thumbPath, $file['type'], 150, $width, $height);
+    resizeAndSave($image, $thumbPath, $realMimeType, 150, $width, $height);
     
     imagedestroy($image);
 }
