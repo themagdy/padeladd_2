@@ -792,3 +792,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Rebranding: Replaced 'Player Code' with 'Player XCode' across profile and match forms for a more distinct identity.
 - UI Refinement: Tightened player code badge styling with optimized padding and modernized 'XCODE' label.
 - Version: 2.2.17 (Build 217)
+
+2.2.18 (Build 218) - 2026-05-12
+- UI Refinement: Added a subtle border to the partner XCode input field in match details for better visibility and definition.
+- Version: 2.2.18 (Build 218)
