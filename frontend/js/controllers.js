@@ -753,7 +753,7 @@ const DashboardController = {
                 DashboardController._renderRankingList(cached);
             }
         } else if (!isSilent && listEl.innerHTML.trim() === '') {
-            listEl.innerHTML = safeHTML(RankingUI.renderSkeleton(5));
+            listEl.innerHTML = RankingUI.renderSkeleton(5);
         }
 
         const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
@@ -905,7 +905,7 @@ const ProfileViewController = {
         if (!res || !res.success) {
             const pageEl = document.querySelector('.page.active');
             if (pageEl) {
-                pageEl.innerHTML = `
+                pageEl.innerHTML = safeHTML(`
                     <div style="width:100%; max-width:500px; margin:0 auto; padding:90px 20px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                         <div style="font-size:64px; margin-bottom:20px;">🎾🔎</div>
                         <h1 style="font-size:32px; font-weight:800; color:#fff; margin-bottom:12px;">Player Not Found</h1>
@@ -920,7 +920,7 @@ const ProfileViewController = {
                             </div>
                         ` : ''}
                     </div>
-                `;
+                `);
             }
             return;
         }
@@ -981,10 +981,10 @@ const ProfileViewController = {
         const codeEl = document.getElementById('prof-code');
         if (codeEl) {
             if (profile?.player_code) {
-                codeEl.innerHTML = `
+                codeEl.innerHTML = safeHTML(`
                     <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
                     <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; padding: 0 8px;">${profile.player_code}</span>
-                `;
+                `);
                 codeEl.style.display = 'inline-flex';
             } else {
                 codeEl.style.display = 'none';
@@ -1024,7 +1024,7 @@ const ProfileViewController = {
                     </div>
                 `);
             }
-            metaEl.innerHTML = safeHTML(items.join(''));
+            metaEl.innerHTML = items.join('');
             metaEl.style.gap = '8px';
         }
 
@@ -1059,7 +1059,7 @@ const ProfileViewController = {
             const listEl = document.getElementById('pv-matches-list');
 
             if (listEl && !isSilent && listEl.innerHTML.trim() === '') {
-                listEl.innerHTML = safeHTML(ScoreUI.renderSkeleton(2));
+                listEl.innerHTML = ScoreUI.renderSkeleton(2);
             }
 
             const matchRes = await API.post('/matches/user', matchPayload);
@@ -1163,7 +1163,7 @@ const ProfileController = {
             if (res && res.success) {
                 const displayImg = res.data.profile_image_thumb || res.data.profile_image;
                 const avContainer = document.getElementById('edit-avatar-container');
-                avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
+                avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
 
                 if (removeBtn) removeBtn.style.display = 'block';
                 Toast.show('Photo updated', 'success');
@@ -2190,7 +2190,7 @@ const MatchesController = {
             // Surgical DOM update for Filter Bar & Container
             let resultsContainer = document.getElementById('ml-filtered-results');
             if (!resultsContainer) {
-                list.innerHTML = safeHTML(filterBar + '<div id="ml-filtered-results"></div>');
+                list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
                 resultsContainer = document.getElementById('ml-filtered-results');
             } else {
                 // Update filter bar ONLY if it changed
@@ -2632,7 +2632,7 @@ const MatchesController = {
                 typeBadges += `</div>`;
             }
 
-            titleEl.innerHTML = safeHTML(`
+            titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                     <span class="match-code-badge" style="border:none;">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}" style="font-weight:700;">${statusLabel}</span>
@@ -2641,7 +2641,7 @@ const MatchesController = {
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
                     ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff; opacity: 0.9;">${subTitle}</span>` : ''}
                 </div>
-            `);
+            `;
         }
 
         const metaEl = document.getElementById('mv-meta');
@@ -2651,7 +2651,7 @@ const MatchesController = {
             metaEl.style.alignItems = 'flex-start';
             metaEl.style.gap = '8px';
 
-            metaEl.innerHTML = safeHTML(`
+            metaEl.innerHTML = `
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
@@ -2669,7 +2669,7 @@ const MatchesController = {
                         <span>🚩</span> Report a problem
                     </button>
                 </div>
-            `);
+            `;
         }
 
         if (statusBadgeContainer) statusBadgeContainer.innerHTML = ''; // Moved into title area
@@ -2685,9 +2685,9 @@ const MatchesController = {
         const team2Sum = getTeamSum(2);
 
         const t1p = document.getElementById('mv-team1-points');
-        if (t1p) t1p.innerHTML = (team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY';
+        if (t1p) t1p.innerHTML = safeHTML((team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY');
         const t2p = document.getElementById('mv-team2-points');
-        if (t2p) t2p.innerHTML = (team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY';
+        if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY');
 
         // Eligibility Range
         const rangeEl = document.getElementById('mv-eligibility-range');
@@ -2717,7 +2717,7 @@ const MatchesController = {
                 const rawName = s.nickname || s.first_name;
                 const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
-                el.innerHTML = `
+                el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
                         ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                     </div>
@@ -2733,7 +2733,7 @@ const MatchesController = {
                             ${s.player_code ? `<span class="slot-code">${s.player_code}</span>` : '<span></span>'}
                             <span class="slot-points">${(parseInt(s.points) || 0) + (parseInt(s.current_buffer) || 0)} pts</span>
                         </div>
-                    </div>`;
+                    </div>`);
             } else {
                 el.className = 'mv-slot slot-empty';
                 el.style.cursor = 'default';
@@ -2798,7 +2798,7 @@ const MatchesController = {
 
 
             if (match.status === 'cancelled') {
-                actionArea.innerHTML = `
+                actionArea.innerHTML = safeHTML(`
                         <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
                             <div style="flex:1; text-align:left;">
@@ -2806,7 +2806,7 @@ const MatchesController = {
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
-                        </div>`;
+                        </div>`);
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
                 return;
@@ -2998,7 +2998,7 @@ const MatchesController = {
                         ? `<img src="${CONFIG.ASSET_BASE}/${pending_for_me.req_profile_thumb || pending_for_me.req_profile}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
                         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--c-bg-secondary);border-radius:50%;font-weight:700;font-size:16px;">${reqInitial}</div>`;
 
-                    actionArea.innerHTML = `
+                    actionArea.innerHTML = safeHTML(`
                         <div style="background:var(--c-bg-card); border-radius:var(--r-lg); padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.15);">
                             <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
                                 <div style="width:52px; height:52px; border:2px solid var(--c-orange); border-radius:50%; padding:2px; flex-shrink:0;">
@@ -3029,10 +3029,10 @@ const MatchesController = {
                                     <span style="font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">Block</span>
                                 </button>
                             </div>
-                        </div>`;
+                        </div>`);
                 } else if (my_pending_request) {
                     const partnerName = my_pending_request.par_nickname || my_pending_request.par_first;
-                    actionArea.innerHTML = `
+                    actionArea.innerHTML = safeHTML(`
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
                             <div style="flex-direction:column; background:rgba(247,148,29,0.06); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
@@ -3044,7 +3044,7 @@ const MatchesController = {
                                     <strong>Private Draft:</strong> This match is hidden from other players until your partner responds or you cancel this invitation.
                                 </div>
                             </div>
-                        </div>`;
+                        </div>`);
                 } else if (user_in_match) {
                     const isCreator = !!is_creator;
                     const isLate = diffHrs < 6;
@@ -3075,7 +3075,7 @@ const MatchesController = {
                         actionHtml += `<button id="mv-cancel-btn" onclick="MatchesController.cancelMatch(${match.id}, this, ${isLate}, ${isFull})" style="padding:7px 12px; background:rgba(241,90,41,0.1); border:none; border-radius:var(--r-sm); color:var(--c-red); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">✕ Cancel</button>`;
                     }
                     actionHtml += `</div></div></div>`;
-                    actionArea.innerHTML = actionHtml;
+                    actionArea.innerHTML = safeHTML(actionHtml);
                 } else if (my_waitlist_entry) {
                     const isSolo = !my_waitlist_entry.partner_id;
                     const otherPerson = (parseInt(my_waitlist_entry.requester_id) === myUserId)
@@ -3131,7 +3131,7 @@ const MatchesController = {
                     }
 
                     joinHtml += `</div>`;
-                    actionArea.innerHTML = joinHtml;
+                    actionArea.innerHTML = safeHTML(joinHtml);
                 }
 
                 // Phase 5: Chat access logic
@@ -3215,7 +3215,7 @@ const MatchesController = {
                     </div>
                     <div class="badge ${sClass}" style="font-size:10px; padding:4px 8px;">${status}</div>
                 </div>`;
-            }).join('');
+            }).join(''));
         } else if (wlSection) {
             wlSection.style.display = 'none';
         }
@@ -4298,12 +4298,12 @@ const ChatController = {
                             ? '<img src="' + CONFIG.ASSET_BASE + '/' + thumb + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
                             : (name[0] || '?').toUpperCase();
 
-                        group.innerHTML = `
+                        group.innerHTML = safeHTML(`
                             <div class="chat-group-avatar" style="width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;">${avatar}</div>
                             <div class="chat-msg-column" style="max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}">
                                 ${!isMe ? `<div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;">${name} ${code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;">${code}</span>` : ''}</div>` : ''}
                             </div>
-                        `;
+                        `);
 
                         group.querySelector('.chat-msg-column').appendChild(bubble);
                         inner.appendChild(group);
@@ -4332,7 +4332,7 @@ const ChatController = {
                         : `<div style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:12px; font-weight:800; flex-shrink:0; border:2px solid var(--c-bg-card);">${initials}</div>`;
                     const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(247,148,29,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
 
-                    el.innerHTML = `
+                    el.innerHTML = safeHTML(`
                         <div style="display:flex; align-items:center; gap:10px;">
                             <div style="position:relative;">
                                 ${avatarHtml}
@@ -4350,7 +4350,7 @@ const ChatController = {
                             <span style="font-size:16px; opacity:0.8;">📞</span>
                             <span style="font-size:16px; font-weight:800; font-family:monospace; color:#10B981; letter-spacing:0.5px;">${phone}</span>
                         </a>
-                    `;
+                    `);
                     if (inner) inner.appendChild(el);
 
                     // Break the group
@@ -4546,7 +4546,7 @@ const PhoneController = {
         const notif = document.getElementById('phone-notif-pending-' + request_id);
         if (action === 'approve' && res.data.phone) {
             if (notif) {
-                notif.innerHTML = '<span style="color:var(--c-orange);font-weight:700;">✅ Approved — <a href="tel:' + res.data.phone + '" style="color:inherit; text-decoration:underline;">' + res.data.phone + '</a></span>';
+                notif.innerHTML = safeHTML('<span style="color:var(--c-orange);font-weight:700;">✅ Approved — <a href="tel:' + res.data.phone + '" style="color:inherit; text-decoration:underline;">' + res.data.phone + '</a></span>');
                 notif.classList.add('notif-handled');
             }
         } else {
@@ -4567,7 +4567,7 @@ const PhoneController = {
             btn.onclick = () => ChatController.cancelPhone(target_user_id, btn);
         }
         else if (status === 'approved' && phone) {
-            btn.innerHTML = '📞 ' + phone;
+            btn.innerHTML = safeHTML('📞 ' + phone);
             btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = (e) => {
                 e.stopPropagation();
