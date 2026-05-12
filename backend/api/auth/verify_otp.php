@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../helpers/rate_limit_helper.php';
+
 $pdo = getDB();
 
 $userId = $data['user_id'] ?? null;
@@ -7,6 +9,10 @@ $code = trim($data['code'] ?? '');
 if (empty($userId) || empty($code)) {
     jsonResponse(false, 'User ID and OTP are required.');
 }
+
+// Rate limit: max 10 OTP attempts per user per 15 minutes
+$_rlKey = 'otp_' . (int)$userId;
+checkRateLimit($pdo, $_rlKey, 10, 900);
 
 $stmtCheck = $pdo->prepare("SELECT is_phone_verified FROM users WHERE id = ?");
 $stmtCheck->execute([$userId]);
