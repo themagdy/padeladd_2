@@ -170,6 +170,17 @@
     </script>
     <!-- DOMPurify: XSS sanitization for innerHTML -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+    <script>
+        // safeHTML: sanitize user-generated HTML while preserving our own
+        // app template event handlers (onerror for avatar fallback, onclick
+        // for navigation, onmouseover/onmouseout for hover effects).
+        // Script injection, iframes, and malicious tags are still blocked.
+        window.safeHTML = function(html) {
+            return DOMPurify.sanitize(html, {
+                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout']
+            });
+        };
+    </script>
     <script src="frontend/js/config.js?v=225"></script>
     <script src="frontend/js/auth.js?v=225"></script>
     <script src="frontend/js/api.js?v=225"></script>
