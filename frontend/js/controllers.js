@@ -3847,6 +3847,7 @@ const ChatController = {
     _matchId: 0,
     _lastId: 0,
     _sending: false,
+    _isLoading: false,
     _pollTimer: null,
     _isShowing: false,
     _lastSenderId: 0,
@@ -4208,6 +4209,7 @@ const ChatController = {
 
 
     loadMessages: async function (initial = false, forceScroll = false) {
+        if (this._isLoading) return;
         // Phase 6: Don't poll if the tab is in the background (prevents "ghost online" status)
         if (document.hidden && !initial) return;
 
@@ -4217,9 +4219,13 @@ const ChatController = {
 
         const mid = parseInt(this._matchId);
         if (!mid) return;
+        this._isLoading = true;
         const res = await API.post('/chat/list', { match_id: mid, since_id: initial ? 0 : (this._lastId || 0) });
 
-        if (!res || !res.success) return;
+        if (!res || !res.success) {
+            this._isLoading = false;
+            return;
+        }
 
         if (initial) {
             this._lastMsgEl = null;
@@ -4434,6 +4440,8 @@ const ChatController = {
                 container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
             }
         }
+        
+        this._isLoading = false;
     },
 
     buildBubbleEl: function (msg, isMe) {
@@ -4660,8 +4668,13 @@ const NotificationsController = {
                 badge.style.display = unreadCount > 0 ? 'flex' : 'none';
             }
 
-            this._notifications = res.data.notifications || [];
-            if (this._isOpen) this.renderList();
+            // Only overwrite list if panel is closed, or if user hasn't scrolled past first page
+            if (!this._isOpen) {
+                this._notifications = res.data.notifications || [];
+            } else if (this._offset <= 20) {
+                this._notifications = res.data.notifications || [];
+                this.renderList();
+            }
         } catch (e) {
             console.warn('Notification poll failed:', e.message);
         } finally {
