@@ -791,3 +791,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.17 (Build 217) - 2026-05-12
 - UI Refinement: Replaced 'ID' label with 'CODE' in player profile for better consistency with the app's player code system.
 - Version: 2.2.17 (Build 217)
+
+2.2.18 (Build 218) - 2026-05-12
+- UI Refinement: Updated player profile label from 'CODE' to 'XCODE'.
+- Version: 2.2.18 (Build 218)
