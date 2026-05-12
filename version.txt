@@ -876,3 +876,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.31 (Build 231) - 2026-05-13
 - Fix: Expanded safeHTML whitelist to include avatar loading patterns (classList.add), restoring visibility to player profile images.
 - Version: 2.2.31 (Build 231)
+
+2.2.32 (Build 232) - 2026-05-13
+- Security: Implemented HSTS (Strict-Transport-Security) for mandatory HTTPS enforcement on web.
+- Security: Added Subresource Integrity (SRI) for DOMPurify to ensure CDN library safety.
+- Version: 2.2.32 (Build 232)
