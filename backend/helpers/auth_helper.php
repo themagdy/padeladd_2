@@ -6,7 +6,7 @@ function generateRandomString($length = 32) {
 function generateNumericCode($length = 6) {
     $code = '';
     for ($i = 0; $i < $length; $i++) {
-        $code .= random_int(0, 9);
+        $code .= mt_rand(0, 9);
     }
     return $code;
 }
