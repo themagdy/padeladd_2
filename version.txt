@@ -796,3 +796,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.18 (Build 218) - 2026-05-12
 - UI Refinement: Added a subtle border to the partner XCode input field in match details for better visibility and definition.
 - Version: 2.2.18 (Build 218)
+
+2.2.19 (Build 219) - 2026-05-12
+- UI Refinement: Optimized player code badge spacing with added horizontal padding for a more balanced and professional look.
+- Version: 2.2.19 (Build 219)
