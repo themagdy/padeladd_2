@@ -12,7 +12,27 @@ if ($_isLocal && isset($_GET['debug']) && $_GET['debug'] === '1') {
 }
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+
+// CORS: Restrict to known origins. Uses hostname check — no constants needed here.
+// Same-origin web requests don't send Origin at all, so they pass through untouched.
+// Capacitor mobile app sends capacitor://localhost (iOS) or http://localhost (Android).
+$_origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$_isLocalHost = isset($_SERVER['HTTP_HOST']) && (
+    str_contains($_SERVER['HTTP_HOST'], 'localhost') ||
+    str_contains($_SERVER['HTTP_HOST'], '127.0.0.1')
+);
+$_allowedOrigins = ['capacitor://localhost', 'http://localhost', 'https://localhost'];
+
+if ($_isLocalHost || empty($_origin)) {
+    // Local dev OR same-origin request (no Origin header) — allow all
+    header('Access-Control-Allow-Origin: *');
+} elseif (in_array($_origin, $_allowedOrigins, true)) {
+    // Capacitor mobile app — allow specific origin
+    header("Access-Control-Allow-Origin: {$_origin}");
+    header('Vary: Origin');
+}
+// Unknown foreign origin — no Allow-Origin header sent, browser blocks it
+
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 date_default_timezone_set('Africa/Cairo');
