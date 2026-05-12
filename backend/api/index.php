@@ -4,14 +4,28 @@ ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 ini_set('log_errors', 1);
 
-// Hidden Debug Mode: If ?debug=1 is in the URL, show errors (for live troubleshooting)
-if (isset($_GET['debug']) && $_GET['debug'] === '1') {
+// Hidden Debug Mode: Only available in development environment
+if (APP_ENV === 'development' && isset($_GET['debug']) && $_GET['debug'] === '1') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
 }
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
+// CORS: Restrict to known allowed origins only
+$allowedOrigins = [
+    'https://ahmedmagdy.com',
+    'capacitor://localhost',
+    'http://localhost',
+    'http://localhost:8888',
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header('Vary: Origin');
+} elseif (APP_ENV === 'development') {
+    // In local dev with no Origin header (e.g. direct curl/Postman), allow all
+    header('Access-Control-Allow-Origin: *');
+}
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 date_default_timezone_set('Africa/Cairo');
