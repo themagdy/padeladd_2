@@ -64,7 +64,7 @@ const UI = {
             if (profile && thumb) {
                 // Only update DOM if the image changed to prevent flickering/re-loading
                 if (UI._lastNavAvatar !== thumb) {
-                    av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;');
+                    av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;'));
                     av.style.background = 'none';
                     UI._lastNavAvatar = thumb;
                 }
@@ -753,13 +753,13 @@ const DashboardController = {
                 DashboardController._renderRankingList(cached);
             }
         } else if (!isSilent && listEl.innerHTML.trim() === '') {
-            listEl.innerHTML = RankingUI.renderSkeleton(5);
+            listEl.innerHTML = safeHTML(RankingUI.renderSkeleton(5));
         }
 
         const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
         if (!res || !res.success) {
             if (!cached) {
-                listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`;
+                listEl.innerHTML = safeHTML(`<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`);
             }
             return;
         }
@@ -787,7 +787,7 @@ const DashboardController = {
         if (!listEl) return;
 
         if (ranking.length === 0) {
-            listEl.innerHTML = `<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`;
+            listEl.innerHTML = safeHTML(`<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">🏅</div><h3>No rankings yet</h3><p>Rankings will appear after the first matches are recorded.</p></div>`);
             return;
         }
 
@@ -933,11 +933,11 @@ const ProfileViewController = {
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
 
             if (profile && thumb) {
-                av.innerHTML = UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>';
+                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = initials + '<div class="avatar-scan-overlay"></div>';
+                av.innerHTML = safeHTML(initials + '<div class="avatar-scan-overlay"></div>');
                 av.classList.add('avatar-placeholder');
                 av.style.background = 'var(--g-primary)';
             }
@@ -1024,7 +1024,7 @@ const ProfileViewController = {
                     </div>
                 `);
             }
-            metaEl.innerHTML = items.join('');
+            metaEl.innerHTML = safeHTML(items.join(''));
             metaEl.style.gap = '8px';
         }
 
@@ -1059,7 +1059,7 @@ const ProfileViewController = {
             const listEl = document.getElementById('pv-matches-list');
 
             if (listEl && !isSilent && listEl.innerHTML.trim() === '') {
-                listEl.innerHTML = ScoreUI.renderSkeleton(2);
+                listEl.innerHTML = safeHTML(ScoreUI.renderSkeleton(2));
             }
 
             const matchRes = await API.post('/matches/user', matchPayload);
@@ -1282,12 +1282,12 @@ const ProfileController = {
 
                 const displayImg = p.profile_image_thumb || p.profile_image;
                 if (displayImg) {
-                    avContainer.innerHTML = UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;');
+                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
                     if (removeBtn) removeBtn.style.display = 'block';
                 } else if (u) {
                     // Show initials if no photo
                     const initials = (u.first_name[0] + u.last_name[0]).toUpperCase();
-                    avContainer.innerHTML = UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials);
+                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials));
                     if (removeBtn) removeBtn.style.display = 'none';
                 }
             }
@@ -2158,7 +2158,7 @@ const MatchesController = {
                     ` : ''}
                 </div>`;
             if (list._lastHtml === emptyHtml) return;
-            list.innerHTML = emptyHtml;
+            list.innerHTML = safeHTML(emptyHtml);
             list._lastHtml = emptyHtml;
             return;
         }
@@ -2190,7 +2190,7 @@ const MatchesController = {
             // Surgical DOM update for Filter Bar & Container
             let resultsContainer = document.getElementById('ml-filtered-results');
             if (!resultsContainer) {
-                list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
+                list.innerHTML = safeHTML(filterBar + '<div id="ml-filtered-results"></div>');
                 resultsContainer = document.getElementById('ml-filtered-results');
             } else {
                 // Update filter bar ONLY if it changed
@@ -2222,7 +2222,7 @@ const MatchesController = {
                 if (matches.length === 0) {
                     const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
                     if (resultsContainer._lastHtml !== emptyResultsHtml) {
-                        resultsContainer.innerHTML = emptyResultsHtml;
+                        resultsContainer.innerHTML = safeHTML(emptyResultsHtml);
                         resultsContainer._lastHtml = emptyResultsHtml;
                     }
                 } else {
@@ -2632,7 +2632,7 @@ const MatchesController = {
                 typeBadges += `</div>`;
             }
 
-            titleEl.innerHTML = `
+            titleEl.innerHTML = safeHTML(`
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
                     <span class="match-code-badge" style="border:none;">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}" style="font-weight:700;">${statusLabel}</span>
@@ -2641,7 +2641,7 @@ const MatchesController = {
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
                     ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff; opacity: 0.9;">${subTitle}</span>` : ''}
                 </div>
-            `;
+            `);
         }
 
         const metaEl = document.getElementById('mv-meta');
@@ -2651,7 +2651,7 @@ const MatchesController = {
             metaEl.style.alignItems = 'flex-start';
             metaEl.style.gap = '8px';
 
-            metaEl.innerHTML = `
+            metaEl.innerHTML = safeHTML(`
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
@@ -2669,7 +2669,7 @@ const MatchesController = {
                         <span>🚩</span> Report a problem
                     </button>
                 </div>
-            `;
+            `);
         }
 
         if (statusBadgeContainer) statusBadgeContainer.innerHTML = ''; // Moved into title area
@@ -2792,7 +2792,7 @@ const MatchesController = {
                 }
 
                 if (policyArea.innerHTML !== combinedHtml) {
-                    policyArea.innerHTML = combinedHtml;
+                    policyArea.innerHTML = safeHTML(combinedHtml);
                 }
             }
 
@@ -3185,7 +3185,7 @@ const MatchesController = {
         const isMatchPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
         if (!isMatchPast && match.status !== 'cancelled' && (is_creator || user_in_match || isWaitlisted) && activeWl.length > 0 && wlSection && wlList) {
             wlSection.style.display = 'block';
-            wlList.innerHTML = activeWl.map(w => {
+            wlList.innerHTML = safeHTML(activeWl.map(w => {
                 const isSolo = !w.partner_id;
                 const reqName = w.req_nickname || w.req_first;
                 const parName = w.par_nickname || w.par_first;
@@ -4839,7 +4839,7 @@ const NotificationsController = {
                 `;
             };
 
-            listEl.innerHTML = renderGroup('Today', todayItems) + renderGroup('Earlier', earlierItems);
+            listEl.innerHTML = safeHTML(renderGroup('Today', todayItems) + renderGroup('Earlier', earlierItems));
 
             // Phase 6: Add loading indicator and scroll listener
             if (this._isLoading) {
@@ -5146,12 +5146,12 @@ const ScoringController = {
         const list = document.getElementById('comp-players-list');
         if (!list) return;
 
-        list.innerHTML = this._composition.map((p, idx) => `
+        list.innerHTML = safeHTML(this._composition.map((p, idx) => `
             <div class="comp-player-card ${p.team_no == 1 ? 'active-t1' : 'active-t2'}" onclick="ScoringController.switchPlayerTeam(${idx})">
                 <div style="font-size:10px; font-weight:800; color:${p.team_no == 1 ? 'var(--c-primary)' : 'var(--c-orange)'}">${p.team_no == 1 ? 'A' : 'B'}</div>
                 <div style="font-size:12px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
             </div>
-        `).join('');
+        `).join(''));
     },
 
     switchPlayerTeam: function (idx) {
