@@ -11,7 +11,7 @@ function validateAdmin() {
     }
 
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT id FROM admin_sessions WHERE token = ?");
+    $stmt = $pdo->prepare("SELECT id FROM admin_sessions WHERE token = ? AND (created_at IS NULL OR created_at >= NOW() - INTERVAL 24 HOUR)");
     $stmt->execute([$token]);
     
     if (!$stmt->fetch()) {

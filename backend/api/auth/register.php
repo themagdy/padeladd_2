@@ -1,5 +1,12 @@
 <?php
+require_once __DIR__ . '/../../helpers/rate_limit_helper.php';
+
 $pdo = getDB();
+
+// Rate limit: max 5 registration attempts per IP per hour
+$_rlKey = 'register_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+checkRateLimit($pdo, $_rlKey, 5, 3600);
+recordAttempt($pdo, $_rlKey);
 
 $firstName = trim($data['first_name'] ?? '');
 $lastName = trim($data['last_name'] ?? '');
@@ -10,6 +17,10 @@ $password = $data['password'] ?? '';
 // Validate
 if (empty($firstName) || empty($lastName) || empty($mobile) || empty($email) || empty($password)) {
     jsonResponse(false, 'All fields are required.');
+}
+
+if (strlen($password) < 8) {
+    jsonResponse(false, 'Password must be at least 8 characters long.');
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
