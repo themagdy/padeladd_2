@@ -821,3 +821,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.23 (Build 223) - 2026-05-12
 - UI/UX Refinement: Updated the Arabic match withdrawal warning text to use the premium 'Cairo' font family for visual consistency.
 - Version: 2.2.23 (Build 223)
+
+2.2.24 (Build 224) - 2026-05-12
+- Security: Added brute-force rate limiting to login, OTP verify, and resend endpoints (10 attempts/10 min for login, 10/15 min for OTP, 3/hour for resend).
+- Security: Enforced 90-day session token expiry — stolen tokens can no longer be used indefinitely.
+- Security: Disabled ?debug=1 error output on production server — PHP stack traces no longer publicly accessible.
+- Security: Replaced CORS wildcard (*) with a smart allowlist — only Capacitor mobile app origins and same-domain requests are allowed.
+- Security: Replaced mt_rand() with random_int() for cryptographically secure OTP generation.
+- Security: Hardened profile image upload — file extension now derived from MIME type, upload folder permissions tightened to 0755.
+- Version: 2.2.24 (Build 224)
