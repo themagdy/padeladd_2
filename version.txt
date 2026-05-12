@@ -890,3 +890,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Global sanitization "Clean Sweep" covering 40+ additional innerHTML locations (Waitlists, Notifications, Chat).
 - Security: Verified 10/10 security rating for both Mobile and Web platforms.
 - Version: 2.2.34 (Build 234)
+2.2.35 (Build 235) - 2026-05-13
+- Fix: Hardened safeHTML whitelist in index.html to allow 'target' and 'rel' attributes, ensuring external location links open in new tabs.
+- Fix: Explicitly added target="_blank" and rel="noopener noreferrer" to venue location buttons in MatchViewController.
+- Version: 2.2.35 (Build 235)
+
