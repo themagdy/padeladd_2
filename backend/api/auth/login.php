@@ -1,11 +1,5 @@
 <?php
-require_once __DIR__ . '/../../helpers/rate_limit_helper.php';
-
 $pdo = getDB();
-
-// Rate limit: max 10 login attempts per IP per 10 minutes
-$rateLimitKey = 'login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
-checkRateLimit($pdo, $rateLimitKey, 10, 600);
 
 $email = trim($data['email'] ?? '');
 $password = $data['password'] ?? '';
@@ -20,7 +14,6 @@ $stmt->execute([$email, $email]);
 $user = $stmt->fetch();
 
 if (!$user || !password_verify($password, $user['password_hash'])) {
-    recordAttempt($pdo, $rateLimitKey); // Count failed attempt
     jsonResponse(false, 'Invalid phone number/email or password.');
 }
 
