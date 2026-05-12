@@ -847,3 +847,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Added 24-hour expiry to admin sessions — stolen admin tokens can no longer be used indefinitely.
 - Fix: Replaced DOMPurify.sanitize() with safeHTML() wrapper that allows onerror/onload/onclick/onmouseover/onmouseout — restores avatar loading and player profile navigation broken by DOMPurify's default stripping of event attributes.
 - Version: 2.2.26 (Build 226)
+
+2.2.27 (Build 227) - 2026-05-12
+- Security: Added .htaccess to backend/core/ and backend/helpers/ — blocks direct HTTP access to config files, credentials, and PHP helpers (previously Apache could serve firebase_credentials.json directly).
+- Security: Deleted unauthenticated migration scripts (migrate_waitlist.php, profile/migrate_thumbnails.php) — both were publicly accessible and could trigger DB schema changes or expose user data.
+- Security: Confirmed backend/core/config.php and firebase_credentials.json are excluded from git via .gitignore — production credentials have never been committed to version control.
+- Security: Removed email and mobile phone from profile API responses for third-party profile views — contact details now only returned when fetching your own profile.
+- Version: 2.2.27 (Build 227)
