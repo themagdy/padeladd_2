@@ -3,6 +3,8 @@
  * POST /api/auth/resend-otp
  * Resends the WhatsApp verification code.
  */
+require_once __DIR__ . '/../../helpers/rate_limit_helper.php';
+
 $pdo = getDB();
 
 $userId = (int)($data['user_id'] ?? 0);
@@ -10,6 +12,11 @@ $userId = (int)($data['user_id'] ?? 0);
 if ($userId <= 0) {
     jsonResponse(false, 'User ID is required.');
 }
+
+// Rate limit: max 3 resend attempts per user per hour
+$_rlKey = 'resend_' . $userId;
+checkRateLimit($pdo, $_rlKey, 3, 3600);
+recordAttempt($pdo, $_rlKey);
 
 // Fetch user mobile
 $stmt = $pdo->prepare("SELECT mobile, is_phone_verified FROM users WHERE id = ?");
