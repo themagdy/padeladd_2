@@ -90,8 +90,9 @@ jsonResponse(true, 'Profile loaded.', [
         'id'         => $u['id'],
         'first_name' => $u['first_name'],
         'last_name'  => $u['last_name'],
-        'email'      => $u['email'],
-        'mobile'     => $u['mobile'],
+        // Only expose contact details for self — never for third-party profile views
+        'email'      => ($viewingId === $user['id']) ? $u['email'] : null,
+        'mobile'     => ($viewingId === $user['id']) ? $u['mobile'] : null,
     ],
     'profile' => $profile ? [
         'player_code'   => $profile['player_code'],
