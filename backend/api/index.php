@@ -4,8 +4,9 @@ ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 ini_set('log_errors', 1);
 
-// Hidden Debug Mode: If ?debug=1 is in the URL, show errors (for live troubleshooting)
-if (isset($_GET['debug']) && $_GET['debug'] === '1') {
+// Hidden Debug Mode: Only available on local development
+$_isLocal = (isset($_SERVER['HTTP_HOST']) && (str_contains($_SERVER['HTTP_HOST'], 'localhost') || str_contains($_SERVER['HTTP_HOST'], '127.0.0.1')));
+if ($_isLocal && isset($_GET['debug']) && $_GET['debug'] === '1') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
 }
