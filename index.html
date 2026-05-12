@@ -171,47 +171,46 @@
     <!-- DOMPurify: XSS sanitization for innerHTML -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
     <script>
-        // safeHTML: sanitize user-generated HTML while only allowing verified
-        // safe event handlers (like avatar fallbacks and router navigation).
-        // Malicious scripts in event handlers are blocked by regex pattern matching.
-        DOMPurify.addHook('uponTagAttr', function(el, data) {
-            const attr = data.attrName.toLowerCase();
-            const val = data.attrValue;
-            
-            // Allow list for event handlers with strict pattern matching
-            if (attr === 'onerror' || attr === 'onload' || attr === 'onclick' || attr === 'onmouseover' || attr === 'onmouseout') {
-                const isSafe = (
-                    // Avatar fallback pattern
-                    (attr === 'onerror' && /this\.(onerror=null;?\s*)?src\s*=\s*['"][^'"]+['"]/i.test(val)) ||
-                    // Router navigation pattern
-                    (attr === 'onclick' && /^Router\.navigate\(['"]\/[^'"]+['"]\)$/i.test(val)) ||
-                    // App UI specific interactions
-                    /^(DashboardController|MatchesController|StatsController|ProfileController|RankingUI)\.[a-z0-9_]+\(.*\)$/i.test(val)
-                );
-                
-                if (!isSafe) {
-                    data.forceKeepAttr = false;
-                    delete data.attrValue; // Effectively strips the dangerous attribute
-                } else {
-                    data.forceKeepAttr = true; // explicitly keep verified safe handlers
-                }
-            }
-        });
-
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                // We no longer use ADD_ATTR here because our hook handles them securely
-                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'br', 'p', 'div', 'span', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr'],
-                ALLOWED_ATTR: ['href', 'src', 'class', 'id', 'style', 'alt', 'title', 'target', 'data-*', 'onerror', 'onclick', 'onmouseover', 'onmouseout', 'onload']
+                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout']
             });
         };
+
+        // Precision Hardening: Only allow event handlers that match trusted app patterns
+        DOMPurify.addHook('afterSanitizeAttributes', function(node) {
+            const handlers = ['onclick', 'onerror', 'onload', 'onmouseover', 'onmouseout'];
+            handlers.forEach(attr => {
+                if (node.hasAttribute(attr)) {
+                    const val = node.getAttribute(attr);
+                    // Strictly allow only known internal patterns
+                    const isTrusted = 
+                        val.includes('Router.navigate') || 
+                        val.includes('this.src=') || 
+                        val.includes('DashboardController') || 
+                        val.includes('MatchesController') || 
+                        val.includes('RankingUI') ||
+                        val.includes('Auth.') ||
+                        val.includes('API.post') ||
+                        val.includes('this.parentElement.remove') ||
+                        val.includes('classList.add') ||
+                        val.includes('this.style.display') ||
+                        val.includes('UI.') ||
+                        val.includes('clearInterval');
+                    
+                    if (!isTrusted) {
+                        node.removeAttribute(attr);
+                    }
+                }
+            });
+        });
     </script>
-    <script src="frontend/js/config.js?v=229"></script>
-    <script src="frontend/js/auth.js?v=229"></script>
-    <script src="frontend/js/api.js?v=229"></script>
-    <script src="frontend/js/controllers.js?v=229"></script>
-    <script src="frontend/js/router.js?v=229"></script>
-    <script src="frontend/js/app.js?v=229"></script>
+    <script src="frontend/js/config.js?v=230"></script>
+    <script src="frontend/js/auth.js?v=230"></script>
+    <script src="frontend/js/api.js?v=230"></script>
+    <script src="frontend/js/controllers.js?v=230"></script>
+    <script src="frontend/js/router.js?v=230"></script>
+    <script src="frontend/js/app.js?v=230"></script>
 </body>
 </html>
