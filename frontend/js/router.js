@@ -271,18 +271,16 @@ const Router = {
                         <h2 style="color: #fff; margin-bottom: 20px;">Oops! Error loading page</h2>
                         <p style="color: var(--c-text-muted); margin-bottom: 30px;">${err.message}</p>
                         <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
-                    </div>
-                `;
+                    </div>`);
             }
         } else {
             if (loader) loader.style.display = 'none';
-            appDiv.innerHTML = `
+            appDiv.innerHTML = safeHTML(`
                 <div class="test-page" style="text-align: center; padding: 50px 20px;">
                     <h2 style="color: #fff;">Page Not Found</h2>
                     <p style="color: var(--c-text-muted); margin-bottom: 30px;">The requested path "${path}" was not found.</p>
                     <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
-                </div>
-            `;
+                </div>`);
         }
     },
 
