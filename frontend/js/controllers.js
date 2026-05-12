@@ -1643,21 +1643,9 @@ const MatchesController = {
         const partnerHelp = document.getElementById('cm-partner-help');
         let partnerTimeout = null;
 
-        const partnerBadge = document.getElementById('cm-partner-badge');
-        const badgeCode = document.getElementById('cm-badge-code');
-        const badgeName = document.getElementById('cm-badge-name');
-        const badgeClear = document.getElementById('cm-badge-clear');
+        // Badge references removed.
 
         if (partnerInput && partnerHelp) {
-            if (badgeClear) {
-                badgeClear.addEventListener('click', () => {
-                    partnerBadge.style.display = 'none';
-                    partnerInput.value = '';
-                    partnerInput.focus();
-                    partnerHelp.textContent = "Enter your partner's player XCode";
-                    partnerHelp.style.color = 'var(--c-text-muted)';
-                });
-            }
 
             partnerInput.addEventListener('input', (e) => {
                 clearTimeout(partnerTimeout);
@@ -1673,15 +1661,9 @@ const MatchesController = {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
                             partnerInput.value = q; // Standardize value to just the code
-                            if (partnerBadge && badgeCode && badgeName) {
-                                badgeCode.textContent = q;
-                                badgeName.textContent = res.data.name;
-                                partnerBadge.style.display = 'flex';
-                            }
-                            partnerHelp.textContent = "Player found!";
+                            partnerHelp.innerHTML = `✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`;
                             partnerHelp.style.color = "var(--c-primary)";
                         } else {
-                            if (partnerBadge) partnerBadge.style.display = 'none';
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
                             partnerInput.classList.add('error');
@@ -1692,7 +1674,7 @@ const MatchesController = {
                     e.target.value = q.substring(0, 4);
                     e.target.dispatchEvent(new Event('input'));
                 } else {
-                    if (partnerBadge) partnerBadge.style.display = 'none';
+                    // Do nothing
                 }
             });
         }
@@ -3283,25 +3265,13 @@ const MatchesController = {
     initJoinForm: function () {
         const input = document.getElementById('mv-partner-code-input');
         const help = document.getElementById('mv-partner-help');
-        const badge = document.getElementById('mv-partner-badge');
-        const bCode = document.getElementById('mv-badge-code');
-        const bName = document.getElementById('mv-badge-name');
-        const bClear = document.getElementById('mv-badge-clear');
+        // Badge references removed.
 
         if (!input || !help) return;
 
         let lookupTimeout = null;
 
-        if (bClear) {
-            bClear.onclick = () => {
-                badge.style.display = 'none';
-                input.value = '';
-                input.focus();
-                help.textContent = "Your partner will receive a request to approve.";
-                help.style.color = 'var(--c-text-muted)';
-            };
-        }
-
+        // Badge removed. Form resets happen below.
         input.oninput = (e) => {
             clearTimeout(lookupTimeout);
             const q = e.target.value.trim();
@@ -3324,15 +3294,9 @@ const MatchesController = {
                         }
 
                         input.value = q;
-                        if (badge && bCode && bName) {
-                            bCode.textContent = q;
-                            bName.textContent = res.data.name;
-                            badge.style.display = 'flex';
-                        }
-                        help.textContent = "Player found!";
+                        help.innerHTML = `✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`;
                         help.style.color = "var(--c-primary)";
                     } else {
-                        if (badge) badge.style.display = 'none';
                         help.textContent = (res && res.message) ? res.message : "Player not found";
                         help.style.color = "var(--c-danger)";
                         input.classList.add('error');
@@ -3385,7 +3349,6 @@ const MatchesController = {
 
     resetInviteForm: function () {
         const input = document.getElementById('mv-partner-code-input');
-        const badge = document.getElementById('mv-partner-badge');
         const help = document.getElementById('mv-partner-help');
         const btn = document.querySelector('#mv-join-team-form button[type="submit"]');
 
@@ -3393,7 +3356,6 @@ const MatchesController = {
             input.value = '';
             input.classList.remove('error');
         }
-        if (badge) badge.style.display = 'none';
         if (help) {
             help.textContent = "Your partner will receive a request to approve.";
             help.style.color = 'var(--c-text-muted)';
@@ -4832,7 +4794,7 @@ const NotificationsController = {
 
                     const thumb = n.sender_avatar_thumb || n.sender_avatar;
                     let initials = '';
-                    if (thumb) {
+                    if (n.sender_first_name || n.sender_last_name || n.sender_nickname) {
                         if (n.sender_first_name || n.sender_last_name) {
                             initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
                         } else if (n.sender_nickname) {

@@ -811,3 +811,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bug Fix: Fixed a race condition in the notifications panel where background polling would overwrite user scrolling.
 - Bug Fix: Added a loading lock to the chat controller to prevent duplicate message rendering caused by concurrent data fetching.
 - Version: 2.2.21 (Build 221)
+
+2.2.22 (Build 222) - 2026-05-12
+- UI/UX Refinement: Removed partner code overlay on match creation/view pages; player name now displays seamlessly beneath input to allow continuous editing.
+- UI Update: Streamlined Verification pages by replacing the 'Resend code' help text with a direct 'Contact Padeladd' Instagram link.
+- Bug Fix: Corrected notification avatars to properly display sender initials rather than generic fallback emojis when no profile picture is set.
+- Version: 2.2.22 (Build 222)
