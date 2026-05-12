@@ -46,6 +46,7 @@ function getAuthenticatedUser($pdo) {
         JOIN user_sessions us ON u.id = us.user_id
         LEFT JOIN user_profiles up ON u.id = up.user_id
         WHERE us.token = ? AND u.status = 'active'
+        AND (us.created_at IS NULL OR us.created_at >= NOW() - INTERVAL 90 DAY)
     ");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
