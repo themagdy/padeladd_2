@@ -595,16 +595,16 @@ form {
   border: 1px solid var(--c-border);
   border-right: none;
   border-radius: var(--r-md) 0 0 var(--r-md);
-  padding: 14px 10px;
+  padding: 12px 15px;
   color: var(--c-text-muted);
   font-weight: 600;
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 1;
   white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
-  gap: 6px;
+  min-width: 50px;
   cursor: pointer;
   transition: background var(--t-fast);
 }
