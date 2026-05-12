@@ -238,5 +238,8 @@ try {
     }
 } catch (\Throwable $e) {
     error_log("API Error [" . $endpoint . "]: " . $e->getMessage());
-    jsonResponse(false, 'Internal server error: ' . $e->getMessage(), null, 500);
+    $msg = (defined('APP_ENV') && APP_ENV === 'development')
+        ? 'Internal server error: ' . $e->getMessage()
+        : 'An unexpected error occurred. Please try again.';
+    jsonResponse(false, $msg, null, 500);
 }
