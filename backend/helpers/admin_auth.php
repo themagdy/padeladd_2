@@ -5,9 +5,6 @@ require_once __DIR__ . '/response.php';
 
 function validateAdmin() {
     $token = getBearerToken();
-    if (!$token) {
-        $token = $_GET['admin_token'] ?? null; // Fallback for some types of requests
-    }
 
     if (!$token) {
         jsonResponse(false, 'Admin unauthorized. Token missing.', null, 401);

@@ -1,10 +1,17 @@
+// Security: Admin fetch wrapper — sends token as Authorization header, not in URL
+function _admFetch(url, opts = {}) {
+    const token = localStorage.getItem('admin_token');
+    opts.headers = Object.assign({}, opts.headers || {}, { 'Authorization': 'Bearer ' + token });
+    return fetch(url, opts);
+}
+
 window.AdminControllers = {
     // ── Dashboard Controller ──────────────────────────────────────────────
     dashboard: {
         async init() {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/dashboard/stats.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/dashboard/stats.php`);
                 const data = await res.json();
                 if (data.success) {
                     const s = data.data;
@@ -154,7 +161,7 @@ window.AdminControllers = {
         async fetchPlayers(search = '') {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/players/list.php?search=${search}&sort=${this.currentSort}&order=${this.currentOrder}&admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/players/list.php?search=${search}&sort=${this.currentSort}&order=${this.currentOrder}`);
                 const data = await res.json();
                 if (data.success) {
                     this.allPlayers = data.data.players;
@@ -296,7 +303,7 @@ window.AdminControllers = {
                 account_status: document.getElementById('edit-status').value,
                 remove_avatar: document.getElementById('edit-remove-avatar').value
             };
-            const res = await fetch(`../backend/api/admin/players/update.php?admin_token=${token}`, {
+            const res = await _admFetch(`../backend/api/admin/players/update.php`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
@@ -317,7 +324,7 @@ window.AdminControllers = {
                 user_id: userId,
                 status: currentStatus === 'active' ? 'suspended' : 'active'
             };
-            const res = await fetch(`../backend/api/admin/players/update.php?admin_token=${token}`, {
+            const res = await _admFetch(`../backend/api/admin/players/update.php`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
@@ -386,7 +393,7 @@ window.AdminControllers = {
                 }
                 
                 const token = localStorage.getItem('admin_token');
-                const res = await fetch(`../backend/api/admin/matches/investigate.php?code=${code}&admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/matches/investigate.php?code=${code}`);
                 if (!res.ok) throw new Error("Network error");
                 
                 const data = await res.json();
@@ -586,7 +593,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentHidden ? 0 : 1;
             try {
-                const res = await fetch(`../backend/api/admin/system/moderate_chat.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/moderate_chat.php`, {
                     method: 'POST',
                     body: JSON.stringify({ chat_id: chatId, hide: newStatus })
                 });
@@ -620,7 +627,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             try {
                 console.log('Fetching reports from API...');
-                const res = await fetch(`../backend/api/admin/reports/list.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/reports/list.php`);
                 const data = await res.json();
                 console.log('API Response received:', data);
                 
@@ -833,7 +840,7 @@ window.AdminControllers = {
 
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/reports/resolve_dispute.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/reports/resolve_dispute.php`, {
                     method: 'POST',
                     body: JSON.stringify({ dispute_id: disputeId, action: action })
                 });
@@ -855,7 +862,7 @@ window.AdminControllers = {
             if (type === 'system') apiType = 'system_report';
             
             try {
-                const res = await fetch(`../backend/api/admin/system/archive_item.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/archive_item.php`, {
                     method: 'POST',
                     body: JSON.stringify({ id, type: apiType, status: newStatus })
                 });
@@ -890,7 +897,7 @@ window.AdminControllers = {
             if (!confirm(`Mark this report as ${newStatus.toUpperCase()}?`)) return;
 
             try {
-                const res = await fetch(`../backend/api/admin/system/update_report_status.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/update_report_status.php`, {
                     method: 'POST',
                     body: JSON.stringify({ id, status: newStatus })
                 });
@@ -929,7 +936,7 @@ window.AdminControllers = {
         async fetchBuilds() {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/get_unique_builds.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/get_unique_builds.php`);
                 const data = await res.json();
                 if (data.success) {
                     this.availableBuilds = data.data;
@@ -958,7 +965,7 @@ window.AdminControllers = {
         async fetchMessages() {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/messages/list.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/messages/list.php`);
                 const data = await res.json();
                 if (data.success) {
                     this.allMessages = data.data;
@@ -1144,7 +1151,7 @@ window.AdminControllers = {
 
             try {
                 const endpoint = editId ? 'update.php' : 'create.php';
-                const res = await fetch(`../backend/api/admin/messages/${endpoint}?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/messages/${endpoint}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -1169,7 +1176,7 @@ window.AdminControllers = {
             if (!confirm('Are you sure you want to delete this message?')) return;
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/messages/delete.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/messages/delete.php`, {
                     method: 'POST',
                     body: JSON.stringify({ id })
                 });
@@ -1184,7 +1191,7 @@ window.AdminControllers = {
         async viewStats(id) {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/messages/get_stats.php?admin_token=${token}&message_id=${id}`);
+                const res = await _admFetch(`../backend/api/admin/messages/get_stats.php&message_id=${id}`);
                 const data = await res.json();
                 if (data.success) {
                     this.renderStats(data.data);
@@ -1266,7 +1273,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             try {
                 // Fetch Requests
-                const resReq = await fetch(`../backend/api/admin/venues/requests.php?admin_token=${token}`);
+                const resReq = await _admFetch(`../backend/api/admin/venues/requests.php`);
                 const dataReq = await resReq.json();
                 if (dataReq.success) {
                     this.allRequests = dataReq.data.requests;
@@ -1278,7 +1285,7 @@ window.AdminControllers = {
                 }
 
                 // Fetch All Venues
-                const resAll = await fetch(`../backend/api/admin/venues/list.php?admin_token=${token}`);
+                const resAll = await _admFetch(`../backend/api/admin/venues/list.php`);
                 const dataAll = await resAll.json();
                 if (dataAll.success) this.allVenues = dataAll.data.venues;
 
@@ -1396,7 +1403,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             const newHidden = currentHidden == 1 ? 0 : 1;
             try {
-                const res = await fetch(`../backend/api/admin/venues/update.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/venues/update.php`, {
                     method: 'POST',
                     body: JSON.stringify({ id: venueId, is_hidden: newHidden })
                 });
@@ -1416,7 +1423,7 @@ window.AdminControllers = {
                 location_link: document.getElementById('edit-venue-location').value
             };
             try {
-                const res = await fetch(`../backend/api/admin/venues/update.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/venues/update.php`, {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
@@ -1437,7 +1444,7 @@ window.AdminControllers = {
                 name: document.getElementById('review-name').value,
                 location_link: document.getElementById('review-location').value
             };
-            const res = await fetch(`../backend/api/admin/venues/approve.php?admin_token=${token}`, {
+            const res = await _admFetch(`../backend/api/admin/venues/approve.php`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
@@ -1461,7 +1468,7 @@ window.AdminControllers = {
 
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/system/cron_manual.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/cron_manual.php`, {
                     method: 'POST',
                     body: JSON.stringify({ task: task })
                 });
@@ -1517,7 +1524,7 @@ window.AdminControllers = {
         async fetchViolations() {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/system/violations.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/system/violations.php`);
                 const data = await res.json();
                 if (data.success) {
                     this.allViolations = data.data.violations;
@@ -1549,7 +1556,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentStatus ? 0 : 1;
             try {
-                const res = await fetch(`../backend/api/admin/system/archive_item.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/archive_item.php`, {
                     method: 'POST',
                     body: JSON.stringify({ id, type: 'violation', status: newStatus })
                 });
@@ -1627,7 +1634,7 @@ window.AdminControllers = {
         async fetchLogs(search = '', type = 'all') {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/logs/list.php?search=${search}&type=${type}&admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/logs/list.php?search=${search}&type=${type}`);
                 const data = await res.json();
                 if (data.success) {
                     this.allLogs = data.data.logs;
@@ -1691,7 +1698,7 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentHidden ? 0 : 1;
             try {
-                const res = await fetch(`../backend/api/admin/system/moderate_chat.php?admin_token=${token}`, {
+                const res = await _admFetch(`../backend/api/admin/system/moderate_chat.php`, {
                     method: 'POST',
                     body: JSON.stringify({ chat_id: chatId, hide: newStatus })
                 });
@@ -1854,7 +1861,7 @@ window.AdminControllers = {
         async fetchVersions() {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await fetch(`../backend/api/admin/get_user_versions.php?admin_token=${token}`);
+                const res = await _admFetch(`../backend/api/admin/get_user_versions.php`);
                 const data = await res.json();
                 if (data.success) {
                     this.allUsers = data.data;
