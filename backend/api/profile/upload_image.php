@@ -15,11 +15,12 @@ if (!in_array($file['type'], $allowedTypes)) {
 // Create uploads directory if not exists
 $uploadDir = __DIR__ . '/../../../uploads/avatars/';
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
+    mkdir($uploadDir, 0755, true);
 }
 
-// Generate unique filenames
-$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+// Derive extension from MIME type (not user-supplied filename)
+$mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+$ext = $mimeToExt[$file['type']] ?? 'jpg';
 $baseName = $user['id'] . '_' . time();
 $filename = $baseName . '.' . $ext;
 $thumbFilename = $baseName . '_thumb.' . $ext;
