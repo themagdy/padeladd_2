@@ -909,7 +909,7 @@ const ProfileViewController = {
                     <div style="width:100%; max-width:500px; margin:0 auto; padding:90px 20px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                         <div style="font-size:64px; margin-bottom:20px;">🎾🔎</div>
                         <h1 style="font-size:32px; font-weight:800; color:#fff; margin-bottom:12px;">Player Not Found</h1>
-                        <p style="color:var(--c-text-muted); font-size:16px; margin-bottom:32px;">The player code you are looking for does not exist or has been removed.</p>
+                        <p style="color:var(--c-text-muted); font-size:16px; margin-bottom:32px;">The player XCode you are looking for does not exist or has been removed.</p>
                         <button onclick="Router.navigate(Auth.isAuthenticated() ? '/dashboard' : '/')" class="btn btn-primary" style="width:auto; padding:14px 40px;">
                             ${Auth.isAuthenticated() ? 'Return to Dashboard' : 'Go to Homepage'}
                         </button>
@@ -982,7 +982,7 @@ const ProfileViewController = {
         if (codeEl) {
             if (profile?.player_code) {
                 codeEl.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 12px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
+                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
                     <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px;">${profile.player_code}</span>
                 `;
                 codeEl.style.display = 'inline-flex';
@@ -1654,7 +1654,7 @@ const MatchesController = {
                     partnerBadge.style.display = 'none';
                     partnerInput.value = '';
                     partnerInput.focus();
-                    partnerHelp.textContent = "Enter your partner's player code";
+                    partnerHelp.textContent = "Enter your partner's player XCode";
                     partnerHelp.style.color = 'var(--c-text-muted)';
                 });
             }
@@ -1663,7 +1663,7 @@ const MatchesController = {
                 clearTimeout(partnerTimeout);
 
                 const q = e.target.value.trim();
-                partnerHelp.textContent = "Enter your partner's player code";
+                partnerHelp.textContent = "Enter your partner's player XCode";
                 partnerHelp.style.color = 'var(--c-text-muted)';
                 partnerInput.classList.remove('error');
 
@@ -1750,7 +1750,7 @@ const MatchesController = {
                     code = code.split(' (')[0].trim();
                 }
                 if (!code || code.length < 3 || code.length > 7) {
-                    UI.showError('partner_player_code', "Enter a valid player code", form);
+                    UI.showError('partner_player_code', "Enter a valid player XCode", form);
                     return;
                 }
                 payload.partner_player_code = code;
@@ -3568,9 +3568,9 @@ const MatchesController = {
         const code = document.getElementById('mv-partner-code-input')?.value.trim();
 
         if (!code) {
-            MatchesController.showActionError('Enter partner player code!');
+            MatchesController.showActionError('Enter partner player XCode!');
             if (btn) { btn.disabled = false; btn.innerText = oldText; }
-            Toast.show('Enter partner player code', 'warning');
+            Toast.show('Enter partner player XCode', 'warning');
             return;
         }
 
