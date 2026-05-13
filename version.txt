@@ -905,3 +905,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Improved audio unlocking logic for iOS/Safari compatibility.
 - Version: 2.2.37 (Build 237)
 
+2.2.38 (Build 238) - 2026-05-13
+- Fix: Re-implemented SoundManager using Web Audio API (AudioContext) for stable Safari/iOS playback.
+- Fix: Suppressed system media player UI in Safari for UI sounds.
+- Version: 2.2.38 (Build 238)
+
