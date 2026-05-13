@@ -914,3 +914,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Expanded DOMPurify security whitelist to allow NotificationsController, ScoringController, and ChatController. This restores interactivity to notifications and match management buttons.
 - Version: 2.2.39 (Build 239)
 
+2.2.40 (Build 240) - 2026-05-13
+- Fix: Whitelisted onkeydown and oninput in DOMPurify to enable 'Enter to send' and auto-resize in chat.
+- Version: 2.2.40 (Build 240)
+

@@ -127,13 +127,13 @@
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'target', 'rel']
+                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
 
         // Precision Hardening: Only allow event handlers that match trusted app patterns
         DOMPurify.addHook('afterSanitizeAttributes', function(node) {
-            const handlers = ['onclick', 'onerror', 'onload', 'onmouseover', 'onmouseout'];
+            const handlers = ['onclick', 'onerror', 'onload', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup'];
             handlers.forEach(attr => {
                 if (node.hasAttribute(attr)) {
                     const val = node.getAttribute(attr);
