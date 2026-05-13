@@ -13,34 +13,38 @@ var FX = {
 };
 
 var SoundManager = {
-    _sounds: {},
+    _ctx: null,
+    _buffers: {},
     _unlocked: false,
+
     init: function () {
-        if (typeof Audio === 'undefined') return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
         const list = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
             notify: 'assets/sounds/notify.mp3'
         };
+        this._ctx = new AudioContext();
         for (const [id, path] of Object.entries(list)) {
-            const s = new Audio(path);
-            s.preload = 'auto';
-            s.controls = false;
-            this._sounds[id] = s;
+            fetch(path)
+                .then(res => res.arrayBuffer())
+                .then(arrayBuffer => this._ctx.decodeAudioData(arrayBuffer))
+                .then(buffer => { this._buffers[id] = buffer; })
+                .catch(err => console.warn('[SoundManager] Load failed:', path, err));
         }
         const unlock = () => {
-            if (this._unlocked) return;
-            const s = this._sounds['tap'];
-            if (s) {
-                s.play().then(() => {
-                    s.pause();
-                    s.currentTime = 0;
-                    this._unlocked = true;
-                    console.log('[SoundManager] Unlocked');
-                }).catch(() => {});
-            }
+            if (this._unlocked || !this._ctx) return;
+            if (this._ctx.state === 'suspended') this._ctx.resume();
+            const source = this._ctx.createBufferSource();
+            source.buffer = this._ctx.createBuffer(1, 1, 22050);
+            source.connect(this._ctx.destination);
+            source.start(0);
+            this._unlocked = true;
         };
-        ['touchstart', 'click', 'mousedown'].forEach(e => document.addEventListener(e, unlock, { once: true, passive: true }));
+        ['touchstart', 'click', 'mousedown'].forEach(e => 
+            document.addEventListener(e, unlock, { once: true, passive: true })
+        );
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
@@ -48,14 +52,14 @@ var SoundManager = {
             }
         }, true);
     },
+
     play: function (type) {
-        const s = this._sounds[type];
-        if (s) {
-            s.currentTime = 0;
-            const p = s.play();
-            if (p && p.catch) p.catch(() => {});
-        }
-        // Haptics (Same way for all)
+        if (!this._ctx || !this._buffers[type]) return;
+        if (this._ctx.state === 'suspended') this._ctx.resume();
+        const source = this._ctx.createBufferSource();
+        source.buffer = this._buffers[type];
+        source.connect(this._ctx.destination);
+        source.start(0);
         const Haptics = window.Capacitor?.Plugins?.Haptics;
         if (Haptics) {
             if (type === 'tap') Haptics.selectionChanged().catch(() => {});
