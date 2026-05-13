@@ -13,36 +13,50 @@ var FX = {
 };
 
 var SoundManager = {
-    _sounds: {},
+    _ctx: null,
+    _buffers: {},
     _unlocked: false,
 
-    init: function () {
-        if (typeof Audio === 'undefined') return;
-
-        // 1. Identical Loading for all 3 sounds
+    init: async function () {
         const list = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
             notify: 'assets/sounds/notify.mp3'
         };
 
-        for (const [id, path] of Object.entries(list)) {
-            this._sounds[id] = new Audio('./' + path);
-            this._sounds[id].preload = 'auto';
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        this._ctx = new AudioContext();
+
+        for (const [id, url] of Object.entries(list)) {
+            try {
+                const response = await fetch('./' + url);
+                const arrayBuffer = await response.arrayBuffer();
+                this._ctx.decodeAudioData(arrayBuffer, (buffer) => {
+                    this._buffers[id] = buffer;
+                });
+            } catch (e) {
+                console.warn('[SoundManager] Failed to load:', id, e);
+            }
         }
 
-        // 2. Identical Unlock for all 3 sounds
         const unlock = () => {
             if (this._unlocked) return;
-            for (const s of Object.values(this._sounds)) {
-                s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {});
-            }
+            if (this._ctx.state === 'suspended') this._ctx.resume();
+            
+            // Play a silent buffer to fully unlock
+            const source = this._ctx.createBufferSource();
+            source.buffer = this._ctx.createBuffer(1, 1, 22050);
+            source.connect(this._ctx.destination);
+            source.start(0);
+            
             this._unlocked = true;
-            console.log('[SoundManager] All Sounds Unlocked');
+            console.log('[SoundManager] WebAudio Unlocked');
         };
-        ['touchstart', 'click', 'mousedown'].forEach(e => document.addEventListener(e, unlock, { passive: true }));
+        ['touchstart', 'click', 'mousedown'].forEach(e => 
+            document.addEventListener(e, unlock, { passive: true })
+        );
 
-        // 3. Global Listener for Tap
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
@@ -51,12 +65,16 @@ var SoundManager = {
         }, true);
     },
 
-    play: function (type) {
-        const s = this._sounds[type];
-        if (s) {
-            s.currentTime = 0;
-            s.play().catch(() => {});
-        }
+    play: function (id) {
+        if (!this._ctx || !this._buffers[id]) return;
+        if (this._ctx.state === 'suspended') this._ctx.resume();
+
+        const source = this._ctx.createBufferSource();
+        source.buffer = this._buffers[id];
+        source.connect(this._ctx.destination);
+        source.start(0);
+    }
+};
 
         // Haptics (Same way for all)
         const Haptics = window.Capacitor?.Plugins?.Haptics;
