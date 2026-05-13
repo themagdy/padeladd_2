@@ -13,50 +13,34 @@ var FX = {
 };
 
 var SoundManager = {
-    _ctx: null,
-    _buffers: {},
+    _sounds: {},
     _unlocked: false,
-
-    init: async function () {
+    init: function () {
+        if (typeof Audio === 'undefined') return;
         const list = {
             tap: 'assets/sounds/tap.mp3',
             success: 'assets/sounds/success.mp3',
             notify: 'assets/sounds/notify.mp3'
         };
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        this._ctx = new AudioContext();
-
-        for (const [id, url] of Object.entries(list)) {
-            try {
-                const response = await fetch('./' + url);
-                const arrayBuffer = await response.arrayBuffer();
-                this._ctx.decodeAudioData(arrayBuffer, (buffer) => {
-                    this._buffers[id] = buffer;
-                });
-            } catch (e) {
-                console.warn('[SoundManager] Failed to load:', id, e);
-            }
+        for (const [id, path] of Object.entries(list)) {
+            const s = new Audio(path);
+            s.preload = 'auto';
+            s.controls = false;
+            this._sounds[id] = s;
         }
-
         const unlock = () => {
             if (this._unlocked) return;
-            if (this._ctx.state === 'suspended') this._ctx.resume();
-            
-            // Play a silent buffer to fully unlock
-            const source = this._ctx.createBufferSource();
-            source.buffer = this._ctx.createBuffer(1, 1, 22050);
-            source.connect(this._ctx.destination);
-            source.start(0);
-            
-            this._unlocked = true;
-            console.log('[SoundManager] WebAudio Unlocked');
+            const s = this._sounds['tap'];
+            if (s) {
+                s.play().then(() => {
+                    s.pause();
+                    s.currentTime = 0;
+                    this._unlocked = true;
+                    console.log('[SoundManager] Unlocked');
+                }).catch(() => {});
+            }
         };
-        ['touchstart', 'click', 'mousedown'].forEach(e => 
-            document.addEventListener(e, unlock, { passive: true })
-        );
-
+        ['touchstart', 'click', 'mousedown'].forEach(e => document.addEventListener(e, unlock, { once: true, passive: true }));
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
@@ -64,18 +48,13 @@ var SoundManager = {
             }
         }, true);
     },
-
-    play: function (id) {
-        if (!this._ctx || !this._buffers[id]) return;
-        if (this._ctx.state === 'suspended') this._ctx.resume();
-
-        const source = this._ctx.createBufferSource();
-        source.buffer = this._buffers[id];
-        source.connect(this._ctx.destination);
-        source.start(0);
-    }
-};
-
+    play: function (type) {
+        const s = this._sounds[type];
+        if (s) {
+            s.currentTime = 0;
+            const p = s.play();
+            if (p && p.catch) p.catch(() => {});
+        }
         // Haptics (Same way for all)
         const Haptics = window.Capacitor?.Plugins?.Haptics;
         if (Haptics) {
