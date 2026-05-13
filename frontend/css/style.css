@@ -28,7 +28,7 @@
   --c-primary-glow: rgba(27, 82, 206, 0.3);
 
   /* Accents */
-  --c-orange: #ff8b00;
+  --c-orange: #FF725F;
   --c-green: #00CE00;
   --c-red: #F15A29;
   --c-gold: #F5C518;
@@ -37,7 +37,7 @@
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
   --g-card: linear-gradient(145deg, #1E2535 0%, #1A2030 100%);
-  --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
+  --g-orange: linear-gradient(135deg, #FF725F 0%, #E06454 100%);
 
   /* Typography */
   --font: 'Montserrat', 'Cairo', sans-serif;
@@ -344,7 +344,7 @@ ol {
 
 .nav-item.active {
   color: var(--c-orange);
-  text-shadow: 0 0 10px rgba(247, 148, 29, 0.2);
+  text-shadow: 0 0 10px rgba(255, 114, 95, 0.2);
 }
 
 .nav-item.active::after {
@@ -357,7 +357,7 @@ ol {
 
 .nav-item.active img.nav-icon {
   opacity: 1;
-  filter: brightness(0) saturate(100%) invert(67%) sepia(93%) saturate(1312%) hue-rotate(352deg) brightness(101%) contrast(94%) drop-shadow(0 0 5px rgba(247, 148, 29, 0.4));
+  filter: brightness(0) saturate(100%) invert(67%) sepia(93%) saturate(1312%) hue-rotate(352deg) brightness(101%) contrast(94%) drop-shadow(0 0 5px rgba(255, 114, 95, 0.4));
 }
 
 .nav-item:active img.nav-icon {
@@ -662,7 +662,7 @@ form {
 }
 
 .badge-orange {
-  background: rgba(247, 148, 29, 0.2);
+  background: rgba(255, 114, 95, 0.2);
   color: var(--c-orange);
 }
 
@@ -1158,7 +1158,7 @@ form {
 }
 
 .stat-card.accent-orange {
-  border-color: rgba(247, 148, 29, 0.3);
+  border-color: rgba(255, 114, 95, 0.3);
 }
 
 .stat-card.accent-green {
@@ -2742,7 +2742,7 @@ form {
   .avatar-circle.active .avatar-wrap,
   .avatar-circle.active .avatar-placeholder {
     border-color: var(--c-orange) !important;
-    box-shadow: 0 0 10px rgba(247, 148, 29, 0.35) !important;
+    box-shadow: 0 0 10px rgba(255, 114, 95, 0.35) !important;
     transform: scale(1.08);
   }
 
@@ -2954,7 +2954,7 @@ form {
 
 .mv-slot.slot-mine {
   border-color: var(--c-orange);
-  background: rgba(247, 148, 29, 0.08);
+  background: rgba(255, 114, 95, 0.08);
 }
 
 .mv-slot .slot-avatar {
@@ -2991,7 +2991,7 @@ form {
   color: var(--c-orange);
   font-weight: 800;
   font-family: monospace;
-  background: rgba(247, 148, 29, 0.12);
+  background: rgba(255, 114, 95, 0.12);
   padding: 1px 6px;
   border-radius: 6px;
   font-size: 10px;
@@ -3102,7 +3102,7 @@ form {
   .mv-slot .slot-code {
     font-size: 10px;
     padding: 2px 6px !important;
-    background: rgba(247, 148, 29, 0.12) !important;
+    background: rgba(255, 114, 95, 0.12) !important;
     border: none !important;
     border-radius: 6px;
     color: var(--c-orange);
@@ -3570,9 +3570,9 @@ form {
 .badge-pending {
   display: inline-flex;
   align-items: center;
-  background: rgba(247, 148, 29, 0.1);
+  background: rgba(255, 114, 95, 0.1);
   color: var(--c-orange);
-  border: 1px solid rgba(247, 148, 29, 0.2);
+  border: 1px solid rgba(255, 114, 95, 0.2);
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 10px;
@@ -3585,9 +3585,9 @@ form {
 .badge-waiting {
   display: inline-flex;
   align-items: center;
-  background: rgba(247, 148, 29, 0.1);
+  background: rgba(255, 114, 95, 0.1);
   color: var(--c-orange);
-  border: 1px solid rgba(247, 148, 29, 0.2);
+  border: 1px solid rgba(255, 114, 95, 0.2);
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 10px;
@@ -3893,7 +3893,7 @@ form {
 
 .comp-player-card.active-t2 {
   border-color: var(--c-orange);
-  box-shadow: 0 0 10px rgba(247, 148, 29, 0.2);
+  box-shadow: 0 0 10px rgba(255, 114, 95, 0.2);
 }
 
 .results-banner {
@@ -3954,7 +3954,7 @@ form {
 }
 
 .status-tag.pending {
-  background: rgba(247, 148, 29, 0.15);
+  background: rgba(255, 114, 95, 0.15);
   color: var(--c-orange);
 }
 
@@ -4263,7 +4263,7 @@ form {
   position: absolute;
   inset: -10px;
   pointer-events: none;
-  background: radial-gradient(circle, #ff8b00 0%, #ff4500 40%, transparent 70%);
+  background: radial-gradient(circle, #FF725F 0%, #ff4500 40%, transparent 70%);
   filter: blur(4px);
   opacity: 0;
   z-index: -1;

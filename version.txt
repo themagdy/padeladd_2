@@ -900,3 +900,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Fine-tuned input-prefix alignment and height in style.css for consistent field heights.
 - Version: 2.2.36 (Build 236)
 
+2.2.37 (Build 237) - 2026-05-13
+- Brand: Rebranded 'Orange' accent from #FF8B00 to Coral #FF725F across the entire application.
+- Brand: Updated all CSS variables, gradients, and inline styles (including RGBA variants) to maintain theme consistency.
+- Version: 2.2.37 (Build 237)
+
