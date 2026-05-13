@@ -509,7 +509,7 @@ const ScoreUI = {
             const p2 = teamPlayers[1] || { name: '—' };
 
             return `
-                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? 'rgba(255,114,95,0.06)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? 'rgba(255,114,95,0.1)' : 'transparent'};">
+                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? 'rgba(247,148,29,0.06)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? 'rgba(247,148,29,0.1)' : 'transparent'};">
                     <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
                         ${isWinner ? '<span style="color:var(--c-orange); font-size:10px; flex-shrink:0;">▶</span>' : '<span style="width:10px; flex-shrink:0;"></span>'}
                         <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">

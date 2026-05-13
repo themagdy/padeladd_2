@@ -2759,7 +2759,7 @@ const MatchesController = {
                     const lwCode = lateWithdrawal.player_code || '';
                     const lwReason = lateWithdrawal.event_data?.reason || '';
                     const profileUrl = `/p/${lwCode}`;
-                    const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(255,114,95,0.08); border:1px solid rgba(255,114,95,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
+                    const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
                     const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
 
                     combinedHtml += `
@@ -2911,7 +2911,7 @@ const MatchesController = {
                                             <div style="font-size:15px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:6px;">
                                                 🏆 ${(scores || []).length > 1 ? `${getOrdinal(idx + 1)} Match Score` : 'Match Score'}
                                             </div>
-                                            <div class="status-tag pending" style="background:rgba(255,114,95,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending</div>
+                                            <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending</div>
                                         </div>
                                         
                                         <div style="padding:0 20px; margin-bottom:16px; font-size:11px; color:var(--c-text-muted); display:flex; align-items:center; gap:8px;">
@@ -3020,7 +3020,7 @@ const MatchesController = {
                                     <span style="font-size:20px;">✅</span>
                                     <span style="font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">Approve</span>
                                 </button>
-                                <button onclick="MatchesController.deny(${pending_for_me.id}, ${match.id}, this)"    class="btn btn-danger"  style="flex:1; flex-direction:column; padding:12px 8px; font-size:12px; gap:6px; border-radius:12px; color:var(--c-orange); border-color:rgba(255, 114, 95, 0.3); background:rgba(255, 114, 95, 0.1);">
+                                <button onclick="MatchesController.deny(${pending_for_me.id}, ${match.id}, this)"    class="btn btn-danger"  style="flex:1; flex-direction:column; padding:12px 8px; font-size:12px; gap:6px; border-radius:12px; color:var(--c-orange); border-color:rgba(247, 148, 29, 0.3); background:rgba(247, 148, 29, 0.1);">
                                     <span style="font-size:20px;">✗</span>
                                     <span style="font-weight:800; text-transform:uppercase; letter-spacing:0.3px;">Deny</span>
                                 </button>
@@ -3035,7 +3035,7 @@ const MatchesController = {
                     actionArea.innerHTML = safeHTML(`
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div id="mv-action-msg" style="display:none; font-size:12px; font-weight:600; padding:10px; border-radius:8px; text-align:center;"></div>
-                            <div style="flex-direction:column; background:rgba(255,114,95,0.06); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
+                            <div style="flex-direction:column; background:rgba(247,148,29,0.06); border-radius:var(--r-md); padding:16px; gap:12px; display:flex;">
                                 <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;">
                                     <div style="font-size:14px; font-weight:700; color:var(--c-orange);"><span style="margin-right:8px;">⏳</span>Invitation sent to <strong>${partnerName}</strong></div>
                                     <button onclick="MatchesController.cancelRequest(${my_pending_request.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); white-space:nowrap;">Cancel</button>
@@ -3165,7 +3165,7 @@ const MatchesController = {
                         <a href="${match.venue_location_link}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
                             <span style="font-size:16px;">📍</span> Location
                         </a>` : ''}
-                        <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(255,114,95,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(255,114,95,0.15)'" onmouseout="this.style.background='rgba(255,114,95,0.08)'">
+                        <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
                             <span style="font-size:16px;">🔗</span> Share
                         </button>
                     </div>
@@ -3323,7 +3323,7 @@ const MatchesController = {
             if (!noticeEl) {
                 noticeEl = document.createElement('div');
                 noticeEl.id = 'mv-team-waitlist-notice';
-                noticeEl.style.cssText = 'background:rgba(255,114,95,0.07); border:1px solid rgba(255,114,95,0.2); border-radius:10px; padding:10px 14px; font-size:12px; color:var(--c-orange); font-weight:600; margin-bottom:14px; line-height:1.4;';
+                noticeEl.style.cssText = 'background:rgba(247,148,29,0.07); border:1px solid rgba(247,148,29,0.2); border-radius:10px; padding:10px 14px; font-size:12px; color:var(--c-orange); font-weight:600; margin-bottom:14px; line-height:1.4;';
                 noticeEl.innerHTML = '🕒 <strong>Match is full.</strong> Your request will be added to the waitlist. You and your partner will be notified when a team slot opens up.';
                 form.insertBefore(noticeEl, form.firstChild);
             } else {
@@ -4003,7 +4003,7 @@ const ChatController = {
             btnContent = `
                 <div id="phone-btn-${userId}" 
                      onclick="event.stopPropagation(); window.location.href='tel:${cached.phone.replace(/\s+/g, '')}'"
-                     style="cursor:pointer; padding:6px 14px; background:rgba(255,114,95,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;">
+                     style="cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;">
                      📞 ${cached.phone}
                 </div>`;
         } else {
@@ -4015,7 +4015,7 @@ const ChatController = {
                 </div>`;
         }
 
-        const codeHtml = pCode ? `<span style="font-family:monospace; font-size:11px; background:rgba(255,114,95,0.15); color:var(--c-orange); padding:2px 6px; border-radius:6px; letter-spacing:0.5px; font-weight:800;">${pCode}</span>` : '';
+        const codeHtml = pCode ? `<span style="font-family:monospace; font-size:11px; background:rgba(247,148,29,0.15); color:var(--c-orange); padding:2px 6px; border-radius:6px; letter-spacing:0.5px; font-weight:800;">${pCode}</span>` : '';
         const nameDisplay = `<span style="text-transform:uppercase; font-weight:900;">${nickname}</span>`;
         nameEl.innerHTML = safeHTML(`${nameDisplay} ${codeHtml}`);
         listEl.innerHTML = btnContent;
@@ -4330,7 +4330,7 @@ const ChatController = {
                     const avatarHtml = thumb
                         ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:32px; height:32px; object-fit:cover; border-radius:50%; flex-shrink:0; border:2px solid var(--c-bg-card);">`
                         : `<div style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:12px; font-weight:800; flex-shrink:0; border:2px solid var(--c-bg-card);">${initials}</div>`;
-                    const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(255,114,95,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
+                    const codeHtml = pr.player_code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; background:rgba(247,148,29,0.1); padding:2px 4px; border-radius:4px;">${pr.player_code}</span>` : '';
 
                     el.innerHTML = safeHTML(`
                         <div style="display:flex; align-items:center; gap:10px;">
@@ -4568,7 +4568,7 @@ const PhoneController = {
         }
         else if (status === 'approved' && phone) {
             btn.innerHTML = safeHTML('📞 ' + phone);
-            btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(255,114,95,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
+            btn.style.cssText = 'cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;';
             btn.onclick = (e) => {
                 e.stopPropagation();
                 window.location.href = 'tel:' + phone.replace(/\s+/g, '');
