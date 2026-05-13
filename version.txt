@@ -900,3 +900,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Fine-tuned input-prefix alignment and height in style.css for consistent field heights.
 - Version: 2.2.36 (Build 236)
 
+2.2.37 (Build 237) - 2026-05-13
+- Fix: Migrated SoundManager to Web Audio API (AudioContext) to resolve Safari issues where sounds would trigger a media player UI instead of playing.
+- Fix: Improved audio unlocking logic for iOS/Safari compatibility.
+- Version: 2.2.37 (Build 237)
+
