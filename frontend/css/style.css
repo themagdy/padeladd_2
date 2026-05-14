@@ -326,8 +326,8 @@ ol {
 .nav-item img.nav-icon {
   width: 28px;
   height: 28px;
-  opacity: 1;
-  transition: opacity var(--t-fast), transform var(--t-fast);
+  opacity: 1; /* White by default */
+  transition: opacity var(--t-fast), transform var(--t-fast), filter var(--t-fast);
 }
 
 .nav-item img.nav-icon.nav-logo-icon {
@@ -2493,7 +2493,7 @@ form {
   cursor: pointer;
 }
 
-.nav-notif img {
+.nav-notif img.nav-icon {
   width: 26px;
   height: 26px;
 }
@@ -2751,9 +2751,9 @@ form {
     position: relative;
   }
 
-  .nav-notif img {
-    width: 24px;
-    height: 24px;
+  .nav-notif img.nav-icon {
+    width: 26px;
+    height: 26px;
   }
 
   .notif-badge {

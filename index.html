@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <!-- CSS -->
-    <link rel="stylesheet" href="frontend/css/style.css?v=237">
+    <link rel="stylesheet" href="frontend/css/style.css?v=241">
 </head>
 <body>
     <div id="app">
@@ -72,7 +72,7 @@
                 <div class="nav-right">
                     <a href="profile/view" data-link id="nav-avatar" class="nav-item avatar-circle"></a>
                     <div class="nav-notif" onclick="NotificationsController.toggle()" style="cursor:pointer;">
-                        <img src="assets/nav_icons/notif.svg" alt="Notifications">
+                        <img src="assets/nav_icons/notif.svg" alt="Notifications" class="nav-icon">
                         <span id="nav-notif-badge" class="notif-badge" style="display: none;">0</span>
                     </div>
                 </div>
@@ -127,7 +127,7 @@
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
+                ADD_ATTR: ['style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
 
@@ -164,11 +164,11 @@
             });
         });
     </script>
-    <script src="frontend/js/config.js?v=234"></script>
-    <script src="frontend/js/auth.js?v=234"></script>
-    <script src="frontend/js/api.js?v=234"></script>
-    <script src="frontend/js/controllers.js?v=234"></script>
-    <script src="frontend/js/router.js?v=234"></script>
-    <script src="frontend/js/app.js?v=234"></script>
+    <script src="frontend/js/config.js?v=241"></script>
+    <script src="frontend/js/auth.js?v=241"></script>
+    <script src="frontend/js/api.js?v=241"></script>
+    <script src="frontend/js/controllers.js?v=241"></script>
+    <script src="frontend/js/router.js?v=241"></script>
+    <script src="frontend/js/app.js?v=241"></script>
 </body>
 </html>

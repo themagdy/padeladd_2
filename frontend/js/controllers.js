@@ -491,6 +491,21 @@ const DashboardController = {
     _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
     _rankingCache: {}, // Stores dashboard-specific ranking lists
+    _messages: [
+        "Enter the Game.",
+        "Next Round!",
+        "Survive the Court.",
+        "The Ladder is watching.",
+        "Play to Rise.",
+        "No Easy Matches.",
+        "The Game Begins.",
+        "Only One Rises.",
+        "Ready to Compete?",
+        "Prove Your Level.",
+        "The Court Decides.",
+        "Climb or disappear.",
+        "Let the games begin."
+    ],
 
     init: async function (isSilent = false) {
         if (!isSilent) UI.syncNav();
@@ -575,13 +590,20 @@ const DashboardController = {
 
         // Welcome name
         const nameEl = document.getElementById('dash-name');
-        if (nameEl) nameEl.textContent = profile?.nickname || user.first_name;
+        if (nameEl) nameEl.textContent = profile?.player_code || user.first_name;
 
         // Stats
         StatsUI.update(stats, 'dash');
 
         DashboardController.renderMatches();
         DashboardController.renderRanking(isSilent);
+
+        // Random subtitle if not silent (initial load)
+        const subEl = document.getElementById('dash-subtitle');
+        if (subEl && !isSilent) {
+            const msg = DashboardController._messages[Math.floor(Math.random() * DashboardController._messages.length)];
+            subEl.textContent = msg;
+        }
     },
 
     switchRankTab: function (gender) {
@@ -4970,7 +4992,7 @@ const NotificationsController = {
                 box-shadow:-8px 0 32px rgba(0,0,0,0.4);
             ">
                 <div style="display:flex; align-items:center; justify-content:space-between; padding:20px; border-bottom:1px solid var(--c-border); flex-shrink:0;">
-                    <div style="font-size:16px; font-weight:800; letter-spacing:0.5px;">🔔 Notifications</div>
+                    <div class="section-title" style="font-size:14px;">Notifications</div>
                     <div style="display:flex; gap:8px; align-items:center;">
 
                         <button onclick="NotificationsController.close()" style="background:transparent; border:none; color:var(--c-text); cursor:pointer; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:8px;">
