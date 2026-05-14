@@ -26,6 +26,7 @@ $stmt = $pdo->prepare("
         MAX(n.created_at) as created_at,
         COUNT(*) as count,
         MAX(up.profile_image) AS sender_avatar,
+        MAX(up.profile_image_thumb) AS sender_avatar_thumb,
         MAX(u.first_name) AS sender_first_name, 
         MAX(u.last_name) AS sender_last_name, 
         MAX(up.nickname) AS sender_nickname,
@@ -63,7 +64,8 @@ foreach ($notifications as &$n) {
     $n['is_read']      = (bool)$n['is_read'];
     
     // Ensure strings for JS truthiness
-    $n['sender_avatar']     = !empty($n['sender_avatar']) ? (string)$n['sender_avatar'] : null;
+    $n['sender_avatar']           = !empty($n['sender_avatar']) ? (string)$n['sender_avatar'] : null;
+    $n['sender_avatar_thumb']     = !empty($n['sender_avatar_thumb']) ? (string)$n['sender_avatar_thumb'] : null;
     $n['sender_nickname']   = !empty($n['sender_nickname']) ? (string)$n['sender_nickname'] : null;
     $n['sender_first_name'] = !empty($n['sender_first_name']) ? (string)$n['sender_first_name'] : null;
     $n['sender_last_name']  = !empty($n['sender_last_name']) ? (string)$n['sender_last_name'] : null;
