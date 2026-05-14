@@ -297,14 +297,14 @@ ol {
   to { opacity: 1; }
 }
 
-@keyframes slideInLeft {
+@keyframes subtitleReveal {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    clip-path: inset(0 100% 0 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -319,9 +319,11 @@ ol {
   background-size: 400% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  opacity: 0;
   animation: 
-    slideInLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    subtitleReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
     shimmer 8s linear infinite;
+  will-change: clip-path, opacity;
 }
 
 .container {

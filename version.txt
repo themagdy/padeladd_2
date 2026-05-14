@@ -936,3 +936,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Optimized shimmer smoothness with 8s duration and 400% background scale.
 - UI: Unified entrance animation by removing shimmer delay for a smoother load.
 - Version: 2.2.43 (Build 243)
+
+2.2.44 (Build 244) - 2026-05-15
+- UI: Fixed dashboard subtitle flicker by removing hardcoded placeholder text.
+- UI: Implemented a premium "left-to-right" reveal animation for the subtitle in place.
+- UX: Optimized randomization logic to prevent subtitle switching during data refresh.
+- Version: 2.2.44 (Build 244)
