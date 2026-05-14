@@ -648,8 +648,26 @@ const StatsUI = {
     update: function (stats, prefix) {
         if (!stats) return;
 
-        const upIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
-        const downIcon = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+        const getUpIcon = () => {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "12"); svg.setAttribute("height", "12"); svg.setAttribute("viewBox", "0 0 24 24");
+            svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor");
+            svg.setAttribute("stroke-width", "4"); svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round");
+            const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            poly.setAttribute("points", "18 15 12 9 6 15");
+            svg.appendChild(poly);
+            return svg;
+        };
+        const getDownIcon = () => {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "12"); svg.setAttribute("height", "12"); svg.setAttribute("viewBox", "0 0 24 24");
+            svg.setAttribute("fill", "none"); svg.setAttribute("stroke", "currentColor");
+            svg.setAttribute("stroke-width", "4"); svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round");
+            const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            poly.setAttribute("points", "6 9 12 15 18 9");
+            svg.appendChild(poly);
+            return svg;
+        };
 
         const elMap = {
             'ranking': stats.ranking ?? '—',
@@ -659,42 +677,67 @@ const StatsUI = {
         };
 
         for (const [key, val] of Object.entries(elMap)) {
-            // Try both prefix-key and prefix-key-count for flexibility
             const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
             if (el) {
+                el.innerHTML = ''; // Clear previous
                 if (key === 'points' && stats.current_buffer !== undefined) {
-                    el.innerHTML = safeHTML(`${val} <span style="display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;">
-                        <span style="font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;">+ ${stats.current_buffer}</span>
-                        <span style="font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;">Buffer</span>
-                    </span>`);
+                    el.textContent = val + ' ';
+                    const bufWrap = document.createElement('span');
+                    bufWrap.style.cssText = 'display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;';
+                    
+                    const bufVal = document.createElement('span');
+                    bufVal.style.cssText = 'font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;';
+                    bufVal.textContent = '+ ' + stats.current_buffer;
+                    
+                    const bufLbl = document.createElement('span');
+                    bufLbl.style.cssText = 'font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;';
+                    bufLbl.textContent = 'Buffer';
+                    
+                    bufWrap.appendChild(bufVal);
+                    bufWrap.appendChild(bufLbl);
+                    el.appendChild(bufWrap);
                 } else {
                     el.textContent = val;
                 }
             }
         }
 
-        // Secondary details (if elements exist)
         const rcEl = document.getElementById(`${prefix}-ranking-change`) || document.getElementById(`${prefix}-highest-rank`);
         if (rcEl) {
+            rcEl.innerHTML = '';
+            const trend = document.createElement('span');
             if (stats.ranking_change > 0) {
-                rcEl.innerHTML = safeHTML(`<span class="stat-trend up">${upIcon} ${stats.ranking_change} POSITIONS</span>`);
+                trend.className = 'stat-trend up';
+                trend.appendChild(getUpIcon());
+                trend.append(` ${stats.ranking_change} POSITIONS`);
             } else if (stats.ranking_change < 0) {
-                rcEl.innerHTML = safeHTML(`<span class="stat-trend down">${downIcon} ${Math.abs(stats.ranking_change)} POSITIONS</span>`);
+                trend.className = 'stat-trend down';
+                trend.appendChild(getDownIcon());
+                trend.append(` ${Math.abs(stats.ranking_change)} POSITIONS`);
             } else {
-                rcEl.innerHTML = safeHTML(`<span class="stat-trend neutral">STABLE RANK</span>`);
+                trend.className = 'stat-trend neutral';
+                trend.textContent = 'STABLE RANK';
             }
+            rcEl.appendChild(trend);
         }
 
         const pwEl = document.getElementById(`${prefix}-points-week`);
         if (pwEl && stats.points_this_week !== undefined) {
+            pwEl.innerHTML = '';
             if (stats.points_this_week > 0) {
-                pwEl.innerHTML = safeHTML(`<span class="stat-trend up">${upIcon} +${stats.points_this_week} THIS WEEK</span>`);
+                const trend = document.createElement('span');
+                trend.className = 'stat-trend up';
+                trend.appendChild(getUpIcon());
+                trend.append(` +${stats.points_this_week} THIS WEEK`);
+                pwEl.appendChild(trend);
                 pwEl.style.color = '';
             } else if (stats.points_this_week < 0) {
-                pwEl.innerHTML = safeHTML(`<span class="stat-trend down">${downIcon} ${stats.points_this_week} THIS WEEK</span>`);
+                const trend = document.createElement('span');
+                trend.className = 'stat-trend down';
+                trend.appendChild(getDownIcon());
+                trend.append(` ${stats.points_this_week} THIS WEEK`);
+                pwEl.appendChild(trend);
                 pwEl.style.color = '';
-            } else {
-                pwEl.textContent = '';
             }
         }
 

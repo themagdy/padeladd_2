@@ -942,3 +942,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Implemented a premium "left-to-right" reveal animation for the subtitle in place.
 - UX: Optimized randomization logic to prevent subtitle switching during data refresh.
 - Version: 2.2.44 (Build 244)
+
+2.2.45 (Build 245) - 2026-05-15
+- Security: Implemented global backend input sanitization (stripping HTML tags) via Security helper.
+- Security: Hardened DOMPurify whitelist with strict pattern matching and dangerous keyword blocking.
+- Security: Refactored Chat, Ranking, and StatsUI to use programmatic DOM creation (createElement) instead of innerHTML.
+- Security: Added X-Frame-Options (DENY) and X-Content-Type-Options (nosniff) headers to .htaccess.
+- Version: 2.2.45 (Build 245)

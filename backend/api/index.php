@@ -50,6 +50,7 @@ require_once __DIR__ . '/../helpers/auth_helper.php';
 require_once __DIR__ . '/../helpers/mail_helper.php';
 require_once __DIR__ . '/../helpers/notification_helper.php';
 require_once __DIR__ . '/../helpers/twilio_helper.php';
+require_once __DIR__ . '/../helpers/security_helper.php';
 
 // Parse the request URI to determine endpoint
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -72,6 +73,9 @@ $data = json_decode($inputJSON, true) ?: [];
 if (!empty($_POST)) {
     $data = array_merge($data, $_POST);
 }
+
+// Global Sanitization: Strip HTML from all incoming data except passwords
+$data = Security::sanitizeArray($data);
 
 try {
     // Route to correct script
