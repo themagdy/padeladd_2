@@ -598,9 +598,9 @@ const DashboardController = {
         DashboardController.renderMatches();
         DashboardController.renderRanking(isSilent);
 
-        // Random subtitle if not silent (initial load)
+        // Random subtitle if not silent (initial load) and not already set
         const subEl = document.getElementById('dash-subtitle');
-        if (subEl && !isSilent) {
+        if (subEl && !isSilent && !subEl.textContent.trim()) {
             const msg = DashboardController._messages[Math.floor(Math.random() * DashboardController._messages.length)];
             subEl.textContent = msg;
         }
