@@ -930,3 +930,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.42 (Build 242) - 2026-05-14
 - UI: Added smooth "Slide-in Left" entrance animation for the dashboard dynamic subtitle.
 - Version: 2.2.42 (Build 242)
+
+2.2.43 (Build 243) - 2026-05-15
+- UI: Enhanced dashboard subtitle with a premium "gradient glint" shimmer effect.
+- UI: Optimized shimmer smoothness with 8s duration and 400% background scale.
+- UI: Unified entrance animation by removing shimmer delay for a smoother load.
+- Version: 2.2.43 (Build 243)

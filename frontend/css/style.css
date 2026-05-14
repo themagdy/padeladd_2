@@ -308,8 +308,20 @@ ol {
   }
 }
 
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
 #dash-subtitle {
-  animation: slideInLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  display: inline-block;
+  background: linear-gradient(90deg, var(--c-text-muted) 0%, var(--c-text-muted) 40%, #fff 50%, var(--c-text-muted) 60%, var(--c-text-muted) 100%);
+  background-size: 400% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: 
+    slideInLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    shimmer 8s linear infinite;
 }
 
 .container {
