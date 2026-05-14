@@ -959,3 +959,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bug Fix: Resolved a navigation bug where the "My Matches" dashboard button was non-functional due to over-aggressive security filtering.
 - UI: Hidden "Rules" and "Create Match" buttons from the "My Matches" view for a cleaner interface.
 - Version: 2.2.47 (Build 247)
+
+2.2.48 (Build 248) - 2026-05-15
+- UI: Refined matches list header spacing (tightened to 25px).
+- Copy: Updated empty state messages with more immersive, competitive tone ("The Court Is Quiet", "Enter the next round").
+- UI: Updated Play section sub-header for better clarity ("Solo or Squad!").
+- Version: 2.2.48 (Build 248)

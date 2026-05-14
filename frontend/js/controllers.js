@@ -1873,7 +1873,7 @@ const MatchesController = {
         if (headerTitleEl) {
             if (mode === 'play') {
                 headerTitleEl.textContent = 'Play';
-                headerSubEl.textContent = 'Join matches nearby or with friends';
+                headerSubEl.textContent = 'Join matches nearby, Solo or Squad!';
                 if (tabsContainer) {
                     tabsContainer.innerHTML = `
                       <button id="ml-tab-play_upcoming" onclick="MatchesController.switchTab('play_upcoming')"
@@ -2162,12 +2162,12 @@ const MatchesController = {
             let icon = '🔍';
 
             if (MatchesController._currentTab === 'play_upcoming') {
-                msg = 'No games yet';
-                sub = 'Be the first to create one!';
+                msg = 'The Court Is Quiet';
+                sub = 'The next move is yours ⚔️';
                 icon = '🎾';
             } else if (MatchesController._currentTab === 'mine_upcoming') {
                 msg = 'Your schedule is clear';
-                sub = 'Join a match to get playing.';
+                sub = 'Enter the next round.';
                 icon = '📅';
             } else if (MatchesController._currentTab.includes('past') || MatchesController._currentTab.includes('completed')) {
                 msg = 'No history yet';
