@@ -948,4 +948,5 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security: Hardened DOMPurify whitelist with strict pattern matching and dangerous keyword blocking.
 - Security: Refactored Chat, Ranking, and StatsUI to use programmatic DOM creation (createElement) instead of innerHTML.
 - Security: Added X-Frame-Options (DENY) and X-Content-Type-Options (nosniff) headers to .htaccess.
+- Security: Final audit passed. Transitioned to a "Defense-in-Depth" architecture.
 - Version: 2.2.45 (Build 245)
