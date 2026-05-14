@@ -4316,18 +4316,43 @@ const ChatController = {
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
                         const thumb = msg.profile_image_thumb || msg.profile_image;
-                        const avatar = thumb
-                            ? '<img src="' + CONFIG.ASSET_BASE + '/' + thumb + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'
-                            : (name[0] || '?').toUpperCase();
+                        
+                        // Avatar
+                        const avatarEl = document.createElement('div');
+                        avatarEl.className = 'chat-group-avatar';
+                        avatarEl.style.cssText = 'width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;';
+                        if (thumb) {
+                            const img = document.createElement('img');
+                            img.src = `${CONFIG.ASSET_BASE}/${thumb}`;
+                            img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+                            img.onerror = function() { this.parentElement.innerText = (name[0] || '?').toUpperCase(); };
+                            avatarEl.appendChild(img);
+                        } else {
+                            avatarEl.innerText = (name[0] || '?').toUpperCase();
+                        }
 
-                        group.innerHTML = safeHTML(`
-                            <div class="chat-group-avatar" style="width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;">${avatar}</div>
-                            <div class="chat-msg-column" style="max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}">
-                                ${!isMe ? `<div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;">${name} ${code ? `<span style="font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;">${code}</span>` : ''}</div>` : ''}
-                            </div>
-                        `);
+                        // Column
+                        const col = document.createElement('div');
+                        col.className = 'chat-msg-column';
+                        col.style.cssText = `max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
+                        
+                        if (!isMe) {
+                            const nameHeader = document.createElement('div');
+                            nameHeader.style.cssText = 'font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;';
+                            nameHeader.innerText = name + ' ';
+                            if (code) {
+                                const codeSpan = document.createElement('span');
+                                codeSpan.style.cssText = 'font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;';
+                                codeSpan.innerText = code;
+                                nameHeader.appendChild(codeSpan);
+                            }
+                            col.appendChild(nameHeader);
+                        }
 
-                        group.querySelector('.chat-msg-column').appendChild(bubble);
+                        col.appendChild(bubble);
+                        group.appendChild(avatarEl);
+                        group.appendChild(col);
+                        
                         inner.appendChild(group);
                         this._lastMsgEl = group;
                     }
@@ -5498,45 +5523,115 @@ const RankingController = {
             return;
         }
 
-        let html = '';
+        // Clear previous list
+        listEl.innerHTML = '';
+
         list.forEach(r => {
             const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
-            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);', initials);
 
-            let rankHtml = `<span style="text-align:left; font-size:20px; font-weight:700; color:#fff;">${r.rank}</span>`;
+            const row = document.createElement('div');
+            row.className = 'rank-grid-full';
+            row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
+            row.onclick = () => Router.navigate('/profile/view/' + r.player_code);
+            row.onmouseover = function() { this.style.background = 'rgba(255,255,255,0.02)'; };
+            row.onmouseout = function() { this.style.background = 'transparent'; };
+
+            // Rank
+            const rankWrap = document.createElement('div');
+            rankWrap.style.cssText = 'display:flex; justify-content:center;';
             if (r.rank === 1) {
-                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #FFD700, #B8860B) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#FFD700; box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1), 0 0 12px rgba(255, 215, 0, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #FFD700, #B8860B) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#FFD700; box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1), 0 0 12px rgba(255, 215, 0, 0.15);">${r.rank}</div>`;
             } else if (r.rank === 2) {
-                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #E0E0E0, #808080) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#C0C0C0; box-shadow: inset 0 0 8px rgba(192, 192, 192, 0.1), 0 0 12px rgba(192, 192, 192, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #E0E0E0, #808080) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#C0C0C0; box-shadow: inset 0 0 8px rgba(192, 192, 192, 0.1), 0 0 12px rgba(192, 192, 192, 0.15);">${r.rank}</div>`;
             } else if (r.rank === 3) {
-                rankHtml = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #CD7F32, #8B4513) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#CD7F32; box-shadow: inset 0 0 8px rgba(205, 127, 50, 0.1), 0 0 12px rgba(205, 127, 50, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #CD7F32, #8B4513) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#CD7F32; box-shadow: inset 0 0 8px rgba(205, 127, 50, 0.1), 0 0 12px rgba(205, 127, 50, 0.15);">${r.rank}</div>`;
+            } else {
+                const rankText = document.createElement('span');
+                rankText.style.cssText = 'text-align:left; font-size:20px; font-weight:700; color:#fff;';
+                rankText.textContent = r.rank;
+                rankWrap.appendChild(rankText);
             }
 
-            html += `
-                <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-full" style="padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
-                    <div style="display:flex; justify-content:center;">${rankHtml}</div>
-                    
-                    <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
-                        ${avatarHtml}
-                        <div style="min-width:0; overflow:hidden;">
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <div style="font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
-                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase; flex-shrink:0;">${r.player_code}</span>
-                            </div>
-                            <div style="font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;">${r.first_name} ${r.last_name}</div>
-                        </div>
-                    </div>
+            // Player Info
+            const infoWrap = document.createElement('div');
+            infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;';
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.style.cssText = 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border); display:flex; align-items:center; justify-content:center; overflow:hidden; font-weight:800; font-size:14px;';
+            if (thumb) {
+                const img = document.createElement('img');
+                img.src = `${CONFIG.ASSET_BASE}/${thumb}`;
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+                img.onerror = function() { this.parentElement.innerText = initials; };
+                avatarDiv.appendChild(img);
+            } else {
+                avatarDiv.innerText = initials;
+            }
 
-                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-text);">${r.matches_played}</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:14px; font-weight:600; color:var(--c-green);">${r.win_rate}%</span>
-                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};">${r.points_this_week > 0 ? '+' : ''}${r.points_this_week !== 0 ? r.points_this_week : '—'}</span>
-                    <span style="text-align:right; font-size:16px; font-weight:600; color:${pointsColor};">${r.points >= 0 ? '+' : ''}${r.points}</span>
-                </div>
-            `;
+            const nameWrap = document.createElement('div');
+            nameWrap.style.cssText = 'min-width:0; overflow:hidden;';
+            
+            const nameLine = document.createElement('div');
+            nameLine.style.cssText = 'display:flex; align-items:center; gap:8px;';
+            
+            const nick = document.createElement('div');
+            nick.style.cssText = 'font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+            nick.textContent = r.nickname;
+            
+            const code = document.createElement('span');
+            code.style.cssText = 'font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase; flex-shrink:0;';
+            code.textContent = r.player_code;
+            
+            nameLine.appendChild(nick);
+            nameLine.appendChild(code);
+            
+            const full = document.createElement('div');
+            full.style.cssText = 'font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;';
+            full.textContent = (r.first_name || '') + ' ' + (r.last_name || '');
+            
+            nameWrap.appendChild(nameLine);
+            nameWrap.appendChild(full);
+            
+            infoWrap.appendChild(avatarDiv);
+            infoWrap.appendChild(nameWrap);
+
+            // Stats
+            const age = document.createElement('span');
+            age.className = 'hide-mobile';
+            age.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);';
+            age.textContent = r.age || '—';
+
+            const played = document.createElement('span');
+            played.className = 'hide-mobile';
+            played.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text);';
+            played.textContent = r.matches_played;
+
+            const rate = document.createElement('span');
+            rate.className = 'hide-mobile';
+            rate.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-green);';
+            rate.textContent = r.win_rate + '%';
+
+            const diff = document.createElement('span');
+            diff.className = 'hide-mobile';
+            diff.style.cssText = `text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};`;
+            diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
+
+            const total = document.createElement('span');
+            total.style.cssText = `text-align:right; font-size:16px; font-weight:600; color:${pointsColor};`;
+            total.textContent = (r.points >= 0 ? '+' : '') + r.points;
+
+            row.appendChild(rankWrap);
+            row.appendChild(infoWrap);
+            row.appendChild(age);
+            row.appendChild(played);
+            row.appendChild(rate);
+            row.appendChild(diff);
+            row.appendChild(total);
+
+            listEl.appendChild(row);
         });
-        listEl.innerHTML = safeHTML(html);
     }
+
 };

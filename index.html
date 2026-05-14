@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <!-- CSS -->
-    <link rel="stylesheet" href="frontend/css/style.css?v=244">
+    <link rel="stylesheet" href="frontend/css/style.css?v=245">
 </head>
 <body>
     <div id="app">
@@ -138,24 +138,39 @@
                 if (node.hasAttribute(attr)) {
                     const val = node.getAttribute(attr);
                     // Strictly allow only known internal patterns
-                    const isTrusted = 
-                        val.includes('Router.navigate') || 
-                        val.includes('this.src=') || 
-                        val.includes('DashboardController') || 
-                        val.includes('MatchesController') || 
-                        val.includes('NotificationsController') ||
-                        val.includes('ScoringController') ||
-                        val.includes('ChatController') ||
-                        val.includes('RankingUI') ||
-                        val.includes('Auth.') ||
-                        val.includes('API.post') ||
-                        val.includes('this.parentElement.remove') ||
-                        val.includes('classList.add') ||
-                        val.includes('this.style.display') ||
-                        val.includes('this.style.background') ||
-                        val.includes('this.style.transform') ||
-                        val.includes('UI.') ||
-                        val.includes('clearInterval');
+                    // Strictly allow only known internal patterns
+                    const isTrusted = (function(str) {
+                        const s = str.toLowerCase();
+                        // 1. Block dangerous keywords
+                        if (s.includes('eval') || s.includes('fetch') || s.includes('cookie') || s.includes('document.') || s.includes('window.') || s.includes('location.') || s.includes('xmlhttprequest')) return false;
+                        
+                        // 2. Define safe patterns
+                        const whitelist = [
+                            'Router.navigate', 'DashboardController', 'MatchesController', 
+                            'NotificationsController', 'ScoringController', 'ChatController', 
+                            'RankingUI', 'Auth.', 'API.post', 'UI.', 'clearInterval', 'FX.',
+                            'this.src=', 'this.parentElement.remove', 'classList.add', 
+                            'this.style.display', 'this.style.background', 'this.style.transform',
+                            'event.stopPropagation()', 'ConfirmModal', 'ProfileController'
+                        ];
+                        
+                        // 3. Validate content
+                        const hasTrustedPattern = whitelist.some(p => str.includes(p));
+                        if (!hasTrustedPattern) return false;
+
+                        // 4. Hardening: If command chaining exists, verify it doesn't look like an injection
+                        if (str.includes(';') || str.includes('&')) {
+                            // Only allow multiple statements if they are all from the whitelist or simple assignments
+                            const parts = str.split(/[;&]/);
+                            return parts.every(part => {
+                                const p = part.trim();
+                                if (!p) return true;
+                                return whitelist.some(w => p.includes(w)) || (!p.includes('(') && !p.includes('='));
+                            });
+                        }
+                        
+                        return true;
+                    })(val);
                     
                     if (!isTrusted) {
                         node.removeAttribute(attr);
@@ -164,11 +179,11 @@
             });
         });
     </script>
-    <script src="frontend/js/config.js?v=244"></script>
-    <script src="frontend/js/auth.js?v=244"></script>
-    <script src="frontend/js/api.js?v=244"></script>
-    <script src="frontend/js/controllers.js?v=244"></script>
-    <script src="frontend/js/router.js?v=244"></script>
-    <script src="frontend/js/app.js?v=244"></script>
+    <script src="frontend/js/config.js?v=245"></script>
+    <script src="frontend/js/auth.js?v=245"></script>
+    <script src="frontend/js/api.js?v=245"></script>
+    <script src="frontend/js/controllers.js?v=245"></script>
+    <script src="frontend/js/router.js?v=245"></script>
+    <script src="frontend/js/app.js?v=245"></script>
 </body>
 </html>
