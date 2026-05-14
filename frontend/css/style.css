@@ -293,13 +293,23 @@ ol {
 }
 
 @keyframes pageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInLeft {
   from {
     opacity: 0;
+    transform: translateX(-30px);
   }
-
   to {
     opacity: 1;
+    transform: translateX(0);
   }
+}
+
+#dash-subtitle {
+  animation: slideInLeft 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .container {
