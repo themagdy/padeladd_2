@@ -954,3 +954,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.46 (Build 246) - 2026-05-15
 - Perf: Enabled thumbnail support in the notification panel for faster loading.
 - Version: 2.2.46 (Build 246)
+
+2.2.47 (Build 247) - 2026-05-15
+- Bug Fix: Resolved a navigation bug where the "My Matches" dashboard button was non-functional due to over-aggressive security filtering.
+- UI: Hidden "Rules" and "Create Match" buttons from the "My Matches" view for a cleaner interface.
+- Version: 2.2.47 (Build 247)
