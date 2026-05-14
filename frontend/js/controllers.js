@@ -1864,6 +1864,11 @@ const MatchesController = {
         const headerTitleEl = document.getElementById('ml-header-title');
         const headerSubEl = document.getElementById('ml-header-sub');
         const tabsContainer = document.getElementById('ml-tabs-container');
+        const rulesBtn = document.getElementById('ml-rules-btn');
+        const createBtn = document.getElementById('ml-create-btn');
+
+        if (rulesBtn) rulesBtn.style.display = mode === 'play' ? 'flex' : 'none';
+        if (createBtn) createBtn.style.display = mode === 'play' ? 'flex' : 'none';
 
         if (headerTitleEl) {
             if (mode === 'play') {
