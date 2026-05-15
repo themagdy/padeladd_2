@@ -1227,7 +1227,7 @@ const ProfileViewController = {
                 const followBtn = document.getElementById('prof-follow-btn');
                 if (followBtn) {
                     followBtn.style.width = 'auto';
-                    followBtn.style.minWidth = '70px';
+                    followBtn.style.minWidth = '100px';
                     followBtn.style.height = '28px';
                     followBtn.style.fontSize = '11px';
                     followBtn.style.fontWeight = '700';
