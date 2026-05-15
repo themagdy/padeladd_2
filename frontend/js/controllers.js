@@ -1230,7 +1230,7 @@ const ProfileViewController = {
                     followBtn.style.height = '34px';
                     followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : '#007AFF';
                     followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#007AFF';
-                    followBtn.querySelector('.follow-icon').textContent = is_following ? '✅' : '👤+';
+                    followBtn.querySelector('.follow-icon').textContent = is_following ? '👤✅' : '👤+';
                     followBtn.onclick = () => ProfileViewController.toggleFollow();
                 }
             } else {
