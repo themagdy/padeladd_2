@@ -119,28 +119,60 @@ const StoriesController = {
     _progressInterval: null,
     _progressValue: 0,
     _STORY_DURATION: 5000, // 5 seconds per story
+    _cache: null,
+    _hasAnimatedThisSession: false,
 
     initTray: async function() {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
+        // 1. Check cache for instant appearance
+        if (this._cache) {
+            this._activeStories = this._cache;
+            this.renderTray(true); // Render from cache
+        }
+
+        // 2. Fetch fresh data
         const res = await API.post('/stories/list');
         if (res && res.success) {
-            this._activeStories = res.data.stories;
-            this.renderTray();
+            const newStoriesJson = JSON.stringify(res.data.stories);
+            const oldStoriesJson = JSON.stringify(this._cache);
+
+            // Only re-render if data actually changed or it's the first fetch
+            if (newStoriesJson !== oldStoriesJson) {
+                this._activeStories = res.data.stories;
+                this._cache = res.data.stories;
+                this.renderTray(false);
+            } else if (this._activeStories.length > 0) {
+                // Same data as cache, just ensure it's visible if not already
+                tray.classList.add('active');
+            }
         }
     },
 
-    renderTray: function() {
+    renderTray: function(fromCache = false) {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
         if (this._activeStories.length === 0) {
-            tray.style.display = 'none';
+            tray.classList.remove('active', 'animate-in');
             return;
         }
 
-        tray.style.display = 'flex';
+        // Handle animation vs instant loading
+        if (fromCache) {
+            tray.classList.add('active');
+        } else if (!this._hasAnimatedThisSession) {
+            // First time in session: slide down
+            setTimeout(() => {
+                tray.classList.add('animate-in');
+                this._hasAnimatedThisSession = true;
+            }, 100);
+        } else {
+            // Subsequent loads in session: instant
+            tray.classList.add('active');
+        }
+
         let html = '';
         
         let hasMine = false;
