@@ -558,7 +558,8 @@ const StoriesController = {
         const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
         if (story && !story.is_seen) {
             story.is_seen = 1;
-            // No need to re-render immediately if watching, but it will update the tray in the background
+            // Re-render tray in background so it's updated when user closes story
+            this.renderTray();
         }
         await API.post('/stories/mark_seen', { story_id: storyId });
     }
