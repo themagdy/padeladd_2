@@ -1050,3 +1050,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Enhanced score remapping to support external player replacements (e.g., Lebron) in both match history and stories.
 - UX: Refined story navigation zones to a 50/50 split and protected interactive buttons from accidental navigation skips.
 - Version: 2.2.61 (Build 261)
+
+2.2.62 (Build 262) - 2026-05-16
+- Fix: Optimized story card scaling and spacing on mobile to prevent content cropping.
+- UI: Implemented adaptive story height and reduced internal paddings for better fit on small viewports.
+- Version: 2.2.62 (Build 262)
