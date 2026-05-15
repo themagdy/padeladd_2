@@ -401,17 +401,17 @@ const StoriesController = {
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
         const renderTeamCardUpcoming = (teamPlayers) => `
-            <div class="story-team-card">
-                <div style="display:flex; align-items:center;">
-                    <div class="story-team-avatars">
+            <div class="story-team-card" style="padding: 16px 20px; align-items: center; min-height: 80px;">
+                <div style="display:flex; align-items:center; gap: 16px;">
+                    <div class="story-team-avatars" style="margin-right:0;">
                         ${teamPlayers.length > 0 ? teamPlayers.map(p => `
-                            <div class="story-team-avatar-mini">
+                            <div class="story-team-avatar-mini" style="width:44px; height:44px;">
                                 ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', (p.nickname?.[0] || p.first_name[0]))}
                             </div>
-                        `).join('') : '<div class="story-team-avatar-mini" style="background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.1);"></div>'}
+                        `).join('') : '<div class="story-team-avatar-mini" style="width:44px; height:44px; background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.1);"></div>'}
                     </div>
-                    <div class="story-team-names">
-                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `<span>${p.nickname || p.first_name}</span>`).join('') : '<span style="opacity:0.3;">TBD</span>'}
+                    <div class="story-team-names" style="gap: 4px;">
+                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `<span style="font-size:16px; font-weight:700;">${p.nickname || p.first_name}</span>`).join('') : '<span style="opacity:0.3; font-size:16px;">TBD</span>'}
                     </div>
                 </div>
             </div>
