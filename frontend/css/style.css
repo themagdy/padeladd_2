@@ -4988,13 +4988,11 @@ body {
 }
 
 .story-team-names span {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: #fff;
   line-height: 1.1;
   font-family: 'Montserrat', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .story-winner-badge {
