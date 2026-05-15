@@ -1226,7 +1226,7 @@ const ProfileViewController = {
                 followContainer.style.display = 'block';
                 const followBtn = document.getElementById('prof-follow-btn');
                 if (followBtn) {
-                    followBtn.style.width = is_following ? '40px' : '70px';
+                    followBtn.style.width = is_following ? '40px' : '55px';
                     followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : '#007AFF';
                     followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#007AFF';
                     followBtn.querySelector('.follow-icon').textContent = is_following ? '✅' : '👤+';
