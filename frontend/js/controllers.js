@@ -137,11 +137,15 @@ const StoriesController = {
                     tray.classList.add('revealed');
                 }
             } catch (e) { console.error('Stories cache load failed', e); }
-        } else {
-            this._activeStories = this.sortStories(this._cache);
-            this.renderTray();
-            tray.classList.add('revealed');
         }
+
+        // 1.5. Set up auto-refresh timer (every 10 seconds)
+        if (this._refreshTimer) clearInterval(this._refreshTimer);
+        this._refreshTimer = setInterval(() => {
+            if (!this._isShowing) { // Only refresh if not currently watching stories
+                this.renderTray();
+            }
+        }, 10000);
 
         // 2. Refresh from API in background
         const res = await API.post('/stories/list');
@@ -263,7 +267,7 @@ const StoriesController = {
             const initials = ((item.player?.first_name?.[0] || '') + (item.player?.last_name?.[0] || '')).toUpperCase() || '?';
             
             html += `
-                <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${item.storyIndex})">
+                <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${item.storyIndex}, ${item.player.id})">
                     <div class="story-avatar-ring">
                         ${UI.getAvatarHtml(item.player?.profile_image_thumb || item.player?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
@@ -280,7 +284,8 @@ const StoriesController = {
         tray.innerHTML = safeHTML(html);
     },
 
-    playByIndex: function(index) {
+    playByIndex: function(index, preferredPlayerId = null) {
+        this._preferredPlayerId = preferredPlayerId;
         this._currentIndex = index;
         this.openPlayer(this._activeStories);
     },
@@ -337,6 +342,12 @@ const StoriesController = {
         const isScore = story.type === 'score';
         const players = story.players || [];
         
+        // Find the player for the header
+        let headerPlayer = players[0];
+        if (this._preferredPlayerId) {
+            headerPlayer = players.find(p => parseInt(p.id) === parseInt(this._preferredPlayerId)) || players[0];
+        }
+
         let progressHtml = '';
         this._currentFeed.forEach((_, idx) => {
             let width = '0%';
@@ -345,7 +356,7 @@ const StoriesController = {
         });
 
         const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
-        const initials = ((players[0]?.first_name?.[0] || '') + (players[0]?.last_name?.[0] || '')).toUpperCase() || '?';
+        const initials = ((headerPlayer?.first_name?.[0] || '') + (headerPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
 
         overlay.innerHTML = safeHTML(`
             <div class="story-header">
@@ -353,10 +364,10 @@ const StoriesController = {
                 <div class="story-meta">
                     <div class="story-user">
                         <div class="story-user-avatar">
-                             ${UI.getAvatarHtml(players[0]?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
+                             ${UI.getAvatarHtml(headerPlayer?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         </div>
                         <div class="story-user-info">
-                            <span class="story-username">${players[0]?.nickname || players[0]?.first_name}</span>
+                            <span class="story-username">${headerPlayer?.nickname || headerPlayer?.first_name}</span>
                             <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
                         </div>
                     </div>
@@ -543,6 +554,12 @@ const StoriesController = {
     },
 
     markSeen: async function(storyId) {
+        // Update local state immediately
+        const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
+        if (story && !story.is_seen) {
+            story.is_seen = 1;
+            // No need to re-render immediately if watching, but it will update the tray in the background
+        }
         await API.post('/stories/mark_seen', { story_id: storyId });
     }
 };
