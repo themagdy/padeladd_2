@@ -1402,7 +1402,6 @@ const ProfileViewController = {
             cached.is_following = res.data.is_following;
             // Refresh view silently
             ProfileViewController.init(Router.params, true);
-            Toast.show(res.message, 'success');
         } else {
             Toast.show(res ? res.message : 'Action failed');
         }
