@@ -1000,3 +1000,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Refined story typography, spacing, and layout for enhanced visual consistency.
 - UI: Fixed instant "seen" status updates in the stories tray for a smoother user experience.
 - Version: 2.2.53 (Build 253)
+
+2.2.54 (Build 254) - 2026-05-16
+- UI: Redesigned the "Upcoming Match" story component to better utilize screen space and eliminate large empty areas.
+- UI: Integrated player XCode tags and Skill Level badges directly into the upcoming match story cards for a more detailed preview.
+- UI: Implemented a distributed team layout that balances player information across the full width of the story overlay.
+- UI: Refined typography and VS divider styling for a more premium, high-fidelity aesthetic.
+- Version: 2.2.54 (Build 254)

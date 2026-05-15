@@ -5036,10 +5036,49 @@ body {
 }
 
 .story-vs-divider {
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.15);
+  text-align: center;
+  letter-spacing: 2px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.story-player-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.story-player-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.story-xcode-tag {
+  background: rgba(247, 148, 29, 0.1);
+  border: 1px solid rgba(247, 148, 29, 0.3);
+  color: var(--c-orange);
   font-size: 10px;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.2);
-  text-align: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.story-level-badge {
+  background: rgba(27, 82, 206, 0.15);
+  border: 1px solid rgba(27, 82, 206, 0.3);
+  color: #60a5fa;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  text-transform: uppercase;
 }
 
 .story-match-details {
