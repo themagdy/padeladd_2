@@ -269,7 +269,7 @@ const StoriesController = {
         let overlay = document.getElementById('story-player-overlay');
         if (!overlay) return; // Should exist in index.html
         overlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('story-open');
     },
 
     startStory: function() {
@@ -481,7 +481,7 @@ const StoriesController = {
         if (this._progressInterval) clearInterval(this._progressInterval);
         const overlay = document.getElementById('story-player-overlay');
         if (overlay) overlay.style.display = 'none';
-        document.body.style.overflow = '';
+        document.body.classList.remove('story-open');
         
         if (Router.currentPath === 'dashboard') {
             this.initTray();
@@ -593,7 +593,6 @@ const AuthController = {
             if (res && res.success) {
                 localStorage.setItem('verify_user_id', res.data.user_id);
                 console.log("TEST CODES:", res.data);
-                // Friendly modal/notification could go here, but for now alert is fine for flow
                 Router.navigate('/verify');
             } else {
                 const msg = (res && res.message) ? res.message.toLowerCase() : '';
