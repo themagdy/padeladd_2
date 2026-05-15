@@ -4915,7 +4915,7 @@ body {
     justify-content: center;
     font-size: 18px;
     font-weight: 900;
-    color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.3);
     border: 1px solid rgba(255,255,255,0.05);
     font-family: 'Outfit', sans-serif;
 }
