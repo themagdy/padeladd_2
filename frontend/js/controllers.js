@@ -1226,11 +1226,14 @@ const ProfileViewController = {
                 followContainer.style.display = 'block';
                 const followBtn = document.getElementById('prof-follow-btn');
                 if (followBtn) {
-                    followBtn.style.width = is_following ? '34px' : '55px';
-                    followBtn.style.height = '34px';
+                    followBtn.style.width = 'auto';
+                    followBtn.style.minWidth = '85px';
                     followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : '#007AFF';
                     followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#007AFF';
-                    followBtn.querySelector('.follow-icon').textContent = is_following ? '👤✅' : '👤+';
+                    followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
+                    followBtn.querySelector('.follow-text').style.display = 'block';
+                    followBtn.querySelector('.follow-text').textContent = is_following ? 'Unfollow' : 'Follow';
+                    followBtn.querySelector('.follow-icon').style.display = 'none';
                     followBtn.onclick = () => ProfileViewController.toggleFollow();
                 }
             } else {
