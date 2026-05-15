@@ -40,7 +40,7 @@ foreach ($stories as $s) {
     
     // Fetch all players for this story's match
     $pStmt = $pdo->prepare("
-        SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb
+        SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, mp.team_no
         FROM match_players mp
         JOIN users u ON mp.user_id = u.id
         LEFT JOIN user_profiles up ON u.id = up.user_id
