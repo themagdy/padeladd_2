@@ -5140,6 +5140,7 @@ body {
 .story-ring {
   position: relative;
   cursor: pointer !important;
+  overflow: visible !important;
 }
 
 .story-ring::after {
