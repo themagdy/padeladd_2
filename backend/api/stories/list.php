@@ -10,12 +10,13 @@ $uid  = $user['id'];
 // Fetch stories from people the user follows
 // We also include "seen" status to allow the UI to sort them
 $sql = "
-    SELECT DISTINCT 
+    SELECT 
         s.*, 
         v.name AS venue_name, 
         m.match_code, 
         m.match_datetime,
-        (SELECT 1 FROM story_seen ss WHERE ss.story_id = s.id AND ss.user_id = :uid1) AS is_seen
+        (SELECT 1 FROM story_seen ss WHERE ss.story_id = s.id AND ss.user_id = :uid1) AS is_seen,
+        GROUP_CONCAT(f.following_id) AS followed_player_ids
     FROM stories s
     LEFT JOIN venues v ON s.venue_id = v.id
     JOIN matches m ON s.match_id = m.id
@@ -24,6 +25,7 @@ $sql = "
     WHERE f.follower_id = :uid2
       AND s.is_active = 1
       AND s.expires_at > NOW()
+    GROUP BY s.id
     ORDER BY is_seen ASC, s.created_at DESC
 ";
 
