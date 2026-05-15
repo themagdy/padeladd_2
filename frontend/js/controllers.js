@@ -130,14 +130,15 @@ const StoriesController = {
             try {
                 const saved = localStorage.getItem('stories_cache');
                 if (saved) {
-                    this._cache = JSON.parse(saved);
+                    const savedStories = JSON.parse(saved);
+                    this._cache = this.sortStories(savedStories);
                     this._activeStories = this._cache;
                     this.renderTray();
                     tray.classList.add('revealed');
                 }
             } catch (e) { console.error('Stories cache load failed', e); }
         } else {
-            this._activeStories = this._cache;
+            this._activeStories = this.sortStories(this._cache);
             this.renderTray();
             tray.classList.add('revealed');
         }
@@ -149,8 +150,9 @@ const StoriesController = {
             const oldStoriesJson = JSON.stringify(this._cache);
 
             if (newStoriesJson !== oldStoriesJson) {
-                this._activeStories = res.data.stories;
-                this._cache = res.data.stories;
+                const sorted = this.sortStories(res.data.stories);
+                this._activeStories = sorted;
+                this._cache = sorted;
                 this.renderTray();
                 
                 // Persist new data
@@ -167,6 +169,28 @@ const StoriesController = {
                 tray.classList.add('revealed');
             }
         }
+    },
+
+    sortStories: function(stories) {
+        if (!stories) return [];
+        return [...stories].sort((a, b) => {
+            // 1. Priority: Your Story (is_mine)
+            const mineA = parseInt(a.is_mine) === 1 ? 1 : 0;
+            const mineB = parseInt(b.is_mine) === 1 ? 1 : 0;
+            if (mineA !== mineB) return mineB - mineA;
+
+            // 2. Unseen first
+            const seenA = a.is_seen ? 1 : 0;
+            const seenB = b.is_seen ? 1 : 0;
+            if (seenA !== seenB) return seenA - seenB;
+
+            // 3. Latest first (by match_datetime)
+            const dateA = new Date(a.match_datetime).getTime();
+            const dateB = new Date(b.match_datetime).getTime();
+            if (dateA !== dateB) return dateB - dateA;
+            
+            return parseInt(b.id) - parseInt(a.id);
+        });
     },
 
     renderTray: function() {
