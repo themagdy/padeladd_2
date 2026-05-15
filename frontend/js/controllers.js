@@ -93,6 +93,18 @@ const UI = {
         } else {
             return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}" ${extraAttr}>${initials}</div>`;
         }
+    },
+    formatDate: function (dateStr, includeTime = false) {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr.replace(' ', 'T'));
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            if (includeTime) {
+                options.hour = 'numeric';
+                options.minute = '2-digit';
+            }
+            return date.toLocaleDateString('en-US', options);
+        } catch (e) { return dateStr; }
     }
 };
 
