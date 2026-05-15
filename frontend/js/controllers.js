@@ -269,7 +269,16 @@ const StoriesController = {
         let overlay = document.getElementById('story-player-overlay');
         if (!overlay) return; // Should exist in index.html
         overlay.style.display = 'flex';
+        
+        // Save scroll position
+        this._scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+        document.documentElement.classList.add('story-open');
         document.body.classList.add('story-open');
+        const app = document.getElementById('app');
+        if (app) app.classList.add('story-open');
+        
+        // Offset body to stay at same visual position
+        document.body.style.top = `-${this._scrollPos}px`;
     },
 
     startStory: function() {
@@ -481,7 +490,15 @@ const StoriesController = {
         if (this._progressInterval) clearInterval(this._progressInterval);
         const overlay = document.getElementById('story-player-overlay');
         if (overlay) overlay.style.display = 'none';
+        
+        document.documentElement.classList.remove('story-open');
         document.body.classList.remove('story-open');
+        const app = document.getElementById('app');
+        if (app) app.classList.remove('story-open');
+        
+        // Restore scroll position
+        document.body.style.top = '';
+        window.scrollTo(0, this._scrollPos || 0);
         
         if (Router.currentPath === 'dashboard') {
             this.initTray();

@@ -97,11 +97,19 @@ body.is-mobile-app html {
   /* IE/Edge */
 }
 
-/* Story Player Scroll Lock */
+/* Story Player Scroll Lock - Nuclear Version */
+html.story-open,
 body.story-open {
   overflow: hidden !important;
-  touch-action: none;
-  -webkit-overflow-scrolling: auto;
+  height: 100% !important;
+  width: 100% !important;
+  position: fixed !important;
+  touch-action: none !important;
+}
+
+#app.story-open {
+  overflow: hidden !important;
+  height: 100% !important;
 }
 
 /* Chrome, Safari, Opera, Android WebView inside Mobile App */
