@@ -16,21 +16,27 @@ $sql = "
         m.match_code, 
         m.match_datetime,
         (SELECT 1 FROM story_seen ss WHERE ss.story_id = s.id AND ss.user_id = :uid1) AS is_seen,
-        GROUP_CONCAT(f.following_id) AS followed_player_ids
+        GROUP_CONCAT(DISTINCT f.following_id) AS followed_player_ids,
+        (CASE WHEN EXISTS(SELECT 1 FROM match_players mp2 WHERE mp2.match_id = s.match_id AND mp2.user_id = :uidSelf) THEN 1 ELSE 0 END) as is_mine
     FROM stories s
     LEFT JOIN venues v ON s.venue_id = v.id
     JOIN matches m ON s.match_id = m.id
     JOIN match_players mp ON s.match_id = mp.match_id
-    JOIN follows f ON mp.user_id = f.following_id
-    WHERE f.follower_id = :uid2
+    LEFT JOIN follows f ON mp.user_id = f.following_id AND f.follower_id = :uidFollower
+    WHERE (f.id IS NOT NULL OR mp.user_id = :uidSelf2)
       AND s.is_active = 1
       AND s.expires_at > NOW()
     GROUP BY s.id
-    ORDER BY is_seen ASC, s.created_at DESC
+    ORDER BY is_mine DESC, is_seen ASC, s.created_at DESC
 ";
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':uid1' => $uid, ':uid2' => $uid]);
+$stmt->execute([
+    ':uid1' => $uid, 
+    ':uidFollower' => $uid, 
+    ':uidSelf' => $uid, 
+    ':uidSelf2' => $uid
+]);
 $stories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
