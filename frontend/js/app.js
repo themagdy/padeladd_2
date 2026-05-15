@@ -488,22 +488,30 @@ const ScoreUI = {
             } catch (e) { }
         }
 
-        allPlayers.forEach(p => {
-            let finalPlayer = { ...p };
-            if (customComp) {
-                const compMatch = customComp.find(c => parseInt(c.user_id) === parseInt(p.user_id || p.id));
-                if (compMatch) finalPlayer = { ...p, ...compMatch };
-            }
-
-            const pData = {
-                name: finalPlayer.nickname || finalPlayer.name || (finalPlayer.first_name + ' ' + finalPlayer.last_name) || '—',
-                code: finalPlayer.player_code || finalPlayer.code || '',
-                team_no: parseInt(finalPlayer.team_no)
-            };
-
-            if (pData.team_no === 1) team1.push(pData);
-            else if (pData.team_no === 2) team2.push(pData);
-        });
+        if (customComp && customComp.length > 0) {
+            // Use custom composition as source of truth for players and teams
+            customComp.forEach(p => {
+                const original = allPlayers.find(op => parseInt(op.user_id || op.id) === parseInt(p.user_id));
+                const pData = {
+                    name: p.nickname || p.name || (original ? (original.nickname || original.name || (original.first_name + ' ' + original.last_name)) : '—'),
+                    code: p.player_code || p.code || (original ? (original.player_code || original.code) : ''),
+                    team_no: parseInt(p.team_no)
+                };
+                if (pData.team_no === 1) team1.push(pData);
+                else if (pData.team_no === 2) team2.push(pData);
+            });
+        } else {
+            // Standard mapping from original players
+            allPlayers.forEach(p => {
+                const pData = {
+                    name: p.nickname || p.name || (p.first_name + ' ' + p.last_name) || '—',
+                    code: p.player_code || p.code || '',
+                    team_no: parseInt(p.team_no)
+                };
+                if (pData.team_no === 1) team1.push(pData);
+                else if (pData.team_no === 2) team2.push(pData);
+            });
+        }
 
         const renderTeamRow = (teamPlayers, isWinner) => {
             const p1 = teamPlayers[0] || { name: '—' };
