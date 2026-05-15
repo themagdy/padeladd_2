@@ -532,9 +532,11 @@ const StoriesController = {
         const sets = [];
         let t1Sets = 0, t2Sets = 0;
         for (let i = 1; i <= 3; i++) {
-            const s1 = s[`s${i}_t1`];
-            const s2 = s[`s${i}_t2`];
+            const s1 = s[`t1_set${i}`];
+            const s2 = s[`t2_set${i}`];
             if (s1 === undefined || s2 === undefined) continue;
+            if (i > 1 && parseInt(s1) === 0 && parseInt(s2) === 0) continue;
+
             sets.push({ s1, s2 });
             if (parseInt(s1) > parseInt(s2)) t1Sets++;
             else if (parseInt(s2) > parseInt(s1)) t2Sets++;

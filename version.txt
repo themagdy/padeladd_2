@@ -1038,3 +1038,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Core: Refactored stories engine to support individual stories per score submission. One match session can now generate multiple result stories if multiple scores are recorded.
 - DB: Implemented precise score-to-story linking to ensure result accuracy in social feeds.
 - Version: 2.2.59 (Build 259)
+
+2.2.60 (Build 260) - 2026-05-16
+- Fix: Corrected a field mapping error in the story engine that was preventing match scores from appearing in result stories.
+- Version: 2.2.60 (Build 260)
