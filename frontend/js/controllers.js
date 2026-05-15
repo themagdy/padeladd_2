@@ -105,6 +105,31 @@ const UI = {
             }
             return date.toLocaleDateString('en-US', options);
         } catch (e) { return dateStr; }
+    },
+    formatStoryVenue: function (venueName) {
+        if (!venueName) return 'Padel Court';
+        const parts = venueName.split(' - ');
+        if (parts.length > 1) {
+            return `${parts[0]}<br><span style="font-size: 0.9em; opacity: 0.8; font-weight: 500;">${parts[1]}</span>`;
+        }
+        return venueName;
+    },
+    formatStoryDate: function (dateStr) {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr.replace(' ', 'T'));
+            const now = new Date();
+            const d1 = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const d2 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const diffDays = Math.round((d1 - d2) / (1000 * 60 * 60 * 24));
+            const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
+            const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            let prefix = '';
+            if (diffDays === 1 || (diffDays > 1 && diffDays < 7)) prefix = 'Next ';
+            else if (diffDays === -1 || (diffDays < -1 && diffDays > -7)) prefix = 'Last ';
+            if (diffDays === 0) return `Today at ${time}`;
+            return `${prefix}${weekday} at ${time}`;
+        } catch (e) { return dateStr; }
     }
 };
 
@@ -473,11 +498,11 @@ const StoriesController = {
                 <div class="story-match-details">
                     <div class="story-detail-item">
                         <div class="icon-wrap">📍</div>
-                        <div class="text">${venueName}</div>
+                        <div class="text">${UI.formatStoryVenue(venueName)}</div>
                     </div>
                     <div class="story-detail-item">
                         <div class="icon-wrap">📅</div>
-                        <div class="text">${UI.formatDate(story.match_datetime, true)}</div>
+                        <div class="text">${UI.formatStoryDate(story.match_datetime)}</div>
                     </div>
                 </div>
             </div>
@@ -547,11 +572,11 @@ const StoriesController = {
                 <div class="story-match-details">
                     <div class="story-detail-item">
                         <div class="icon-wrap">📍</div>
-                        <div class="text">${venueName}</div>
+                        <div class="text">${UI.formatStoryVenue(venueName)}</div>
                     </div>
                     <div class="story-detail-item">
                         <div class="icon-wrap">📅</div>
-                        <div class="text">${UI.formatDate(story.match_datetime, true)}</div>
+                        <div class="text">${UI.formatStoryDate(story.match_datetime)}</div>
                     </div>
                 </div>
             </div>

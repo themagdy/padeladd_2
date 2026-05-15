@@ -1024,3 +1024,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Corrected profile navigation from stories by implementing multi-field identifier fallbacks.
 - Fix: Restored visual consistency for story rings in the ranking and match lists.
 - Version: 2.2.56 (Build 256)
+
+2.2.57 (Build 257) - 2026-05-16
+- UI: Refined story date formatting to show relative weekdays (e.g., "Next Tuesday", "Today") instead of full dates.
+- UI: Implemented automatic court name splitting for stories to enhance readability on multi-venue listings.
+- Version: 2.2.57 (Build 257)
