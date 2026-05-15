@@ -281,7 +281,10 @@ const StoriesController = {
             }
         });
         
-        tray.innerHTML = safeHTML(html);
+        const newHtml = safeHTML(html);
+        if (tray.innerHTML !== newHtml) {
+            tray.innerHTML = newHtml;
+        }
     },
 
     playByIndex: function(index, preferredPlayerId = null) {
