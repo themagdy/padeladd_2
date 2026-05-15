@@ -977,3 +977,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Enhancement: Added animated story rings to player avatars in the dashboard and ranking leaderboard.
 - Performance: Integrated stories tray with stale-while-revalidate (SWR) caching for instant dashboard loading.
 - Version: 2.2.50 (Build 250)
+
+2.2.51 (Build 251) - 2026-05-15
+- Stories: Finalized tray logic with "Your Story" priority and social separation.
+- Stories: Implemented high-contrast, multi-set match score rendering with trophy badges for winners.
+- Performance: Added persistent localStorage caching for stories for instant dashboard appearance.
+- UI: Added smooth slide-down entrance animation for the stories tray.
+- UX: Enabled side-by-side display for shared stories (Your Story + Followed Players).
+- Version: 2.2.51 (Build 251)
