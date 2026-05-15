@@ -96,6 +96,254 @@ const UI = {
     }
 };
 
+// -------------------------------------------------------
+//  STORIES CONTROLLER
+// -------------------------------------------------------
+const StoriesController = {
+    _activeStories: [],
+    _currentFeed: [],
+    _currentIndex: 0,
+    _isShowing: false,
+    _progressInterval: null,
+    _progressValue: 0,
+    _STORY_DURATION: 5000, // 5 seconds per story
+
+    initTray: async function() {
+        const tray = document.getElementById('story-tray');
+        if (!tray) return;
+
+        const res = await API.post('/stories/list');
+        if (res && res.success) {
+            this._activeStories = res.data.stories;
+            this.renderTray();
+        }
+    },
+
+    renderTray: function() {
+        const tray = document.getElementById('story-tray');
+        if (!tray) return;
+
+        if (this._activeStories.length === 0) {
+            tray.style.display = 'none';
+            return;
+        }
+
+        tray.style.display = 'flex';
+        let html = '';
+        
+        this._activeStories.forEach((s, idx) => {
+            const players = s.players || [];
+            const mainPlayer = players[0]; 
+            const isSeen = !!s.is_seen;
+            const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
+            
+            html += `
+                <div class="story-item ${isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${idx})">
+                    <div class="story-avatar-ring">
+                        ${UI.getAvatarHtml(mainPlayer?.profile_image_thumb || mainPlayer?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
+                    </div>
+                    <span class="story-label">${mainPlayer?.nickname || mainPlayer?.first_name || 'Match'}</span>
+                </div>
+            `;
+        });
+        
+        tray.innerHTML = safeHTML(html);
+    },
+
+    playByIndex: function(index) {
+        this._currentIndex = index;
+        this.openPlayer(this._activeStories);
+    },
+
+    playUserStories: async function(userId) {
+        const res = await API.post('/stories/user', { user_id: userId });
+        if (res && res.success && res.data.stories.length > 0) {
+            this._currentIndex = 0;
+            this.openPlayer(res.data.stories);
+        } else {
+            Toast.show('No active stories for this player');
+        }
+    },
+
+    openPlayer: function(stories) {
+        this._currentFeed = stories;
+        this._isShowing = true;
+        this.renderPlayerOverlay();
+        this.startStory();
+    },
+
+    renderPlayerOverlay: function() {
+        let overlay = document.getElementById('story-player-overlay');
+        if (!overlay) return; // Should exist in index.html
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    },
+
+    startStory: function() {
+        const story = this._currentFeed[this._currentIndex];
+        if (!story) {
+            this.closePlayer();
+            return;
+        }
+
+        this.renderStoryContent(story);
+        this.startProgress();
+        this.markSeen(story.id);
+    },
+
+    renderStoryContent: function(story) {
+        const overlay = document.getElementById('story-player-overlay');
+        if (!overlay) return;
+
+        const isScore = story.type === 'score';
+        const players = story.players || [];
+        
+        let progressHtml = '';
+        this._currentFeed.forEach((_, idx) => {
+            let width = '0%';
+            if (idx < this._currentIndex) width = '100%';
+            progressHtml += `<div class="story-progress-bar"><div class="story-progress-fill" style="width: ${width}"></div></div>`;
+        });
+
+        const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
+        const initials = ((players[0]?.first_name?.[0] || '') + (players[0]?.last_name?.[0] || '')).toUpperCase() || '?';
+
+        overlay.innerHTML = safeHTML(`
+            <div class="story-header">
+                <div class="story-progress-container">${progressHtml}</div>
+                <div class="story-meta">
+                    <div class="story-user">
+                        <div class="story-user-avatar">
+                             ${UI.getAvatarHtml(players[0]?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
+                        </div>
+                        <div class="story-user-info">
+                            <span class="story-username">${players[0]?.nickname || players[0]?.first_name}</span>
+                            <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
+                        </div>
+                    </div>
+                    <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
+                </div>
+            </div>
+            
+            <div class="story-content-area" onclick="StoriesController.handleTap(event)">
+                <div class="story-card ${story.type}">
+                    <div class="story-venue-badge">${venueName}</div>
+                    
+                    ${isScore ? this.renderScoreStory(story) : this.renderUpcomingStory(story)}
+
+                    <div class="story-footer-actions">
+                        <button class="btn btn-primary" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">View Match Details</button>
+                    </div>
+                </div>
+            </div>
+        `);
+    },
+
+    renderUpcomingStory: function(story) {
+        const players = story.players || [];
+        // Ensure we have 4 slots, even if null
+        const slots = [...players];
+        while(slots.length < 4) slots.push(null);
+
+        return `
+            <div class="story-upcoming-main">
+                <div class="story-players-grid">
+                    ${slots.map(p => `
+                        <div class="story-player-circle">
+                            ${p ? UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', (p.nickname?.[0] || p.first_name[0])) : '<div style="width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.05);border:2px dashed rgba(255,255,255,0.1);"></div>'}
+                            <span>${p ? (p.nickname || p.first_name) : 'Empty'}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="story-match-time">${UI.formatDate(story.match_datetime, true)}</div>
+                <div class="story-match-type">${story.match_type === 'competition' ? '🏆 RANKED MATCH' : '🎾 FRIENDLY MATCH'}</div>
+            </div>
+        `;
+    },
+
+    renderScoreStory: function(story) {
+        const scores = story.score_data || [];
+        const s = scores[0]; 
+        if (!s) return '<div class="story-score-main">No score data</div>';
+
+        return `
+            <div class="story-score-main">
+                <div class="story-win-label">MATCH RESULT</div>
+                <div class="story-score-display">
+                    <div class="team-score">${s.team1_score}</div>
+                    <div class="score-divider">-</div>
+                    <div class="team-score">${s.team2_score}</div>
+                </div>
+                <div class="story-match-code">#${story.match_code}</div>
+            </div>
+        `;
+    },
+
+    startProgress: function() {
+        if (this._progressInterval) clearInterval(this._progressInterval);
+        this._progressValue = 0;
+        const bars = document.querySelectorAll('.story-progress-fill');
+        const bar = bars[this._currentIndex];
+        if (!bar) return;
+
+        const duration = this._STORY_DURATION;
+        const interval = 50;
+        const step = 100 / (duration / interval);
+        
+        this._progressInterval = setInterval(() => {
+            this._progressValue += step;
+            bar.style.width = Math.min(this._progressValue, 100) + '%';
+            if (this._progressValue >= 100) {
+                this.next();
+            }
+        }, interval);
+    },
+
+    handleTap: function(e) {
+        const x = e.clientX;
+        const w = window.innerWidth;
+        if (x < w / 3) {
+            this.prev();
+        } else {
+            this.next();
+        }
+    },
+
+    next: function() {
+        if (this._currentIndex < this._currentFeed.length - 1) {
+            this._currentIndex++;
+            this.startStory();
+        } else {
+            this.closePlayer();
+        }
+    },
+
+    prev: function() {
+        if (this._currentIndex > 0) {
+            this._currentIndex--;
+            this.startStory();
+        } else {
+            this.startStory();
+        }
+    },
+
+    closePlayer: function() {
+        this._isShowing = false;
+        if (this._progressInterval) clearInterval(this._progressInterval);
+        const overlay = document.getElementById('story-player-overlay');
+        if (overlay) overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        
+        if (Router.currentPath === 'dashboard') {
+            this.initTray();
+        }
+    },
+
+    markSeen: async function(storyId) {
+        await API.post('/stories/mark_seen', { story_id: storyId });
+    }
+};
+
 const Sanitizer = {
     // Strips emojis and special symbols to keep text professional
     cleanName: function (str) {
@@ -5710,250 +5958,3 @@ const RankingController = {
 
 };
 
-// -------------------------------------------------------
-//  STORIES CONTROLLER
-// -------------------------------------------------------
-const StoriesController = {
-    _activeStories: [],
-    _currentFeed: [],
-    _currentIndex: 0,
-    _isShowing: false,
-    _progressInterval: null,
-    _progressValue: 0,
-    _STORY_DURATION: 5000, // 5 seconds per story
-
-    initTray: async function() {
-        const tray = document.getElementById('story-tray');
-        if (!tray) return;
-
-        const res = await API.get('/stories/list');
-        if (res && res.success) {
-            this._activeStories = res.data.stories;
-            this.renderTray();
-        }
-    },
-
-    renderTray: function() {
-        const tray = document.getElementById('story-tray');
-        if (!tray) return;
-
-        if (this._activeStories.length === 0) {
-            tray.style.display = 'none';
-            return;
-        }
-
-        tray.style.display = 'flex';
-        let html = '';
-        
-        this._activeStories.forEach((s, idx) => {
-            const players = s.players || [];
-            const mainPlayer = players[0]; 
-            const isSeen = !!s.is_seen;
-            const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
-            
-            html += `
-                <div class="story-item ${isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${idx})">
-                    <div class="story-avatar-ring">
-                        ${UI.getAvatarHtml(mainPlayer?.profile_image_thumb || mainPlayer?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
-                    </div>
-                    <span class="story-label">${mainPlayer?.nickname || mainPlayer?.first_name || 'Match'}</span>
-                </div>
-            `;
-        });
-        
-        tray.innerHTML = safeHTML(html);
-    },
-
-    playByIndex: function(index) {
-        this._currentIndex = index;
-        this.openPlayer(this._activeStories);
-    },
-
-    playUserStories: async function(userId) {
-        const res = await API.get('/stories/user', { user_id: userId });
-        if (res && res.success && res.data.stories.length > 0) {
-            this._currentIndex = 0;
-            this.openPlayer(res.data.stories);
-        } else {
-            Toast.show('No active stories for this player');
-        }
-    },
-
-    openPlayer: function(stories) {
-        this._currentFeed = stories;
-        this._isShowing = true;
-        this.renderPlayerOverlay();
-        this.startStory();
-    },
-
-    renderPlayerOverlay: function() {
-        let overlay = document.getElementById('story-player-overlay');
-        if (!overlay) return; // Should exist in index.html
-        overlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    },
-
-    startStory: function() {
-        const story = this._currentFeed[this._currentIndex];
-        if (!story) {
-            this.closePlayer();
-            return;
-        }
-
-        this.renderStoryContent(story);
-        this.startProgress();
-        this.markSeen(story.id);
-    },
-
-    renderStoryContent: function(story) {
-        const overlay = document.getElementById('story-player-overlay');
-        if (!overlay) return;
-
-        const isScore = story.type === 'score';
-        const players = story.players || [];
-        
-        let progressHtml = '';
-        this._currentFeed.forEach((_, idx) => {
-            let width = '0%';
-            if (idx < this._currentIndex) width = '100%';
-            progressHtml += `<div class="story-progress-bar"><div class="story-progress-fill" style="width: ${width}"></div></div>`;
-        });
-
-        const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
-        const initials = ((players[0]?.first_name?.[0] || '') + (players[0]?.last_name?.[0] || '')).toUpperCase() || '?';
-
-        overlay.innerHTML = safeHTML(`
-            <div class="story-header">
-                <div class="story-progress-container">${progressHtml}</div>
-                <div class="story-meta">
-                    <div class="story-user">
-                        <div class="story-user-avatar">
-                             ${UI.getAvatarHtml(players[0]?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
-                        </div>
-                        <div class="story-user-info">
-                            <span class="story-username">${players[0]?.nickname || players[0]?.first_name}</span>
-                            <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
-                        </div>
-                    </div>
-                    <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
-                </div>
-            </div>
-            
-            <div class="story-content-area" onclick="StoriesController.handleTap(event)">
-                <div class="story-card ${story.type}">
-                    <div class="story-venue-badge">${venueName}</div>
-                    
-                    ${isScore ? this.renderScoreStory(story) : this.renderUpcomingStory(story)}
-
-                    <div class="story-footer-actions">
-                        <button class="btn btn-primary" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">View Match Details</button>
-                    </div>
-                </div>
-            </div>
-        `);
-    },
-
-    renderUpcomingStory: function(story) {
-        const players = story.players || [];
-        // Ensure we have 4 slots, even if null
-        const slots = [...players];
-        while(slots.length < 4) slots.push(null);
-
-        return `
-            <div class="story-upcoming-main">
-                <div class="story-players-grid">
-                    ${slots.map(p => `
-                        <div class="story-player-circle">
-                            ${p ? UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', (p.nickname?.[0] || p.first_name[0])) : '<div style="width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.05);border:2px dashed rgba(255,255,255,0.1);"></div>'}
-                            <span>${p ? (p.nickname || p.first_name) : 'Empty'}</span>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="story-match-time">${UI.formatDate(story.match_datetime, true)}</div>
-                <div class="story-match-type">${story.match_type === 'competition' ? '🏆 RANKED MATCH' : '🎾 FRIENDLY MATCH'}</div>
-            </div>
-        `;
-    },
-
-    renderScoreStory: function(story) {
-        const scores = story.score_data || [];
-        const s = scores[0]; 
-        if (!s) return '<div class="story-score-main">No score data</div>';
-
-        return `
-            <div class="story-score-main">
-                <div class="story-win-label">MATCH RESULT</div>
-                <div class="story-score-display">
-                    <div class="team-score">${s.team1_score}</div>
-                    <div class="score-divider">-</div>
-                    <div class="team-score">${s.team2_score}</div>
-                </div>
-                <div class="story-match-code">#${story.match_code}</div>
-            </div>
-        `;
-    },
-
-    startProgress: function() {
-        if (this._progressInterval) clearInterval(this._progressInterval);
-        this._progressValue = 0;
-        const bars = document.querySelectorAll('.story-progress-fill');
-        const bar = bars[this._currentIndex];
-        if (!bar) return;
-
-        const duration = this._STORY_DURATION;
-        const interval = 50;
-        const step = 100 / (duration / interval);
-        
-        this._progressInterval = setInterval(() => {
-            this._progressValue += step;
-            bar.style.width = Math.min(this._progressValue, 100) + '%';
-            if (this._progressValue >= 100) {
-                this.next();
-            }
-        }, interval);
-    },
-
-    handleTap: function(e) {
-        const x = e.clientX;
-        const w = window.innerWidth;
-        if (x < w / 3) {
-            this.prev();
-        } else {
-            this.next();
-        }
-    },
-
-    next: function() {
-        if (this._currentIndex < this._currentFeed.length - 1) {
-            this._currentIndex++;
-            this.startStory();
-        } else {
-            this.closePlayer();
-        }
-    },
-
-    prev: function() {
-        if (this._currentIndex > 0) {
-            this._currentIndex--;
-            this.startStory();
-        } else {
-            this.startStory();
-        }
-    },
-
-    closePlayer: function() {
-        this._isShowing = false;
-        if (this._progressInterval) clearInterval(this._progressInterval);
-        const overlay = document.getElementById('story-player-overlay');
-        if (overlay) overlay.style.display = 'none';
-        document.body.style.overflow = '';
-        
-        if (Router.currentPath === 'dashboard') {
-            this.initTray();
-        }
-    },
-
-    markSeen: async function(storyId) {
-        await API.post('/stories/mark_seen', { story_id: storyId });
-    }
-};

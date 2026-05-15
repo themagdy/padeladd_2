@@ -235,6 +235,18 @@ try {
         case 'system/mark_message_seen':
             require __DIR__ . '/system/mark_message_seen.php';
             break;
+        case 'profile/follow':
+            require __DIR__ . '/profile/follow.php';
+            break;
+        case 'stories/list':
+            require __DIR__ . '/stories/list.php';
+            break;
+        case 'stories/user':
+            require __DIR__ . '/stories/user.php';
+            break;
+        case 'stories/mark_seen':
+            require __DIR__ . '/stories/mark_seen.php';
+            break;
         case 'system/report':
             require __DIR__ . '/system/report.php';
             break;
