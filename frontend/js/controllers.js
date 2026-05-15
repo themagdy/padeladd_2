@@ -116,6 +116,7 @@ const StoriesController = {
     _currentFeed: [],
     _currentIndex: 0,
     _isShowing: false,
+    _isPaused: false,
     _progressInterval: null,
     _progressValue: 0,
     _STORY_DURATION: 5000, // 5 seconds per story
@@ -336,6 +337,7 @@ const StoriesController = {
             return;
         }
 
+        this._isPaused = false;
         this.renderStoryContent(story);
         this.startProgress();
         this.markSeen(story.id);
@@ -377,7 +379,12 @@ const StoriesController = {
                             <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
                         </div>
                     </div>
-                    <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
+                    <div style="display:flex; align-items:center; gap:20px;">
+                        <button class="story-pause" onclick="StoriesController.togglePause(event)">
+                            <span id="story-pause-icon">⏸</span>
+                        </button>
+                        <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
+                    </div>
                 </div>
             </div>
             
@@ -540,6 +547,24 @@ const StoriesController = {
     startProgress: function() {
         if (this._progressInterval) clearInterval(this._progressInterval);
         this._progressValue = 0;
+        this.resumeProgress();
+    },
+
+    togglePause: function(e) {
+        if (e) e.stopPropagation();
+        this._isPaused = !this._isPaused;
+        const icon = document.getElementById('story-pause-icon');
+        if (icon) icon.innerText = this._isPaused ? '▶' : '⏸';
+        
+        if (this._isPaused) {
+            if (this._progressInterval) clearInterval(this._progressInterval);
+        } else {
+            this.resumeProgress();
+        }
+    },
+
+    resumeProgress: function() {
+        if (this._progressInterval) clearInterval(this._progressInterval);
         const bars = document.querySelectorAll('.story-progress-fill');
         const bar = bars[this._currentIndex];
         if (!bar) return;
@@ -549,6 +574,7 @@ const StoriesController = {
         const step = 100 / (duration / interval);
         
         this._progressInterval = setInterval(() => {
+            if (this._isPaused) return;
             this._progressValue += step;
             bar.style.width = Math.min(this._progressValue, 100) + '%';
             if (this._progressValue >= 100) {

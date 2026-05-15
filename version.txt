@@ -1007,3 +1007,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Implemented a distributed team layout that balances player information across the full width of the story overlay.
 - UI: Refined typography and VS divider styling for a more premium, high-fidelity aesthetic.
 - Version: 2.2.54 (Build 254)
+
+2.2.55 (Build 255) - 2026-05-16
+- Feature: Added a Pause/Resume button to the story overlay for better viewing control.
+- UX: Implemented story progress pausing logic to allow users to hold the current frame.
+- UI: Added a sleek pause icon with optimized spacing next to the close button.
+- UI: Ensured story progress resumes accurately from the paused point.
+- Version: 2.2.55 (Build 255)
