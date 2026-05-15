@@ -1226,8 +1226,8 @@ const ProfileViewController = {
                 followContainer.style.display = 'block';
                 const followBtn = document.getElementById('prof-follow-btn');
                 if (followBtn) {
-                    followBtn.className = is_following ? 'btn btn-secondary' : 'btn btn-primary';
-                    followBtn.querySelector('.follow-text').textContent = is_following ? 'Following' : 'Follow';
+                    followBtn.style.background = is_following ? 'var(--c-orange)' : 'rgba(255,255,255,0.05)';
+                    followBtn.style.borderColor = is_following ? 'var(--c-orange)' : 'rgba(255,255,255,0.1)';
                     followBtn.querySelector('.follow-icon').textContent = is_following ? '✅' : '👤+';
                     followBtn.onclick = () => ProfileViewController.toggleFollow();
                 }
