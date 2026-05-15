@@ -334,10 +334,6 @@ const StoriesController = {
                         <span class="text">${UI.formatDate(story.match_datetime, true)}</span>
                     </div>
                 </div>
-                
-                <div class="story-match-footer">
-                    <span class="match-code">#${story.match_code}</span>
-                </div>
             </div>
         `;
     },
