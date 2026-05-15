@@ -1063,3 +1063,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.64 (Build 264) - 2026-05-16
 - Fix: Made Weekly Progress (+/-) tracking additive to correctly sum points from multi-score match sessions.
 - Version: 2.2.64 (Build 264)
+
+2.2.65 (Build 265) - 2026-05-16
+- [CONSOLIDATED UPDATE] - Today's Story & Scoring Refinements:
+    - Stories: Grouped tray by player to eliminate duplicates and synchronized playback with visual order.
+    - Stories: Optimized mobile cropping and internal scaling to ensure visibility on all viewports.
+    - Stories: Balanced navigation zones (50/50 split) and protected action buttons from accidental skips.
+    - Profiles: Implemented perfectly rounded (50%) circular story rings for a premium mobile aesthetic.
+    - Data: Fixed team mapping to correctly support external player replacements (e.g. Lebron) in Match History and Stories.
+    - Scoring: Hardened Weekly Progress (+/-) tracking to be additive, supporting multi-round sessions under one Match ID.
+- Version: 2.2.65 (Build 265)
