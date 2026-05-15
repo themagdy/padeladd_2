@@ -119,7 +119,12 @@ const StoriesController = {
     _isPaused: false,
     _progressInterval: null,
     _progressValue: 0,
-    _STORY_DURATION: 5000, // 5 seconds per story
+    _STORY_DURATION: 5000,
+    _icons: {
+        pause: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="5" x2="9" y2="19"></line><line x1="15" y1="5" x2="15" y2="19"></line></svg>`,
+        play: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="7 4 19 12 7 20 7 4"></polygon></svg>`,
+        close: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`
+    },
     _cache: null,
     _lastTrayFingerprint: '',
 
@@ -127,7 +132,10 @@ const StoriesController = {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
-        // 1. Instant load from persistent cache
+        // Reset fingerprint to force render on the newly created DOM element
+        this._lastTrayFingerprint = '';
+
+        // 1. Instant load from persistent or memory cache
         if (!this._cache) {
             try {
                 const saved = localStorage.getItem('stories_cache');
@@ -135,10 +143,13 @@ const StoriesController = {
                     const savedStories = JSON.parse(saved);
                     this._cache = this.sortStories(savedStories);
                     this._activeStories = this._cache;
-                    this.renderTray();
-                    tray.classList.add('revealed');
                 }
             } catch (e) { console.error('Stories cache load failed', e); }
+        }
+
+        if (this._cache) {
+            this.renderTray();
+            tray.classList.add('revealed');
         }
 
         // 1.5. Set up auto-refresh timer (every 10 seconds)
@@ -365,12 +376,13 @@ const StoriesController = {
 
         const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
         const initials = ((headerPlayer?.first_name?.[0] || '') + (headerPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
+        const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id;
 
         overlay.innerHTML = safeHTML(`
             <div class="story-header">
                 <div class="story-progress-container">${progressHtml}</div>
                 <div class="story-meta">
-                    <div class="story-user">
+                    <div class="story-user" onclick="Router.navigate('/p/${profileId}'); StoriesController.closePlayer();">
                         <div class="story-user-avatar">
                              ${UI.getAvatarHtml(headerPlayer?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         </div>
@@ -379,11 +391,13 @@ const StoriesController = {
                             <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:20px;">
-                        <button class="story-pause" onclick="StoriesController.togglePause(event)">
-                            <span id="story-pause-icon">⏸</span>
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <button class="story-pause" onclick="StoriesController.togglePause(event)" style="padding: 4px; display: flex; align-items: center; justify-content: center;">
+                            <span id="story-pause-icon" style="display: flex;">${this._icons.pause}</span>
                         </button>
-                        <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
+                        <button class="story-close" onclick="StoriesController.closePlayer()" style="padding: 4px; display: flex; align-items: center; justify-content: center;">
+                            ${this._icons.close}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -554,7 +568,7 @@ const StoriesController = {
         if (e) e.stopPropagation();
         this._isPaused = !this._isPaused;
         const icon = document.getElementById('story-pause-icon');
-        if (icon) icon.innerText = this._isPaused ? '▶' : '⏸';
+        if (icon) icon.innerHTML = this._isPaused ? this._icons.play : this._icons.pause;
         
         if (this._isPaused) {
             if (this._progressInterval) clearInterval(this._progressInterval);
@@ -1501,17 +1515,27 @@ const ProfileViewController = {
 
         // Avatar with Story Ring
         const av = document.getElementById('prof-avatar');
+        const ring = document.getElementById('prof-ring');
+        const avWrap = document.getElementById('prof-avatar-wrap');
+
         if (av) {
             const thumb = profile.profile_image_thumb || profile.profile_image;
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
-            const extraAttr = has_active_story ? `onclick="StoriesController.playUserStories(${user.id})"` : '';
+            
+            if (has_active_story) {
+                if (ring) ring.style.display = 'block';
+                if (avWrap) avWrap.onclick = () => StoriesController.playUserStories(user.id);
+            } else {
+                if (ring) ring.style.display = 'none';
+                if (avWrap) avWrap.onclick = null;
+            }
             
             if (profile && thumb) {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials, has_active_story ? 'story-ring' : '', extraAttr) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:38px;', initials, has_active_story ? 'story-ring' : '', extraAttr) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.add('avatar-placeholder');
                 av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
             }
