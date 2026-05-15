@@ -1581,6 +1581,37 @@ form {
   font-weight: 700;
 }
 
+/* Profile Actions Responsive */
+.prof-actions-row {
+  margin-left: auto;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prof-follow-wrapper {
+  flex-grow: 1;
+}
+
+#prof-follow-btn {
+  min-width: 180px;
+}
+
+@media (max-width: 768px) {
+  .prof-actions-row {
+    width: 100%;
+    margin-left: 0;
+  }
+  .prof-follow-wrapper {
+    flex-grow: 1;
+  }
+  #prof-follow-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
 /* -------------------------------------------------------
    [24] SCORE INPUT
    ------------------------------------------------------- */
