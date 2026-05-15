@@ -970,3 +970,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX: Implemented filter persistence for the "Play" section. Match Type and Gender selections now stay active when navigating or refreshing.
 - UI: Added automatic visual synchronization for filter buttons to match the internal session state.
 - Version: 2.2.49 (Build 249)
+
+2.2.50 (Build 250) - 2026-05-15
+- Automated Match Stories: Implemented Instagram-style stories for upcoming matches and match scores.
+- Social Features: Launched player follow/unfollow system to personalize the stories feed.
+- UI Enhancement: Added animated story rings to player avatars in the dashboard and ranking leaderboard.
+- Performance: Integrated stories tray with stale-while-revalidate (SWR) caching for instant dashboard loading.
+- Version: 2.2.50 (Build 250)

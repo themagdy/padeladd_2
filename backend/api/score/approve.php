@@ -97,6 +97,10 @@ try {
     $msg = "Score for your match has been approved! Points have been updated.";
     notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg, $uid);
 
+    // Phase 9: Update automated story
+    require_once __DIR__ . '/../../helpers/story_helper.php';
+    StoryHelper::createScoreStory($pdo, $match_id);
+
     jsonResponse(true, 'Score approved. Ranking updated.', [
         'players' => $updatedPlayers
     ]);

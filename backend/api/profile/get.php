@@ -85,6 +85,24 @@ if ($profile && $stats) {
     $pointsThisWeek = (int)$rollingStmt->fetchColumn();
 }
 
+
+// Phase 9: Stories & Social
+$storyStmt = $pdo->prepare("
+    SELECT 1 FROM stories s 
+    JOIN match_players mp ON s.match_id = mp.match_id 
+    WHERE mp.user_id = ? AND s.is_active = 1 AND s.expires_at > NOW() 
+    LIMIT 1
+");
+$storyStmt->execute([$viewingId]);
+$hasActiveStory = (bool)$storyStmt->fetchColumn();
+
+$isFollowing = false;
+if ($viewingId !== $user['id']) {
+    $fStmt = $pdo->prepare("SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
+    $fStmt->execute([$user['id'], $viewingId]);
+    $isFollowing = (bool)$fStmt->fetchColumn();
+}
+
 jsonResponse(true, 'Profile loaded.', [
     'user' => [
         'id'         => $u['id'],
@@ -124,6 +142,8 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_lost' => 0, 'ranking' => null, 'ranking_change' => null, 'highest_ranking' => null,
         'points_this_week' => 0, 'win_rate' => 0, 'current_buffer' => 0
     ],
-    'is_self' => ($viewingId === $user['id'])
+    'is_self' => ($viewingId === $user['id']),
+    'is_following' => $isFollowing,
+    'has_active_story' => $hasActiveStory
 ]);
 ?>

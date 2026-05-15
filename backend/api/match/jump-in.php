@@ -126,6 +126,10 @@ try {
     $msg = $isSolo ? "{$joinerName} jumped into the match" : "{$joinerName} and their partner jumped into the match";
     notifyMatchParticipants($pdo, $match_id, 'match_joined', $msg, $uid);
 
+    // Phase 9: Update automated story
+    require_once __DIR__ . '/../../helpers/story_helper.php';
+    StoryHelper::updateMatchStory($pdo, $match_id);
+
     jsonResponse(true, 'Jumped in successfully!');
 
 } catch (Exception $e) {

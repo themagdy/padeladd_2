@@ -31,7 +31,10 @@ $stmt = $pdo->prepare("
            AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         ) as points_this_week,
         ps.matches_played,
-        ps.win_rate
+        ps.win_rate,
+        (SELECT 1 FROM stories s 
+         JOIN match_players mp_s ON s.match_id = mp_s.match_id 
+         WHERE mp_s.user_id = u.id AND s.is_active = 1 AND s.expires_at > NOW() LIMIT 1) as has_active_story
     FROM player_stats ps
     JOIN users u ON ps.user_id = u.id
     JOIN user_profiles up ON ps.user_id = up.user_id
@@ -70,6 +73,7 @@ foreach ($ranking as $index => &$row) {
     $row['points_this_week'] = (int)$row['points_this_week'];
     $row['matches_played']   = (int)$row['matches_played'];
     $row['win_rate']         = (int)$row['win_rate'];
+    $row['has_active_story'] = (bool)$row['has_active_story'];
 
     // Fallback nickname
     if (empty($row['nickname'])) {

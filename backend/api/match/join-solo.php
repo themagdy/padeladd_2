@@ -242,6 +242,10 @@ try {
     $joinerName = getDisplayName($user);
     notifyMatchParticipants($pdo, $match_id, 'match_joined', "{$joinerName} joined the match", $uid);
 
+    // Phase 9: Update automated story
+    require_once __DIR__ . '/../../helpers/story_helper.php';
+    StoryHelper::updateMatchStory($pdo, $match_id);
+
     jsonResponse(true, 'You have joined the match.', [
         'team_no' => $targetTeam,
         'slot_no' => $targetSlot,

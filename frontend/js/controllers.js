@@ -83,15 +83,15 @@ const UI = {
         NotificationsController.pollBadge();
     },
 
-    getAvatarHtml: function (thumb, style = '', wrapperStyle = '', initials = '?', className = '') {
+    getAvatarHtml: function (thumb, style = '', wrapperStyle = '', initials = '?', className = '', extraAttr = '') {
         if (thumb) {
             return `
-                <div class="avatar-wrap ${className}" style="${wrapperStyle}">
+                <div class="avatar-wrap ${className}" style="${wrapperStyle}" ${extraAttr}>
                     <img src="${CONFIG.ASSET_BASE}/${thumb}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';">
                 </div>
             `;
         } else {
-            return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}">${initials}</div>`;
+            return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}" ${extraAttr}>${initials}</div>`;
         }
     }
 };
@@ -508,7 +508,10 @@ const DashboardController = {
     ],
 
     init: async function (isSilent = false) {
-        if (!isSilent) UI.syncNav();
+        if (!isSilent) {
+            UI.syncNav();
+            StoriesController.initTray();
+        }
 
         // Use cache for instant render if available
         if (!isSilent && DashboardController._cache.profile) {
@@ -821,7 +824,9 @@ const DashboardController = {
 
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
-            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);', initials);
+            const hasStory = !!r.has_active_story;
+            const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
+            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
 
             let rankHtml = `<span style="font-weight:800; color:#fff; font-size:15px;">${r.rank}</span>`;
             if (r.rank === 1) {
@@ -946,35 +951,52 @@ const ProfileViewController = {
             }
             return;
         }
-        const { user, profile, stats, is_self } = res.data;
+        const { user, profile, stats, is_self, is_following, has_active_story } = res.data;
 
-        // Avatar
+        // Avatar with Story Ring
         const av = document.getElementById('prof-avatar');
         if (av) {
             const thumb = profile.profile_image_thumb || profile.profile_image;
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
-
+            const extraAttr = has_active_story ? `onclick="StoriesController.playUserStories(${user.id})"` : '';
+            
             if (profile && thumb) {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials, has_active_story ? 'story-ring' : '', extraAttr) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = safeHTML(initials + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:38px;', initials, has_active_story ? 'story-ring' : '', extraAttr) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.add('avatar-placeholder');
-                av.style.background = 'var(--g-primary)';
+                av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
+            }
+        }
+
+        // Follow Button
+        const followContainer = document.getElementById('prof-follow-container');
+        if (followContainer) {
+            if (!is_self) {
+                followContainer.style.display = 'block';
+                const followBtn = document.getElementById('prof-follow-btn');
+                if (followBtn) {
+                    followBtn.className = is_following ? 'btn btn-secondary' : 'btn btn-primary';
+                    followBtn.querySelector('.follow-text').textContent = is_following ? 'Following' : 'Follow';
+                    followBtn.querySelector('.follow-icon').textContent = is_following ? '✅' : '👤+';
+                }
+            } else {
+                followContainer.style.display = 'none';
             }
         }
 
         // Action cards visibility (only for self)
         const actionCards = document.getElementById('prof-action-cards');
         if (actionCards) {
-            actionCards.style.display = res.data.is_self ? 'flex' : 'none';
+            actionCards.style.display = is_self ? 'flex' : 'none';
         }
 
         // Report player button (only for others)
         const reportContainer = document.getElementById('prof-report-container');
         if (reportContainer) {
-            if (!res.data.is_self) {
+            if (!is_self) {
                 reportContainer.style.display = 'block';
                 const reportBtn = document.getElementById('prof-report-btn');
                 if (reportBtn) {
@@ -1115,6 +1137,27 @@ const ProfileViewController = {
                 }
             }
         })();
+    },
+
+    toggleFollow: async function() {
+        const cacheKey = Router.params && Router.params.id ? Router.params.id : 'self';
+        const cached = ProfileViewController._viewCache[cacheKey];
+        if (!cached || !cached.user) return;
+
+        const btn = document.getElementById('prof-follow-btn');
+        if (btn) btn.disabled = true;
+
+        const res = await API.post('/profile/follow', { target_user_id: cached.user.id });
+        if (res && res.success) {
+            // Update cache
+            cached.is_following = res.data.is_following;
+            // Refresh view silently
+            ProfileViewController.init(Router.params, true);
+            Toast.show(res.message, 'success');
+        } else {
+            Toast.show(res ? res.message : 'Action failed');
+        }
+        if (btn) btn.disabled = false;
     }
 };
 
@@ -5594,17 +5637,12 @@ const RankingController = {
             const infoWrap = document.createElement('div');
             infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;';
             
+            const hasStory = !!r.has_active_story;
+            const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
+            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
+            
             const avatarDiv = document.createElement('div');
-            avatarDiv.style.cssText = 'width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border); display:flex; align-items:center; justify-content:center; overflow:hidden; font-weight:800; font-size:14px;';
-            if (thumb) {
-                const img = document.createElement('img');
-                img.src = `${CONFIG.ASSET_BASE}/${thumb}`;
-                img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-                img.onerror = function() { this.parentElement.innerText = initials; };
-                avatarDiv.appendChild(img);
-            } else {
-                avatarDiv.innerText = initials;
-            }
+            avatarDiv.innerHTML = safeHTML(avatarHtml);
 
             const nameWrap = document.createElement('div');
             nameWrap.style.cssText = 'min-width:0; overflow:hidden;';
@@ -5670,4 +5708,252 @@ const RankingController = {
         });
     }
 
+};
+
+// -------------------------------------------------------
+//  STORIES CONTROLLER
+// -------------------------------------------------------
+const StoriesController = {
+    _activeStories: [],
+    _currentFeed: [],
+    _currentIndex: 0,
+    _isShowing: false,
+    _progressInterval: null,
+    _progressValue: 0,
+    _STORY_DURATION: 5000, // 5 seconds per story
+
+    initTray: async function() {
+        const tray = document.getElementById('story-tray');
+        if (!tray) return;
+
+        const res = await API.get('/stories/list');
+        if (res && res.success) {
+            this._activeStories = res.data.stories;
+            this.renderTray();
+        }
+    },
+
+    renderTray: function() {
+        const tray = document.getElementById('story-tray');
+        if (!tray) return;
+
+        if (this._activeStories.length === 0) {
+            tray.style.display = 'none';
+            return;
+        }
+
+        tray.style.display = 'flex';
+        let html = '';
+        
+        this._activeStories.forEach((s, idx) => {
+            const players = s.players || [];
+            const mainPlayer = players[0]; 
+            const isSeen = !!s.is_seen;
+            const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
+            
+            html += `
+                <div class="story-item ${isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${idx})">
+                    <div class="story-avatar-ring">
+                        ${UI.getAvatarHtml(mainPlayer?.profile_image_thumb || mainPlayer?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
+                    </div>
+                    <span class="story-label">${mainPlayer?.nickname || mainPlayer?.first_name || 'Match'}</span>
+                </div>
+            `;
+        });
+        
+        tray.innerHTML = safeHTML(html);
+    },
+
+    playByIndex: function(index) {
+        this._currentIndex = index;
+        this.openPlayer(this._activeStories);
+    },
+
+    playUserStories: async function(userId) {
+        const res = await API.get('/stories/user', { user_id: userId });
+        if (res && res.success && res.data.stories.length > 0) {
+            this._currentIndex = 0;
+            this.openPlayer(res.data.stories);
+        } else {
+            Toast.show('No active stories for this player');
+        }
+    },
+
+    openPlayer: function(stories) {
+        this._currentFeed = stories;
+        this._isShowing = true;
+        this.renderPlayerOverlay();
+        this.startStory();
+    },
+
+    renderPlayerOverlay: function() {
+        let overlay = document.getElementById('story-player-overlay');
+        if (!overlay) return; // Should exist in index.html
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    },
+
+    startStory: function() {
+        const story = this._currentFeed[this._currentIndex];
+        if (!story) {
+            this.closePlayer();
+            return;
+        }
+
+        this.renderStoryContent(story);
+        this.startProgress();
+        this.markSeen(story.id);
+    },
+
+    renderStoryContent: function(story) {
+        const overlay = document.getElementById('story-player-overlay');
+        if (!overlay) return;
+
+        const isScore = story.type === 'score';
+        const players = story.players || [];
+        
+        let progressHtml = '';
+        this._currentFeed.forEach((_, idx) => {
+            let width = '0%';
+            if (idx < this._currentIndex) width = '100%';
+            progressHtml += `<div class="story-progress-bar"><div class="story-progress-fill" style="width: ${width}"></div></div>`;
+        });
+
+        const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
+        const initials = ((players[0]?.first_name?.[0] || '') + (players[0]?.last_name?.[0] || '')).toUpperCase() || '?';
+
+        overlay.innerHTML = safeHTML(`
+            <div class="story-header">
+                <div class="story-progress-container">${progressHtml}</div>
+                <div class="story-meta">
+                    <div class="story-user">
+                        <div class="story-user-avatar">
+                             ${UI.getAvatarHtml(players[0]?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
+                        </div>
+                        <div class="story-user-info">
+                            <span class="story-username">${players[0]?.nickname || players[0]?.first_name}</span>
+                            <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
+                        </div>
+                    </div>
+                    <button class="story-close" onclick="StoriesController.closePlayer()">✕</button>
+                </div>
+            </div>
+            
+            <div class="story-content-area" onclick="StoriesController.handleTap(event)">
+                <div class="story-card ${story.type}">
+                    <div class="story-venue-badge">${venueName}</div>
+                    
+                    ${isScore ? this.renderScoreStory(story) : this.renderUpcomingStory(story)}
+
+                    <div class="story-footer-actions">
+                        <button class="btn btn-primary" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">View Match Details</button>
+                    </div>
+                </div>
+            </div>
+        `);
+    },
+
+    renderUpcomingStory: function(story) {
+        const players = story.players || [];
+        // Ensure we have 4 slots, even if null
+        const slots = [...players];
+        while(slots.length < 4) slots.push(null);
+
+        return `
+            <div class="story-upcoming-main">
+                <div class="story-players-grid">
+                    ${slots.map(p => `
+                        <div class="story-player-circle">
+                            ${p ? UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', (p.nickname?.[0] || p.first_name[0])) : '<div style="width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.05);border:2px dashed rgba(255,255,255,0.1);"></div>'}
+                            <span>${p ? (p.nickname || p.first_name) : 'Empty'}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="story-match-time">${UI.formatDate(story.match_datetime, true)}</div>
+                <div class="story-match-type">${story.match_type === 'competition' ? '🏆 RANKED MATCH' : '🎾 FRIENDLY MATCH'}</div>
+            </div>
+        `;
+    },
+
+    renderScoreStory: function(story) {
+        const scores = story.score_data || [];
+        const s = scores[0]; 
+        if (!s) return '<div class="story-score-main">No score data</div>';
+
+        return `
+            <div class="story-score-main">
+                <div class="story-win-label">MATCH RESULT</div>
+                <div class="story-score-display">
+                    <div class="team-score">${s.team1_score}</div>
+                    <div class="score-divider">-</div>
+                    <div class="team-score">${s.team2_score}</div>
+                </div>
+                <div class="story-match-code">#${story.match_code}</div>
+            </div>
+        `;
+    },
+
+    startProgress: function() {
+        if (this._progressInterval) clearInterval(this._progressInterval);
+        this._progressValue = 0;
+        const bars = document.querySelectorAll('.story-progress-fill');
+        const bar = bars[this._currentIndex];
+        if (!bar) return;
+
+        const duration = this._STORY_DURATION;
+        const interval = 50;
+        const step = 100 / (duration / interval);
+        
+        this._progressInterval = setInterval(() => {
+            this._progressValue += step;
+            bar.style.width = Math.min(this._progressValue, 100) + '%';
+            if (this._progressValue >= 100) {
+                this.next();
+            }
+        }, interval);
+    },
+
+    handleTap: function(e) {
+        const x = e.clientX;
+        const w = window.innerWidth;
+        if (x < w / 3) {
+            this.prev();
+        } else {
+            this.next();
+        }
+    },
+
+    next: function() {
+        if (this._currentIndex < this._currentFeed.length - 1) {
+            this._currentIndex++;
+            this.startStory();
+        } else {
+            this.closePlayer();
+        }
+    },
+
+    prev: function() {
+        if (this._currentIndex > 0) {
+            this._currentIndex--;
+            this.startStory();
+        } else {
+            this.startStory();
+        }
+    },
+
+    closePlayer: function() {
+        this._isShowing = false;
+        if (this._progressInterval) clearInterval(this._progressInterval);
+        const overlay = document.getElementById('story-player-overlay');
+        if (overlay) overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        
+        if (Router.currentPath === 'dashboard') {
+            this.initTray();
+        }
+    },
+
+    markSeen: async function(storyId) {
+        await API.post('/stories/mark_seen', { story_id: storyId });
+    }
 };
