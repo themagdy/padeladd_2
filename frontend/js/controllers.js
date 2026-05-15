@@ -118,41 +118,54 @@ const StoriesController = {
     _isShowing: false,
     _progressInterval: null,
     _progressValue: 0,
-    _STORY_DURATION: 5000,
+    _STORY_DURATION: 5000, // 5 seconds per story
     _cache: null,
-    _isFirstLoad: true,
+
     initTray: async function() {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
-        // 1. Instant render from cache if available
-        if (this._cache) {
+        // 1. Instant load from persistent cache
+        if (!this._cache) {
+            try {
+                const saved = localStorage.getItem('stories_cache');
+                if (saved) {
+                    this._cache = JSON.parse(saved);
+                    this._activeStories = this._cache;
+                    this.renderTray();
+                    tray.classList.add('revealed');
+                }
+            } catch (e) { console.error('Stories cache load failed', e); }
+        } else {
             this._activeStories = this._cache;
             this.renderTray();
             tray.classList.add('revealed');
         }
 
-        // 2. Fetch fresh data
+        // 2. Refresh from API in background
         const res = await API.post('/stories/list');
         if (res && res.success) {
-            const freshData = res.data.stories;
-            const newJson = JSON.stringify(freshData);
-            const oldJson = JSON.stringify(this._cache);
-            
-            if (newJson !== oldJson) {
-                this._cache = freshData;
-                this._activeStories = freshData;
+            const newStoriesJson = JSON.stringify(res.data.stories);
+            const oldStoriesJson = JSON.stringify(this._cache);
+
+            if (newStoriesJson !== oldStoriesJson) {
+                this._activeStories = res.data.stories;
+                this._cache = res.data.stories;
                 this.renderTray();
                 
-                // Entrance animation
-                setTimeout(() => tray.classList.add('revealed'), 50);
-            } else if (this._cache) {
-                // Ensure it's revealed even if data is the same as cache
+                // Persist new data
+                try {
+                    localStorage.setItem('stories_cache', newStoriesJson);
+                } catch (e) {}
+
+                // Trigger animation if not already revealed
+                setTimeout(() => {
+                    tray.classList.add('revealed');
+                }, 100);
+            } else if (this._activeStories.length > 0) {
+                // Even if data is same, ensure it's revealed
                 tray.classList.add('revealed');
             }
-            this._isFirstLoad = false;
-        } else if (!this._cache) {
-            tray.style.display = 'none';
         }
     },
 
@@ -162,7 +175,6 @@ const StoriesController = {
 
         if (this._activeStories.length === 0) {
             tray.style.display = 'none';
-            tray.classList.remove('revealed');
             return;
         }
 

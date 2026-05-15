@@ -4599,35 +4599,45 @@ body {
 }
 
 /* Stories System */
+.story-tray {
+    display: none;
+    overflow-x: auto;
+    padding: 0 0 10px 0;
+    gap: 12px;
+    scrollbar-width: none;
     background: transparent;
     border: none;
     margin-bottom: 10px;
     align-items: center;
     
-    /* Animation Properties */
+    /* Animation setup */
+    max-height: 0;
     opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: hidden;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin 0.4s ease;
+    margin-top: -10px;
 }
-.story-tray.revealed {
-    opacity: 1;
-    transform: translateY(0);
-}
-.story-tray::-webkit-scrollbar { display: none; }
 
+.story-tray.revealed {
+    display: flex;
+    max-height: 120px;
+    opacity: 1;
+    margin-top: 10px;
+}
 .story-separator {
     width: 1px;
-    height: 32px;
+    height: 40px;
     background: rgba(255,255,255,0.1);
     margin: 0 4px;
     flex-shrink: 0;
 }
+.story-tray::-webkit-scrollbar { display: none; }
 
 .story-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
     width: 60px;
 }
@@ -4635,28 +4645,25 @@ body {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    padding: 2.5px;
+    padding: 2px;
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.2s;
 }
 .story-item.seen .story-avatar-ring {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.1);
 }
-.story-avatar-ring:active { transform: scale(0.9); }
+.story-avatar-ring:active { transform: scale(0.95); }
 
 .story-label {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 11px;
     color: var(--c-text-muted);
-    text-align: center;
-    width: 100%;
-    white-space: nowrap;
+    font-weight: 600;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: 0.3px;
+    white-space: nowrap;
 }
-.story-item.seen .story-label { opacity: 0.6; }
 
 /* Story Player Overlay */
 .story-player-overlay {
