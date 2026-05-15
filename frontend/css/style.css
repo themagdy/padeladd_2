@@ -4605,12 +4605,12 @@ body {
 .story-tray {
     display: none;
     overflow-x: auto;
-    padding: 15px 10px;
+    padding: 20px 0;
     gap: 15px;
     scrollbar-width: none;
-    background: rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    margin-bottom: 20px;
+    background: transparent;
+    border: none;
+    margin-bottom: 10px;
 }
 .story-tray::-webkit-scrollbar { display: none; }
 
