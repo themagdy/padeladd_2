@@ -148,7 +148,7 @@ const StoriesController = {
 
         this._activeStories.forEach((s, idx) => {
             const players = s.players || [];
-            const isMine = !!s.is_mine;
+            const isMine = parseInt(s.is_mine) === 1;
             const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id));
             
             // If mine, show current user as mainPlayer
