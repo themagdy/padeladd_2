@@ -397,22 +397,48 @@ const StoriesController = {
 
     renderUpcomingStory: function(story) {
         const players = story.players || [];
-        // Ensure we have 4 slots, even if null
-        const slots = [...players];
-        while(slots.length < 4) slots.push(null);
+        const team1 = players.filter(p => parseInt(p.team_no) === 1);
+        const team2 = players.filter(p => parseInt(p.team_no) === 2);
+
+        const renderTeamCardUpcoming = (teamPlayers) => `
+            <div class="story-team-card">
+                <div style="display:flex; align-items:center;">
+                    <div class="story-team-avatars">
+                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `
+                            <div class="story-team-avatar-mini">
+                                ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', (p.nickname?.[0] || p.first_name[0]))}
+                            </div>
+                        `).join('') : '<div class="story-team-avatar-mini" style="background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.1);"></div>'}
+                    </div>
+                    <div class="story-team-names">
+                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `<span>${p.nickname || p.first_name}</span>`).join('') : '<span style="opacity:0.3;">TBD</span>'}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
 
         return `
-            <div class="story-upcoming-main">
-                <div class="story-players-grid">
-                    ${slots.map(p => `
-                        <div class="story-player-circle">
-                            ${p ? UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', (p.nickname?.[0] || p.first_name[0])) : '<div style="width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.05);border:2px dashed rgba(255,255,255,0.1);"></div>'}
-                            <span>${p ? (p.nickname || p.first_name) : 'Empty'}</span>
-                        </div>
-                    `).join('')}
+            <div class="story-score-refined">
+                <div class="story-result-label">MATCH PREVIEW</div>
+                
+                <div class="story-teams-stack">
+                    ${renderTeamCardUpcoming(team1)}
+                    <div class="story-vs-divider">VS</div>
+                    ${renderTeamCardUpcoming(team2)}
                 </div>
-                <div class="story-match-time">${UI.formatDate(story.match_datetime, true)}</div>
-                <div class="story-match-type">${story.match_type === 'competition' ? '🏆 RANKED MATCH' : '🎾 FRIENDLY MATCH'}</div>
+
+                <div class="story-match-details">
+                    <div class="story-detail-item">
+                        <div class="icon-wrap">📍</div>
+                        <div class="text">${venueName}</div>
+                    </div>
+                    <div class="story-detail-item">
+                        <div class="icon-wrap">📅</div>
+                        <div class="text">${UI.formatDate(story.match_datetime, true)}</div>
+                    </div>
+                </div>
             </div>
         `;
     },
