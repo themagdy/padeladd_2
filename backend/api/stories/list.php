@@ -12,6 +12,7 @@ $uid  = $user['id'];
 $sql = "
     SELECT 
         s.*, 
+        s.score_id,
         v.name AS venue_name, 
         m.match_code, 
         m.match_datetime,

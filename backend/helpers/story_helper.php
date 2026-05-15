@@ -40,7 +40,7 @@ class StoryHelper {
     }
 
     /**
-     * Creates or updates a 'score' story for a match.
+     * Creates or updates a 'score' story for each approved score of a match.
      * Triggered when a score is approved.
      */
     public static function createScoreStory(PDO $pdo, int $matchId) {
@@ -59,19 +59,27 @@ class StoryHelper {
         // Score stories are valid for 48 hours after the last approval
         $expiresAt = date('Y-m-d H:i:s', time() + (48 * 3600));
 
-        // 3. Check if 'score' story exists
-        $stmt = $pdo->prepare("SELECT id FROM stories WHERE match_id = ? AND type = 'score'");
-        $stmt->execute([$matchId]);
-        $storyId = $stmt->fetchColumn();
+        // 3. Process each score into its own story
+        foreach ($scores as $s) {
+            $scoreId = (int)$s['id'];
+            
+            // Check if a story already exists for THIS specific score record
+            $stmt = $pdo->prepare("SELECT id FROM stories WHERE score_id = ? AND type = 'score'");
+            $stmt->execute([$scoreId]);
+            $storyId = $stmt->fetchColumn();
 
-        if ($storyId) {
-            // Update existing score story (group multiple scores together)
-            $stmt = $pdo->prepare("UPDATE stories SET is_active = 1, score_data_json = ?, expires_at = ? WHERE id = ?");
-            $stmt->execute([json_encode($scores), $expiresAt, $storyId]);
-        } else {
-            // Create new score story
-            $stmt = $pdo->prepare("INSERT INTO stories (match_id, type, is_active, venue_id, score_data_json, expires_at) VALUES (?, 'score', 1, ?, ?, ?)");
-            $stmt->execute([$matchId, $match['venue_id'], json_encode($scores), $expiresAt]);
+            // We wrap the score in an array for backward compatibility with the frontend grouping logic
+            $scoreDataJson = json_encode([$s]);
+
+            if ($storyId) {
+                // Update existing score story
+                $stmt = $pdo->prepare("UPDATE stories SET is_active = 1, score_data_json = ?, expires_at = ? WHERE id = ?");
+                $stmt->execute([$scoreDataJson, $expiresAt, $storyId]);
+            } else {
+                // Create new story for this score
+                $stmt = $pdo->prepare("INSERT INTO stories (match_id, score_id, type, is_active, venue_id, score_data_json, expires_at) VALUES (?, ?, 'score', 1, ?, ?, ?)");
+                $stmt->execute([$matchId, $scoreId, $match['venue_id'], $scoreDataJson, $expiresAt]);
+            }
         }
         
         // 4. Deactivate the 'upcoming' story if it exists for this match
