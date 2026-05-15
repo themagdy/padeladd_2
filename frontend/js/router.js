@@ -237,6 +237,8 @@ const Router = {
             }
         }
         
+        this.params = matchedParams || {};
+        
         if (route) {
             try {
                 let html;
