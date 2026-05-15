@@ -263,16 +263,34 @@ const StoriesController = {
 
     renderScoreStory: function(story) {
         const scores = story.score_data || [];
-        const s = scores[0]; 
-        if (!s) return '<div class="story-score-main">No score data</div>';
+        const s = scores[0] || { team1_score: '-', team2_score: '-' };
+        const players = story.players || [];
+        
+        // Group players into teams (based on team_no from match_players)
+        const team1 = players.filter(p => parseInt(p.team_no) === 1);
+        const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
         return `
             <div class="story-score-main">
-                <div class="story-win-label">MATCH RESULT</div>
-                <div class="story-score-display">
-                    <div class="team-score">${s.team1_score}</div>
-                    <div class="score-divider">-</div>
-                    <div class="team-score">${s.team2_score}</div>
+                <div class="story-score-teams">
+                    <div class="story-team">
+                        <div class="story-team-players">
+                            ${team1.map(p => `<span>${p.nickname || p.first_name}</span>`).join(' & ')}
+                        </div>
+                        <div class="team-score">${s.team1_score}</div>
+                    </div>
+                    <div class="score-vs-label">VS</div>
+                    <div class="story-team">
+                        <div class="story-team-players">
+                            ${team2.map(p => `<span>${p.nickname || p.first_name}</span>`).join(' & ')}
+                        </div>
+                        <div class="team-score">${s.team2_score}</div>
+                    </div>
+                </div>
+                
+                <div class="story-match-meta">
+                    <div class="story-match-venue">📍 ${story.official_venue_name || story.venue_name || 'Padel Court'}</div>
+                    <div class="story-match-time">📅 ${UI.formatDate(story.match_datetime, true)}</div>
                 </div>
                 <div class="story-match-code">#${story.match_code}</div>
             </div>
