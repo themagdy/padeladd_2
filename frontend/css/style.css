@@ -4600,15 +4600,43 @@ body {
 
 /* Stories System */
 .story-tray {
-    display: none;
+    display: flex;
     overflow-x: auto;
     padding: 0 0 10px 0;
     gap: 12px;
     scrollbar-width: none;
     background: transparent;
     border: none;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     align-items: center;
+    transform-origin: top;
+    opacity: 0;
+    max-height: 0;
+    overflow-y: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.story-tray.active {
+    opacity: 1;
+    max-height: 100px;
+    margin-bottom: 20px;
+}
+
+.story-tray.animate-in {
+    animation: storyTraySlideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes storyTraySlideDown {
+    0% { 
+        opacity: 0; 
+        transform: translateY(-20px) scaleY(0.5);
+        max-height: 0;
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0) scaleY(1);
+        max-height: 100px;
+    }
 }
 .story-separator {
     width: 1px;
