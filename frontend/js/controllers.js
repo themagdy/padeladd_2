@@ -1229,6 +1229,7 @@ const ProfileViewController = {
                     followBtn.className = is_following ? 'btn btn-secondary' : 'btn btn-primary';
                     followBtn.querySelector('.follow-text').textContent = is_following ? 'Following' : 'Follow';
                     followBtn.querySelector('.follow-icon').textContent = is_following ? '✅' : '👤+';
+                    followBtn.onclick = () => ProfileViewController.toggleFollow();
                 }
             } else {
                 followContainer.style.display = 'none';
