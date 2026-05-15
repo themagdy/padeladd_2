@@ -375,8 +375,8 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
                     $p['user_id'],
                 ]);
 
-        // Phase 7: Store the point change in match_players for rolling 7-day stats
-        $pdo->prepare("UPDATE match_players SET point_change = ? WHERE match_id = ? AND user_id = ?")
+        // Phase 7: Store the point change in match_players for rolling 7-day stats (Additive to handle multi-score sessions)
+        $pdo->prepare("UPDATE match_players SET point_change = IFNULL(point_change, 0) + ? WHERE match_id = ? AND user_id = ?")
             ->execute([$p['total_rank_change'], $match_id, $p['user_id']]);
 
         // Track highest ranking
