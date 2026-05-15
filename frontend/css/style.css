@@ -4691,6 +4691,8 @@ body {
     z-index: 10000;
     display: none;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .story-header {
@@ -4749,19 +4751,34 @@ body {
 
 .story-card {
     width: 100%;
-    max-width: 400px;
-    aspect-ratio: 9/16;
+    height: 100%;
+    max-width: 480px;
     background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
-    border-radius: 32px;
     position: relative;
     padding: 30px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8);
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
+}
+
+@media (min-width: 481px) {
+    .story-card {
+        max-height: 850px;
+        aspect-ratio: 9/16;
+        border-radius: 32px;
+        border: 1px solid rgba(255,255,255,0.05);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+    }
+}
+
+/* Safe area support for notched phones */
+.story-header {
+    padding-top: calc(10px + env(safe-area-inset-top));
+}
+.story-footer-actions {
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 
 .story-card::before {
@@ -4827,8 +4844,14 @@ body {
     font-family: 'Outfit', sans-serif;
     color: var(--c-text-muted);
     letter-spacing: 4px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     text-transform: uppercase;
+}
+
+@media (max-height: 700px) {
+    .story-result-label { margin-bottom: 12px; }
+    .story-teams-stack { gap: 8px; }
+    .story-team-card { padding: 12px; }
 }
 
 .story-teams-stack {
