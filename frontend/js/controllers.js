@@ -1858,6 +1858,13 @@ const MatchesController = {
         MatchesController._currentTab = savedTab || defaultSubTab;
         MatchesController._lastMode = mode;
 
+        if (mode === 'play') {
+            const savedType = sessionStorage.getItem('last_play_filter_type');
+            const savedGender = sessionStorage.getItem('last_play_filter_gender');
+            if (savedType) MatchesController._playFilterType = savedType;
+            if (savedGender) MatchesController._playFilterGender = savedGender;
+        }
+
         UI.syncNav();
         const skeleton = document.getElementById('ml-skeleton');
         const list = document.getElementById('ml-list');
@@ -1936,6 +1943,24 @@ const MatchesController = {
         filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
 
         if (isUpcomingPlay) {
+            // Sync active states for type buttons
+            filterEl.querySelectorAll('.ml-type-filter-btn').forEach(btn => {
+                const isActive = btn.dataset.val === MatchesController._playFilterType;
+                btn.classList.toggle('active', isActive);
+                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
+                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
+                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
+            });
+
+            // Sync active states for gender buttons
+            filterEl.querySelectorAll('.ml-gender-filter-btn').forEach(btn => {
+                const isActive = btn.dataset.val === MatchesController._playFilterGender;
+                btn.classList.toggle('active', isActive);
+                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
+                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
+                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
+            });
+
             const btn = document.getElementById('ml-gender-restricted-filter-btn');
             if (btn) {
                 const updateLabel = (p) => {
@@ -1956,8 +1981,14 @@ const MatchesController = {
     },
 
     setPlayFilter: function (type, val, btn) {
-        if (type === 'match_type') MatchesController._playFilterType = val;
-        if (type === 'gender_type') MatchesController._playFilterGender = val;
+        if (type === 'match_type') {
+            MatchesController._playFilterType = val;
+            sessionStorage.setItem('last_play_filter_type', val);
+        }
+        if (type === 'gender_type') {
+            MatchesController._playFilterGender = val;
+            sessionStorage.setItem('last_play_filter_gender', val);
+        }
 
         // Update UI
         const btns = btn.parentElement.querySelectorAll('button');

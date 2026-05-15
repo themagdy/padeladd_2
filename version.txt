@@ -965,3 +965,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Copy: Updated empty state messages with more immersive, competitive tone ("The Court Is Quiet", "Enter the next round").
 - UI: Updated Play section sub-header for better clarity ("Solo or Squad!").
 - Version: 2.2.48 (Build 248)
+
+2.2.49 (Build 249) - 2026-05-15
+- UX: Implemented filter persistence for the "Play" section. Match Type and Gender selections now stay active when navigating or refreshing.
+- UI: Added automatic visual synchronization for filter buttons to match the internal session state.
+- Version: 2.2.49 (Build 249)
