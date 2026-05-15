@@ -215,6 +215,7 @@ const StoriesController = {
             const isMine = parseInt(s.is_mine) === 1;
             const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
             const isSeen = !!s.is_seen;
+            const storyDate = new Date(s.match_datetime).getTime();
 
             // 1. If it's my story, add a "Your Story" entry
             if (isMine) {
@@ -224,7 +225,8 @@ const StoriesController = {
                     player: me,
                     label: 'Your Story',
                     isMine: true,
-                    isSeen: isSeen
+                    isSeen: isSeen,
+                    storyDate: storyDate
                 });
                 hasMine = true;
             }
@@ -239,10 +241,21 @@ const StoriesController = {
                         player: p,
                         label: p.nickname || p.first_name,
                         isMine: false,
-                        isSeen: isSeen
+                        isSeen: isSeen,
+                        storyDate: storyDate
                     });
                 }
             });
+        });
+
+        // Final Sort for the Tray:
+        // 1. Your Story ALWAYS first
+        // 2. Unseen stories before seen ones
+        // 3. Within seen/unseen, latest first
+        trayItems.sort((a, b) => {
+            if (a.isMine !== b.isMine) return b.isMine - a.isMine;
+            if (a.isSeen !== b.isSeen) return a.isSeen - b.isSeen;
+            return b.storyDate - a.storyDate;
         });
 
         // Render tray items
