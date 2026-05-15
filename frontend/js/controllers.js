@@ -400,20 +400,40 @@ const StoriesController = {
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
-        const renderTeamCardUpcoming = (teamPlayers) => `
-            <div class="story-team-card" style="padding: 16px 20px; align-items: center; min-height: 80px;">
-                <div style="display:flex; align-items:center; gap: 16px;">
-                    <div class="story-team-avatars" style="margin-right:0;">
-                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `
-                            <div class="story-team-avatar-mini" style="width:44px; height:44px;">
-                                ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', (p.nickname?.[0] || p.first_name[0]))}
-                            </div>
-                        `).join('') : '<div class="story-team-avatar-mini" style="width:44px; height:44px; background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.1);"></div>'}
-                    </div>
-                    <div class="story-team-names" style="gap: 4px;">
-                        ${teamPlayers.length > 0 ? teamPlayers.map(p => `<span style="font-size:16px; font-weight:700;">${p.nickname || p.first_name}</span>`).join('') : '<span style="opacity:0.3; font-size:16px;">TBD</span>'}
+        const renderPlayerRow = (p) => {
+            if (!p) return `
+                <div class="story-player-row empty" style="display:flex; align-items:center; gap:12px; width:100%; opacity:0.4;">
+                    <div class="story-team-avatar-mini" style="width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.2); font-size:18px;">+</div>
+                    <div class="story-player-info" style="flex:1;">
+                        <span class="story-player-name" style="font-size:16px; font-weight:400; font-style:italic; color:rgba(255,255,255,0.3);">Open Slot</span>
                     </div>
                 </div>
+            `;
+            
+            const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
+            const xcode = p.player_code || p.player_xcode || p.id;
+            const level = p.level || '';
+
+            return `
+                <div class="story-player-row" style="display:flex; align-items:center; gap:12px; width:100%;">
+                    <div class="story-team-avatar-mini" style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.1); flex-shrink:0;">
+                        ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', initials)}
+                    </div>
+                    <div class="story-player-info" style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                        <span class="story-player-name" style="font-size:16px; font-weight:700; color:#fff; font-family:'Montserrat';">${p.nickname || p.first_name}</span>
+                    </div>
+                    <div class="story-player-identity" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                        <span class="story-xcode-tag" style="background:rgba(247,148,29,0.1); border:1px solid rgba(247,148,29,0.3); color:var(--c-orange); font-size:10px; font-weight:900; padding:2px 8px; border-radius:6px; letter-spacing:0.5px; font-family:'Outfit';">XCODE: ${xcode}</span>
+                        ${level ? `<span class="story-level-badge" style="background:rgba(27, 82, 206, 0.15); border:1px solid rgba(27, 82, 206, 0.3); color:#60a5fa; font-size:9px; font-weight:800; padding:1px 6px; border-radius:6px; text-transform:uppercase;">${level} LEVEL</span>` : ''}
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderTeamCardUpcoming = (teamPlayers) => `
+            <div class="story-team-card upcoming" style="padding: 20px; display:flex; flex-direction:column; gap:16px; min-height:100px; background:rgba(255,255,255,0.03); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.06); border-radius:24px;">
+                ${renderPlayerRow(teamPlayers[0])}
+                ${renderPlayerRow(teamPlayers[1])}
             </div>
         `;
 
