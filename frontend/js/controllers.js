@@ -388,7 +388,7 @@ const StoriesController = {
 
         const renderTeamCard = (teamPlayers, isWinner) => `
             <div class="story-team-card ${isWinner ? 'winner' : ''}">
-                <div style="display:flex; align-items:center;">
+                <div style="display:flex; align-items:flex-start;">
                     <div class="story-team-avatars">
                         ${teamPlayers.map(p => `
                             <div class="story-team-avatar-mini">
@@ -401,7 +401,7 @@ const StoriesController = {
                         ${isWinner ? '<div class="story-winner-badge">WINNERS</div>' : ''}
                     </div>
                 </div>
-                <div class="story-team-score-sets">
+                <div class="story-team-score-sets" style="align-self: flex-start; margin-top: 2px;">
                     ${sets.map(set => `
                         <div class="story-set-box ${ (teamPlayers === team1 ? parseInt(set.s1) > parseInt(set.s2) : parseInt(set.s2) > parseInt(set.s1)) ? 'set-won' : ''}">
                             ${teamPlayers === team1 ? set.s1 : set.s2}
