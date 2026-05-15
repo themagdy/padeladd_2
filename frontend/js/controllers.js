@@ -152,6 +152,7 @@ const StoriesController = {
     },
     _cache: null,
     _lastTrayFingerprint: '',
+    _trayItems: [],
 
     initTray: async function() {
         const tray = document.getElementById('story-tray');
@@ -245,71 +246,71 @@ const StoriesController = {
         }
 
         tray.style.display = 'flex';
-        let html = '';
-        
-        let hasMine = false;
         const currentUserId = DashboardController._currentUser?.id;
 
-        // Process all stories to build tray items
-        const trayItems = [];
-        this._activeStories.forEach((s, sIdx) => {
+        // 1. Group stories by player (Unique Avatars)
+        const playerGroups = {}; // playerId -> { player: obj, stories: [], isMine: bool }
+        
+        this._activeStories.forEach(s => {
             const players = s.players || [];
             const isMine = parseInt(s.is_mine) === 1;
             const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
-            const isSeen = !!s.is_seen;
-            const storyDate = new Date(s.match_datetime).getTime();
-
-            // 1. If it's my story, add a "Your Story" entry
+            
             if (isMine) {
                 const me = players.find(p => parseInt(p.id) === currentUserId) || players[0];
-                trayItems.push({
-                    storyIndex: sIdx,
-                    player: me,
-                    label: 'Your Story',
-                    isMine: true,
-                    isSeen: isSeen,
-                    storyDate: storyDate
-                });
-                hasMine = true;
+                if (!playerGroups[currentUserId]) playerGroups[currentUserId] = { player: me, stories: [], isMine: true };
+                // Deduplicate stories within the same player (shouldn't happen with match-based IDs but safe)
+                if (!playerGroups[currentUserId].stories.find(st => st.id === s.id)) {
+                    playerGroups[currentUserId].stories.push(s);
+                }
             }
-
-            // 2. Add entries for followed players in this story (excluding myself)
+            
             followedIds.forEach(fid => {
                 if (fid === currentUserId) return;
                 const p = players.find(player => parseInt(player.id) === fid);
                 if (p) {
-                    trayItems.push({
-                        storyIndex: sIdx,
-                        player: p,
-                        label: p.nickname || p.first_name,
-                        isMine: false,
-                        isSeen: isSeen,
-                        storyDate: storyDate
-                    });
+                    if (!playerGroups[fid]) playerGroups[fid] = { player: p, stories: [], isMine: false };
+                    if (!playerGroups[fid].stories.find(st => st.id === s.id)) {
+                        playerGroups[fid].stories.push(s);
+                    }
                 }
             });
         });
 
-        // Final Sort for the Tray:
-        // 1. Your Story ALWAYS first
-        // 2. Unseen stories before seen ones
-        // 3. Within seen/unseen, latest first
+        // 2. Build tray items with seen status and sort priority
+        const trayItems = Object.values(playerGroups).map(group => {
+            // A player bubble is "seen" only if ALL its stories are seen
+            const isSeen = group.stories.every(s => !!s.is_seen);
+            // Latest story date for sorting
+            const latestDate = Math.max(...group.stories.map(s => new Date(s.match_datetime).getTime()));
+            
+            return {
+                ...group,
+                isSeen,
+                latestDate
+            };
+        });
+
+        // 3. Sort for the Tray: Me first, then Unseen, then Latest
         trayItems.sort((a, b) => {
             if (a.isMine !== b.isMine) return b.isMine - a.isMine;
             if (a.isSeen !== b.isSeen) return a.isSeen - b.isSeen;
-            return b.storyDate - a.storyDate;
+            return b.latestDate - a.latestDate;
         });
 
-        // Render tray items
+        // Save tray items to maintain playback sequence
+        this._trayItems = trayItems;
+
+        let html = '';
         trayItems.forEach((item, idx) => {
             const initials = ((item.player?.first_name?.[0] || '') + (item.player?.last_name?.[0] || '')).toUpperCase() || '?';
             
             html += `
-                <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${item.storyIndex}, ${item.player.id})">
+                <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playPlayerByIndex(${idx})">
                     <div class="story-avatar-ring">
                         ${UI.getAvatarHtml(item.player?.profile_image_thumb || item.player?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
-                    <span class="story-label">${item.label}</span>
+                    <span class="story-label">${item.isMine ? 'Your Story' : (item.player.nickname || item.player.first_name)}</span>
                 </div>
             `;
 
@@ -319,7 +320,7 @@ const StoriesController = {
             }
         });
         
-        // Fingerprint check to avoid flickering/re-rendering if nothing changed
+        // Fingerprint check to avoid flickering
         const fingerprint = trayItems.map(it => `${it.player.id}:${it.isSeen}`).join('|');
         if (this._lastTrayFingerprint === fingerprint) return;
         this._lastTrayFingerprint = fingerprint;
@@ -327,28 +328,48 @@ const StoriesController = {
         tray.innerHTML = safeHTML(html);
     },
 
-    playByIndex: function(index, preferredPlayerId = null) {
-        this._preferredPlayerId = preferredPlayerId;
-        this._currentIndex = index;
-        this.openPlayer(this._activeStories);
+    playPlayerByIndex: function(trayIdx) {
+        if (!this._trayItems || !this._trayItems[trayIdx]) return;
+        
+        // Construct the playback feed following the tray sequence
+        const fullFeed = [];
+        for (let i = trayIdx; i < this._trayItems.length; i++) {
+            const group = this._trayItems[i];
+            
+            // Sort stories within the player's stack: oldest first for natural story flow
+            const sortedStories = [...group.stories].sort((a, b) => new Date(a.match_datetime) - new Date(b.match_datetime));
+            
+            sortedStories.forEach(s => {
+                fullFeed.push({
+                    ...s,
+                    _overlayPlayer: group.player // Attach context for the header
+                });
+            });
+        }
+        
+        if (fullFeed.length === 0) return;
+
+        this._currentFeed = fullFeed;
+        this._currentIndex = 0;
+        this._isShowing = true;
+        this.renderPlayerOverlay();
+        this.startStory();
     },
 
     playUserStories: async function(userId) {
         const res = await API.post('/stories/user', { user_id: userId });
         if (res && res.success && res.data.stories.length > 0) {
             this._currentIndex = 0;
-            this.openPlayer(res.data.stories);
+            // For profile view, we just show that user's stories
+            this._currentFeed = res.data.stories.map(s => ({ ...s, _overlayPlayer: res.data.player }));
+            this._isShowing = true;
+            this.renderPlayerOverlay();
+            this.startStory();
         } else {
             Toast.show('No active stories for this player');
         }
     },
 
-    openPlayer: function(stories) {
-        this._currentFeed = stories;
-        this._isShowing = true;
-        this.renderPlayerOverlay();
-        this.startStory();
-    },
 
     renderPlayerOverlay: function() {
         let overlay = document.getElementById('story-player-overlay');
@@ -386,11 +407,8 @@ const StoriesController = {
         const isScore = story.type === 'score';
         const players = story.players || [];
         
-        // Find the player for the header
-        let headerPlayer = players[0];
-        if (this._preferredPlayerId) {
-            headerPlayer = players.find(p => parseInt(p.id) === parseInt(this._preferredPlayerId)) || players[0];
-        }
+        // Use the context-aware player for the header
+        const headerPlayer = story._overlayPlayer || players[0];
 
         let progressHtml = '';
         this._currentFeed.forEach((_, idx) => {
@@ -514,14 +532,28 @@ const StoriesController = {
         const s = scores[0] || {};
         let players = story.players || [];
         
-        // Handle team switches (Composition JSON)
+        // Handle team switches and external replacements (Composition JSON)
         if (s.composition_json) {
             try {
                 const comp = typeof s.composition_json === 'string' ? JSON.parse(s.composition_json) : s.composition_json;
-                players = players.map(p => {
-                    const match = comp.find(c => parseInt(c.user_id) === parseInt(p.user_id || p.id));
-                    return match ? { ...p, team_no: match.team_no } : p;
+                
+                // Build a new player list based on the composition
+                const updatedPlayers = comp.map(compPlayer => {
+                    // Try to find original player data (for avatars, etc.)
+                    const original = players.find(p => parseInt(p.id) === parseInt(compPlayer.user_id));
+                    if (original) {
+                        return { ...original, ...compPlayer };
+                    }
+                    // If not found in original list (replacement), use comp data as is
+                    return {
+                        id: compPlayer.user_id,
+                        first_name: compPlayer.name,
+                        nickname: compPlayer.name,
+                        ...compPlayer
+                    };
                 });
+                
+                if (updatedPlayers.length > 0) players = updatedPlayers;
             } catch (e) { console.error("Story composition parse failed", e); }
         }
         
@@ -636,9 +668,14 @@ const StoriesController = {
     },
 
     handleTap: function(e) {
+        // Don't navigate if clicking a button or link
+        if (e.target.closest('button') || e.target.closest('a')) return;
+
         const x = e.clientX;
         const w = window.innerWidth;
-        if (x < w / 3) {
+        
+        // 50/50 split for more intuitive navigation on both mobile and desktop
+        if (x < w / 2) {
             this.prev();
         } else {
             this.next();
