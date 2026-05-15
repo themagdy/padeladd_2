@@ -16,14 +16,16 @@
             <h1 id="prof-nickname" class="v-nickname" style="font-weight:700; letter-spacing:-1px; margin:0 0 8px 0; color:#fff; line-height:1.1;">Loading...</h1>
             <div id="prof-fullname" style="font-size:16px; font-weight:600; color:var(--c-text-muted); opacity:0.8; margin-bottom:10px; line-height:1.2;"></div>
             
-            <div id="prof-follow-container" style="display:none; margin-bottom:16px;">
-                <button id="prof-follow-btn" onclick="ProfileViewController.toggleFollow()" class="btn btn-primary" style="width:auto; padding:10px 24px; font-size:13px; font-weight:800; border-radius:12px; height:40px; display:flex; align-items:center; gap:8px;">
-                    <span class="follow-icon">👤+</span>
-                    <span class="follow-text">Follow</span>
-                </button>
-            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div id="prof-code" class="profile-code" style="display:none; align-items:center; width:fit-content; gap:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:6px 12px 6px 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border-right: 3px solid var(--c-orange); transition: transform 0.2s, box-shadow 0.2s; cursor: default; font-size:17px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.2)';"></div>
 
-            <div id="prof-code" class="profile-code" style="display:none; align-items:center; width:fit-content; gap:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:6px 12px 6px 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border-right: 3px solid var(--c-orange); transition: transform 0.2s, box-shadow 0.2s; cursor: default; font-size:17px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.2)';"></div>
+                <div id="prof-follow-container" style="display:none;">
+                    <button id="prof-follow-btn" class="btn" style="width:40px; height:40px; padding:0; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; transition:all 0.2s;">
+                        <span class="follow-icon">👤+</span>
+                        <span class="follow-text" style="display:none;"></span>
+                    </button>
+                </div>
+            </div>
           </div>
 
           <div class="v-details" style="grid-area:details; display:flex; flex-direction:column; gap:12px;">
