@@ -146,37 +146,58 @@ const StoriesController = {
         let hasMine = false;
         const currentUserId = DashboardController._currentUser?.id;
 
-        this._activeStories.forEach((s, idx) => {
+        // Process all stories to build tray items
+        const trayItems = [];
+        this._activeStories.forEach((s, sIdx) => {
             const players = s.players || [];
             const isMine = parseInt(s.is_mine) === 1;
-            const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id));
-            
-            // If mine, show current user as mainPlayer
-            let mainPlayer;
-            if (isMine) {
-                mainPlayer = players.find(p => parseInt(p.id) === currentUserId);
-                hasMine = true;
-            } else {
-                mainPlayer = players.find(p => followedIds.includes(parseInt(p.id)));
-            }
-            
-            if (!mainPlayer) mainPlayer = players[0]; 
-
+            const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
             const isSeen = !!s.is_seen;
-            const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
-            const label = isMine ? 'Your Story' : (mainPlayer?.nickname || mainPlayer?.first_name || 'Match');
 
+            // 1. If it's my story, add a "Your Story" entry
+            if (isMine) {
+                const me = players.find(p => parseInt(p.id) === currentUserId) || players[0];
+                trayItems.push({
+                    storyIndex: sIdx,
+                    player: me,
+                    label: 'Your Story',
+                    isMine: true,
+                    isSeen: isSeen
+                });
+                hasMine = true;
+            }
+
+            // 2. Add entries for followed players in this story (excluding myself)
+            followedIds.forEach(fid => {
+                if (fid === currentUserId) return;
+                const p = players.find(player => parseInt(player.id) === fid);
+                if (p) {
+                    trayItems.push({
+                        storyIndex: sIdx,
+                        player: p,
+                        label: p.nickname || p.first_name,
+                        isMine: false,
+                        isSeen: isSeen
+                    });
+                }
+            });
+        });
+
+        // Render tray items
+        trayItems.forEach((item, idx) => {
+            const initials = ((item.player?.first_name?.[0] || '') + (item.player?.last_name?.[0] || '')).toUpperCase() || '?';
+            
             html += `
-                <div class="story-item ${isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${idx})">
+                <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${item.storyIndex})">
                     <div class="story-avatar-ring">
-                        ${UI.getAvatarHtml(mainPlayer?.profile_image_thumb || mainPlayer?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
+                        ${UI.getAvatarHtml(item.player?.profile_image_thumb || item.player?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
-                    <span class="story-label">${label}</span>
+                    <span class="story-label">${item.label}</span>
                 </div>
             `;
 
-            // Add separator after the user's stories
-            if (isMine && (idx === this._activeStories.length - 1 || !this._activeStories[idx + 1].is_mine)) {
+            // Add separator after the user's stories section
+            if (item.isMine && (idx === trayItems.length - 1 || !trayItems[idx + 1].isMine)) {
                 html += `<div class="story-separator"></div>`;
             }
         });
