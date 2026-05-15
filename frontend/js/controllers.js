@@ -6089,7 +6089,7 @@ const RankingController = {
 
             // Player Info
             const infoWrap = document.createElement('div');
-            infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;';
+            infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; position:relative;';
             
             const hasStory = !!r.has_active_story;
             const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
