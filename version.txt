@@ -985,3 +985,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Added smooth slide-down entrance animation for the stories tray.
 - UX: Enabled side-by-side display for shared stories (Your Story + Followed Players).
 - Version: 2.2.51 (Build 251)
+
+2.2.52 (Build 252) - 2026-05-15
+- UI: Complete redesign of the match story overlay with glassmorphism and court textures.
+- UI: Integrated player avatars directly into story team cards for a more social feel.
+- UI: Optimized story components for mobile (downsized scores, avatars, and fonts).
+- UX: Implemented "Nuclear" scroll-lock to prevent background scrolling on iOS Safari.
+- Typography: Switched player names to Montserrat Semi-Bold for better legibility and balance.
+- Version: 2.2.52 (Build 252)
