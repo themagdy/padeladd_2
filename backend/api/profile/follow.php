@@ -7,9 +7,9 @@ $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
 
-$target_id = (int)($data['user_id'] ?? 0);
+$target_id = (int)($data['target_user_id'] ?? 0);
 if ($target_id <= 0) {
-    jsonResponse(false, 'user_id is required.', null, 422);
+    jsonResponse(false, 'target_user_id is required.', null, 422);
 }
 
 if ($target_id === $uid) {
