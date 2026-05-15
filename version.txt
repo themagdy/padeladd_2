@@ -1055,3 +1055,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Optimized story card scaling and spacing on mobile to prevent content cropping.
 - UI: Implemented adaptive story height and reduced internal paddings for better fit on small viewports.
 - Version: 2.2.62 (Build 262)
+
+2.2.63 (Build 263) - 2026-05-16
+- Final: Verified and consolidated all Story UI refinements, mobile cropping fixes, and sequential tray logic.
+- Version: 2.2.63 (Build 263)
