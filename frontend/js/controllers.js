@@ -120,6 +120,7 @@ const StoriesController = {
     _progressValue: 0,
     _STORY_DURATION: 5000, // 5 seconds per story
     _cache: null,
+    _lastTrayFingerprint: '',
 
     initTray: async function() {
         const tray = document.getElementById('story-tray');
@@ -281,10 +282,12 @@ const StoriesController = {
             }
         });
         
-        const newHtml = safeHTML(html);
-        if (tray.innerHTML !== newHtml) {
-            tray.innerHTML = newHtml;
-        }
+        // Fingerprint check to avoid flickering/re-rendering if nothing changed
+        const fingerprint = trayItems.map(it => `${it.player.id}:${it.isSeen}`).join('|');
+        if (this._lastTrayFingerprint === fingerprint) return;
+        this._lastTrayFingerprint = fingerprint;
+
+        tray.innerHTML = safeHTML(html);
     },
 
     playByIndex: function(index, preferredPlayerId = null) {
