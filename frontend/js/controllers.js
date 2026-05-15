@@ -145,7 +145,12 @@ const StoriesController = {
         
         this._activeStories.forEach((s, idx) => {
             const players = s.players || [];
-            const mainPlayer = players[0]; 
+            const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id));
+            
+            // Pick a player that the user follows to show in the tray
+            let mainPlayer = players.find(p => followedIds.includes(parseInt(p.id)));
+            if (!mainPlayer) mainPlayer = players[0]; 
+
             const isSeen = !!s.is_seen;
             const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
             
