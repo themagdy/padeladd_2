@@ -143,25 +143,42 @@ const StoriesController = {
         tray.style.display = 'flex';
         let html = '';
         
+        let hasMine = false;
+        const currentUserId = DashboardController._currentUser?.id;
+
         this._activeStories.forEach((s, idx) => {
             const players = s.players || [];
+            const isMine = !!s.is_mine;
             const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id));
             
-            // Pick a player that the user follows to show in the tray
-            let mainPlayer = players.find(p => followedIds.includes(parseInt(p.id)));
+            // If mine, show current user as mainPlayer
+            let mainPlayer;
+            if (isMine) {
+                mainPlayer = players.find(p => parseInt(p.id) === currentUserId);
+                hasMine = true;
+            } else {
+                mainPlayer = players.find(p => followedIds.includes(parseInt(p.id)));
+            }
+            
             if (!mainPlayer) mainPlayer = players[0]; 
 
             const isSeen = !!s.is_seen;
             const initials = ((mainPlayer?.first_name?.[0] || '') + (mainPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
-            
+            const label = isMine ? 'Your Story' : (mainPlayer?.nickname || mainPlayer?.first_name || 'Match');
+
             html += `
                 <div class="story-item ${isSeen ? 'seen' : ''}" onclick="StoriesController.playByIndex(${idx})">
                     <div class="story-avatar-ring">
                         ${UI.getAvatarHtml(mainPlayer?.profile_image_thumb || mainPlayer?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
-                    <span class="story-label">${mainPlayer?.nickname || mainPlayer?.first_name || 'Match'}</span>
+                    <span class="story-label">${label}</span>
                 </div>
             `;
+
+            // Add separator after the user's stories
+            if (isMine && (idx === this._activeStories.length - 1 || !this._activeStories[idx + 1].is_mine)) {
+                html += `<div class="story-separator"></div>`;
+            }
         });
         
         tray.innerHTML = safeHTML(html);
