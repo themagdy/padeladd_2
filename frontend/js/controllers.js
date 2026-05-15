@@ -1227,13 +1227,13 @@ const ProfileViewController = {
                 const followBtn = document.getElementById('prof-follow-btn');
                 if (followBtn) {
                     followBtn.style.width = 'auto';
-                    followBtn.style.minWidth = '100px';
+                    followBtn.style.minWidth = '130px';
                     followBtn.style.height = '28px';
                     followBtn.style.fontSize = '11px';
                     followBtn.style.fontWeight = '700';
                     followBtn.style.textTransform = 'uppercase';
                     followBtn.style.letterSpacing = '0.5px';
-                    followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : '#007AFF';
+                    followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #007AFF, #0051FF)';
                     followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#007AFF';
                     followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
                     followBtn.querySelector('.follow-text').style.display = 'block';
