@@ -221,6 +221,10 @@ try {
         $message .= ' Note: This is a late withdrawal (within ' . POLICY_VIOLATION_HOURS . ' hours of the match).';
     }
 
+    // Phase 9: Update automated story
+    require_once __DIR__ . '/../../helpers/story_helper.php';
+    StoryHelper::updateMatchStory($pdo, $match_id);
+
     jsonResponse(true, $message, [
         'is_team'    => $isTeamJoin,
         'is_late'    => $isLate,

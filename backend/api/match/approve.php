@@ -89,6 +89,10 @@ try {
         $approverName = getDisplayName($user);
         createNotification($pdo, $requester_id, 'partner_confirmed', $match_id, "{$approverName} accepted your team invite", $uid);
 
+        // Phase 9: Update automated story
+        require_once __DIR__ . '/../../helpers/story_helper.php';
+        StoryHelper::updateMatchStory($pdo, $match_id);
+
         jsonResponse(true, 'You have approved the request and joined the match as the creator\'s partner.', null);
     }
 
@@ -242,6 +246,10 @@ try {
 
     // Phase 6: Notify match participants that a team joined (excluding requester who already got confirmed notif)
     notifyMatchParticipants($pdo, $match_id, 'match_joined', "{$approverName} and their partner joined the match", $uid, [$requester_id]);
+
+    // Phase 9: Update automated story
+    require_once __DIR__ . '/../../helpers/story_helper.php';
+    StoryHelper::updateMatchStory($pdo, $match_id);
 
     jsonResponse(true, 'You have approved the request. Both players are now in the match.', null);
 
