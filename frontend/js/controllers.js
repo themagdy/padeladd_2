@@ -275,36 +275,69 @@ const StoriesController = {
 
     renderScoreStory: function(story) {
         const scores = story.score_data || [];
-        const s = scores[0] || { team1_score: '-', team2_score: '-' };
+        const s = scores[0] || {};
         const players = story.players || [];
         
-        // Group players into teams (based on team_no from match_players)
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
-        return `
-            <div class="story-score-main">
-                <div class="story-score-teams">
-                    <div class="story-team">
-                        <div class="story-team-players">
-                            ${team1.map(p => `<span>${p.nickname || p.first_name}</span>`).join(' & ')}
-                        </div>
-                        <div class="team-score">${s.team1_score}</div>
+        // Process sets
+        const sets = [];
+        let t1Sets = 0, t2Sets = 0;
+        for (let i = 1; i <= 3; i++) {
+            const s1 = s[`s${i}_t1`];
+            const s2 = s[`s${i}_t2`];
+            if (s1 === undefined || s2 === undefined) continue;
+            sets.push({ s1, s2 });
+            if (parseInt(s1) > parseInt(s2)) t1Sets++;
+            else if (parseInt(s2) > parseInt(s1)) t2Sets++;
+        }
+
+        const t1Wins = t1Sets > t2Sets;
+        const t2Wins = t2Sets > t1Sets;
+
+        const renderTeamCard = (teamPlayers, isWinner, teamScore) => `
+            <div class="story-team-card ${isWinner ? 'winner' : ''}">
+                <div class="story-team-info">
+                    <div class="story-team-names">
+                        ${teamPlayers.map(p => `<span>${p.nickname || p.first_name}</span>`).join('')}
                     </div>
-                    <div class="score-vs-label">VS</div>
-                    <div class="story-team">
-                        <div class="story-team-players">
-                            ${team2.map(p => `<span>${p.nickname || p.first_name}</span>`).join(' & ')}
+                    ${isWinner ? '<div class="story-winner-badge">🏆 WINNERS</div>' : ''}
+                </div>
+                <div class="story-team-score-sets">
+                    ${sets.map(set => `
+                        <div class="story-set-box ${ (teamPlayers === team1 ? set.s1 > set.s2 : set.s2 > set.s1) ? 'set-won' : ''}">
+                            ${teamPlayers === team1 ? set.s1 : set.s2}
                         </div>
-                        <div class="team-score">${s.team2_score}</div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        return `
+            <div class="story-score-refined">
+                <div class="story-result-label">MATCH RESULT</div>
+                
+                <div class="story-teams-stack">
+                    ${renderTeamCard(team1, t1Wins)}
+                    <div class="story-vs-divider">VS</div>
+                    ${renderTeamCard(team2, t2Wins)}
+                </div>
+
+                <div class="story-match-details">
+                    <div class="story-detail-item">
+                        <span class="icon">📍</span>
+                        <span class="text">${story.official_venue_name || story.venue_name || 'Padel Court'}</span>
+                    </div>
+                    <div class="story-detail-item">
+                        <span class="icon">📅</span>
+                        <span class="text">${UI.formatDate(story.match_datetime, true)}</span>
                     </div>
                 </div>
                 
-                <div class="story-match-meta">
-                    <div class="story-match-venue">📍 ${story.official_venue_name || story.venue_name || 'Padel Court'}</div>
-                    <div class="story-match-time">📅 ${UI.formatDate(story.match_datetime, true)}</div>
+                <div class="story-match-footer">
+                    <span class="match-code">#${story.match_code}</span>
                 </div>
-                <div class="story-match-code">#${story.match_code}</div>
             </div>
         `;
     },
