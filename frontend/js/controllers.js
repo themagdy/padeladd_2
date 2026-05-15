@@ -320,12 +320,12 @@ const StoriesController = {
             
             <div class="story-content-area" onclick="StoriesController.handleTap(event)">
                 <div class="story-card ${story.type}">
-                    <div class="story-venue-badge">${venueName}</div>
+                    <div class="story-match-type-badge">${story.match_type === 'competition' ? '🏆 COMPETITION' : '🤝 FRIENDLY'}</div>
                     
                     ${isScore ? this.renderScoreStory(story) : this.renderUpcomingStory(story)}
 
                     <div class="story-footer-actions">
-                        <button class="btn btn-primary" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">View Match Details</button>
+                        <button class="btn btn-primary" style="width:100%; height:54px; border-radius:16px; font-weight:800; font-family:'Outfit'; box-shadow:0 10px 25px rgba(27, 82, 206, 0.4);" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">VIEW MATCH DETAILS</button>
                     </div>
                 </div>
             </div>
@@ -377,23 +377,32 @@ const StoriesController = {
         const t1Wins = t1Sets > t2Sets;
         const t2Wins = t2Sets > t1Sets;
 
-        const renderTeamCard = (teamPlayers, isWinner, teamScore) => `
+        const renderTeamCard = (teamPlayers, isWinner) => `
             <div class="story-team-card ${isWinner ? 'winner' : ''}">
-                <div class="story-team-info">
+                <div style="display:flex; align-items:center;">
+                    <div class="story-team-avatars">
+                        ${teamPlayers.map(p => `
+                            <div class="story-team-avatar-mini">
+                                ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', (p.nickname?.[0] || p.first_name[0]))}
+                            </div>
+                        `).join('')}
+                    </div>
                     <div class="story-team-names">
                         ${teamPlayers.map(p => `<span>${p.nickname || p.first_name}</span>`).join('')}
+                        ${isWinner ? '<div class="story-winner-badge">WINNERS</div>' : ''}
                     </div>
-                    ${isWinner ? '<div class="story-winner-badge">🏆 WINNERS</div>' : ''}
                 </div>
                 <div class="story-team-score-sets">
                     ${sets.map(set => `
-                        <div class="story-set-box ${ (teamPlayers === team1 ? set.s1 > set.s2 : set.s2 > set.s1) ? 'set-won' : ''}">
+                        <div class="story-set-box ${ (teamPlayers === team1 ? parseInt(set.s1) > parseInt(set.s2) : parseInt(set.s2) > parseInt(set.s1)) ? 'set-won' : ''}">
                             ${teamPlayers === team1 ? set.s1 : set.s2}
                         </div>
                     `).join('')}
                 </div>
             </div>
         `;
+
+        const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
 
         return `
             <div class="story-score-refined">
@@ -407,12 +416,12 @@ const StoriesController = {
 
                 <div class="story-match-details">
                     <div class="story-detail-item">
-                        <span class="icon">📍</span>
-                        <span class="text">${story.official_venue_name || story.venue_name || 'Padel Court'}</span>
+                        <div class="icon-wrap">📍</div>
+                        <div class="text">${venueName}</div>
                     </div>
                     <div class="story-detail-item">
-                        <span class="icon">📅</span>
-                        <span class="text">${UI.formatDate(story.match_datetime, true)}</span>
+                        <div class="icon-wrap">📅</div>
+                        <div class="text">${UI.formatDate(story.match_datetime, true)}</div>
                     </div>
                 </div>
             </div>
