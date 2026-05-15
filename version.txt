@@ -993,3 +993,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UX: Implemented "Nuclear" scroll-lock to prevent background scrolling on iOS Safari.
 - Typography: Switched player names to Montserrat Semi-Bold for better legibility and balance.
 - Version: 2.2.52 (Build 252)
+
+2.2.53 (Build 253) - 2026-05-16
+- Perf: Completely eliminated story tray flickering through smart-render fingerprinting.
+- UI: Redesigned "Upcoming Match" story component to achieve a premium, glassmorphic aesthetic.
+- UI: Refined story typography, spacing, and layout for enhanced visual consistency.
+- UI: Fixed instant "seen" status updates in the stories tray for a smoother user experience.
+- Version: 2.2.53 (Build 253)
