@@ -512,7 +512,18 @@ const StoriesController = {
     renderScoreStory: function(story) {
         const scores = story.score_data || [];
         const s = scores[0] || {};
-        const players = story.players || [];
+        let players = story.players || [];
+        
+        // Handle team switches (Composition JSON)
+        if (s.composition_json) {
+            try {
+                const comp = typeof s.composition_json === 'string' ? JSON.parse(s.composition_json) : s.composition_json;
+                players = players.map(p => {
+                    const match = comp.find(c => parseInt(c.user_id) === parseInt(p.user_id || p.id));
+                    return match ? { ...p, team_no: match.team_no } : p;
+                });
+            } catch (e) { console.error("Story composition parse failed", e); }
+        }
         
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
