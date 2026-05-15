@@ -4599,59 +4599,35 @@ body {
 }
 
 /* Stories System */
-.story-tray {
-    display: flex;
-    overflow-x: auto;
-    padding: 0 0 10px 0;
-    gap: 12px;
-    scrollbar-width: none;
     background: transparent;
     border: none;
-    margin-bottom: 0;
+    margin-bottom: 10px;
     align-items: center;
-    transform-origin: top;
+    
+    /* Animation Properties */
     opacity: 0;
-    max-height: 0;
-    overflow-y: hidden;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-10px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.story-tray.active {
+.story-tray.revealed {
     opacity: 1;
-    max-height: 100px;
-    margin-bottom: 20px;
+    transform: translateY(0);
 }
+.story-tray::-webkit-scrollbar { display: none; }
 
-.story-tray.animate-in {
-    animation: storyTraySlideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes storyTraySlideDown {
-    0% { 
-        opacity: 0; 
-        transform: translateY(-20px) scaleY(0.5);
-        max-height: 0;
-    }
-    100% { 
-        opacity: 1; 
-        transform: translateY(0) scaleY(1);
-        max-height: 100px;
-    }
-}
 .story-separator {
     width: 1px;
-    height: 40px;
+    height: 32px;
     background: rgba(255,255,255,0.1);
     margin: 0 4px;
     flex-shrink: 0;
 }
-.story-tray::-webkit-scrollbar { display: none; }
 
 .story-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
     width: 60px;
 }
@@ -4659,25 +4635,28 @@ body {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    padding: 2px;
+    padding: 2.5px;
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .story-item.seen .story-avatar-ring {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.15);
 }
-.story-avatar-ring:active { transform: scale(0.95); }
+.story-avatar-ring:active { transform: scale(0.9); }
 
 .story-label {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 700;
     color: var(--c-text-muted);
-    font-weight: 600;
-    max-width: 100%;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    letter-spacing: 0.3px;
 }
+.story-item.seen .story-label { opacity: 0.6; }
 
 /* Story Player Overlay */
 .story-player-overlay {
