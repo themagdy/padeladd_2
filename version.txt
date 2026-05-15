@@ -1033,3 +1033,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.58 (Build 258) - 2026-05-16
 - UI: Added full support for team switches in match result stories. Stories now correctly reflect players' final teams if they swapped during score submission.
 - Version: 2.2.58 (Build 258)
+
+2.2.59 (Build 259) - 2026-05-16
+- Core: Refactored stories engine to support individual stories per score submission. One match session can now generate multiple result stories if multiple scores are recorded.
+- DB: Implemented precise score-to-story linking to ensure result accuracy in social feeds.
+- Version: 2.2.59 (Build 259)
