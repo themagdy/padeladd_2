@@ -1219,28 +1219,37 @@ const ProfileViewController = {
             }
         }
 
-        // Follow Button
-        const followContainer = document.getElementById('prof-follow-container');
-        if (followContainer) {
-            if (!is_self) {
-                followContainer.style.display = 'block';
-                const followBtn = document.getElementById('prof-follow-btn');
-                if (followBtn) {
-                    followBtn.style.height = '28px';
-                    followBtn.style.fontSize = '11px';
-                    followBtn.style.fontWeight = '700';
-                    followBtn.style.textTransform = 'uppercase';
-                    followBtn.style.letterSpacing = '0.5px';
-                    followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #0055FF, #0033BB)';
-                    followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#0044CC';
-                    followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
-                    followBtn.querySelector('.follow-text').style.display = 'block';
-                    followBtn.querySelector('.follow-text').textContent = is_following ? 'Unfollow' : 'Follow';
-                    followBtn.querySelector('.follow-icon').style.display = 'none';
-                    followBtn.onclick = () => ProfileViewController.toggleFollow();
-                }
+        const actionsRow = document.querySelector('.prof-actions-row');
+        if (actionsRow) {
+            if (is_self) {
+                actionsRow.style.display = 'none';
             } else {
-                followContainer.style.display = 'none';
+                actionsRow.style.display = 'flex';
+                
+                const followContainer = document.getElementById('prof-follow-container');
+                if (followContainer) {
+                    followContainer.style.display = 'block';
+                    const followBtn = document.getElementById('prof-follow-btn');
+                    if (followBtn) {
+                        followBtn.style.height = '28px';
+                        followBtn.style.fontSize = '11px';
+                        followBtn.style.fontWeight = '700';
+                        followBtn.style.textTransform = 'uppercase';
+                        followBtn.style.letterSpacing = '0.5px';
+                        followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #0055FF, #0033BB)';
+                        followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#0044CC';
+                        followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
+                        followBtn.querySelector('.follow-text').style.display = 'block';
+                        followBtn.querySelector('.follow-text').textContent = is_following ? 'Unfollow' : 'Follow';
+                        followBtn.querySelector('.follow-icon').style.display = 'none';
+                        followBtn.onclick = () => ProfileViewController.toggleFollow();
+                    }
+                }
+
+                const reportContainer = document.getElementById('prof-report-container');
+                if (reportContainer) {
+                    reportContainer.style.display = 'block';
+                }
             }
         }
 
