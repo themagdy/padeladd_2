@@ -1089,3 +1089,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.67 (Build 267) - 2026-05-16
 - UI: Standardized profile avatar and story ring radius to 43% across both desktop and mobile views for global design consistency.
 - Version: 2.2.67 (Build 267)
+
+2.2.68 (Build 268) - 2026-05-16
+- UI: Refined mobile profile aesthetics with differentiated rounding (38% avatar / 42% story ring) for enhanced visual depth.
+- Version: 2.2.68 (Build 268)
