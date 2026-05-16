@@ -3225,6 +3225,11 @@ form {
     font-size: 11px !important;
     border-radius: 5px !important;
   }
+
+  .player-name-mini,
+  .empty-name-mini {
+    font-size: 13px !important;
+  }
 }
 
 /* -------------------------------------------------------
@@ -5255,18 +5260,26 @@ body {
 }
 
 @keyframes ringRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Story Mobile Optimization - Prevent Cropping */
-@media (max-width: 600px), (max-height: 750px) {
+@media (max-width: 600px),
+(max-height: 750px) {
   .story-header {
     padding: 12px 15px 8px !important;
   }
+
   .story-content-area {
     padding: 10px !important;
   }
+
   .story-card {
     aspect-ratio: auto !important;
     height: 100% !important;
@@ -5274,34 +5287,42 @@ body {
     padding: 20px 15px !important;
     border-radius: 24px !important;
   }
+
   .story-teams-stack {
     margin-bottom: 15px !important;
     gap: 8px !important;
   }
+
   .story-team-card.upcoming {
     padding: 14px 12px !important;
     gap: 12px !important;
     border-radius: 18px !important;
   }
+
   .story-match-details {
     padding: 14px 16px !important;
     gap: 10px !important;
     border-radius: 18px !important;
   }
+
   .story-player-row {
     gap: 10px !important;
   }
+
   .story-team-avatar-mini {
     width: 38px !important;
     height: 38px !important;
   }
+
   .story-player-name {
     font-size: 14px !important;
   }
+
   .story-xcode-tag {
     padding: 1px 6px !important;
     font-size: 9px !important;
   }
+
   .story-result-label {
     font-size: 10px !important;
     margin-bottom: 12px !important;
@@ -5310,10 +5331,10 @@ body {
 
 /* Utility: Text Truncation */
 .text-truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    display: inline-block;
-    vertical-align: bottom;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: bottom;
 }

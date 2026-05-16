@@ -18,11 +18,11 @@ if ($playerCode) {
     $stmtFind->execute([$playerCode]);
     $found = $stmtFind->fetch();
     if (!$found) jsonResponse(false, 'Player not found.');
-    $viewingId = $found['user_id'];
+    $viewingId = (int)$found['user_id'];
 } elseif ($targetId) {
-    $viewingId = $targetId;
+    $viewingId = (int)$targetId;
 } else {
-    $viewingId = $user['id'];
+    $viewingId = (int)$user['id'];
 }
 
 // Get basic user info
@@ -142,7 +142,7 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_lost' => 0, 'ranking' => null, 'ranking_change' => null, 'highest_ranking' => null,
         'points_this_week' => 0, 'win_rate' => 0, 'current_buffer' => 0
     ],
-    'is_self' => ($viewingId === $user['id']),
+    'is_self' => ((int)$viewingId === (int)$user['id']),
     'is_following' => $isFollowing,
     'has_active_story' => $hasActiveStory
 ]);

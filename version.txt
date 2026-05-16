@@ -1,3 +1,11 @@
+2.2.89 (Build 289) - 2026-05-16
+- UI: Implemented responsive nickname truncation (Mobile Match: 7, Mobile Detail: 10, Desktop: 13).
+- UI: Enforced 15-char limit on names and nicknames for layout stability.
+- Fix: Resolved "Follow Yourself" bug by standardizing router parameters and backend ID casting.
+- Fix: Eliminated Story avatar flickering by persisting auth_user_id to localStorage.
+- Performance: Fixed profile data access bug that caused empty states on revisit.
+- Version: 2.2.89 (Build 289)
+
 a28060d - 2026-04-24 16:46:13 +0300
 - Resolved Match Chat Permalink auto-open issues.
 - Fixed back button logic to return to match details from chat.
