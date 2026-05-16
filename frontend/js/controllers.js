@@ -2024,9 +2024,9 @@ const ProfileController = {
                     if (psSelect && p.playing_side) psSelect.value = p.playing_side;
 
                     console.log('[DEBUG] Checking location...');
-                    const locSelect = q('location');
-                    if (locSelect && p.location) {
-                        const loc = p.location;
+                    const locSelect = document.getElementById('edit-profile-location') || q('location');
+                    if (locSelect) {
+                        const loc = p.location || '';
                         console.log('[DEBUG] Setting location to:', loc);
                         locSelect.value = loc;
                         if (locSelect.value !== loc) {
@@ -2037,6 +2037,8 @@ const ProfileController = {
                                 }
                             }
                         }
+                    } else {
+                        console.error('[DEBUG] Location select NOT found by ID or name!');
                     }
                     const bioText = q('bio');
                     if (bioText && p.bio) bioText.value = p.bio;
