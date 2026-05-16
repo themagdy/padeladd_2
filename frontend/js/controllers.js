@@ -310,7 +310,7 @@ const StoriesController = {
                     <div class="story-avatar-ring">
                         ${UI.getAvatarHtml(item.player?.profile_image_thumb || item.player?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
-                    <span class="story-label">${item.isMine ? 'Your Story' : (item.player.nickname || item.player.first_name)}</span>
+                    <span class="story-label text-truncate" style="max-width: 65px;">${item.isMine ? 'Your Story' : (item.player.nickname || item.player.first_name)}</span>
                 </div>
             `;
 
@@ -430,7 +430,7 @@ const StoriesController = {
                              ${UI.getAvatarHtml(headerPlayer?.profile_image_thumb, 'width:100%;height:100%;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
                         </div>
                         <div class="story-user-info">
-                            <span class="story-username">${headerPlayer?.nickname || headerPlayer?.first_name}</span>
+                            <span class="story-username text-truncate" style="max-width: 120px;">${headerPlayer?.nickname || headerPlayer?.first_name}</span>
                             <span class="story-time">${story.type === 'upcoming' ? 'Upcoming Match' : 'Match Result'}</span>
                         </div>
                     </div>
@@ -1492,7 +1492,7 @@ const DashboardController = {
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
-                            <div style="font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.nickname}</div>
+                            <div class="text-truncate" style="font-size:14px; font-weight:700; max-width: 140px;">${r.nickname}</div>
                             <div style="display:flex; align-items:center; gap:6px; margin-top:2px;">
                                 <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:700; text-transform:uppercase;">${r.player_code}</span>
                                 <span style="font-size:10px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.first_name} ${r.last_name}</span>
@@ -2214,9 +2214,7 @@ const ProfileController = {
                 bio: bio.trim()
             };
 
-
             const res = await API.post('/profile/update', payload);
-
             if (res && res.success) {
                 Auth.setHasProfile(true);
                 // Important: Don't set hasLevel(true) here yet!
@@ -3270,7 +3268,7 @@ const MatchesController = {
             </div>
             <div style="text-align:right; flex-shrink:0;">
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
-               <div style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600;">By ${m.creator_nickname || m.creator_name}</div>
+               <div class="text-truncate" style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600; max-width: 100px;">By ${m.creator_nickname || m.creator_name}</div>
             </div>
           </div>
           <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; margin-top:20px; border:1px solid rgba(255,255,255,0.03);">
@@ -3506,9 +3504,9 @@ const MatchesController = {
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
-                    <div style="display:flex; align-items:center; gap:6px; opacity:0.8; min-width:0; flex:1;">
-                        <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${match.creator_nickname || match.creator_name}</span>
-                        ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px; flex-shrink:0;">${match.creator_code}</span>` : ''}
+                    <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
+                        <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
+                        ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
                     </div>
                     <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
@@ -3559,7 +3557,8 @@ const MatchesController = {
                     el.style.cursor = 'default';
                     el.onclick = null;
                 }
-                const displayName = s.nickname || s.first_name;
+                const rawName = s.nickname || s.first_name;
+                const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
 
                 el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
@@ -3567,7 +3566,7 @@ const MatchesController = {
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">
-                            <div class="slot-name" title="${displayName}">${displayName}</div>
+                            <div class="slot-name" title="${rawName}">${displayName}</div>
                             <div class="slot-side-wrapper" style="display:flex; align-items:center; gap:6px;">
                                 ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
                                 ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
