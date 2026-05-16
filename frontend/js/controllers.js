@@ -3114,7 +3114,7 @@ const MatchesController = {
             const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || '?';
             const profileUrl = `/p/${s.player_code}`;
             const rawName = s.nickname || s.first_name;
-            const displayName = rawName.length > 10 ? rawName.substring(0, 8) + '..' : rawName;
+            const displayName = rawName.length > 8 ? rawName.substring(0, 6) + '..' : rawName;
             return `
             <div class="player-mini-slot">
               <div class="player-avatar-mini" style="width:32px; height:32px; border-radius:50%; overflow:hidden;">
@@ -3558,7 +3558,7 @@ const MatchesController = {
                     el.onclick = null;
                 }
                 const rawName = s.nickname || s.first_name;
-                const displayName = (rawName.length > 9) ? rawName.substring(0, 7) + '..' : rawName;
+                const displayName = (rawName.length > 8) ? rawName.substring(0, 6) + '..' : rawName;
 
                 el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
