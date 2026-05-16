@@ -1106,3 +1106,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.71 (Build 271) - 2026-05-16
 - Cleanup: Removed debug logs and finalized Profile Edit stability fixes.
 - Version: 2.2.71 (Build 271)
+
+2.2.73 (Build 273) - 2026-05-16
+- UI: Improved long nickname truncation on mobile match view.
+- Fix: Finalized Profile Update stability fixes.
+- Version: 2.2.73 (Build 273)
