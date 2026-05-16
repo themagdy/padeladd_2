@@ -1102,3 +1102,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Resolved Profile Edit issues including broken photo upload, unresponsive save button, and location dropdown population.
 - Security: Hardened DOMPurify whitelist and improved form field validation logic.
 - Version: 2.2.70 (Build 270)
+
+2.2.71 (Build 271) - 2026-05-16
+- Cleanup: Removed debug logs and finalized Profile Edit stability fixes.
+- Version: 2.2.71 (Build 271)
