@@ -40,7 +40,7 @@ foreach ($stories as $s) {
     
     // Fetch all players for this story's match
     $pStmt = $pdo->prepare("
-        SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, mp.team_no
+        SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level, mp.team_no
         FROM match_players mp
         JOIN users u ON mp.user_id = u.id
         LEFT JOIN user_profiles up ON u.id = up.user_id
@@ -56,4 +56,17 @@ foreach ($stories as $s) {
     $result[] = $s;
 }
 
-jsonResponse(true, 'User stories loaded.', ['stories' => $result]);
+// Fetch the target player info for the header
+$playerStmt = $pdo->prepare("
+    SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level
+    FROM users u
+    LEFT JOIN user_profiles up ON u.id = up.user_id
+    WHERE u.id = ?
+");
+$playerStmt->execute([$targetId]);
+$targetPlayer = $playerStmt->fetch(PDO::FETCH_ASSOC);
+
+jsonResponse(true, 'User stories loaded.', [
+    'stories' => $result,
+    'player' => $targetPlayer
+]);

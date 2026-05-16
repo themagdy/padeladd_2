@@ -1137,3 +1137,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Corrected Player XCode display in stories (was showing internal ID).
 - Fix: Added Skill Level badges to upcoming match stories.
 - Version: 2.2.90 (Build 290)
+
+2.2.95 (Build 295) - 2026-05-16
+- Fix: Story header now correctly identifies the specific player clicked from Ranking/Profile.
+- UI: Removed "XCODE:" label and unsolicited level badges from story previews.
+- UI: Hidden dashboard story separator when only a single item exists.
+- Fix: Ensured Player XCode consistency across all story API endpoints.
+- Version: 2.2.95 (Build 295)

@@ -314,8 +314,8 @@ const StoriesController = {
                 </div>
             `;
 
-            // Add separator after the user's stories section
-            if (item.isMine && (idx === trayItems.length - 1 || !trayItems[idx + 1].isMine)) {
+            // Add separator after the user's stories section, but only if there are other stories
+            if (item.isMine && trayItems.length > 1 && (idx === trayItems.length - 1 || !trayItems[idx + 1].isMine)) {
                 html += `<div class="story-separator"></div>`;
             }
         });
