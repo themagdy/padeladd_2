@@ -2167,9 +2167,14 @@ const ProfileController = {
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log('--- Profile Update Started ---');
             UI.clearErrors(form);
             
-            const getVal = (name) => q(name)?.value || '';
+            const getVal = (name) => {
+                const el = q(name);
+                console.log(`Field [${name}] value:`, el ? el.value : 'NOT FOUND');
+                return el ? el.value : '';
+            };
 
             const firstName = getVal('first_name');
             const lastName = getVal('last_name');
@@ -2210,8 +2215,10 @@ const ProfileController = {
                 location: location,
                 bio: bio.trim()
             };
+            console.log('Update Payload:', payload);
 
             const res = await API.post('/profile/update', payload);
+            console.log('Update Response:', res);
             if (res && res.success) {
                 Auth.setHasProfile(true);
                 // Important: Don't set hasLevel(true) here yet!
