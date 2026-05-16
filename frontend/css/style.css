@@ -3174,7 +3174,7 @@ form {
     font-weight: 800;
     text-align: left;
     margin: 0;
-    max-width: 90%;
+    max-width: 80px;
   }
 
   .mv-slot .slot-row-bottom {
@@ -3429,6 +3429,12 @@ form {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+}
+
+.mv-slot .slot-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .match-venue-name {
