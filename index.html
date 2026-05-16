@@ -128,7 +128,7 @@
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['id', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
+                ADD_ATTR: ['id', 'name', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
 
@@ -175,7 +175,6 @@
                         
                         return true;
                     })(val);
-                    
                     if (!isTrusted) {
                         node.removeAttribute(attr);
                     }
