@@ -1132,3 +1132,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Eliminated Story avatar flickering by persisting auth_user_id to localStorage.
 - Performance: Fixed profile data access bug that caused empty states on revisit.
 - Version: 2.2.89 (Build 289)
+
+2.2.90 (Build 290) - 2026-05-16
+- Fix: Corrected Player XCode display in stories (was showing internal ID).
+- Fix: Added Skill Level badges to upcoming match stories.
+- Version: 2.2.90 (Build 290)
