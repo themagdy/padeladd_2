@@ -1120,3 +1120,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.2.74 (Build 274) - 2026-05-16
 - UI: Unified aggressive nickname truncation in both Match Detail and Dashboard Match Cards (8 char limit).
 - Version: 2.2.74 (Build 274)
+
+2.2.75 (Build 275) - 2026-05-16
+- UI: Reduced nickname font size on mobile to 12px for better fit.
+- Version: 2.2.75 (Build 275)
