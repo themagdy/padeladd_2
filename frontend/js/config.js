@@ -26,6 +26,6 @@ const CONFIG = {
     ASSET_BASE: isCapacitor ? 'https://ahmedmagdy.com/pl' : (isLocal ? '/padeladd4' : '/pl'),
     LIVE_URL: 'https://ahmedmagdy.com/pl',
     APP_ENV: isLocal ? 'development' : 'production',
-    APP_BUILD_REF: isCapacitor ? "2.2.50" : "Web",
+    APP_BUILD_REF: isCapacitor ? "2.2.70" : "Web",
     SKELETON_DELAY: 300
 };
