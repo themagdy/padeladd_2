@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#11161E">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <base href="/padeladd4/">
     <script>
-        (function() {
+        (function () {
             var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             if (!isLocal) {
                 var b = document.querySelector('base');
@@ -28,15 +30,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <!-- CSS -->
-    <link rel="stylesheet" href="frontend/css/style.css?v=289">
+    <link rel="stylesheet" href="frontend/css/style.css?v=261">
 </head>
+
 <body>
     <div id="app">
         <!-- Unified Top Bar for Sub-pages -->
         <header id="top-bar-nav" class="fixed-top-bar" style="display: none;">
-            <div id="top-bar-inner" style="width:100%; max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 16px; height: 100%;">
-                <a href="javascript:void(0)" onclick="Router.back()" style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:transparent; border:none; color:var(--c-text); text-decoration:none; margin-left:-12px;">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <div id="top-bar-inner"
+                style="width:100%; max-width:480px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 16px; height: 100%;">
+                <a href="javascript:void(0)" onclick="Router.back()"
+                    style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:transparent; border:none; color:var(--c-text); text-decoration:none; margin-left:-12px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
                 </a>
                 <div id="top-bar-actions" style="display: flex; align-items: center;"></div>
             </div>
@@ -89,27 +97,40 @@
     </div>
 
     <!-- Mobile-optimized Cropping Modal -->
-    <div id="crop-modal-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:10000; flex-direction:column; align-items:center; justify-content:center; padding:15px;">
-        <div style="width:100%; max-width:400px; background:#111; position:relative; overflow:hidden; border-radius:12px; display:flex; flex-direction:column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-            <div style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+    <div id="crop-modal-overlay"
+        style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); z-index:10000; flex-direction:column; align-items:center; justify-content:center; padding:15px;">
+        <div
+            style="width:100%; max-width:400px; background:#111; position:relative; overflow:hidden; border-radius:12px; display:flex; flex-direction:column; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <div
+                style="padding:15px; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center;">
                 <h3 style="margin:0; font-size:16px; color:#fff;">Center Your Face</h3>
-                <button onclick="ProfileController.cancelCrop()" style="background:transparent; border:none; color:#fff; padding:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-right:-10px;">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <button onclick="ProfileController.cancelCrop()"
+                    style="background:transparent; border:none; color:#fff; padding:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-right:-10px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div id="crop-container" style="height:350px; background:#000; position:relative; width:100%;">
                 <img id="crop-image-el" style="max-width:100%; display:block;">
             </div>
-            
+
             <!-- Zoom Controls -->
-            <div style="padding:15px; background:#1a1a1a; display:flex; align-items:center; gap:15px; border-top:1px solid #333;">
-                <button onclick="ProfileController.zoom(-0.1)" style="background:transparent; border:none; color:#fff; font-size:20px; padding:5px; cursor:pointer;">➖</button>
-                <input type="range" id="crop-zoom-bar" min="0.1" max="3" step="0.01" value="1" style="flex:1; accent-color:var(--c-primary); height:4px; border-radius:2px; appearance:none; background:#444;">
-                <button onclick="ProfileController.zoom(0.1)" style="background:transparent; border:none; color:#fff; font-size:20px; padding:5px; cursor:pointer;">➕</button>
+            <div
+                style="padding:15px; background:#1a1a1a; display:flex; align-items:center; gap:15px; border-top:1px solid #333;">
+                <button onclick="ProfileController.zoom(-0.1)"
+                    style="background:transparent; border:none; color:#fff; font-size:20px; padding:5px; cursor:pointer;">➖</button>
+                <input type="range" id="crop-zoom-bar" min="0.1" max="3" step="0.01" value="1"
+                    style="flex:1; accent-color:var(--c-primary); height:4px; border-radius:2px; appearance:none; background:#444;">
+                <button onclick="ProfileController.zoom(0.1)"
+                    style="background:transparent; border:none; color:#fff; font-size:20px; padding:5px; cursor:pointer;">➕</button>
             </div>
 
             <div style="padding:15px; background:#111; display:flex; gap:10px; border-top:1px solid #333;">
-                <button onclick="ProfileController.confirmCrop()" class="btn btn-primary" style="flex:1;">Perfect, Save Photo</button>
+                <button onclick="ProfileController.confirmCrop()" class="btn btn-primary" style="flex:1;">Perfect, Save
+                    Photo</button>
             </div>
         </div>
     </div>
@@ -123,9 +144,11 @@
         }
     </script>
     <!-- DOMPurify: XSS sanitization for innerHTML -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"
+        integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        window.safeHTML = function(html) {
+        window.safeHTML = function (html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
                 ADD_ATTR: ['id', 'name', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
@@ -133,31 +156,31 @@
         };
 
         // Precision Hardening: Only allow event handlers that match trusted app patterns
-        DOMPurify.addHook('afterSanitizeAttributes', function(node) {
+        DOMPurify.addHook('afterSanitizeAttributes', function (node) {
             const handlers = ['onclick', 'onerror', 'onload', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup'];
             handlers.forEach(attr => {
                 if (node.hasAttribute(attr)) {
                     const val = node.getAttribute(attr);
                     // Strictly allow only known internal patterns
                     // Strictly allow only known internal patterns
-                    const isTrusted = (function(str) {
+                    const isTrusted = (function (str) {
                         const s = str.toLowerCase();
                         // 1. Block dangerous keywords
                         if (s.includes('eval') || s.includes('fetch') || s.includes('cookie') || s.includes('document.') || s.includes('window.') || s.includes('location.') || s.includes('xmlhttprequest')) return false;
-                        
+
                         // 2. Define safe patterns
                         const whitelist = [
-                            'Router.navigate', 'DashboardController', 'MatchesController', 
-                            'NotificationsController', 'ScoringController', 'ChatController', 
+                            'Router.navigate', 'DashboardController', 'MatchesController',
+                            'NotificationsController', 'ScoringController', 'ChatController',
                             'RankingUI', 'Auth.', 'API.post', 'UI.', 'clearInterval', 'FX.',
-                            'this.src=', 'this.parentElement.remove', 'classList.add', 
+                            'this.src=', 'this.parentElement.remove', 'classList.add',
                             'this.style.display', 'this.style.background', 'this.style.transform',
                             'event.stopPropagation()', 'ConfirmModal', 'ProfileController',
                             'sessionStorage.setItem', 'StatsUI', 'ScoreUI', 'PollManager',
                             'RankingController', 'ProfileViewController', 'StoriesController',
                             '.click()', '.focus()'
                         ];
-                        
+
                         // 3. Validate content
                         const hasTrustedPattern = whitelist.some(p => str.includes(p));
                         if (!hasTrustedPattern) return false;
@@ -172,7 +195,7 @@
                                 return whitelist.some(w => p.includes(w)) || (!p.includes('(') && !p.includes('='));
                             });
                         }
-                        
+
                         return true;
                     })(val);
                     if (!isTrusted) {
@@ -182,11 +205,12 @@
             });
         });
     </script>
-    <script src="frontend/js/config.js?v=289"></script>
-    <script src="frontend/js/auth.js?v=289"></script>
-    <script src="frontend/js/api.js?v=289"></script>
-    <script src="frontend/js/controllers.js?v=289"></script>
-    <script src="frontend/js/router.js?v=289"></script>
-    <script src="frontend/js/app.js?v=289"></script>
+    <script src="frontend/js/config.js?v=288"></script>
+    <script src="frontend/js/auth.js?v=288"></script>
+    <script src="frontend/js/api.js?v=288"></script>
+    <script src="frontend/js/controllers.js?v=288"></script>
+    <script src="frontend/js/router.js?v=288"></script>
+    <script src="frontend/js/app.js?v=288"></script>
 </body>
+
 </html>
