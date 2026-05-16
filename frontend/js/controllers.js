@@ -1889,8 +1889,15 @@ const ProfileController = {
 
             if (res && res.success) {
                 const displayImg = res.data.profile_image_thumb || res.data.profile_image;
-                const avContainer = document.getElementById('edit-avatar-container');
-                avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
+                const imgEl = document.getElementById('edit-avatar-img');
+                const previewEl = document.getElementById('edit-avatar-preview');
+                const removeBtn = document.getElementById('remove-avatar-btn');
+
+                if (imgEl && previewEl) {
+                    imgEl.src = CONFIG.ASSET_BASE + '/' + displayImg;
+                    imgEl.style.display = 'block';
+                    previewEl.style.display = 'none';
+                }
 
                 if (removeBtn) removeBtn.style.display = 'block';
                 Toast.show('Photo updated', 'success');
@@ -1976,10 +1983,24 @@ const ProfileController = {
                         input.title = 'Gender cannot be changed once set.';
 
                         genderSelect.parentNode.replaceChild(input, genderSelect);
+                        // Force form element update
+                        if (form.elements) form.elements['gender'] = input;
                     }
-                    if (form.playing_side && p.playing_side) form.playing_side.value = p.playing_side;
-                    if (form.location && p.location) form.location.value = p.location;
-                    if (form.bio && p.bio) form.bio.value = p.bio;
+                    if (form.elements['playing_side'] && p.playing_side) form.elements['playing_side'].value = p.playing_side;
+                    if (form.elements['location'] && p.location) {
+                        const loc = p.location;
+                        const select = form.elements['location'];
+                        select.value = loc;
+                        if (select.value !== loc) {
+                            for (let i = 0; i < select.options.length; i++) {
+                                if (select.options[i].value.toLowerCase() === loc.toLowerCase()) {
+                                    select.value = select.options[i].value;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (form.elements['bio'] && p.bio) form.elements['bio'].value = p.bio;
 
                     Auth.setHasProfile(true); // They have a profile row
                     Auth.setHasLevel(!!p.level);
@@ -2004,17 +2025,22 @@ const ProfileController = {
                 }
 
                 // Avatar setup
-                const avContainer = document.getElementById('edit-avatar-container');
+                const imgEl = document.getElementById('edit-avatar-img');
+                const previewEl = document.getElementById('edit-avatar-preview');
                 const removeBtn = document.getElementById('remove-avatar-btn');
 
                 const displayImg = p.profile_image_thumb || p.profile_image;
-                if (displayImg) {
-                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(displayImg, 'width:80px; height:80px; border-radius:50%; object-fit:cover;', 'width:80px; height:80px; border-radius:50%;'));
+                if (displayImg && imgEl && previewEl) {
+                    imgEl.src = CONFIG.ASSET_BASE + '/' + displayImg;
+                    imgEl.style.display = 'block';
+                    previewEl.style.display = 'none';
                     if (removeBtn) removeBtn.style.display = 'block';
-                } else if (u) {
+                } else if (u && previewEl && imgEl) {
                     // Show initials if no photo
-                    const initials = (u.first_name[0] + u.last_name[0]).toUpperCase();
-                    avContainer.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:80px; height:80px; font-size:28px; border-radius:50%;', initials));
+                    const initials = (u.first_name[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase();
+                    previewEl.innerHTML = `<span style="font-size:28px;">${initials}</span>`;
+                    previewEl.style.display = 'flex';
+                    imgEl.style.display = 'none';
                     if (removeBtn) removeBtn.style.display = 'none';
                 }
             }
@@ -2084,14 +2110,24 @@ const ProfileController = {
                 reader.readAsDataURL(file);
             });
         }
+        const uploadPhotoBtn = document.getElementById('upload-photo-btn');
+        if (uploadPhotoBtn) {
+            uploadPhotoBtn.onclick = (e) => {
+                e.preventDefault();
+                const input = document.getElementById('avatar-input');
+                if (input) input.click();
+            };
+        }
 
         const removeAvatarBtn = document.getElementById('remove-avatar-btn');
         if (removeAvatarBtn) {
             removeAvatarBtn.addEventListener('click', async () => {
                 const res = await API.post('/profile/remove_image', {});
                 if (res && res.success) {
-                    document.getElementById('edit-avatar-img').style.display = 'none';
-                    document.getElementById('edit-avatar-preview').style.display = 'flex';
+                    const imgEl = document.getElementById('edit-avatar-img');
+                    const previewEl = document.getElementById('edit-avatar-preview');
+                    if (imgEl) imgEl.style.display = 'none';
+                    if (previewEl) previewEl.style.display = 'flex';
                     removeAvatarBtn.style.display = 'none';
                     Toast.show('Photo removed', 'success');
                     UI.syncNav();
@@ -2102,14 +2138,26 @@ const ProfileController = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
+            const firstName = form.elements['first_name'] ? form.elements['first_name'].value : '';
+            const lastName = form.elements['last_name'] ? form.elements['last_name'].value : '';
+            const gender = form.elements['gender'] ? form.elements['gender'].value : '';
+            const side = form.elements['playing_side'] ? form.elements['playing_side'].value : '';
+            const location = form.elements['location'] ? form.elements['location'].value : '';
+            const nickname = form.elements['nickname'] ? form.elements['nickname'].value : '';
+            const bio = form.elements['bio'] ? form.elements['bio'].value : '';
 
-            if (!form.first_name.value) { UI.showError('first_name', 'First name is required', form); return; }
-            if (!form.last_name.value) { UI.showError('last_name', 'Last name is required', form); return; }
-            if (!form.dob_day.value) { UI.showError('dob_day', 'Select day', form); return; }
-            if (!form.dob_month.value) { UI.showError('dob_month', 'Select month', form); return; }
-            if (!form.dob_year.value) { UI.showError('dob_year', 'Select year', form); return; }
+            if (!firstName) { UI.showError('first_name', 'First name is required', form); return; }
+            if (!lastName) { UI.showError('last_name', 'Last name is required', form); return; }
+            
+            const dobDay = form.elements['dob_day'] ? form.elements['dob_day'].value : '';
+            const dobMonth = form.elements['dob_month'] ? form.elements['dob_month'].value : '';
+            const dobYearVal = form.elements['dob_year'] ? form.elements['dob_year'].value : '';
 
-            const dobYear = parseInt(form.dob_year.value);
+            if (!dobDay) { UI.showError('dob_day', 'Select day', form); return; }
+            if (!dobMonth) { UI.showError('dob_month', 'Select month', form); return; }
+            if (!dobYearVal) { UI.showError('dob_year', 'Select year', form); return; }
+
+            const dobYear = parseInt(dobYearVal);
             const curY = new Date().getFullYear();
             const age = curY - dobYear;
             if (age < 14 || age > 65) {
@@ -2117,21 +2165,21 @@ const ProfileController = {
                 return;
             }
 
-            if (!form.gender.value) { UI.showError('gender', 'Please select gender', form); return; }
-            if (!form.playing_side.value) { UI.showError('playing_side', 'Please select your side', form); return; }
-            if (!form.location.value) { UI.showError('location', 'Please select location', form); return; }
+            if (!gender) { UI.showError('gender', 'Please select gender', form); return; }
+            if (!side) { UI.showError('playing_side', 'Please select your side', form); return; }
+            if (!location) { UI.showError('location', 'Please select location', form); return; }
 
-            const dob = `${form.dob_year.value}-${form.dob_month.value}-${form.dob_day.value}`;
+            const dob = `${dobYearVal}-${dobMonth}-${dobDay}`;
 
             const payload = {
-                first_name: Sanitizer.cleanName(form.first_name.value),
-                last_name: Sanitizer.cleanName(form.last_name.value),
+                first_name: Sanitizer.cleanName(firstName),
+                last_name: Sanitizer.cleanName(lastName),
                 date_of_birth: dob,
-                gender: form.gender.value,
-                playing_side: form.playing_side.value,
-                nickname: Sanitizer.cleanName(form.nickname.value),
-                location: form.location.value,
-                bio: form.bio.value.trim()
+                gender: gender,
+                playing_side: side,
+                nickname: Sanitizer.cleanName(nickname),
+                location: location,
+                bio: bio.trim()
             };
 
             const res = await API.post('/profile/update', payload);
