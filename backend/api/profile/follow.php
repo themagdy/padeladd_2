@@ -12,7 +12,7 @@ if ($target_id <= 0) {
     jsonResponse(false, 'target_user_id is required.', null, 422);
 }
 
-if ($target_id === $uid) {
+if ((int)$target_id === (int)$uid) {
     jsonResponse(false, 'You cannot follow yourself.', null, 422);
 }
 

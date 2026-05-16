@@ -12,7 +12,7 @@ const Router = {
         '/profile/view/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
         '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() },
-        '/p/:profileId': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init({ id: params.profileId }) },
+        '/p/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         // ── Phase 3: Match System ──────────────────────────────────────────────
         '/matches': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
         '/matches/my': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('mine') },

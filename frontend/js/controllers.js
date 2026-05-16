@@ -246,7 +246,7 @@ const StoriesController = {
         }
 
         tray.style.display = 'flex';
-        const currentUserId = DashboardController._currentUser?.id;
+        const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
 
         // 1. Group stories by player (Unique Avatars)
         const playerGroups = {}; // playerId -> { player: obj, stories: [], isMine: bool }
@@ -771,6 +771,7 @@ const AuthController = {
             const res = await API.post('/login', payload);
             if (res && res.success) {
                 Auth.setToken(res.data.token);
+                if (res.data.user_id) localStorage.setItem('auth_user_id', res.data.user_id);
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile); 
 
@@ -1216,6 +1217,10 @@ const DashboardController = {
         DashboardController._currentUser = user;
         DashboardController._currentProfile = profile;
 
+        if (user && user.id) {
+            localStorage.setItem('auth_user_id', user.id);
+        }
+
         // Default ranking tab to user's gender or saved preference
         const savedRankGender = sessionStorage.getItem('ranking_gender');
         if (savedRankGender) {
@@ -1600,7 +1605,9 @@ const ProfileViewController = {
             }
             return;
         }
-        const { user, profile, stats, is_self, is_following, has_active_story } = res.data;
+        // Normalize data: 'res' might be the full response {success, data} or just the data from cache
+        const profileData = res.data || res;
+        const { user, profile, stats, is_self, is_following, has_active_story } = profileData;
 
         // Avatar with Story Ring
         const av = document.getElementById('prof-avatar');
@@ -1817,14 +1824,21 @@ const ProfileViewController = {
     },
 
     toggleFollow: async function() {
+        // Try to get target ID from Router params, but fallback to 'self'
         const cacheKey = Router.params && Router.params.id ? Router.params.id : 'self';
         const cached = ProfileViewController._viewCache[cacheKey];
-        if (!cached || !cached.user) return;
+        
+        // Safety: If we don't have cached data, we can't perform the action
+        if (!cached || !cached.user) {
+            console.error('Follow action failed: No cached user data for', cacheKey);
+            return;
+        }
 
+        const targetUserId = cached.user.id;
         const btn = document.getElementById('prof-follow-btn');
         if (btn) btn.disabled = true;
 
-        const res = await API.post('/profile/follow', { target_user_id: cached.user.id });
+        const res = await API.post('/profile/follow', { target_user_id: targetUserId });
         if (res && res.success) {
             // Update cache
             cached.is_following = res.data.is_following;
@@ -3114,7 +3128,9 @@ const MatchesController = {
             const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || '?';
             const profileUrl = `/p/${s.player_code}`;
             const rawName = s.nickname || s.first_name;
-            const displayName = rawName.length > 8 ? rawName.substring(0, 6) + '..' : rawName;
+            const isMob = window.innerWidth < 600;
+            const limit = isMob ? 7 : 13;
+            const displayName = rawName.length > limit ? rawName.substring(0, limit - 2) + '..' : rawName;
             return `
             <div class="player-mini-slot">
               <div class="player-avatar-mini" style="width:32px; height:32px; border-radius:50%; overflow:hidden;">
@@ -3558,7 +3574,9 @@ const MatchesController = {
                     el.onclick = null;
                 }
                 const rawName = s.nickname || s.first_name;
-                const displayName = (rawName.length > 8) ? rawName.substring(0, 6) + '..' : rawName;
+                const isMob = window.innerWidth < 600;
+                const limit = isMob ? 10 : 13;
+                const displayName = (rawName.length > limit) ? rawName.substring(0, limit - 2) + '..' : rawName;
 
                 el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
