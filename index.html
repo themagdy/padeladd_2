@@ -128,7 +128,7 @@
         window.safeHTML = function(html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
-                ADD_ATTR: ['style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
+                ADD_ATTR: ['id', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
 
