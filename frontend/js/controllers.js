@@ -1924,11 +1924,7 @@ const ProfileController = {
 
     initEdit: function () {
         const form = document.getElementById('profile-form');
-        console.log('[DEBUG] ProfileController.initEdit running, form found:', !!form);
-        if (!form) {
-            console.error('[DEBUG] Profile form NOT found in DOM!');
-            return;
-        }
+        if (!form) return;
 
         const q = (name) => form.querySelector(`[name="${name}"]`);
 
@@ -1978,10 +1974,7 @@ const ProfileController = {
             if (res && res.success) {
                 const p = res.data.profile;
                 const u = res.data.user;
-                console.log('[DEBUG] Profile data from DB:', p);
-                console.log('[DEBUG] User data from DB:', u);
                 if (u) {
-                    console.log('[DEBUG] Populating user info...');
                     const fn = q('first_name');
                     const ln = q('last_name');
                     if (fn) fn.value = u.first_name || '';
@@ -1994,12 +1987,10 @@ const ProfileController = {
                     if (phoneEl) phoneEl.textContent = u.mobile || '—';
                 }
                 if (p) {
-                    console.log('[DEBUG] Populating profile info...');
                     const nick = q('nickname');
                     if (nick && p.nickname) nick.value = p.nickname;
                     
                     const genderSelect = q('gender');
-                    console.log('[DEBUG] Gender select found:', !!genderSelect);
                     if (genderSelect && p.gender) {
                         const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
 
@@ -2019,15 +2010,12 @@ const ProfileController = {
                         // Force form element update
                         if (form.elements) form.elements['gender'] = input;
                     }
-                    console.log('[DEBUG] Checking playing_side...');
                     const psSelect = q('playing_side');
                     if (psSelect && p.playing_side) psSelect.value = p.playing_side;
 
-                    console.log('[DEBUG] Checking location...');
                     const locSelect = document.getElementById('edit-profile-location') || q('location');
                     if (locSelect) {
                         const loc = p.location || '';
-                        console.log('[DEBUG] Setting location to:', loc);
                         locSelect.value = loc;
                         if (locSelect.value !== loc) {
                             for (let i = 0; i < locSelect.options.length; i++) {
@@ -2037,8 +2025,6 @@ const ProfileController = {
                                 }
                             }
                         }
-                    } else {
-                        console.error('[DEBUG] Location select NOT found by ID or name!');
                     }
                     const bioText = q('bio');
                     if (bioText && p.bio) bioText.value = p.bio;
@@ -2182,7 +2168,6 @@ const ProfileController = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
-            console.log('[DEBUG] Form submit triggered');
             
             const getVal = (name) => q(name)?.value || '';
 
