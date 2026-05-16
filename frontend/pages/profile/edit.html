@@ -14,7 +14,7 @@
             <img id="edit-avatar-img" src="" style="display:none; width:80px; height:80px; border-radius:50%; object-fit:cover;">
         </div>
         <div style="display:flex; flex-direction:column; gap:8px;">
-            <button type="button" onclick="document.getElementById('avatar-input').click()" class="btn btn-primary btn-sm" style="width:auto;">Upload Photo</button>
+            <button id="upload-photo-btn" type="button" class="btn btn-primary btn-sm" style="width:auto;">Upload Photo</button>
             <button id="remove-avatar-btn" type="button" style="display:none; background:transparent; border:none; color:var(--c-red); font-size:12px; font-weight:700; width:fit-content; border-bottom:1px solid transparent; padding:2px 0; margin-top:5px;" onmouseover="this.style.borderBottomColor='var(--c-red)'" onmouseout="this.style.borderBottomColor='transparent'">Remove photo</button>
             <input type="file" id="avatar-input" accept="image/*" style="display:none;">
             <p style="font-size:11px; color:var(--c-text-dim);">JPG, PNG or WEBP.</p>
