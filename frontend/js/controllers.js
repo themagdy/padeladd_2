@@ -1924,7 +1924,11 @@ const ProfileController = {
 
     initEdit: function () {
         const form = document.getElementById('profile-form');
-        if (!form) return;
+        console.log('[DEBUG] ProfileController.initEdit running, form found:', !!form);
+        if (!form) {
+            console.error('[DEBUG] Profile form NOT found in DOM!');
+            return;
+        }
 
         const q = (name) => form.querySelector(`[name="${name}"]`);
 
@@ -1974,7 +1978,10 @@ const ProfileController = {
             if (res && res.success) {
                 const p = res.data.profile;
                 const u = res.data.user;
+                console.log('[DEBUG] Profile data from DB:', p);
+                console.log('[DEBUG] User data from DB:', u);
                 if (u) {
+                    console.log('[DEBUG] Populating user info...');
                     const fn = q('first_name');
                     const ln = q('last_name');
                     if (fn) fn.value = u.first_name || '';
@@ -1987,10 +1994,12 @@ const ProfileController = {
                     if (phoneEl) phoneEl.textContent = u.mobile || '—';
                 }
                 if (p) {
+                    console.log('[DEBUG] Populating profile info...');
                     const nick = q('nickname');
                     if (nick && p.nickname) nick.value = p.nickname;
                     
                     const genderSelect = q('gender');
+                    console.log('[DEBUG] Gender select found:', !!genderSelect);
                     if (genderSelect && p.gender) {
                         const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
 
@@ -2010,10 +2019,14 @@ const ProfileController = {
                         // Force form element update
                         if (form.elements) form.elements['gender'] = input;
                     }
+                    console.log('[DEBUG] Checking playing_side...');
                     if (form.elements['playing_side'] && p.playing_side) form.elements['playing_side'].value = p.playing_side;
+                    console.log('[DEBUG] Checking location...');
                     if (form.elements['location'] && p.location) {
                         const loc = p.location;
                         const select = form.elements['location'];
+                        console.log('[DEBUG] Setting location to:', loc);
+                        console.log('[DEBUG] Select options count:', select.options.length);
                         select.value = loc;
                         if (select.value !== loc) {
                             for (let i = 0; i < select.options.length; i++) {
@@ -2165,6 +2178,7 @@ const ProfileController = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
+            console.log('[DEBUG] Form submit triggered');
             
             const getVal = (name) => q(name)?.value || '';
 
