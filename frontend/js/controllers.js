@@ -2020,24 +2020,26 @@ const ProfileController = {
                         if (form.elements) form.elements['gender'] = input;
                     }
                     console.log('[DEBUG] Checking playing_side...');
-                    if (form.elements['playing_side'] && p.playing_side) form.elements['playing_side'].value = p.playing_side;
+                    const psSelect = q('playing_side');
+                    if (psSelect && p.playing_side) psSelect.value = p.playing_side;
+
                     console.log('[DEBUG] Checking location...');
-                    if (form.elements['location'] && p.location) {
+                    const locSelect = q('location');
+                    if (locSelect && p.location) {
                         const loc = p.location;
-                        const select = form.elements['location'];
                         console.log('[DEBUG] Setting location to:', loc);
-                        console.log('[DEBUG] Select options count:', select.options.length);
-                        select.value = loc;
-                        if (select.value !== loc) {
-                            for (let i = 0; i < select.options.length; i++) {
-                                if (select.options[i].value.toLowerCase() === loc.toLowerCase()) {
-                                    select.value = select.options[i].value;
+                        locSelect.value = loc;
+                        if (locSelect.value !== loc) {
+                            for (let i = 0; i < locSelect.options.length; i++) {
+                                if (locSelect.options[i].value.toLowerCase() === loc.toLowerCase()) {
+                                    locSelect.value = locSelect.options[i].value;
                                     break;
                                 }
                             }
                         }
                     }
-                    if (form.elements['bio'] && p.bio) form.elements['bio'].value = p.bio;
+                    const bioText = q('bio');
+                    if (bioText && p.bio) bioText.value = p.bio;
 
                     Auth.setHasProfile(true); // They have a profile row
                     Auth.setHasLevel(!!p.level);
