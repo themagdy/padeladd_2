@@ -2167,12 +2167,10 @@ const ProfileController = {
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            console.log('--- Profile Update Started ---');
             UI.clearErrors(form);
             
             const getVal = (name) => {
                 const el = (name === 'location') ? (document.getElementById('edit-profile-location') || q(name)) : q(name);
-                console.log(`Field [${name}] value:`, el ? el.value : 'NOT FOUND');
                 return el ? el.value : '';
             };
 
@@ -2215,10 +2213,10 @@ const ProfileController = {
                 location: location,
                 bio: bio.trim()
             };
-            console.log('Update Payload:', payload);
+
 
             const res = await API.post('/profile/update', payload);
-            console.log('Update Response:', res);
+
             if (res && res.success) {
                 Auth.setHasProfile(true);
                 // Important: Don't set hasLevel(true) here yet!
@@ -3508,9 +3506,9 @@ const MatchesController = {
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
-                    <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
-                        <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
-                        ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
+                    <div style="display:flex; align-items:center; gap:6px; opacity:0.8; min-width:0; flex:1;">
+                        <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${match.creator_nickname || match.creator_name}</span>
+                        ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px; flex-shrink:0;">${match.creator_code}</span>` : ''}
                     </div>
                     <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
@@ -3561,8 +3559,7 @@ const MatchesController = {
                     el.style.cursor = 'default';
                     el.onclick = null;
                 }
-                const rawName = s.nickname || s.first_name;
-                const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
+                const displayName = s.nickname || s.first_name;
 
                 el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
@@ -3570,7 +3567,7 @@ const MatchesController = {
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">
-                            <div class="slot-name" title="${rawName}">${displayName}</div>
+                            <div class="slot-name" title="${displayName}">${displayName}</div>
                             <div class="slot-side-wrapper" style="display:flex; align-items:center; gap:6px;">
                                 ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
                                 ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
