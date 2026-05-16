@@ -5237,7 +5237,7 @@ body {
   left: -5px;
   right: -5px;
   bottom: -5px;
-  border-radius: 42px;
+  border-radius: 43%;
   padding: 3px;
   background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);

@@ -1606,11 +1606,11 @@ const ProfileViewController = {
             }
             
             if (profile && thumb) {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:38px; object-fit:cover;', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.remove('avatar-placeholder');
                 av.style.background = 'none';
             } else {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:38px;', initials) + '<div class="avatar-scan-overlay"></div>');
+                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.add('avatar-placeholder');
                 av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
             }
