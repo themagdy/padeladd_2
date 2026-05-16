@@ -488,7 +488,6 @@ const StoriesController = {
                     </div>
                     <div class="story-player-identity" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
                         <span class="story-xcode-tag" style="background:rgba(247,148,29,0.1); border:1px solid rgba(247,148,29,0.3); color:var(--c-orange); font-size:10px; font-weight:900; padding:2px 8px; border-radius:6px; letter-spacing:0.5px; font-family:'Outfit';">XCODE: ${xcode}</span>
-                        ${level ? `<span class="story-level-badge" style="background:rgba(27, 82, 206, 0.15); border:1px solid rgba(27, 82, 206, 0.3); color:#60a5fa; font-size:9px; font-weight:800; padding:1px 6px; border-radius:6px; text-transform:uppercase;">${level} LEVEL</span>` : ''}
                     </div>
                 </div>
             `;
