@@ -1073,3 +1073,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
     - Data: Fixed team mapping to correctly support external player replacements (e.g. Lebron) in Match History and Stories.
     - Scoring: Hardened Weekly Progress (+/-) tracking to be additive, supporting multi-round sessions under one Match ID.
 - Version: 2.2.65 (Build 265)
+
+2.2.66 (Build 266) - 2026-05-16
+- UI: Adjusted mobile player profile avatar and story ring radius to 43% for a refined squircle look.
+- Version: 2.2.66 (Build 266)
