@@ -3558,7 +3558,7 @@ const MatchesController = {
                     el.onclick = null;
                 }
                 const rawName = s.nickname || s.first_name;
-                const displayName = (rawName.length > 18) ? rawName.substring(0, 16) + '..' : rawName;
+                const displayName = (rawName.length > 9) ? rawName.substring(0, 7) + '..' : rawName;
 
                 el.innerHTML = safeHTML(`
                     <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
