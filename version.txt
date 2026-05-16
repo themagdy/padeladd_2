@@ -1111,3 +1111,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Improved long nickname truncation on mobile match view.
 - Fix: Finalized Profile Update stability fixes.
 - Version: 2.2.73 (Build 273)
+
+2.2.72 (Build 272) - 2026-05-16
+- UI: Implemented nickname truncation across all components to ensure mobile layout stability.
+- Fix: Finalized and cleaned up Profile Edit stability fixes.
+- Version: 2.2.72 (Build 272)
