@@ -751,23 +751,28 @@ const AuthController = {
         const form = document.getElementById('login-form');
         if (!form) return;
 
+        const q = (name) => form.querySelector(`[name="${name}"]`);
+        
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
 
-            if (!form.email.value) { UI.showError('email', 'Phone number or email is required', form); return; }
-            if (!form.password.value) { UI.showError('password', 'Password is required', form); return; }
+            const emailInput = q('email');
+            const passwordInput = q('password');
+            
+            if (!emailInput || !emailInput.value) { UI.showError('email', 'Phone number or email is required', form); return; }
+            if (!passwordInput || !passwordInput.value) { UI.showError('password', 'Password is required', form); return; }
 
             const payload = {
-                email: form.email.value,
-                password: form.password.value
+                email: emailInput.value,
+                password: passwordInput.value
             };
 
             const res = await API.post('/login', payload);
             if (res && res.success) {
                 Auth.setToken(res.data.token);
                 Auth.setHasProfile(res.data.has_profile);
-                Auth.setHasLevel(res.data.has_profile); // If has_profile is true, they have a level
+                Auth.setHasLevel(res.data.has_profile); 
 
                 // Initialize push notifications
                 if (typeof PushNotificationsController !== 'undefined') {
@@ -800,28 +805,37 @@ const AuthController = {
         const form = document.getElementById('register-form');
         if (!form) return;
 
+        const q = (name) => form.querySelector(`[name="${name}"]`);
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             Auth.clearAll();
             UI.clearErrors(form);
 
-            if (!form.first_name.value) { UI.showError('first_name', 'First name is required', form); return; }
-            if (!form.last_name.value) { UI.showError('last_name', 'Last name is required', form); return; }
-            if (!form.email.value || !form.email.value.includes('@')) { UI.showError('email', 'Invalid email address', form); return; }
-            const mobileVal = form.mobile.value.trim();
+            const fnInput = q('first_name');
+            const lnInput = q('last_name');
+            const emailInput = q('email');
+            const mobileInput = q('mobile');
+            const passInput = q('password');
+
+            if (!fnInput || !fnInput.value) { UI.showError('first_name', 'First name is required', form); return; }
+            if (!lnInput || !lnInput.value) { UI.showError('last_name', 'Last name is required', form); return; }
+            if (!emailInput || !emailInput.value || !emailInput.value.includes('@')) { UI.showError('email', 'Invalid email address', form); return; }
+            
+            const mobileVal = mobileInput ? mobileInput.value.trim() : '';
             const mobileRegex = /^01[0125][0-9]{8}$/;
             if (!mobileRegex.test(mobileVal)) {
                 UI.showError('mobile', 'Enter a valid 11-digit Egyptian mobile (e.g. 01012345678)', form);
                 return;
             }
-            if (!form.password.value || form.password.value.length < 8) { UI.showError('password', 'Password must be at least 8 chars', form); return; }
+            if (!passInput || !passInput.value || passInput.value.length < 8) { UI.showError('password', 'Password must be at least 8 chars', form); return; }
 
             const payload = {
-                first_name: Sanitizer.cleanName(form.first_name.value),
-                last_name: Sanitizer.cleanName(form.last_name.value),
-                mobile: form.mobile.value.trim(),
-                email: form.email.value.trim().toLowerCase(),
-                password: form.password.value
+                first_name: Sanitizer.cleanName(fnInput.value),
+                last_name: Sanitizer.cleanName(lnInput.value),
+                mobile: mobileVal,
+                email: emailInput.value.trim().toLowerCase(),
+                password: passInput.value
             };
 
             const btn = form.querySelector('button[type="submit"]');
@@ -1912,18 +1926,24 @@ const ProfileController = {
         const form = document.getElementById('profile-form');
         if (!form) return;
 
+        const q = (name) => form.querySelector(`[name="${name}"]`);
+
         // Populate days
-        const daySelect = form.dob_day;
-        for (let i = 1; i <= 31; i++) {
-            const val = i.toString().padStart(2, '0');
-            daySelect.options.add(new Option(i, val));
+        const daySelect = q('dob_day');
+        if (daySelect) {
+            for (let i = 1; i <= 31; i++) {
+                const val = i.toString().padStart(2, '0');
+                daySelect.options.add(new Option(i, val));
+            }
         }
 
         // Populate years (1961 - 2012 for 14-65yo)
-        const yearSelect = form.dob_year;
-        const currentYear = new Date().getFullYear();
-        for (let i = currentYear - 14; i >= currentYear - 65; i--) {
-            yearSelect.options.add(new Option(i, i));
+        const yearSelect = q('dob_year');
+        if (yearSelect) {
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear - 14; i >= currentYear - 65; i--) {
+                yearSelect.options.add(new Option(i, i));
+            }
         }
         // Only show logout option if they don't have a profile yet
         const logoutOption = document.getElementById('logout-option');
@@ -1955,8 +1975,10 @@ const ProfileController = {
                 const p = res.data.profile;
                 const u = res.data.user;
                 if (u) {
-                    if (form.first_name) form.first_name.value = u.first_name || '';
-                    if (form.last_name) form.last_name.value = u.last_name || '';
+                    const fn = q('first_name');
+                    const ln = q('last_name');
+                    if (fn) fn.value = u.first_name || '';
+                    if (ln) ln.value = u.last_name || '';
 
                     // Populate read-only contact info
                     const emailEl = document.getElementById('edit-email');
@@ -1965,9 +1987,11 @@ const ProfileController = {
                     if (phoneEl) phoneEl.textContent = u.mobile || '—';
                 }
                 if (p) {
-                    if (form.nickname && p.nickname) form.nickname.value = p.nickname;
-                    if (form.gender && p.gender) {
-                        const genderSelect = form.gender;
+                    const nick = q('nickname');
+                    if (nick && p.nickname) nick.value = p.nickname;
+                    
+                    const genderSelect = q('gender');
+                    if (genderSelect && p.gender) {
                         const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
 
                         // Create a readonly input to replace the dropdown
@@ -2017,9 +2041,12 @@ const ProfileController = {
                     if (p.date_of_birth) {
                         const parts = p.date_of_birth.split('-');
                         if (parts.length === 3) {
-                            if (form.dob_year) form.dob_year.value = parts[0];
-                            if (form.dob_month) form.dob_month.value = parts[1];
-                            if (form.dob_day) form.dob_day.value = parts[2];
+                            const dy = q('dob_year');
+                            const dm = q('dob_month');
+                            const dd = q('dob_day');
+                            if (dy) dy.value = parts[0];
+                            if (dm) dm.value = parts[1];
+                            if (dd) dd.value = parts[2];
                         }
                     }
                 }
@@ -2138,45 +2165,44 @@ const ProfileController = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
-            const firstName = form.elements['first_name'] ? form.elements['first_name'].value : '';
-            const lastName = form.elements['last_name'] ? form.elements['last_name'].value : '';
-            const gender = form.elements['gender'] ? form.elements['gender'].value : '';
-            const side = form.elements['playing_side'] ? form.elements['playing_side'].value : '';
-            const location = form.elements['location'] ? form.elements['location'].value : '';
-            const nickname = form.elements['nickname'] ? form.elements['nickname'].value : '';
-            const bio = form.elements['bio'] ? form.elements['bio'].value : '';
+            
+            const getVal = (name) => q(name)?.value || '';
+
+            const firstName = getVal('first_name');
+            const lastName = getVal('last_name');
+            const gender = getVal('gender');
+            const playingSide = getVal('playing_side');
+            const location = getVal('location');
+            const nickname = getVal('nickname');
+            const bio = getVal('bio');
+            const dobDay = getVal('dob_day');
+            const dobMonth = getVal('dob_month');
+            const dobYear = getVal('dob_year');
 
             if (!firstName) { UI.showError('first_name', 'First name is required', form); return; }
             if (!lastName) { UI.showError('last_name', 'Last name is required', form); return; }
-            
-            const dobDay = form.elements['dob_day'] ? form.elements['dob_day'].value : '';
-            const dobMonth = form.elements['dob_month'] ? form.elements['dob_month'].value : '';
-            const dobYearVal = form.elements['dob_year'] ? form.elements['dob_year'].value : '';
-
             if (!dobDay) { UI.showError('dob_day', 'Select day', form); return; }
             if (!dobMonth) { UI.showError('dob_month', 'Select month', form); return; }
-            if (!dobYearVal) { UI.showError('dob_year', 'Select year', form); return; }
+            if (!dobYear) { UI.showError('dob_year', 'Select year', form); return; }
 
-            const dobYear = parseInt(dobYearVal);
-            const curY = new Date().getFullYear();
-            const age = curY - dobYear;
+            const age = new Date().getFullYear() - parseInt(dobYear);
             if (age < 14 || age > 65) {
                 UI.showError('dob_year', 'Age must be between 14 and 65', form);
                 return;
             }
 
             if (!gender) { UI.showError('gender', 'Please select gender', form); return; }
-            if (!side) { UI.showError('playing_side', 'Please select your side', form); return; }
+            if (!playingSide) { UI.showError('playing_side', 'Please select your side', form); return; }
             if (!location) { UI.showError('location', 'Please select location', form); return; }
 
-            const dob = `${dobYearVal}-${dobMonth}-${dobDay}`;
+            const dob = `${dobYear}-${dobMonth}-${dobDay}`;
 
             const payload = {
                 first_name: Sanitizer.cleanName(firstName),
                 last_name: Sanitizer.cleanName(lastName),
                 date_of_birth: dob,
                 gender: gender,
-                playing_side: side,
+                playing_side: playingSide,
                 nickname: Sanitizer.cleanName(nickname),
                 location: location,
                 bio: bio.trim()
