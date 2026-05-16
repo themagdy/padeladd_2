@@ -2171,7 +2171,7 @@ const ProfileController = {
             UI.clearErrors(form);
             
             const getVal = (name) => {
-                const el = q(name);
+                const el = (name === 'location') ? (document.getElementById('edit-profile-location') || q(name)) : q(name);
                 console.log(`Field [${name}] value:`, el ? el.value : 'NOT FOUND');
                 return el ? el.value : '';
             };
