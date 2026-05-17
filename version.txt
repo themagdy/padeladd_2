@@ -1160,3 +1160,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Fix: Fixed alignment and spacing issue where newlines in row template literals caused massive phantom vertical spacing due to global modal paragraph/break parser.
 - Version: 2.2.97 (Build 297)
 
+2.2.98 (Build 298) - 2026-05-17
+- UI: Fine-tuned followers and following counts spacing on mobile viewports (+3px top margin and -7px bottom margin).
+- Version: 2.2.98 (Build 298)
+
+
