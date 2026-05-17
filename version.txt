@@ -1161,7 +1161,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.2.97 (Build 297)
 
 2.2.98 (Build 298) - 2026-05-17
-- UI: Fine-tuned followers and following counts spacing on mobile viewports (+3px top margin and -7px bottom margin).
+- UI: Applied custom responsive overrides for the follower/following count block on mobile viewports (< 600px).
+- UI: Fine-tuned spacing by introducing +3px top margin, -12px bottom margin, and +5px left margin for the counts container on mobile.
+- UI: Scaled down the counts text to a perfectly legible 14px on mobile, preserving 16px on desktop.
 - Version: 2.2.98 (Build 298)
 
 
