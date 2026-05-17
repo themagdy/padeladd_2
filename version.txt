@@ -1144,3 +1144,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Hidden dashboard story separator when only a single item exists.
 - Fix: Ensured Player XCode consistency across all story API endpoints.
 - Version: 2.2.95 (Build 295)
+
+2.2.96 (Build 296) - 2026-05-17
+- Policy: Reduced the late withdrawal/cancellation penalty window from 6 hours to 5 hours.
+- UI: Updated 'upcoming match' cutoff display logic from 6 to 4 hours.
+- UI: Added a clear semi-bold warning modal box when a user attempts a late cancellation or withdrawal.
+- Translation: Synced 5-hour rule text in both English and Arabic across match details, rules, and terms pages.
+- Version: 2.2.96 (Build 296)

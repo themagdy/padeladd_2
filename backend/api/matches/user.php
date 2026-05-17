@@ -22,7 +22,7 @@ $stmt = $pdo->prepare("
         (
             m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved'))
             AND m.status NOT IN ('completed', 'cancelled')
-            AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 6 HOUR)
+            AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
         )
     )
     AND m.status != 'cancelled'
@@ -83,7 +83,7 @@ foreach ($matches as $m) {
     $status = $m['status'];
     if (in_array($m['status'], ['open', 'full', 'on_hold'])) {
         $matchTime = strtotime($m['match_datetime']);
-        $cutoff    = time() - (6 * 3600); // 6 hours ago
+        $cutoff    = time() - (4 * 3600); // 4 hours ago
         if ($matchTime > $cutoff) {
             $status = 'upcoming';
         }

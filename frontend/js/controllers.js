@@ -4555,7 +4555,7 @@ const MatchesController = {
         if (isLate && isFull) {
             modalOpts = {
                 title: 'Reason for leaving',
-                message: '<b>Common reasons:</b>\n• Injury / Emergency\n• Work / Traffic',
+                message: '<div style="color:var(--c-red); font-weight:600; font-size:13px; margin-bottom:12px; background:rgba(239,68,68,0.1); padding:10px; border-radius:8px;">⚠️ Warning: You are leaving within 5 hours of the match.</div>',
                 confirmText: 'Confirm Withdrawal',
                 cancelText: 'Don\'t Leave',
                 type: 'warning',
@@ -4583,7 +4583,7 @@ const MatchesController = {
 
         if (res && res.success) {
             const msg = res.data?.is_late
-                ? 'You have left the match (late withdrawal — within 6 hours).'
+                ? 'You have left the match (late withdrawal — within 5 hours).'
                 : 'You have left the match.';
             Toast.show(msg, 'success');
             await MatchesController.loadDetails({ match_id }, true);
@@ -4608,7 +4608,7 @@ const MatchesController = {
         if (isLate && isFull) {
             modalOpts = {
                 title: 'Reason for leaving',
-                message: '<b>Common reasons:</b>\n• Injury / Emergency\n• Work / Traffic',
+                message: '<div style="color:var(--c-red); font-weight:600; font-size:13px; margin-bottom:12px; background:rgba(239,68,68,0.1); padding:10px; border-radius:8px;">⚠️ Warning: You are cancelling within 5 hours of the match.</div>',
                 confirmText: 'Confirm Cancellation',
                 cancelText: 'Don\'t Cancel',
                 type: 'warning',
