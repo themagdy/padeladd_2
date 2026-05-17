@@ -1151,3 +1151,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Added a clear semi-bold warning modal box when a user attempts a late cancellation or withdrawal.
 - Translation: Synced 5-hour rule text in both English and Arabic across match details, rules, and terms pages.
 - Version: 2.2.96 (Build 296)
+
+2.2.97 (Build 297) - 2026-05-17
+- Feature: Added follow/unfollow inline dynamic action buttons to each player card in the followers and following lists.
+- UI: Re-engineered ConfirmModal layout (wider max-width, tighter padding) for highly mobile-friendly row setups.
+- UI: Formatted row items and inline buttons with fixed, stable dimensions to prevent layout-shifting and line-wrapping.
+- UI: Restyled horizontal header row baseline alignment and added extra-bold uppercase styling for the connection list title.
+- Fix: Fixed alignment and spacing issue where newlines in row template literals caused massive phantom vertical spacing due to global modal paragraph/break parser.
+- Version: 2.2.97 (Build 297)
+

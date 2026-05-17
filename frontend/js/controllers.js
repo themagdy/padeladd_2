@@ -85,11 +85,7 @@ const UI = {
 
     getAvatarHtml: function (thumb, style = '', wrapperStyle = '', initials = '?', className = '', extraAttr = '') {
         if (thumb) {
-            return `
-                <div class="avatar-wrap ${className}" style="${wrapperStyle}" ${extraAttr}>
-                    <img src="${CONFIG.ASSET_BASE}/${thumb}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';">
-                </div>
-            `;
+            return `<div class="avatar-wrap ${className}" style="${wrapperStyle}" ${extraAttr}><img src="${CONFIG.ASSET_BASE}/${thumb}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';"></div>`;
         } else {
             return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}" ${extraAttr}>${initials}</div>`;
         }
@@ -154,7 +150,7 @@ const StoriesController = {
     _lastTrayFingerprint: '',
     _trayItems: [],
 
-    initTray: async function() {
+    initTray: async function () {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
@@ -197,11 +193,11 @@ const StoriesController = {
                 this._activeStories = sorted;
                 this._cache = sorted;
                 this.renderTray();
-                
+
                 // Persist new data
                 try {
                     localStorage.setItem('stories_cache', newStoriesJson);
-                } catch (e) {}
+                } catch (e) { }
 
                 // Trigger animation if not already revealed
                 setTimeout(() => {
@@ -214,7 +210,7 @@ const StoriesController = {
         }
     },
 
-    sortStories: function(stories) {
+    sortStories: function (stories) {
         if (!stories) return [];
         return [...stories].sort((a, b) => {
             // 1. Priority: Your Story (is_mine)
@@ -231,12 +227,12 @@ const StoriesController = {
             const dateA = new Date(a.match_datetime).getTime();
             const dateB = new Date(b.match_datetime).getTime();
             if (dateA !== dateB) return dateB - dateA;
-            
+
             return parseInt(b.id) - parseInt(a.id);
         });
     },
 
-    renderTray: function() {
+    renderTray: function () {
         const tray = document.getElementById('story-tray');
         if (!tray) return;
 
@@ -250,12 +246,12 @@ const StoriesController = {
 
         // 1. Group stories by player (Unique Avatars)
         const playerGroups = {}; // playerId -> { player: obj, stories: [], isMine: bool }
-        
+
         this._activeStories.forEach(s => {
             const players = s.players || [];
             const isMine = parseInt(s.is_mine) === 1;
             const followedIds = (s.followed_player_ids || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
-            
+
             if (isMine) {
                 const me = players.find(p => parseInt(p.id) === currentUserId) || players[0];
                 if (!playerGroups[currentUserId]) playerGroups[currentUserId] = { player: me, stories: [], isMine: true };
@@ -264,7 +260,7 @@ const StoriesController = {
                     playerGroups[currentUserId].stories.push(s);
                 }
             }
-            
+
             followedIds.forEach(fid => {
                 if (fid === currentUserId) return;
                 const p = players.find(player => parseInt(player.id) === fid);
@@ -283,7 +279,7 @@ const StoriesController = {
             const isSeen = group.stories.every(s => !!s.is_seen);
             // Latest story date for sorting
             const latestDate = Math.max(...group.stories.map(s => new Date(s.match_datetime).getTime()));
-            
+
             return {
                 ...group,
                 isSeen,
@@ -304,7 +300,7 @@ const StoriesController = {
         let html = '';
         trayItems.forEach((item, idx) => {
             const initials = ((item.player?.first_name?.[0] || '') + (item.player?.last_name?.[0] || '')).toUpperCase() || '?';
-            
+
             html += `
                 <div class="story-item ${item.isSeen ? 'seen' : ''}" onclick="StoriesController.playPlayerByIndex(${idx})">
                     <div class="story-avatar-ring">
@@ -319,7 +315,7 @@ const StoriesController = {
                 html += `<div class="story-separator"></div>`;
             }
         });
-        
+
         // Fingerprint check to avoid flickering
         const fingerprint = trayItems.map(it => `${it.player.id}:${it.isSeen}`).join('|');
         if (this._lastTrayFingerprint === fingerprint) return;
@@ -328,17 +324,17 @@ const StoriesController = {
         tray.innerHTML = safeHTML(html);
     },
 
-    playPlayerByIndex: function(trayIdx) {
+    playPlayerByIndex: function (trayIdx) {
         if (!this._trayItems || !this._trayItems[trayIdx]) return;
-        
+
         // Construct the playback feed following the tray sequence
         const fullFeed = [];
         for (let i = trayIdx; i < this._trayItems.length; i++) {
             const group = this._trayItems[i];
-            
+
             // Sort stories within the player's stack: oldest first for natural story flow
             const sortedStories = [...group.stories].sort((a, b) => new Date(a.match_datetime) - new Date(b.match_datetime));
-            
+
             sortedStories.forEach(s => {
                 fullFeed.push({
                     ...s,
@@ -346,7 +342,7 @@ const StoriesController = {
                 });
             });
         }
-        
+
         if (fullFeed.length === 0) return;
 
         this._currentFeed = fullFeed;
@@ -356,7 +352,7 @@ const StoriesController = {
         this.startStory();
     },
 
-    playUserStories: async function(userId) {
+    playUserStories: async function (userId) {
         const res = await API.post('/stories/user', { user_id: userId });
         if (res && res.success && res.data.stories.length > 0) {
             this._currentIndex = 0;
@@ -371,23 +367,23 @@ const StoriesController = {
     },
 
 
-    renderPlayerOverlay: function() {
+    renderPlayerOverlay: function () {
         let overlay = document.getElementById('story-player-overlay');
         if (!overlay) return; // Should exist in index.html
         overlay.style.display = 'flex';
-        
+
         // Save scroll position
         this._scrollPos = window.pageYOffset || document.documentElement.scrollTop;
         document.documentElement.classList.add('story-open');
         document.body.classList.add('story-open');
         const app = document.getElementById('app');
         if (app) app.classList.add('story-open');
-        
+
         // Offset body to stay at same visual position
         document.body.style.top = `-${this._scrollPos}px`;
     },
 
-    startStory: function() {
+    startStory: function () {
         const story = this._currentFeed[this._currentIndex];
         if (!story) {
             this.closePlayer();
@@ -400,13 +396,13 @@ const StoriesController = {
         this.markSeen(story.id);
     },
 
-    renderStoryContent: function(story) {
+    renderStoryContent: function (story) {
         const overlay = document.getElementById('story-player-overlay');
         if (!overlay) return;
 
         const isScore = story.type === 'score';
         const players = story.players || [];
-        
+
         // Use the context-aware player for the header
         const headerPlayer = story._overlayPlayer || players[0];
 
@@ -459,7 +455,7 @@ const StoriesController = {
         `);
     },
 
-    renderUpcomingStory: function(story) {
+    renderUpcomingStory: function (story) {
         const players = story.players || [];
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
@@ -473,7 +469,7 @@ const StoriesController = {
                     </div>
                 </div>
             `;
-            
+
             const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
             const xcode = p.player_code || p.player_xcode || p.id;
             const level = p.level || '';
@@ -526,16 +522,16 @@ const StoriesController = {
         `;
     },
 
-    renderScoreStory: function(story) {
+    renderScoreStory: function (story) {
         const scores = story.score_data || [];
         const s = scores[0] || {};
         let players = story.players || [];
-        
+
         // Handle team switches and external replacements (Composition JSON)
         if (s.composition_json) {
             try {
                 const comp = typeof s.composition_json === 'string' ? JSON.parse(s.composition_json) : s.composition_json;
-                
+
                 // Build a new player list based on the composition
                 const updatedPlayers = comp.map(compPlayer => {
                     // Try to find original player data (for avatars, etc.)
@@ -551,11 +547,11 @@ const StoriesController = {
                         ...compPlayer
                     };
                 });
-                
+
                 if (updatedPlayers.length > 0) players = updatedPlayers;
             } catch (e) { console.error("Story composition parse failed", e); }
         }
-        
+
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
@@ -593,7 +589,7 @@ const StoriesController = {
                 </div>
                 <div class="story-team-score-sets" style="align-self: flex-start; margin-top: 2px;">
                     ${sets.map(set => `
-                        <div class="story-set-box ${ (teamPlayers === team1 ? parseInt(set.s1) > parseInt(set.s2) : parseInt(set.s2) > parseInt(set.s1)) ? 'set-won' : ''}">
+                        <div class="story-set-box ${(teamPlayers === team1 ? parseInt(set.s1) > parseInt(set.s2) : parseInt(set.s2) > parseInt(set.s1)) ? 'set-won' : ''}">
                             ${teamPlayers === team1 ? set.s1 : set.s2}
                         </div>
                     `).join('')}
@@ -627,18 +623,18 @@ const StoriesController = {
         `;
     },
 
-    startProgress: function() {
+    startProgress: function () {
         if (this._progressInterval) clearInterval(this._progressInterval);
         this._progressValue = 0;
         this.resumeProgress();
     },
 
-    togglePause: function(e) {
+    togglePause: function (e) {
         if (e) e.stopPropagation();
         this._isPaused = !this._isPaused;
         const icon = document.getElementById('story-pause-icon');
         if (icon) icon.innerHTML = this._isPaused ? this._icons.play : this._icons.pause;
-        
+
         if (this._isPaused) {
             if (this._progressInterval) clearInterval(this._progressInterval);
         } else {
@@ -646,7 +642,7 @@ const StoriesController = {
         }
     },
 
-    resumeProgress: function() {
+    resumeProgress: function () {
         if (this._progressInterval) clearInterval(this._progressInterval);
         const bars = document.querySelectorAll('.story-progress-fill');
         const bar = bars[this._currentIndex];
@@ -655,7 +651,7 @@ const StoriesController = {
         const duration = this._STORY_DURATION;
         const interval = 50;
         const step = 100 / (duration / interval);
-        
+
         this._progressInterval = setInterval(() => {
             if (this._isPaused) return;
             this._progressValue += step;
@@ -666,13 +662,13 @@ const StoriesController = {
         }, interval);
     },
 
-    handleTap: function(e) {
+    handleTap: function (e) {
         // Don't navigate if clicking a button or link
         if (e.target.closest('button') || e.target.closest('a')) return;
 
         const x = e.clientX;
         const w = window.innerWidth;
-        
+
         // 50/50 split for more intuitive navigation on both mobile and desktop
         if (x < w / 2) {
             this.prev();
@@ -681,7 +677,7 @@ const StoriesController = {
         }
     },
 
-    next: function() {
+    next: function () {
         if (this._currentIndex < this._currentFeed.length - 1) {
             this._currentIndex++;
             this.startStory();
@@ -690,7 +686,7 @@ const StoriesController = {
         }
     },
 
-    prev: function() {
+    prev: function () {
         if (this._currentIndex > 0) {
             this._currentIndex--;
             this.startStory();
@@ -699,27 +695,27 @@ const StoriesController = {
         }
     },
 
-    closePlayer: function() {
+    closePlayer: function () {
         this._isShowing = false;
         if (this._progressInterval) clearInterval(this._progressInterval);
         const overlay = document.getElementById('story-player-overlay');
         if (overlay) overlay.style.display = 'none';
-        
+
         document.documentElement.classList.remove('story-open');
         document.body.classList.remove('story-open');
         const app = document.getElementById('app');
         if (app) app.classList.remove('story-open');
-        
+
         // Restore scroll position
         document.body.style.top = '';
         window.scrollTo(0, this._scrollPos || 0);
-        
+
         if (Router.currentPath === 'dashboard') {
             this.initTray();
         }
     },
 
-    markSeen: async function(storyId) {
+    markSeen: async function (storyId) {
         // Update local state immediately
         const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
         if (story && !story.is_seen) {
@@ -751,14 +747,14 @@ const AuthController = {
         if (!form) return;
 
         const q = (name) => form.querySelector(`[name="${name}"]`);
-        
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
 
             const emailInput = q('email');
             const passwordInput = q('password');
-            
+
             if (!emailInput || !emailInput.value) { UI.showError('email', 'Phone number or email is required', form); return; }
             if (!passwordInput || !passwordInput.value) { UI.showError('password', 'Password is required', form); return; }
 
@@ -772,7 +768,7 @@ const AuthController = {
                 Auth.setToken(res.data.token);
                 if (res.data.user_id) localStorage.setItem('auth_user_id', res.data.user_id);
                 Auth.setHasProfile(res.data.has_profile);
-                Auth.setHasLevel(res.data.has_profile); 
+                Auth.setHasLevel(res.data.has_profile);
 
                 // Initialize push notifications
                 if (typeof PushNotificationsController !== 'undefined') {
@@ -821,7 +817,7 @@ const AuthController = {
             if (!fnInput || !fnInput.value) { UI.showError('first_name', 'First name is required', form); return; }
             if (!lnInput || !lnInput.value) { UI.showError('last_name', 'Last name is required', form); return; }
             if (!emailInput || !emailInput.value || !emailInput.value.includes('@')) { UI.showError('email', 'Invalid email address', form); return; }
-            
+
             const mobileVal = mobileInput ? mobileInput.value.trim() : '';
             const mobileRegex = /^01[0125][0-9]{8}$/;
             if (!mobileRegex.test(mobileVal)) {
@@ -1606,7 +1602,7 @@ const ProfileViewController = {
         }
         // Normalize data: 'res' might be the full response {success, data} or just the data from cache
         const profileData = res.data || res;
-        const { user, profile, stats, is_self, is_following, has_active_story } = profileData;
+        const { user, profile, stats, is_self, is_following, has_active_story, followers_count, following_count } = profileData;
 
         // Avatar with Story Ring
         const av = document.getElementById('prof-avatar');
@@ -1616,7 +1612,7 @@ const ProfileViewController = {
         if (av) {
             const thumb = profile.profile_image_thumb || profile.profile_image;
             const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
-            
+
             if (has_active_story) {
                 if (ring) ring.style.display = 'block';
                 if (avWrap) avWrap.onclick = () => StoriesController.playUserStories(user.id);
@@ -1624,7 +1620,7 @@ const ProfileViewController = {
                 if (ring) ring.style.display = 'none';
                 if (avWrap) avWrap.onclick = null;
             }
-            
+
             if (profile && thumb) {
                 av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
                 av.classList.remove('avatar-placeholder');
@@ -1642,7 +1638,7 @@ const ProfileViewController = {
                 actionsRow.style.display = 'none';
             } else {
                 actionsRow.style.display = 'flex';
-                
+
                 const followContainer = document.getElementById('prof-follow-container');
                 if (followContainer) {
                     followContainer.style.display = 'block';
@@ -1715,6 +1711,33 @@ const ProfileViewController = {
                 codeEl.style.display = 'inline-flex';
             } else {
                 codeEl.style.display = 'none';
+            }
+        }
+
+        // Followers Counts
+        const followersCountsEl = document.getElementById('prof-followers-counts');
+        if (followersCountsEl) {
+            if (profile?.player_code) {
+                followersCountsEl.style.display = 'flex';
+                document.getElementById('prof-followers-num').textContent = followers_count || 0;
+                document.getElementById('prof-following-num').textContent = following_count || 0;
+
+                const followersBtn = document.getElementById('prof-followers-btn');
+                const followingBtn = document.getElementById('prof-following-btn');
+
+                if (is_self) {
+                    followersBtn.style.cursor = 'pointer';
+                    followingBtn.style.cursor = 'pointer';
+                    followersBtn.onclick = () => ProfileViewController.showFollowsList('followers');
+                    followingBtn.onclick = () => ProfileViewController.showFollowsList('following');
+                } else {
+                    followersBtn.style.cursor = 'default';
+                    followingBtn.style.cursor = 'default';
+                    followersBtn.onclick = null;
+                    followingBtn.onclick = null;
+                }
+            } else {
+                followersCountsEl.style.display = 'none';
             }
         }
 
@@ -1822,11 +1845,11 @@ const ProfileViewController = {
         })();
     },
 
-    toggleFollow: async function() {
+    toggleFollow: async function () {
         // Try to get target ID from Router params, but fallback to 'self'
         const cacheKey = Router.params && Router.params.id ? Router.params.id : 'self';
         const cached = ProfileViewController._viewCache[cacheKey];
-        
+
         // Safety: If we don't have cached data, we can't perform the action
         if (!cached || !cached.user) {
             console.error('Follow action failed: No cached user data for', cacheKey);
@@ -1847,6 +1870,77 @@ const ProfileViewController = {
             Toast.show(res ? res.message : 'Action failed');
         }
         if (btn) btn.disabled = false;
+    },
+
+    toggleFollowInList: async function (targetUserId, btn) {
+        if (btn) btn.disabled = true;
+        const res = await API.post('/profile/follow', { target_user_id: targetUserId });
+        if (res && res.success) {
+            const isFollowing = res.data.is_following;
+            if (isFollowing) {
+                btn.textContent = 'Following';
+                btn.style.background = 'rgba(255,255,255,0.1)';
+            } else {
+                btn.textContent = 'Follow';
+                btn.style.background = 'var(--c-primary)';
+            }
+            // Update profile view silently in case it affects the current counts
+            ProfileViewController.init(Router.params, true);
+        } else {
+            Toast.show(res ? res.message : 'Action failed', 'error');
+        }
+        if (btn) btn.disabled = false;
+    },
+
+    showFollowsList: async function (type) {
+        const title = type === 'followers' ? 'Followers' : 'Following';
+        const res = await API.post(`/profile/follows_list`, { type: type });
+
+        if (!res || !res.success) {
+            Toast.show('Failed to load list', 'error');
+            return;
+        }
+
+        const list = res.data || [];
+        
+        if (list.length === 0) {
+            Toast.show(`No ${type} found.`, 'info');
+            return;
+        }
+        const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
+        let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
+        list.forEach(u => {
+            let initials = '?';
+            if (u.first_name && u.last_name) {
+                initials = (u.first_name.charAt(0) + u.last_name.charAt(0)).toUpperCase();
+            } else if (u.name) {
+                const parts = u.name.trim().split(' ');
+                initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : u.name.substring(0, 2).toUpperCase();
+            }
+            const avatarHtml = UI.getAvatarHtml(u.image, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; font-size:14px; font-weight:700; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; padding-top:2px;', initials);
+            
+            let followBtnHtml = '';
+            if (u.id !== myId) {
+                if (u.is_following) {
+                    followBtnHtml = `<button onclick="event.stopPropagation(); ProfileViewController.toggleFollowInList(${u.id}, this)" class="btn btn-sm" style="background:rgba(255,255,255,0.1); color:#fff; border:none; width:78px; height:28px; font-size:11px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; padding:0;">Following</button>`;
+                } else {
+                    followBtnHtml = `<button onclick="event.stopPropagation(); ProfileViewController.toggleFollowInList(${u.id}, this)" class="btn btn-sm" style="background:var(--c-primary); color:#fff; border:none; width:78px; height:28px; font-size:11px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; padding:0;">Follow</button>`;
+                }
+            }
+
+            html += `<div onclick="ConfirmModal.close(); Router.navigate('/profile/view/${u.player_code}')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; cursor:pointer; background:rgba(255,255,255,0.02); margin-bottom:6px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">${avatarHtml}<div style="flex:1; min-width:0; text-align:left;"><div style="font-weight:700; font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.name}</div><div style="font-size:10px; font-weight:600; color:var(--c-orange); font-family:monospace; margin-top:1px;">${u.player_code}</div></div>${followBtnHtml ? `<div style="flex-shrink:0;">${followBtnHtml}</div>` : ''}</div>`;
+        });
+        html += '</div>';
+
+        ConfirmModal.show({
+            title: title,
+            message: html,
+            icon: '👥',
+            showCancel: false,
+            confirmText: 'Close',
+            type: 'info',
+            headerLayout: 'row'
+        });
     }
 };
 
@@ -2002,7 +2096,7 @@ const ProfileController = {
                 if (p) {
                     const nick = q('nickname');
                     if (nick && p.nickname) nick.value = p.nickname;
-                    
+
                     const genderSelect = q('gender');
                     if (genderSelect && p.gender) {
                         const val = p.gender.charAt(0).toUpperCase() + p.gender.slice(1);
@@ -2181,7 +2275,7 @@ const ProfileController = {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             UI.clearErrors(form);
-            
+
             const getVal = (name) => {
                 const el = (name === 'location') ? (document.getElementById('edit-profile-location') || q(name)) : q(name);
                 return el ? el.value : '';
@@ -2481,7 +2575,7 @@ const MatchesController = {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
                             partnerInput.value = q; // Standardize value to just the code
-                            partnerHelp.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`);                            partnerHelp.style.color = "var(--c-primary)";
+                            partnerHelp.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`); partnerHelp.style.color = "var(--c-primary)";
                         } else {
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
@@ -5154,7 +5248,7 @@ const ChatController = {
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
                         const thumb = msg.profile_image_thumb || msg.profile_image;
-                        
+
                         // Avatar
                         const avatarEl = document.createElement('div');
                         avatarEl.className = 'chat-group-avatar';
@@ -5163,7 +5257,7 @@ const ChatController = {
                             const img = document.createElement('img');
                             img.src = `${CONFIG.ASSET_BASE}/${thumb}`;
                             img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
-                            img.onerror = function() { this.parentElement.innerText = (name[0] || '?').toUpperCase(); };
+                            img.onerror = function () { this.parentElement.innerText = (name[0] || '?').toUpperCase(); };
                             avatarEl.appendChild(img);
                         } else {
                             avatarEl.innerText = (name[0] || '?').toUpperCase();
@@ -5173,7 +5267,7 @@ const ChatController = {
                         const col = document.createElement('div');
                         col.className = 'chat-msg-column';
                         col.style.cssText = `max-width:72%; display:flex; flex-direction:column; gap:2px; ${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
-                        
+
                         if (!isMe) {
                             const nameHeader = document.createElement('div');
                             nameHeader.style.cssText = 'font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;';
@@ -5190,7 +5284,7 @@ const ChatController = {
                         col.appendChild(bubble);
                         group.appendChild(avatarEl);
                         group.appendChild(col);
-                        
+
                         inner.appendChild(group);
                         this._lastMsgEl = group;
                     }
@@ -5286,7 +5380,7 @@ const ChatController = {
                 container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
             }
         }
-        
+
         this._isLoading = false;
     },
 
@@ -6373,8 +6467,8 @@ const RankingController = {
             row.className = 'rank-grid-full';
             row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
             row.onclick = () => Router.navigate('/profile/view/' + r.player_code);
-            row.onmouseover = function() { this.style.background = 'rgba(255,255,255,0.02)'; };
-            row.onmouseout = function() { this.style.background = 'transparent'; };
+            row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
+            row.onmouseout = function () { this.style.background = 'transparent'; };
 
             // Rank
             const rankWrap = document.createElement('div');
@@ -6395,38 +6489,38 @@ const RankingController = {
             // Player Info
             const infoWrap = document.createElement('div');
             infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; position:relative;';
-            
+
             const hasStory = !!r.has_active_story;
             const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
-            
+
             const avatarDiv = document.createElement('div');
             avatarDiv.innerHTML = safeHTML(avatarHtml);
 
             const nameWrap = document.createElement('div');
             nameWrap.style.cssText = 'min-width:0; overflow:hidden;';
-            
+
             const nameLine = document.createElement('div');
             nameLine.style.cssText = 'display:flex; align-items:center; gap:8px;';
-            
+
             const nick = document.createElement('div');
             nick.style.cssText = 'font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
             nick.textContent = r.nickname;
-            
+
             const code = document.createElement('span');
             code.style.cssText = 'font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase; flex-shrink:0;';
             code.textContent = r.player_code;
-            
+
             nameLine.appendChild(nick);
             nameLine.appendChild(code);
-            
+
             const full = document.createElement('div');
             full.style.cssText = 'font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;';
             full.textContent = (r.first_name || '') + ' ' + (r.last_name || '');
-            
+
             nameWrap.appendChild(nameLine);
             nameWrap.appendChild(full);
-            
+
             infoWrap.appendChild(avatarDiv);
             infoWrap.appendChild(nameWrap);
 

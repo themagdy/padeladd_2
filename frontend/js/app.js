@@ -113,7 +113,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
             this._undismissable = undismissable;
@@ -153,17 +153,35 @@ var ConfirmModal = {
                 <button id="gcm-cancel" class="btn" style="background:none; border:none; color:var(--c-text-muted); padding:12px; font-size:14px; font-weight:600;">${cancelText}</button>
             ` : '';
 
-            this._modal.innerHTML = safeHTML(`
-                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
-                    
+            let headerHtml = '';
+            if (headerLayout === 'row') {
+                headerHtml = `
+                    <div style="display:flex; align-items:flex-end; justify-content:flex-start; gap:10px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                        <div style="font-size:24px; line-height:1;">${icon}</div>
+                        <h2 style="font-size:15px; font-weight:800; color:#fff; margin:0; text-transform:uppercase; letter-spacing:0.5px; line-height:1; padding-bottom:2px;">${title}</h2>
+                    </div>
+                `;
+            } else {
+                headerHtml = `
                     <!-- Premium Emoji Frame -->
                     <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
                         <div style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg, var(--c-primary), #6366f1); opacity:0.15; filter:blur(10px);"></div>
                         <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);"></div>
                         <div style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">${icon}</div>
                     </div>
-
                     <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:20px; letter-spacing:-0.5px; line-height:1.2;">${title}</h2>
+                `;
+            }
+
+            const isRowLayout = headerLayout === 'row';
+            const cardMaxWidth = isRowLayout ? '380px' : '340px';
+            const cardPadding = isRowLayout ? '20px' : '28px';
+            const cardBorderRadius = isRowLayout ? '24px' : '32px';
+
+            this._modal.innerHTML = safeHTML(`
+                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:${cardBorderRadius}; padding:${cardPadding}; width:100%; max-width:${cardMaxWidth}; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                    
+                    ${headerHtml}
                     
                     ${inputHtml}
 
