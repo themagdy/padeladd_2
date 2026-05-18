@@ -1179,3 +1179,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Converted stats card backgrounds from multi-stop gradients to a clean, flat translucent glass fill (rgba 255 255 255 0.03).
 - UI: Synchronized the premium glass shimmer sweep animation to trigger simultaneously across all 4 cards at a snappy 300ms delay.
 - Version: 2.3.00 (Build 300)
+
+2.3.01 (Build 301) - 2026-05-19
+- UI: Refined 'The Padel Ladder' title font size to 42px and weight to 700 for a cleaner, modern layout.
+- UI: Upgraded 'LADDER' text styling to use a sleek gold-to-orange gradient while keeping a pure flat aesthetic.
+- UI: Slowed down stats card shimmer sweep duration to 5.5s for a high-end luxury feel.
+- UI: Configured stats card shimmer to trigger in beautiful alternating waves (Box 1 & 3 at 200ms, Box 2 & 4 at 800ms).
+- Version: 2.3.01 (Build 301)
