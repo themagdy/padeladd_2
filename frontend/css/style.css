@@ -2070,25 +2070,25 @@ form {
       rgba(255, 255, 255, 0.02) 50%,
       rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
-  animation: glassShimmer 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: glassShimmer 5.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
 }
 
-/* Shimmer triggers simultaneously shortly after page load */
+/* Shimmer triggers in alternating waves: Box 1 & 3 first, then Box 2 & 4 */
 .stat-box:nth-child(1)::after {
-  animation-delay: 300ms;
+  animation-delay: 200ms;
 }
 
 .stat-box:nth-child(2)::after {
-  animation-delay: 300ms;
+  animation-delay: 800ms;
 }
 
 .stat-box:nth-child(3)::after {
-  animation-delay: 300ms;
+  animation-delay: 200ms;
 }
 
 .stat-box:nth-child(4)::after {
-  animation-delay: 300ms;
+  animation-delay: 800ms;
 }
 
 @keyframes glassEntrance {
