@@ -2045,7 +2045,7 @@ form {
 .stat-box {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.01) 80%, rgba(255, 255, 255, 0.04) 100%) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 0.5px solid var(--c-border) !important;
@@ -2055,17 +2055,7 @@ form {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25) !important;
-  
-  /* Entrance Animation */
-  opacity: 0;
-  animation: glassEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
-/* Staggered Delay for the 4 stats boxes */
-.stat-box:nth-child(1) { animation-delay: 0ms; }
-.stat-box:nth-child(2) { animation-delay: 100ms; }
-.stat-box:nth-child(3) { animation-delay: 200ms; }
-.stat-box:nth-child(4) { animation-delay: 300ms; }
 
 /* The Glossy Shimmer Reflection Sweep */
 .stat-box::after {
@@ -2075,30 +2065,40 @@ form {
   left: -150%;
   width: 50%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
-  animation: glassShimmer 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: glassShimmer 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
 }
 
-/* Staggered Shimmer Delay to match the card entrance */
-.stat-box:nth-child(1)::after { animation-delay: 100ms; }
-.stat-box:nth-child(2)::after { animation-delay: 200ms; }
-.stat-box:nth-child(3)::after { animation-delay: 300ms; }
-.stat-box:nth-child(4)::after { animation-delay: 400ms; }
+/* Shimmer triggers simultaneously shortly after page load */
+.stat-box:nth-child(1)::after {
+  animation-delay: 300ms;
+}
+
+.stat-box:nth-child(2)::after {
+  animation-delay: 300ms;
+}
+
+.stat-box:nth-child(3)::after {
+  animation-delay: 300ms;
+}
+
+.stat-box:nth-child(4)::after {
+  animation-delay: 300ms;
+}
 
 @keyframes glassEntrance {
   0% {
     opacity: 0;
-    transform: translateY(15px) scale(0.98);
+    transform: translateY(8px) scale(0.99);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -2111,6 +2111,7 @@ form {
   0% {
     left: -150%;
   }
+
   100% {
     left: 150%;
   }
