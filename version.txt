@@ -1173,4 +1173,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Removed interactive-looking button bevels/embossed inset shadows for a clean, flat-card profile.
 - Version: 2.2.99 (Build 299)
 
+2.3.00 (Build 300) - 2026-05-19
+- UI: Added a sleek 1-second entrance animation on page load for the glass stats cards.
+- UI: Implemented a cascading staggered delay effect (0ms to 300ms) for stats boxes to load in sequence.
+- UI: Added a glossy diagonal shimmer reflection sweep that glides across the cards on entrance to enhance three-dimensional depth.
+- Version: 2.3.00 (Build 300)
+
 
