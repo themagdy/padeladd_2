@@ -1166,4 +1166,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Scaled down the counts text to a perfectly legible 14px on mobile, preserving 16px on desktop.
 - Version: 2.2.98 (Build 298)
 
+2.2.99 (Build 299) - 2026-05-19
+- UI: Replaced dashboard and player profile stats card styling with a high-fidelity glassmorphism effect.
+- UI: Implemented a four-stop light-refracting background gradient to simulate real frosted glass sheets.
+- UI: Enforced a sleek, ultra-thin 0.5px border utilizing original CSS border tokens to preserve UI consistency.
+- UI: Removed interactive-looking button bevels/embossed inset shadows for a clean, flat-card profile.
+- Version: 2.2.99 (Build 299)
+
 
