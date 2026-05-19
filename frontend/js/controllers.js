@@ -1548,6 +1548,12 @@ const DashboardController = {
 // -------------------------------------------------------
 const ProfileViewController = {
     _viewCache: {},
+    _limit: 20,
+    _offset: 0,
+    _hasMore: true,
+    _isLoading: false,
+    _targetUserId: null,
+    _cacheMatches: [],
     init: async function (params, isSilent = false) {
         // Guard: All profile views require authentication
         if (!Auth.isAuthenticated()) {
@@ -1609,6 +1615,7 @@ const ProfileViewController = {
         // Normalize data: 'res' might be the full response {success, data} or just the data from cache
         const profileData = res.data || res;
         const { user, profile, stats, is_self, is_following, has_active_story, followers_count, following_count } = profileData;
+        ProfileViewController._targetUserId = user.id;
 
         // Avatar with Story Ring
         const av = document.getElementById('prof-avatar');
@@ -1805,50 +1812,116 @@ const ProfileViewController = {
         if (contentEl) contentEl.style.opacity = '1';
 
         // Load matches list asynchronously so it doesn't block the instant navigation
-        (async () => {
-            if (!isSilent) {
-                // Wait to showcase placeholder loaders for matches
-                await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
-            }
+        if (!isSilent) {
+            ProfileViewController._limit = 20;
+            ProfileViewController._offset = 0;
+            ProfileViewController._hasMore = true;
+            ProfileViewController._isLoading = false;
+            ProfileViewController._cacheMatches = [];
+            window.removeEventListener('scroll', ProfileViewController.handleScroll);
+            window.addEventListener('scroll', ProfileViewController.handleScroll);
 
-            const matchPayload = { target_id: user.id };
             const listEl = document.getElementById('pv-matches-list');
-
-            if (listEl && !isSilent && listEl.innerHTML.trim() === '') {
+            if (listEl && listEl.innerHTML.trim() === '') {
                 listEl.innerHTML = ScoreUI.renderSkeleton(2);
+                listEl._lastHtml = ''; // Clear to force-render on initial data arrival
             }
 
-            const matchRes = await API.post('/matches/user', matchPayload);
+            // Wait to showcase placeholder loaders for matches
+            await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
+        }
 
-            if (listEl) {
-                // Filter: only completed matches (history)
-                const historyMatches = (matchRes?.data?.matches || []).filter(m => m.status === 'completed');
+        await ProfileViewController.loadMatches(isSilent);
+    },
 
-                if (historyMatches.length === 0) {
-                    const emptySub = is_self ? 'Complete matches to see them in history.' : 'This player hasn\'t completed any matches yet.';
-                    listEl.innerHTML = safeHTML(`<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>${emptySub}</p></div>`);
-                } else {
-                    // Limit to latest 50 results (matching API limit)
-                    let scoreCount = 0;
-                    let html = '';
-                    for (const m of historyMatches) {
-                        if (scoreCount >= 50) break;
+    loadMatches: async function (isSilent = false, isLoadMore = false) {
+        if (ProfileViewController._isLoading) return;
+        if (isLoadMore && !ProfileViewController._hasMore) return;
 
-                        if (m.scores && m.scores.length > 0) {
-                            for (const s of m.scores) {
-                                if (scoreCount >= 50) break;
-                                html += DashboardController.renderMatchCard(m, user.id, s);
-                                scoreCount++;
-                            }
-                        } else {
-                            html += DashboardController.renderMatchCard(m, user.id);
-                            scoreCount++;
-                        }
+        if (isLoadMore) {
+            ProfileViewController._isLoading = true;
+            const listEl = document.getElementById('pv-matches-list');
+            if (listEl && !listEl.querySelector('.pagination-loader')) {
+                listEl.insertAdjacentHTML('beforeend', `<div class="pagination-loader"><div class="pagination-spinner"></div></div>`);
+            }
+        }
+
+        const matchPayload = {
+            target_id: ProfileViewController._targetUserId,
+            limit: ProfileViewController._limit,
+            offset: ProfileViewController._offset
+        };
+
+        const matchRes = await API.post('/matches/user', matchPayload);
+        ProfileViewController._isLoading = false;
+
+        const listEl = document.getElementById('pv-matches-list');
+        if (!listEl) return;
+
+        const newMatches = matchRes?.data?.matches || [];
+        ProfileViewController._hasMore = matchRes?.data?.has_more || false;
+
+        if (isLoadMore) {
+            // Remove pagination loading indicator
+            const loader = listEl.querySelector('.pagination-loader');
+            if (loader) loader.remove();
+
+            ProfileViewController._cacheMatches = [...ProfileViewController._cacheMatches, ...newMatches];
+            ProfileViewController._offset += newMatches.length;
+        } else {
+            ProfileViewController._cacheMatches = newMatches;
+            ProfileViewController._offset = newMatches.length;
+        }
+
+        // Render completed history matches only
+        const historyMatches = ProfileViewController._cacheMatches.filter(m => m.status === 'completed');
+
+        let finalHtml = '';
+        if (historyMatches.length === 0) {
+            const isSelf = ProfileViewController._targetUserId === Auth.getUserId();
+            const emptySub = isSelf ? 'Complete matches to see them in history.' : 'This player hasn\'t completed any matches yet.';
+            finalHtml = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>${emptySub}</p></div>`;
+        } else {
+            let html = '';
+            for (const m of historyMatches) {
+                if (m.scores && m.scores.length > 0) {
+                    for (const s of m.scores) {
+                        html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId, s);
                     }
-                    listEl.innerHTML = safeHTML(html);
+                } else {
+                    html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId);
                 }
             }
-        })();
+            finalHtml = html;
+        }
+
+        // Append pagination spinner at the bottom if there are more matches
+        if (ProfileViewController._hasMore) {
+            finalHtml += `<div class="pagination-loader"><div class="pagination-spinner"></div></div>`;
+        }
+
+        // Smart rendering check to completely eliminate visual flickering
+        if (listEl._lastHtml !== finalHtml) {
+            listEl.innerHTML = safeHTML(finalHtml);
+            listEl._lastHtml = finalHtml;
+        }
+    },
+
+    handleScroll: function () {
+        const listEl = document.getElementById('pv-matches-list');
+        if (!listEl) {
+            window.removeEventListener('scroll', ProfileViewController.handleScroll);
+            return;
+        }
+
+        const clientHeight = document.documentElement.clientHeight;
+        const scrollHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        // If we are within 300px of the bottom, load the next page of matches
+        if (scrollTop + clientHeight >= scrollHeight - 300) {
+            ProfileViewController.loadMatches(true, true);
+        }
     },
 
     toggleFollow: async function () {
