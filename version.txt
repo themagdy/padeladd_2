@@ -1186,3 +1186,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Slowed down stats card shimmer sweep duration to 5.5s for a high-end luxury feel.
 - UI: Configured stats card shimmer to trigger in beautiful alternating waves (Box 1 & 3 at 200ms, Box 2 & 4 at 800ms).
 - Version: 2.3.01 (Build 301)
+
+2.3.02 (Build 302) - 2026-05-19
+- UI: Replaced 'Create' button icon on the Dashboard with the golf flag/pin icon (⛳️).
+- UI: Restored the premium, high-fidelity linear gradient glass effect on the stats cards.
+- UI: Refined stats card shimmer sweep to be beautifully minimal (5% peak opacity) and very fast (1.8s sweep duration).
+- UI: Snapped alternating wave delays to a tight sequence (Box 1 & 3 at 150ms, Box 2 & 4 at 300ms) for an ultra-premium visual wave flow.
+- Version: 2.3.02 (Build 302)

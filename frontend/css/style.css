@@ -2045,7 +2045,7 @@ form {
 .stat-box {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.03) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.01) 80%, rgba(255, 255, 255, 0.04) 100%) !important;
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 0.5px solid var(--c-border) !important;
@@ -2067,28 +2067,28 @@ form {
   height: 100%;
   background: linear-gradient(90deg,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.02) 50%,
+      rgba(255, 255, 255, 0.05) 50%,
       rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
-  animation: glassShimmer 5.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: glassShimmer 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
 }
 
 /* Shimmer triggers in alternating waves: Box 1 & 3 first, then Box 2 & 4 */
 .stat-box:nth-child(1)::after {
-  animation-delay: 200ms;
+  animation-delay: 150ms;
 }
 
 .stat-box:nth-child(2)::after {
-  animation-delay: 800ms;
+  animation-delay: 300ms;
 }
 
 .stat-box:nth-child(3)::after {
-  animation-delay: 200ms;
+  animation-delay: 150ms;
 }
 
 .stat-box:nth-child(4)::after {
-  animation-delay: 800ms;
+  animation-delay: 300ms;
 }
 
 @keyframes glassEntrance {
