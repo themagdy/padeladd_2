@@ -326,25 +326,31 @@ const StoriesController = {
 
     playPlayerByIndex: function (trayIdx) {
         if (!this._trayItems || !this._trayItems[trayIdx]) return;
-
+ 
         // Construct the playback feed following the tray sequence
         const fullFeed = [];
+        const seenStoryIds = new Set(); // Keep track of already added stories to prevent duplicates in playback
+        
         for (let i = trayIdx; i < this._trayItems.length; i++) {
             const group = this._trayItems[i];
-
+ 
             // Sort stories within the player's stack: oldest first for natural story flow
             const sortedStories = [...group.stories].sort((a, b) => new Date(a.match_datetime) - new Date(b.match_datetime));
-
+ 
             sortedStories.forEach(s => {
-                fullFeed.push({
-                    ...s,
-                    _overlayPlayer: group.player // Attach context for the header
-                });
+                const storyId = parseInt(s.id);
+                if (!seenStoryIds.has(storyId)) {
+                    seenStoryIds.add(storyId);
+                    fullFeed.push({
+                        ...s,
+                        _overlayPlayer: group.player // Attach context for the header
+                    });
+                }
             });
         }
-
+ 
         if (fullFeed.length === 0) return;
-
+ 
         this._currentFeed = fullFeed;
         this._currentIndex = 0;
         this._isShowing = true;
