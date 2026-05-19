@@ -2052,22 +2052,6 @@ form {
   justify-content: space-between;
 }
 
-@keyframes glassEntrance {
-  0% {
-    opacity: 0;
-    transform: translateY(8px) scale(0.99);
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-}
-
 @keyframes glassShimmer {
   0% {
     left: -150%;
