@@ -40,7 +40,7 @@
   --g-orange: linear-gradient(135deg, #ff8b00 0%, #E07010 100%);
 
   /* Typography */
-  --font: 'Montserrat', 'Cairo', sans-serif;
+  --font: 'Montserrat', 'Estedad', sans-serif;
 
   /* Spacing */
   --space-xs: 4px;
@@ -268,7 +268,7 @@ ol {
 /* Unified Section Labels (uppercase, letter-spaced) */
 .section-title {
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #fff;
@@ -2043,52 +2043,13 @@ form {
 }
 
 .stat-box {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(255, 255, 255, 0.01) 80%, rgba(255, 255, 255, 0.04) 100%) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 0.5px solid var(--c-border) !important;
+  background: transparent !important;
+  border: 1px solid var(--c-border) !important;
   border-radius: var(--r-md);
   padding: 20px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.25) !important;
-}
-
-/* The Glossy Shimmer Reflection Sweep */
-.stat-box::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.05) 50%,
-      rgba(255, 255, 255, 0) 100%);
-  transform: skewX(-25deg);
-  animation: glassShimmer 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  pointer-events: none;
-}
-
-/* Shimmer triggers in alternating waves: Box 1 & 3 first, then Box 2 & 4 */
-.stat-box:nth-child(1)::after {
-  animation-delay: 150ms;
-}
-
-.stat-box:nth-child(2)::after {
-  animation-delay: 300ms;
-}
-
-.stat-box:nth-child(3)::after {
-  animation-delay: 150ms;
-}
-
-.stat-box:nth-child(4)::after {
-  animation-delay: 300ms;
 }
 
 @keyframes glassEntrance {
@@ -5402,4 +5363,254 @@ body {
   max-width: 100%;
   display: inline-block;
   vertical-align: bottom;
+}
+
+/* ==========================================================================
+   Interactive Calibration Simulator Styles (Rules Page)
+   ========================================================================== */
+.sim-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--c-text-muted);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+/* Premium Simulator Flying Points & Cards */
+.sim-card {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.sim-card.pulse {
+  transform: scale(1.08);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+.sim-card.pulse-green {
+  transform: scale(1.12);
+  border-color: rgba(0, 206, 0, 0.4);
+  box-shadow: 0 0 20px rgba(0, 206, 0, 0.25);
+}
+.sim-card.pulse-pink {
+  transform: scale(1.08);
+  border-color: rgba(216, 27, 96, 0.4);
+  box-shadow: 0 0 20px rgba(216, 27, 96, 0.2);
+}
+
+/* Dynamically Spawning Flying Badge */
+.flying-badge {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.flying-badge.win-flight {
+  background: var(--c-green) !important;
+  color: #000000 !important;
+  animation: flyToRank 1.5s ease-in-out forwards;
+}
+
+.flying-badge.loss-flight {
+  background: var(--c-pink) !important;
+  color: #ffffff !important;
+  animation: flushLoss 1.5s ease-in-out forwards;
+}
+
+@keyframes flyToRank {
+  0% {
+    left: 20%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    left: 32%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  48% {
+    left: 32%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    left: 80%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes flushLoss {
+  0% {
+    left: 20%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    left: 20%;
+    top: 15%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  48% {
+    left: 20%;
+    top: 15%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    left: 20%;
+    top: 120%;
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* Beautiful custom buttons styles */
+.sim-btn-action {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px !important;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 12px 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sim-btn-action.win {
+  background: linear-gradient(135deg, rgba(0, 180, 0, 0.15) 0%, rgba(0, 220, 120, 0.15) 100%) !important;
+  color: var(--c-green) !important;
+  border-color: rgba(0, 206, 0, 0.25) !important;
+}
+
+.sim-btn-action.win:hover {
+  background: linear-gradient(135deg, rgba(0, 206, 0, 0.25) 0%, rgba(0, 240, 140, 0.25) 100%) !important;
+  color: #fff !important;
+  border-color: rgba(0, 240, 140, 0.4) !important;
+  box-shadow: 0 6px 20px rgba(0, 206, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.sim-btn-action.win:active {
+  transform: translateY(0);
+}
+
+.sim-btn-action.loss {
+  background: linear-gradient(135deg, rgba(216, 27, 96, 0.1) 0%, rgba(255, 40, 80, 0.08) 100%) !important;
+  color: var(--c-pink) !important;
+  border-color: rgba(216, 27, 96, 0.2) !important;
+}
+
+.sim-btn-action.loss:hover {
+  background: linear-gradient(135deg, rgba(216, 27, 96, 0.2) 0%, rgba(255, 60, 100, 0.16) 100%) !important;
+  color: #fff !important;
+  border-color: rgba(255, 60, 100, 0.3) !important;
+  box-shadow: 0 6px 20px rgba(216, 27, 96, 0.2);
+  transform: translateY(-2px);
+}
+
+.sim-btn-action.loss:active {
+  transform: translateY(0);
+}
+
+.sim-card {
+  flex: 1;
+  min-width: 80px;
+  max-width: 110px;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+.sim-card-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.sim-card-number {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  transition: all 0.5s ease;
+}
+.sim-progress-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.sim-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sim-progress-fill.buffer {
+  width: 100%;
+  background: var(--c-orange);
+}
+.sim-progress-fill.rank {
+  width: 0%;
+  background: var(--c-green);
+}
+
+/* Particle / Energy Transfer Animation */
+.flow-arrow {
+  font-size: 18px;
+  color: var(--c-border);
+  transition: color 0.3s ease;
+}
+.flow-status {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+/* Dynamic Classes for States */
+.state-win .flow-arrow {
+  color: var(--c-green);
+}
+.state-win .flow-status {
+  color: var(--c-green);
+  background: rgba(0, 206, 0, 0.1);
+}
+
+.state-loss .flow-arrow {
+  color: var(--c-pink);
+}
+.state-loss .flow-status {
+  color: var(--c-pink);
+  background: rgba(216, 27, 96, 0.1);
 }

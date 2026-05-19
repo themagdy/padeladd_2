@@ -1193,3 +1193,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Refined stats card shimmer sweep to be beautifully minimal (5% peak opacity) and very fast (1.8s sweep duration).
 - UI: Snapped alternating wave delays to a tight sequence (Box 1 & 3 at 150ms, Box 2 & 4 at 300ms) for an ultra-premium visual wave flow.
 - Version: 2.3.02 (Build 302)
+
+2.3.03 (Build 303) - 2026-05-19
+- UI: Redesigned calibration simulator layout to center perfectly on mobile by relocating the container out of bullet-list flex containers.
+- UI: Introduced fluid responsive sizing for simulator cards to adapt gracefully between 80px and 110px on small screen sizes.
+- UI: Replaced status texts under the connector arrow with compact visual emoji state indicators to prevent text wrapping on mobile.
+- UI: Removed old continuous orange circle flow particle element and looping CSS keyframe animations.
+- COPY: Refined calibration complete message copy to emphasize final rank being 100% driven by Performance.
+- Version: 2.3.03 (Build 303)

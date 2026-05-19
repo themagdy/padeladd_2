@@ -91,6 +91,61 @@
               </div>
             </div>
           </div>
+
+          <!-- Interactive Simulator Container -->
+          <div class="calibration-simulator state-idle" style="margin-top: 20px; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.03); overflow: hidden; position: relative;">
+            
+            <!-- Header and Status -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 11px; font-weight: 700; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Calibration Simulator</span>
+                <span id="sim-match-counter" style="font-size: 10px; font-weight: 800; color: var(--c-orange); text-transform: uppercase;">Match: 0 / 20</span>
+              </div>
+              <button id="sim-btn-reset" class="sim-btn" style="padding: 4px 8px; font-size: 10px; opacity: 0.8;">🔄 Reset</button>
+            </div>
+
+            <!-- The Visual Stage -->
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 90px; position: relative; padding: 0 4px; margin-bottom: 16px;">
+              
+              <!-- Left Card: Buffer -->
+              <div class="sim-card">
+                <span class="sim-card-label" style="color: var(--c-orange); text-align: center;">⚡ Buffer Points</span>
+                <div id="sim-val-buffer" class="sim-card-number" style="color: var(--c-orange);">100</div>
+                <div class="sim-progress-bg"><div id="sim-progress-buffer" class="sim-progress-fill buffer"></div></div>
+              </div>
+
+              <!-- Center Flow Arrow / Connector -->
+              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; height: 50px;">
+                <div id="sim-transfer-arrow" class="flow-arrow" style="font-size: 20px; transition: all 0.3s ease;">➔</div>
+                <div id="sim-status-label" class="flow-status" style="font-size: 11px; font-weight: 800; color: var(--c-text-muted); text-align: center;">👇</div>
+              </div>
+
+              <!-- Right Card: Ranking -->
+              <div class="sim-card">
+                <span class="sim-card-label" style="color: var(--c-green); text-align: center;">🏆 Ranking Pts</span>
+                <div id="sim-val-rank" class="sim-card-number" style="color: var(--c-green);">0</div>
+                <div class="sim-progress-bg"><div id="sim-progress-rank" class="sim-progress-fill rank"></div></div>
+              </div>
+
+            </div>
+
+            <!-- Match Outcome Buttons -->
+            <div id="sim-controls" style="display: flex; gap: 8px;">
+              <button id="sim-btn-win" class="sim-btn-action win" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                🏆 Win Match (+5 Rank)
+              </button>
+              <button id="sim-btn-loss" class="sim-btn-action loss" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                ❌ Lose Match (0 Rank)
+              </button>
+            </div>
+
+            <!-- Completion Banner -->
+            <div id="sim-completion-banner" style="display: none; background: rgba(0,206,0,0.08); border: 1px solid rgba(0,206,0,0.2); border-radius: 8px; padding: 12px; text-align: center; margin-top: 4px;">
+              <div style="font-size: 13px; font-weight: 800; color: var(--c-green); margin-bottom: 4px;">🎯 Calibration Complete!</div>
+              <div style="font-size: 11px; color: var(--c-text-muted); line-height: 1.4;">All 20 calibration matches played. The buffer is empty. Your rank is 100% driven by Performance!</div>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>
