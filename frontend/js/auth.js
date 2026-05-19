@@ -28,9 +28,13 @@ const Auth = {
     setHasLevel: function(val) {
         localStorage.setItem('has_level', val ? 'true' : 'false');
     },
+    getUserId: function() {
+        return parseInt(localStorage.getItem('auth_user_id')) || 0;
+    },
     clearAll: function() {
         this.clearToken();
         localStorage.removeItem('has_profile');
         localStorage.removeItem('has_level');
+        localStorage.removeItem('auth_user_id');
     }
 };
