@@ -22,7 +22,194 @@ const Router = {
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
-        '/rules': { template: 'frontend/pages/rules.html', init: () => {} },
+        '/rules': { 
+            template: 'frontend/pages/rules.html', 
+            init: () => {
+                let matchesPlayed = 0;
+                let bufferPoints = 100;
+                let rankingPoints = 0;
+
+                window.toggleCalibrationSim = function(mode) {
+                    if (matchesPlayed >= 20) return;
+
+                    const container = document.querySelector('.calibration-simulator');
+                    if (!container) return;
+
+                    const valBuffer = document.getElementById('sim-val-buffer');
+                    const valRank = document.getElementById('sim-val-rank');
+                    const progressBuffer = document.getElementById('sim-progress-buffer');
+                    const progressRank = document.getElementById('sim-progress-rank');
+                    const statusLabel = document.getElementById('sim-status-label');
+                    const arrow = document.getElementById('sim-transfer-arrow');
+                    const matchCounter = document.getElementById('sim-match-counter');
+                    const cards = container.querySelectorAll('.sim-card');
+                    const cardBuffer = cards[0];
+                    const cardRank = cards[1];
+
+                    // Cache state to represent transitions correctly
+                    matchesPlayed++;
+                    bufferPoints -= 5;
+                    if (bufferPoints < 0) bufferPoints = 0;
+
+                    if (mode === 'win') {
+                        rankingPoints += 5;
+                    }
+
+                    const nextBuffer = bufferPoints;
+                    const nextRank = rankingPoints;
+
+                    // Remove existing classes to restart arrow/connector states
+                    container.classList.remove('state-win', 'state-loss', 'state-idle');
+                    void container.offsetWidth; // force layout reflow
+
+                    // Spawn physical flying badge
+                    const badge = document.createElement('div');
+                    badge.className = `flying-badge ${mode === 'win' ? 'win-flight' : 'loss-flight'}`;
+                    badge.textContent = '5%';
+                    container.appendChild(badge);
+
+                    // Immediate animations on trigger
+                    if (cardBuffer) {
+                        cardBuffer.classList.add(mode === 'win' ? 'pulse-green' : 'pulse-pink');
+                        setTimeout(() => cardBuffer.classList.remove('pulse-green', 'pulse-pink'), 400);
+                    }
+
+                    // Immediate visual decrement for the Buffer Points (Orb leaves the starting card)
+                    if (valBuffer) valBuffer.textContent = nextBuffer;
+                    if (progressBuffer) progressBuffer.style.width = `${nextBuffer}%`;
+                    if (matchCounter) matchCounter.textContent = `Match: ${matchesPlayed} / 20`;
+
+                    if (mode === 'win') {
+                        container.classList.add('state-win');
+                        if (arrow) {
+                            arrow.style.color = 'var(--c-green)';
+                            arrow.style.transform = 'scale(1.2)';
+                        }
+                        if (statusLabel) {
+                            statusLabel.textContent = '⚡ ➔ 🏆';
+                            statusLabel.style.color = 'var(--c-green)';
+                            statusLabel.style.background = 'rgba(0, 206, 0, 0.08)';
+                        }
+
+                        // Delay updates to match landing of the flying badge (1500ms)
+                        setTimeout(() => {
+                            if (valRank) valRank.textContent = nextRank;
+                            if (progressRank) progressRank.style.width = `${Math.min(nextRank, 100)}%`;
+
+                            if (statusLabel) statusLabel.textContent = '🏆 +5';
+                            if (cardRank) {
+                                cardRank.classList.add('pulse-green');
+                                setTimeout(() => cardRank.classList.remove('pulse-green'), 300);
+                            }
+                            badge.remove();
+
+                            // Trigger completion check when points land
+                            if (matchesPlayed >= 20) {
+                                triggerCompletion();
+                            }
+                        }, 1500);
+
+                    } else {
+                        container.classList.add('state-loss');
+                        if (arrow) {
+                            arrow.style.color = 'var(--c-pink)';
+                            arrow.style.transform = 'scale(1.2)';
+                        }
+                        if (statusLabel) {
+                            statusLabel.textContent = '⚡ ➔ 💨';
+                            statusLabel.style.color = 'var(--c-pink)';
+                            statusLabel.style.background = 'rgba(216, 27, 96, 0.08)';
+                        }
+
+                        // Delay removal of loss badge to match flush sequence (1500ms)
+                        setTimeout(() => {
+                            if (statusLabel) statusLabel.textContent = '💨';
+                            badge.remove();
+
+                            // Trigger completion check when points flush
+                            if (matchesPlayed >= 20) {
+                                triggerCompletion();
+                            }
+                        }, 1500);
+                    }
+
+                    // Reset arrow scale after click feedback
+                    setTimeout(() => {
+                        if (arrow) arrow.style.transform = 'scale(1)';
+                    }, 300);
+
+                    function triggerCompletion() {
+                        const controls = document.getElementById('sim-controls');
+                        const banner = document.getElementById('sim-completion-banner');
+                        
+                        if (controls) controls.style.display = 'none';
+                        if (banner) banner.style.display = 'block';
+                        if (statusLabel) {
+                            statusLabel.textContent = '🎯';
+                            statusLabel.style.color = 'var(--c-green)';
+                            statusLabel.style.background = 'rgba(0, 206, 0, 0.15)';
+                        }
+                    }
+                };
+
+                // Programmatic button binding to bypass DOMPurify onclick sanitization
+                const btnWin = document.getElementById('sim-btn-win');
+                const btnLoss = document.getElementById('sim-btn-loss');
+                const btnReset = document.getElementById('sim-btn-reset');
+                
+                if (btnWin) {
+                    btnWin.addEventListener('click', () => {
+                        window.toggleCalibrationSim('win');
+                    });
+                }
+                if (btnLoss) {
+                    btnLoss.addEventListener('click', () => {
+                        window.toggleCalibrationSim('loss');
+                    });
+                }
+                if (btnReset) {
+                    btnReset.addEventListener('click', () => {
+                        // Reset simulator states
+                        matchesPlayed = 0;
+                        bufferPoints = 100;
+                        rankingPoints = 0;
+
+                        const container = document.querySelector('.calibration-simulator');
+                        if (container) {
+                            container.classList.remove('state-win', 'state-loss');
+                            container.classList.add('state-idle');
+                        }
+
+                        const valBuffer = document.getElementById('sim-val-buffer');
+                        const valRank = document.getElementById('sim-val-rank');
+                        const progressBuffer = document.getElementById('sim-progress-buffer');
+                        const progressRank = document.getElementById('sim-progress-rank');
+                        const statusLabel = document.getElementById('sim-status-label');
+                        const arrow = document.getElementById('sim-transfer-arrow');
+                        const matchCounter = document.getElementById('sim-match-counter');
+                        const controls = document.getElementById('sim-controls');
+                        const banner = document.getElementById('sim-completion-banner');
+
+                        if (valBuffer) valBuffer.textContent = '100';
+                        if (valRank) valRank.textContent = '0';
+                        if (matchCounter) matchCounter.textContent = 'Match: 0 / 20';
+                        if (progressBuffer) progressBuffer.style.width = '100%';
+                        if (progressRank) progressRank.style.width = '0%';
+                        if (controls) controls.style.display = 'flex';
+                        if (banner) banner.style.display = 'none';
+                        if (arrow) {
+                            arrow.style.color = 'var(--c-border)';
+                            arrow.style.transform = 'scale(1)';
+                        }
+                        if (statusLabel) {
+                            statusLabel.textContent = '👇';
+                            statusLabel.style.color = 'var(--c-text-muted)';
+                            statusLabel.style.background = 'transparent';
+                        }
+                    });
+                }
+            }
+        },
         '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() }
     },
     

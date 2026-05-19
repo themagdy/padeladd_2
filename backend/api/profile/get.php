@@ -103,6 +103,14 @@ if ($viewingId !== $user['id']) {
     $isFollowing = (bool)$fStmt->fetchColumn();
 }
 
+$followersStmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
+$followersStmt->execute([$viewingId]);
+$followersCount = (int)$followersStmt->fetchColumn();
+
+$followingStmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ?");
+$followingStmt->execute([$viewingId]);
+$followingCount = (int)$followingStmt->fetchColumn();
+
 jsonResponse(true, 'Profile loaded.', [
     'user' => [
         'id'         => $u['id'],
@@ -144,6 +152,8 @@ jsonResponse(true, 'Profile loaded.', [
     ],
     'is_self' => ((int)$viewingId === (int)$user['id']),
     'is_following' => $isFollowing,
-    'has_active_story' => $hasActiveStory
+    'has_active_story' => $hasActiveStory,
+    'followers_count' => $followersCount,
+    'following_count' => $followingCount
 ]);
 ?>
