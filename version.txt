@@ -1201,3 +1201,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Removed old continuous orange circle flow particle element and looping CSS keyframe animations.
 - COPY: Refined calibration complete message copy to emphasize final rank being 100% driven by Performance.
 - Version: 2.3.03 (Build 303)
+
+2.3.04 (Build 304) - 2026-05-19
+- UI: Enhanced typographic hierarchy and weight contrast of 'The Padel Ladder' title in the ranking view, rendering 'THE PADEL' lighter (500) and 'LADDER' bolder (900).
+- Version: 2.3.04 (Build 304)
