@@ -326,17 +326,17 @@ const StoriesController = {
 
     playPlayerByIndex: function (trayIdx) {
         if (!this._trayItems || !this._trayItems[trayIdx]) return;
- 
+
         // Construct the playback feed following the tray sequence
         const fullFeed = [];
         const seenStoryIds = new Set(); // Keep track of already added stories to prevent duplicates in playback
-        
+
         for (let i = trayIdx; i < this._trayItems.length; i++) {
             const group = this._trayItems[i];
- 
+
             // Sort stories within the player's stack: oldest first for natural story flow
             const sortedStories = [...group.stories].sort((a, b) => new Date(a.match_datetime) - new Date(b.match_datetime));
- 
+
             sortedStories.forEach(s => {
                 const storyId = parseInt(s.id);
                 if (!seenStoryIds.has(storyId)) {
@@ -348,9 +348,9 @@ const StoriesController = {
                 }
             });
         }
- 
+
         if (fullFeed.length === 0) return;
- 
+
         this._currentFeed = fullFeed;
         this._currentIndex = 0;
         this._isShowing = true;
@@ -1981,7 +1981,7 @@ const ProfileViewController = {
         }
 
         const list = res.data || [];
-        
+
         if (list.length === 0) {
             Toast.show(`No ${type} found.`, 'info');
             return;
@@ -1997,7 +1997,7 @@ const ProfileViewController = {
                 initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : u.name.substring(0, 2).toUpperCase();
             }
             const avatarHtml = UI.getAvatarHtml(u.image, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; font-size:14px; font-weight:700; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; padding-top:2px;', initials);
-            
+
             let followBtnHtml = '';
             if (u.id !== myId) {
                 if (u.is_following) {

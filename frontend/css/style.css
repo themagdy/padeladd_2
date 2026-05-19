@@ -5379,19 +5379,23 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 /* Premium Simulator Flying Points & Cards */
 .sim-card {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
 .sim-card.pulse {
   transform: scale(1.08);
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
+
 .sim-card.pulse-green {
   transform: scale(1.12);
   border-color: rgba(0, 206, 0, 0.4);
   box-shadow: 0 0 20px rgba(0, 206, 0, 0.25);
 }
+
 .sim-card.pulse-pink {
   transform: scale(1.08);
   border-color: rgba(216, 27, 96, 0.4);
@@ -5434,18 +5438,21 @@ body {
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }
+
   15% {
     left: 32%;
     top: 40%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+
   48% {
     left: 32%;
     top: 40%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+
   100% {
     left: 80%;
     top: 40%;
@@ -5461,18 +5468,21 @@ body {
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }
+
   15% {
     left: 20%;
     top: 15%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+
   48% {
     left: 20%;
     top: 15%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
+
   100% {
     left: 20%;
     top: 120%;
@@ -5546,6 +5556,7 @@ body {
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
+
 .sim-card-label {
   font-size: 9px;
   text-transform: uppercase;
@@ -5553,12 +5564,14 @@ body {
   font-weight: 700;
   margin-bottom: 4px;
 }
+
 .sim-card-number {
   font-size: 20px;
   font-weight: 800;
   color: #fff;
   transition: all 0.5s ease;
 }
+
 .sim-progress-bg {
   width: 100%;
   height: 4px;
@@ -5567,15 +5580,18 @@ body {
   margin-top: 8px;
   overflow: hidden;
 }
+
 .sim-progress-fill {
   height: 100%;
   border-radius: 2px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .sim-progress-fill.buffer {
   width: 100%;
   background: var(--c-orange);
 }
+
 .sim-progress-fill.rank {
   width: 0%;
   background: var(--c-green);
@@ -5587,6 +5603,7 @@ body {
   color: var(--c-border);
   transition: color 0.3s ease;
 }
+
 .flow-status {
   font-size: 9px;
   font-weight: 800;
@@ -5602,6 +5619,7 @@ body {
 .state-win .flow-arrow {
   color: var(--c-green);
 }
+
 .state-win .flow-status {
   color: var(--c-green);
   background: rgba(0, 206, 0, 0.1);
@@ -5610,6 +5628,7 @@ body {
 .state-loss .flow-arrow {
   color: var(--c-pink);
 }
+
 .state-loss .flow-status {
   color: var(--c-pink);
   background: rgba(216, 27, 96, 0.1);
