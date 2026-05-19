@@ -1209,3 +1209,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.05 (Build 305) - 2026-05-19
 - Story: Implemented story duplicate prevention in the Story Viewer so that each unique story plays exactly once when scrolling sequentially through player feeds, while keeping the avatars bar sequence unchanged.
 - Version: 2.3.05 (Build 305)
+
+2.3.06 (Build 306) - 2026-05-19
+- Profile: Upgraded player profile match list history to support dynamic infinite scrolling pagination (20 matches/scores loaded per page) exactly identical to the Dashboard matches sections, including paginated PHP backend query support, smart SWR diff rendering, and self-cleaning window event listeners.
+- Version: 2.3.06 (Build 306)

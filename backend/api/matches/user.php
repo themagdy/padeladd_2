@@ -8,8 +8,33 @@ $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
 $target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
+$limit = (int)($data['limit'] ?? 20);
+$offset = (int)($data['offset'] ?? 0);
 
-// Fetch matches where user is a participant OR an active waiting list entry (only for upcoming)
+// Fetch total count for pagination
+$countStmt = $pdo->prepare("
+    SELECT COUNT(*) FROM matches m
+    WHERE (
+        -- Condition A: User was a confirmed participant
+        m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1)
+        OR
+        -- Condition B: User is on waiting list
+        (
+            m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved'))
+            AND m.status NOT IN ('completed', 'cancelled')
+            AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
+        )
+    )
+    AND m.status != 'cancelled'
+");
+$countStmt->execute([
+    ':uid1' => $target_id,
+    ':uid2' => $target_id,
+    ':uid3' => $target_id
+]);
+$totalMatches = (int)$countStmt->fetchColumn();
+
+// Fetch matches where user is a participant OR an active waiting list entry (with LIMIT and OFFSET)
 $stmt = $pdo->prepare("
     SELECT m.*, v.name AS official_venue_name
     FROM matches m
@@ -27,19 +52,24 @@ $stmt = $pdo->prepare("
     )
     AND m.status != 'cancelled'
     ORDER BY m.match_datetime DESC
-    LIMIT 50
+    LIMIT :limit OFFSET :offset
 ");
-$stmt->execute([
-    ':uid1' => $target_id,
-    ':uid2' => $target_id,
-    ':uid3' => $target_id
-]);
+$stmt->bindValue(':uid1', $target_id, PDO::PARAM_INT);
+$stmt->bindValue(':uid2', $target_id, PDO::PARAM_INT);
+$stmt->bindValue(':uid3', $target_id, PDO::PARAM_INT);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
 
 if (empty($matches)) {
-    jsonResponse(true, 'User matches loaded.', ['matches' => []]);
+    jsonResponse(true, 'User matches loaded.', [
+        'matches' => [],
+        'has_more' => false,
+        'offset' => $offset
+    ]);
 }
 
 $matchIds = array_map(fn($m) => (int)$m['id'], $matches);
@@ -129,5 +159,11 @@ foreach ($matches as $m) {
     ];
 }
 
-jsonResponse(true, 'User matches loaded.', ['matches' => $result]);
+$has_more = ($offset + count($result)) < $totalMatches;
+
+jsonResponse(true, 'User matches loaded.', [
+    'matches' => $result,
+    'has_more' => $has_more,
+    'offset' => $offset
+]);
 ?>
