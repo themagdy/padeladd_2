@@ -1223,5 +1223,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.3.08 (Build 308)
 
 2.3.09 (Build 309) - 2026-05-20
-- Rules: Redesigned rules page flushLoss animation so that the LOSE flight badge flies up into the air (top: 5%) and stays/fades out cleanly instead of falling down.
+- Rules: Calibrated point-to-point flight path (top: 70%) for the 5% calibration simulator badge.
+- Rules: Redesigned the LOSE flush animation to rise into the air (top: 30%) and dissolve snappily into dust using blur and brightness filters.
+- Rules: Renamed Late Withdrawal section to '5 hours rule' and localized the Egyptian Arabic text ('الانسحاب في آخر ٥ ساعات من ماتش كامل هيعرضك للإيقاف.') aligned left.
 - Version: 2.3.09 (Build 309)

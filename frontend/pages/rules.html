@@ -96,12 +96,16 @@
           <div class="calibration-simulator state-idle" style="margin-top: 20px; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.03); overflow: hidden; position: relative;">
             
             <!-- Header and Status -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-              <div style="display: flex; flex-direction: column; gap: 2px;">
-                <span style="font-size: 11px; font-weight: 700; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Calibration Simulator</span>
-                <span id="sim-match-counter" style="font-size: 10px; font-weight: 800; color: var(--c-orange); text-transform: uppercase;">Match: 0 / 20</span>
-              </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Calibration Simulator</span>
               <button id="sim-btn-reset" class="sim-btn" style="padding: 4px 8px; font-size: 10px; opacity: 0.8;">🔄 Reset</button>
+            </div>
+
+            <!-- Centered Match Counter Capsule -->
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+              <div style="background: rgba(255, 149, 0, 0.06); border: 1px solid rgba(255, 149, 0, 0.2); border-radius: 20px; padding: 6px 18px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.05);">
+                <span id="sim-match-counter" style="font-size: 14px; font-weight: 900; color: var(--c-orange); text-transform: uppercase; letter-spacing: 0.5px;">Match: 0 / 20</span>
+              </div>
             </div>
 
             <!-- The Visual Stage -->
@@ -216,11 +220,11 @@
       <div style="display:flex; flex-direction:column; gap:16px;">
         <div style="background:var(--g-card); border:0px; border-radius:var(--r-lg); padding:20px;">
           <h3 style="font-size:16px; font-weight:800; color:var(--c-red); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-            <span>⏱️</span> Late Withdrawal
+            <span>⏱️</span> 5 hours rule
           </h3>
           <p style="font-size:13px; color:var(--c-text-muted); line-height:1.5; margin:0;">
-            Withdrawing within <strong style="color:#fff;">5 hours</strong> and late cancellation may lead to a player ban.
-            <div dir="rtl" style="margin-top:6px; font-size:13px; color:var(--c-text-muted);">الانسحاب آخر <strong style="color:#fff;">٥ ساعات</strong> من المباراة المكتملة يعرضك للإيقاف.</div>
+            Cancellation or withdrawing from a full match within <strong style="color:#fff;">5 hours</strong> may lead to a ban.
+            <div dir="rtl" style="margin-top:6px; font-size:13px; color:var(--c-text-muted); text-align: left;">الانسحاب في آخر <strong style="color:#fff;">٥ ساعات</strong> من ماتش كامل هيعرضك للإيقاف.</div>
           </p>
         </div>
 
