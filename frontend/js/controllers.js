@@ -2108,11 +2108,28 @@ const ProfileController = {
         }, 'image/png');
     },
 
-    initEdit: function () {
+    initEdit: async function () {
         const form = document.getElementById('profile-form');
         if (!form) return;
 
         const q = (name) => form.querySelector(`[name="${name}"]`);
+
+        // Populate locations dynamically
+        const locSelect = document.getElementById('edit-profile-location') || q('location_id');
+        if (locSelect) {
+            locSelect.innerHTML = '<option value="">Select city...</option>';
+            try {
+                const locRes = await API.post('/profile/locations', {});
+                if (locRes && locRes.success && locRes.data) {
+                    locRes.data.forEach(loc => {
+                        const opt = new Option(loc.name, loc.id);
+                        locSelect.add(opt);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load locations:', err);
+            }
+        }
 
         // Populate days
         const daySelect = q('dob_day');
@@ -2199,18 +2216,9 @@ const ProfileController = {
                     const psSelect = q('playing_side');
                     if (psSelect && p.playing_side) psSelect.value = p.playing_side;
 
-                    const locSelect = document.getElementById('edit-profile-location') || q('location');
-                    if (locSelect) {
-                        const loc = p.location || '';
-                        locSelect.value = loc;
-                        if (locSelect.value !== loc) {
-                            for (let i = 0; i < locSelect.options.length; i++) {
-                                if (locSelect.options[i].value.toLowerCase() === loc.toLowerCase()) {
-                                    locSelect.value = locSelect.options[i].value;
-                                    break;
-                                }
-                            }
-                        }
+                    const locSelect = document.getElementById('edit-profile-location') || q('location_id');
+                    if (locSelect && p.location_id) {
+                        locSelect.value = p.location_id;
                     }
                     const bioText = q('bio');
                     if (bioText && p.bio) bioText.value = p.bio;
@@ -2356,7 +2364,7 @@ const ProfileController = {
             UI.clearErrors(form);
 
             const getVal = (name) => {
-                const el = (name === 'location') ? (document.getElementById('edit-profile-location') || q(name)) : q(name);
+                const el = (name === 'location_id') ? (document.getElementById('edit-profile-location') || q(name)) : q(name);
                 return el ? el.value : '';
             };
 
@@ -2364,7 +2372,7 @@ const ProfileController = {
             const lastName = getVal('last_name');
             const gender = getVal('gender');
             const playingSide = getVal('playing_side');
-            const location = getVal('location');
+            const locationId = getVal('location_id');
             const nickname = getVal('nickname');
             const bio = getVal('bio');
             const dobDay = getVal('dob_day');
@@ -2385,7 +2393,7 @@ const ProfileController = {
 
             if (!gender) { UI.showError('gender', 'Please select gender', form); return; }
             if (!playingSide) { UI.showError('playing_side', 'Please select your side', form); return; }
-            if (!location) { UI.showError('location', 'Please select location', form); return; }
+            if (!locationId) { UI.showError('location_id', 'Please select location', form); return; }
 
             const dob = `${dobYear}-${dobMonth}-${dobDay}`;
 
@@ -2396,7 +2404,7 @@ const ProfileController = {
                 gender: gender,
                 playing_side: playingSide,
                 nickname: Sanitizer.cleanName(nickname),
-                location: location,
+                location_id: parseInt(locationId),
                 bio: bio.trim()
             };
 

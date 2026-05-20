@@ -8,12 +8,19 @@ $dob = trim($data['date_of_birth'] ?? '');
 $gender = trim($data['gender'] ?? '');
 $playingSide = trim($data['playing_side'] ?? '');
 $nickname = trim($data['nickname'] ?? '');
-$location = trim($data['location'] ?? '');
+$locationId = isset($data['location_id']) ? (int)$data['location_id'] : 0;
 $bio = trim($data['bio'] ?? '');
 
 // Basic validation
-if (empty($first) || empty($last) || empty($dob) || empty($gender) || empty($playingSide) || empty($location)) {
+if (empty($first) || empty($last) || empty($dob) || empty($gender) || empty($playingSide) || !$locationId) {
     jsonResponse(false, 'First name, last name, date of birth, gender, playing side, and location are required.');
+}
+
+// Validate location ID
+$locCheck = $pdo->prepare("SELECT id FROM locations WHERE id = ?");
+$locCheck->execute([$locationId]);
+if (!$locCheck->fetch()) {
+    jsonResponse(false, 'Invalid location selected.');
 }
 
 // Update primary user info
@@ -38,8 +45,8 @@ if ($hasProfile) {
     }
 
     // Update
-    $update = $pdo->prepare("UPDATE user_profiles SET date_of_birth=?, gender=?, playing_side=?, nickname=?, location=?, bio=? WHERE user_id=?");
-    $update->execute([$dob, $gender, $playingSide, $nickname, $location, $bio, $user['id']]);
+    $update = $pdo->prepare("UPDATE user_profiles SET date_of_birth=?, gender=?, playing_side=?, nickname=?, location_id=?, bio=? WHERE user_id=?");
+    $update->execute([$dob, $gender, $playingSide, $nickname, $locationId, $bio, $user['id']]);
     
     $isMissingLevel = empty($existingProfile['level']);
     
@@ -62,8 +69,8 @@ if ($hasProfile) {
         }
 
         try {
-            $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_side, nickname, location, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $location, $bio, $playerCode]);
+            $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, date_of_birth, gender, playing_side, nickname, location_id, bio, player_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $insert->execute([$user['id'], $dob, $gender, $playingSide, $nickname, $locationId, $bio, $playerCode]);
             break; // Success
         } catch (PDOException $e) {
             if ($e->getCode() == '23000') { // Duplicate entry

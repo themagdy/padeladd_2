@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS user_profiles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -20,13 +26,14 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     gender ENUM('male', 'female', 'other') NULL,
     playing_hand ENUM('right', 'left', 'ambidextrous') NULL,
     nickname VARCHAR(100) NULL,
-    location VARCHAR(255) NULL,
+    location_id INT NULL,
     bio TEXT NULL,
     profile_image VARCHAR(255) NULL,
     player_code VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS verification_codes (

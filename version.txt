@@ -1227,3 +1227,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Rules: Redesigned the LOSE flush animation to rise into the air (top: 30%) and dissolve snappily into dust using blur and brightness filters.
 - Rules: Renamed Late Withdrawal section to '5 hours rule' and localized the Egyptian Arabic text ('الانسحاب في آخر ٥ ساعات من ماتش كامل هيعرضك للإيقاف.') aligned left.
 - Version: 2.3.09 (Build 309)
+
+2.3.10 (Build 310) - 2026-05-20
+- Profile: Migrated player profile location field from a free-text string to a relational database table referencing location_id. Created new locations endpoint to dynamically load cities in edit profile view.
+- Version: 2.3.10 (Build 310)
