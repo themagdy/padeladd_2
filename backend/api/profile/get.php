@@ -32,7 +32,12 @@ $u = $stmtUser->fetch();
 if (!$u) jsonResponse(false, 'User not found.');
 
 // Get profile info
-$stmtProf = $pdo->prepare("SELECT * FROM user_profiles WHERE user_id = ?");
+$stmtProf = $pdo->prepare("
+    SELECT up.*, l.name AS location_name 
+    FROM user_profiles up
+    LEFT JOIN locations l ON up.location_id = l.id
+    WHERE up.user_id = ?
+");
 $stmtProf->execute([$viewingId]);
 $profile = $stmtProf->fetch();
 
@@ -124,7 +129,8 @@ jsonResponse(true, 'Profile loaded.', [
         'player_code'   => $profile['player_code'],
         'nickname'      => $profile['nickname'],
         'gender'        => $profile['gender'],
-        'location'      => $profile['location'],
+        'location_id'   => $profile['location_id'] ? (int)$profile['location_id'] : null,
+        'location'      => $profile['location_name'] ?? null,
         'bio'           => $profile['bio'],
         'playing_side'        => $profile['playing_side'],
         'profile_image'       => $profile['profile_image'],

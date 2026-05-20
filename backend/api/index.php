@@ -119,6 +119,9 @@ try {
         case 'profile/get':
             require __DIR__ . '/profile/get.php';
             break;
+        case 'profile/locations':
+            require __DIR__ . '/profile/locations.php';
+            break;
         case 'profile/follows_list':
             require __DIR__ . '/profile/follows_list.php';
             break;
