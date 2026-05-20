@@ -1217,3 +1217,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.07 (Build 307) - 2026-05-19
 - Fix: Implemented missing Auth.getUserId() helper method in auth.js to resolve page crash when navigating to player profile pages.
 - Version: 2.3.07 (Build 307)
+
+2.3.08 (Build 308) - 2026-05-20
+- Rules: Shortened the calibration simulator win/loss action buttons to '🏆 WIN' and '❌ LOSE' for a highly compact and optimized mobile interface.
+- Version: 2.3.08 (Build 308)
