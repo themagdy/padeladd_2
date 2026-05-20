@@ -5455,21 +5455,21 @@ body {
 
   15% {
     left: 20%;
-    top: 15%;
+    top: 5%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 
   48% {
     left: 20%;
-    top: 15%;
+    top: 5%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 
   100% {
     left: 20%;
-    top: 120%;
+    top: 5%;
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }

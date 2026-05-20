@@ -1221,3 +1221,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.08 (Build 308) - 2026-05-20
 - Rules: Shortened the calibration simulator win/loss action buttons to '🏆 WIN' and '❌ LOSE' for a highly compact and optimized mobile interface.
 - Version: 2.3.08 (Build 308)
+
+2.3.09 (Build 309) - 2026-05-20
+- Rules: Redesigned rules page flushLoss animation so that the LOSE flight badge flies up into the air (top: 5%) and stays/fades out cleanly instead of falling down.
+- Version: 2.3.09 (Build 309)
