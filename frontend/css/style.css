@@ -5418,28 +5418,28 @@ body {
 @keyframes flyToRank {
   0% {
     left: 20%;
-    top: 40%;
+    top: 70%;
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }
 
   15% {
-    left: 32%;
-    top: 40%;
+    left: 88%;
+    top: 70%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 
-  48% {
-    left: 32%;
-    top: 40%;
+  31% {
+    left: 88%;
+    top: 70%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
   }
 
   100% {
-    left: 80%;
-    top: 40%;
+    left: 88%;
+    top: 70%;
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
   }
@@ -5448,30 +5448,42 @@ body {
 @keyframes flushLoss {
   0% {
     left: 20%;
-    top: 40%;
+    top: 70%;
     transform: translate(-50%, -50%) scale(0.7);
     opacity: 0;
+    filter: blur(0px);
   }
 
   15% {
     left: 20%;
-    top: 5%;
+    top: 30%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+    filter: blur(0px);
   }
 
-  48% {
+  31% {
     left: 20%;
-    top: 5%;
+    top: 30%;
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+    filter: blur(0px);
+  }
+
+  60% {
+    left: 20%;
+    top: 25%;
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+    filter: blur(12px) brightness(1.8);
   }
 
   100% {
     left: 20%;
-    top: 5%;
-    transform: translate(-50%, -50%) scale(0.7);
+    top: 25%;
+    transform: translate(-50%, -50%) scale(1.8);
     opacity: 0;
+    filter: blur(12px) brightness(1.8);
   }
 }
 
