@@ -7,7 +7,23 @@ $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
-$target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
+$target_id = null;
+if (isset($data['player_code'])) {
+    $playerCode = strtoupper(trim($data['player_code']));
+    $stmtFind = $pdo->prepare("SELECT user_id FROM user_profiles WHERE player_code = ?");
+    $stmtFind->execute([$playerCode]);
+    $found = $stmtFind->fetch();
+    if ($found) {
+        $target_id = (int)$found['user_id'];
+    } else {
+        jsonResponse(true, 'User matches loaded.', ['matches' => [], 'has_more' => false, 'offset' => 0]);
+    }
+}
+
+if ($target_id === null) {
+    $target_id = (int)($data['target_id'] ?? $data['user_id'] ?? $uid);
+}
+
 $limit = (int)($data['limit'] ?? 20);
 $offset = (int)($data['offset'] ?? 0);
 
