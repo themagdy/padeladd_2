@@ -66,6 +66,53 @@ try {
         jsonResponse(false, 'You are currently blocked from joining team matches due to repeated denied requests. Solo join is also unavailable during this period.', null, 403);
     }
 
+    // ── Eligibility Check ────────────────────────────────────────────────
+    // Fetch match eligibility range (locked at creation)
+    $eligMin = (int)$match['eligible_min'];
+    $eligMax = (int)$match['eligible_max'];
+
+    // Get joining player's points
+    $ptsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
+    $ptsStmt->execute([$uid]);
+    $ptsRow = $ptsStmt->fetch(PDO::FETCH_ASSOC);
+    
+    $joinerPts = 100;
+    if ($ptsRow) {
+        $joinerPts = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
+    }
+
+    if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
+        $pdo->rollBack();
+        jsonResponse(false, "You are not eligible for this match. Your points ({$joinerPts}) must be between {$eligMin} and {$eligMax}.", [
+            'eligibility_failed' => true,
+            'your_points'   => $joinerPts,
+            'eligible_min'  => $eligMin,
+            'eligible_max'  => $eligMax,
+        ], 422);
+    }
+
+    // ── Gender check for Same Gender matches ─────────────────────────────────
+    if ($match['gender_type'] === 'same_gender') {
+        // Creator's gender
+        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtC->execute([$match['creator_id']]);
+        $creatorGender = $stmtC->fetchColumn() ?: 'male';
+
+        // Joiner's gender
+        $stmtJ = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtJ->execute([$uid]);
+        $joinerGender = $stmtJ->fetchColumn() ?: 'male';
+
+        if ($joinerGender !== $creatorGender) {
+            $pdo->rollBack();
+            $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+            jsonResponse(false, "You are not eligible for this match. This is a {$genderLabel} match.", [
+                'eligibility_failed' => true,
+                'reason' => 'gender_mismatch'
+            ], 422);
+        }
+    }
+
     // Get current slots
     $slotsStmt = $pdo->prepare("SELECT user_id, team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
     $slotsStmt->execute([$match_id]);
@@ -135,52 +182,7 @@ try {
     // Use overrides if provided
     $user_side = $data['playing_side'] ?? $profile_side;
 
-    // ── Eligibility Check ────────────────────────────────────────────────
-    // Fetch match eligibility range (locked at creation)
-    $eligMin = (int)$match['eligible_min'];
-    $eligMax = (int)$match['eligible_max'];
 
-    // Get joining player's points
-    $ptsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
-    $ptsStmt->execute([$uid]);
-    $ptsRow = $ptsStmt->fetch(PDO::FETCH_ASSOC);
-    
-    $joinerPts = 100;
-    if ($ptsRow) {
-        $joinerPts = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
-    }
-
-    if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
-        $pdo->rollBack();
-        jsonResponse(false, "You are not eligible for this match. Your points ({$joinerPts}) must be between {$eligMin} and {$eligMax}.", [
-            'eligibility_failed' => true,
-            'your_points'   => $joinerPts,
-            'eligible_min'  => $eligMin,
-            'eligible_max'  => $eligMax,
-        ], 422);
-    }
-
-    // ── Gender check for Same Gender matches ─────────────────────────────────
-    if ($match['gender_type'] === 'same_gender') {
-        // Creator's gender
-        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
-        $stmtC->execute([$match['creator_id']]);
-        $creatorGender = $stmtC->fetchColumn() ?: 'male';
-
-        // Joiner's gender
-        $stmtJ = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
-        $stmtJ->execute([$uid]);
-        $joinerGender = $stmtJ->fetchColumn() ?: 'male';
-
-        if ($joinerGender !== $creatorGender) {
-            $pdo->rollBack();
-            $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
-            jsonResponse(false, "You are not eligible for this match. This is a {$genderLabel} match.", [
-                'eligibility_failed' => true,
-                'reason' => 'gender_mismatch'
-            ], 422);
-        }
-    }
 
     // Friendly match only: when this join makes the match full, check team avg diff <= 300
     if ($match['match_type'] === 'friendly' && count($occupied) + 1 === 4) {
@@ -252,6 +254,8 @@ try {
     ]);
 
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     jsonResponse(false, 'Join failed: ' . $e->getMessage(), null, 500);
 }

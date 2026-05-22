@@ -21,10 +21,12 @@ if ($match_id <= 0) {
 }
 
 // Score Validation
-function isValidSet($t1, $t2) {
-    if ($t1 === 0 && $t2 === 0) return null;
-    return ($t1 === 6 && $t2 <= 4) || ($t1 === 7 && ($t2 === 5 || $t2 === 6)) ||
-           ($t2 === 6 && $t1 <= 4) || ($t2 === 7 && ($t1 === 5 || $t1 === 6));
+if (!function_exists('isValidSet')) {
+    function isValidSet($t1, $t2) {
+        if ($t1 === 0 && $t2 === 0) return null;
+        return ($t1 === 6 && $t2 <= 4) || ($t1 === 7 && ($t2 === 5 || $t2 === 6)) ||
+               ($t2 === 6 && $t1 <= 4) || ($t2 === 7 && ($t1 === 5 || $t1 === 6));
+    }
 }
 
 $w1 = isValidSet($s1_t1, $s1_t2);
@@ -37,6 +39,21 @@ if ($w3 === false) jsonResponse(false, 'Invalid Set 3 score.', null, 422);
 
 if (!$w1) jsonResponse(false, 'Set 1 is required.', null, 422);
 if ($w1 && !$w2) jsonResponse(false, 'Set 2 is required.', null, 422);
+
+$s1_winner = ($s1_t1 > $s1_t2) ? 1 : 2;
+$s2_winner = ($s2_t1 > $s2_t2) ? 1 : 2;
+
+if ($s1_winner === $s2_winner) {
+    // 2-0: Set 3 must not be provided
+    if ($w3 !== null) {
+        jsonResponse(false, 'Set 3 is not allowed because a team already won 2-0.', null, 422);
+    }
+} else {
+    // 1-1: Set 3 is required
+    if ($w3 === null) {
+        jsonResponse(false, 'Set 3 is required because the score is tied 1-1.', null, 422);
+    }
+}
 
 $team1Sets = ($s1_t1 > $s1_t2 ? 1 : 0) + ($s2_t1 > $s2_t2 ? 1 : 0) + ($s3_t1 > $s3_t2 ? 1 : 0);
 $team2Sets = ($s1_t2 > $s1_t1 ? 1 : 0) + ($s2_t2 > $s2_t1 ? 1 : 0) + ($s3_t2 > $s3_t1 ? 1 : 0);
@@ -122,6 +139,8 @@ try {
     jsonResponse(true, 'Score submitted successfully. Pending opponent approval.', ['score_id' => $score_id]);
 
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     jsonResponse(false, 'Failed to submit score: ' . $e->getMessage(), null, 500);
 }

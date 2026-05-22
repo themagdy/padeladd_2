@@ -18,7 +18,7 @@ try {
     $pdo->beginTransaction();
 
     // 1. Lock the match and waitlist entry
-    $mStmt = $pdo->prepare("SELECT id, status, match_datetime FROM matches WHERE id = ? FOR UPDATE");
+    $mStmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? FOR UPDATE");
     $mStmt->execute([$match_id]);
     $match = $mStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -45,8 +45,8 @@ try {
         throw new Exception('Unauthorized access to this waitlist entry.');
     }
 
-    // 2. Check current occupied slots
-    $playersStmt = $pdo->prepare("SELECT team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
+    // 2. Check current occupied slots (including user_id for friendly match team average checks)
+    $playersStmt = $pdo->prepare("SELECT user_id, team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
     $playersStmt->execute([$match_id]);
     $players = $playersStmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -85,6 +85,91 @@ try {
             $targetSlots[] = [1, 2, $wl['partner_id']];
         } else {
             throw new Exception('No full team slots available.');
+        }
+    }
+
+    // ── Eligibility Check: Points, Gender, and Friendly Average ─────────
+    $joiningUserIds = $isSolo ? [$uid] : [(int)$wl['requester_id'], (int)$wl['partner_id']];
+
+    // A. Points Range Check
+    $eligMin = (int)$match['eligible_min'];
+    $eligMax = (int)$match['eligible_max'];
+
+    foreach ($joiningUserIds as $jUid) {
+        $ptsStmt = $pdo->prepare("SELECT current_buffer, rank_points FROM player_stats WHERE user_id = ?");
+        $ptsStmt->execute([$jUid]);
+        $ptsRow = $ptsStmt->fetch(PDO::FETCH_ASSOC);
+        $jPts = 100;
+        if ($ptsRow) {
+            $jPts = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
+        }
+        if ($jPts < $eligMin || $jPts > $eligMax) {
+            $nickStmt = $pdo->prepare("SELECT nickname FROM user_profiles WHERE user_id = ?");
+            $nickStmt->execute([$jUid]);
+            $nick = $nickStmt->fetchColumn() ?: "Player";
+            throw new Exception("{$nick} is not eligible for this match. Points ({$jPts}) must be between {$eligMin} and {$eligMax}.");
+        }
+    }
+
+    // B. Same Gender Check
+    if ($match['gender_type'] === 'same_gender') {
+        $stmtC = $pdo->prepare("SELECT gender FROM user_profiles WHERE user_id = ?");
+        $stmtC->execute([$match['creator_id']]);
+        $creatorGender = $stmtC->fetchColumn() ?: 'male';
+
+        foreach ($joiningUserIds as $jUid) {
+            $stmtJ = $pdo->prepare("SELECT gender, nickname FROM user_profiles WHERE user_id = ?");
+            $stmtJ->execute([$jUid]);
+            $jRow = $stmtJ->fetch(PDO::FETCH_ASSOC);
+            $jGender = $jRow ? $jRow['gender'] : 'male';
+            $nick = $jRow ? $jRow['nickname'] : 'Player';
+
+            if ($jGender !== $creatorGender) {
+                $genderLabel = $creatorGender === 'female' ? 'Females Only' : 'Males Only';
+                throw new Exception("{$nick} is not eligible for this match. This is a {$genderLabel} match.");
+            }
+        }
+    }
+
+    // C. Friendly Match Team Points average difference check (<= 300)
+    $newCount = count($players) + count($targetSlots);
+    if ($match['match_type'] === 'friendly' && $newCount === 4) {
+        $proj = [];
+        foreach ($players as $p) {
+            $proj[] = [
+                'user_id' => (int)$p['user_id'],
+                'team_no' => (int)$p['team_no']
+            ];
+        }
+        foreach ($targetSlots as [$t, $s, $targetUid]) {
+            $proj[] = [
+                'user_id' => (int)$targetUid,
+                'team_no' => (int)$t
+            ];
+        }
+
+        $allIds = array_column($proj, 'user_id');
+        $ph = implode(',', array_fill(0, count($allIds), '?'));
+        $ptsSt = $pdo->prepare("SELECT user_id, current_buffer, rank_points FROM player_stats WHERE user_id IN ($ph)");
+        $ptsSt->execute($allIds);
+        $ptsMap = [];
+        foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 100);
+        }
+        foreach ($allIds as $pid) {
+            if (!isset($ptsMap[$pid])) $ptsMap[$pid] = 100;
+        }
+
+        $t1pts = array_map(fn($p) => $ptsMap[(int)$p['user_id']], array_filter($proj, fn($p) => (int)$p['team_no'] === 1));
+        $t2pts = array_map(fn($p) => $ptsMap[(int)$p['user_id']], array_filter($proj, fn($p) => (int)$p['team_no'] === 2));
+
+        if (count($t1pts) === 2 && count($t2pts) === 2) {
+            $avgA = array_sum($t1pts) / 2;
+            $avgB = array_sum($t2pts) / 2;
+            $teamDiff = abs($avgA - $avgB);
+            if ($teamDiff > 300) {
+                throw new Exception("Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 300).");
+            }
         }
     }
 

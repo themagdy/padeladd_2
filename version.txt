@@ -1241,3 +1241,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.12 (Build 312) - 2026-05-22
 - Onboarding: Fixed Terms of Service "Agree" button and Level Selection "Save & Continue" button being non-functional by programmatically binding event listeners to bypass DOMPurify template sanitization.
 - Version: 2.3.12 (Build 312)
+
+2.3.13 (Build 313) - 2026-05-22
+- Backend: Hardened player eligibility checks during solo join (join-solo.php) and jump-in (jump-in.php) actions, including points range, gender restrictions, and friendly match team skill gaps.
+- Backend: Enforced score submission rules in submit.php, rejecting third-set scores for 2-0 match outcomes and requiring third sets for 1-1 ties.
+- Version: 2.3.13 (Build 313)
