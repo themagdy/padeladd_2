@@ -5726,7 +5726,7 @@ const NotificationsController = {
     },
 
     pollBadge: async function () {
-        if (!Auth.isAuthenticated() || this._inProgress) return;
+        if (!Auth.isAuthenticated() || this._inProgress || this._isOpen) return;
         // Phase 6: Skip background notification polling if tab is hidden
         if (document.hidden) return;
 
