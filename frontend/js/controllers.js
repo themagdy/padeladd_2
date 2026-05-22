@@ -1554,7 +1554,8 @@ const ProfileViewController = {
     _isLoading: false,
     _targetUserId: null,
     _cacheMatches: [],
-    init: async function (params, isSilent = false) {
+    _lastRequestId: 0,
+    init: async function (params, isSilent = false, reqId = null) {
         // Guard: All profile views require authentication
         if (!Auth.isAuthenticated()) {
             Router.navigate('/login');
@@ -1562,6 +1563,9 @@ const ProfileViewController = {
         }
 
         if (!isSilent) UI.syncNav();
+
+        // Determine currentReqId based on whether the call is silent or has an explicit reqId
+        const currentReqId = reqId || (isSilent ? ProfileViewController._lastRequestId : ++ProfileViewController._lastRequestId);
 
         // ID could be user_id (numeric) or player_code (string)
         const payload = {};
@@ -1581,16 +1585,18 @@ const ProfileViewController = {
 
             // Trigger silent background fetch for SWR
             setTimeout(() => {
-                ProfileViewController.init(params, true);
+                ProfileViewController.init(params, true, currentReqId);
             }, 10);
         } else {
             // Full network load
             res = await API.post('/profile/get', payload);
+            if (currentReqId !== ProfileViewController._lastRequestId) return;
             if (res && res.success && res.data) {
                 ProfileViewController._viewCache[cacheKey] = res.data;
             }
         }
         if (!res || !res.success) {
+            if (currentReqId !== ProfileViewController._lastRequestId) return;
             const pageEl = document.querySelector('.page.active');
             if (pageEl) {
                 pageEl.innerHTML = safeHTML(`
@@ -1612,204 +1618,210 @@ const ProfileViewController = {
             }
             return;
         }
+        if (currentReqId !== ProfileViewController._lastRequestId) return;
         // Normalize data: 'res' might be the full response {success, data} or just the data from cache
         const profileData = res.data || res;
         const { user, profile, stats, is_self, is_following, has_active_story, followers_count, following_count } = profileData;
         ProfileViewController._targetUserId = user.id;
 
-        // Avatar with Story Ring
-        const av = document.getElementById('prof-avatar');
-        const ring = document.getElementById('prof-ring');
-        const avWrap = document.getElementById('prof-avatar-wrap');
+        // Compare new profile data with the cache to prevent redundant details rendering
+        const hasProfileChanged = !isSilent || !hasCache || JSON.stringify(hasCache) !== JSON.stringify(profileData);
 
-        if (av) {
-            const thumb = profile.profile_image_thumb || profile.profile_image;
-            const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
+        if (hasProfileChanged) {
+            // Avatar with Story Ring
+            const av = document.getElementById('prof-avatar');
+            const ring = document.getElementById('prof-ring');
+            const avWrap = document.getElementById('prof-avatar-wrap');
 
-            if (has_active_story) {
-                if (ring) ring.style.display = 'block';
-                if (avWrap) avWrap.onclick = () => StoriesController.playUserStories(user.id);
-            } else {
-                if (ring) ring.style.display = 'none';
-                if (avWrap) avWrap.onclick = null;
+            if (av) {
+                const thumb = profile.profile_image_thumb || profile.profile_image;
+                const initials = ((user.first_name?.[0] || '') + (user.last_name?.[0] || '')).toUpperCase() || (user.nickname?.[0] || '?').toUpperCase();
+
+                if (has_active_story) {
+                    if (ring) ring.style.display = 'block';
+                    if (avWrap) avWrap.onclick = () => StoriesController.playUserStories(user.id);
+                } else {
+                    if (ring) ring.style.display = 'none';
+                    if (avWrap) avWrap.onclick = null;
+                }
+
+                if (profile && thumb) {
+                    av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
+                    av.classList.remove('avatar-placeholder');
+                    av.style.background = 'none';
+                } else {
+                    av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
+                    av.classList.add('avatar-placeholder');
+                    av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
+                }
             }
 
-            if (profile && thumb) {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
-                av.classList.remove('avatar-placeholder');
-                av.style.background = 'none';
-            } else {
-                av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
-                av.classList.add('avatar-placeholder');
-                av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
-            }
-        }
+            const actionsRow = document.querySelector('.prof-actions-row');
+            if (actionsRow) {
+                if (is_self) {
+                    actionsRow.style.display = 'none';
+                } else {
+                    actionsRow.style.display = 'flex';
 
-        const actionsRow = document.querySelector('.prof-actions-row');
-        if (actionsRow) {
-            if (is_self) {
-                actionsRow.style.display = 'none';
-            } else {
-                actionsRow.style.display = 'flex';
+                    const followContainer = document.getElementById('prof-follow-container');
+                    if (followContainer) {
+                        followContainer.style.display = 'block';
+                        const followBtn = document.getElementById('prof-follow-btn');
+                        if (followBtn) {
+                            followBtn.style.height = '28px';
+                            followBtn.style.fontSize = '11px';
+                            followBtn.style.fontWeight = '700';
+                            followBtn.style.textTransform = 'uppercase';
+                            followBtn.style.letterSpacing = '0.5px';
+                            followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #0055FF, #0033BB)';
+                            followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#0044CC';
+                            followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
+                            followBtn.querySelector('.follow-text').style.display = 'block';
+                            followBtn.querySelector('.follow-text').textContent = is_following ? 'Unfollow' : 'Follow';
+                            followBtn.querySelector('.follow-icon').style.display = 'none';
+                            followBtn.onclick = () => ProfileViewController.toggleFollow();
+                        }
+                    }
 
-                const followContainer = document.getElementById('prof-follow-container');
-                if (followContainer) {
-                    followContainer.style.display = 'block';
-                    const followBtn = document.getElementById('prof-follow-btn');
-                    if (followBtn) {
-                        followBtn.style.height = '28px';
-                        followBtn.style.fontSize = '11px';
-                        followBtn.style.fontWeight = '700';
-                        followBtn.style.textTransform = 'uppercase';
-                        followBtn.style.letterSpacing = '0.5px';
-                        followBtn.style.background = is_following ? 'rgba(255,255,255,0.05)' : 'linear-gradient(135deg, #0055FF, #0033BB)';
-                        followBtn.style.borderColor = is_following ? 'rgba(255,255,255,0.1)' : '#0044CC';
-                        followBtn.style.color = is_following ? 'var(--c-text-muted)' : '#fff';
-                        followBtn.querySelector('.follow-text').style.display = 'block';
-                        followBtn.querySelector('.follow-text').textContent = is_following ? 'Unfollow' : 'Follow';
-                        followBtn.querySelector('.follow-icon').style.display = 'none';
-                        followBtn.onclick = () => ProfileViewController.toggleFollow();
+                    const reportContainer = document.getElementById('prof-report-container');
+                    if (reportContainer) {
+                        reportContainer.style.display = 'block';
                     }
                 }
+            }
 
-                const reportContainer = document.getElementById('prof-report-container');
-                if (reportContainer) {
+            // Action cards visibility (only for self)
+            const actionCards = document.getElementById('prof-action-cards');
+            if (actionCards) {
+                actionCards.style.display = is_self ? 'flex' : 'none';
+            }
+
+            // Report player button (only for others)
+            const reportContainer = document.getElementById('prof-report-container');
+            if (reportContainer) {
+                if (!is_self) {
                     reportContainer.style.display = 'block';
-                }
-            }
-        }
-
-        // Action cards visibility (only for self)
-        const actionCards = document.getElementById('prof-action-cards');
-        if (actionCards) {
-            actionCards.style.display = is_self ? 'flex' : 'none';
-        }
-
-        // Report player button (only for others)
-        const reportContainer = document.getElementById('prof-report-container');
-        if (reportContainer) {
-            if (!is_self) {
-                reportContainer.style.display = 'block';
-                const reportBtn = document.getElementById('prof-report-btn');
-                if (reportBtn) {
-                    reportBtn.onclick = () => ProfileController.reportPlayer(user.id);
-                }
-            } else {
-                reportContainer.style.display = 'none';
-            }
-        }
-
-        // Names (Nickname + Full Name)
-        const nickEl = document.getElementById('prof-nickname');
-        if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
-
-        const fullEl = document.getElementById('prof-fullname');
-        if (fullEl) {
-            if (profile?.nickname) {
-                fullEl.textContent = user.first_name + ' ' + user.last_name;
-                fullEl.style.display = 'block';
-            } else {
-                fullEl.style.display = 'none';
-            }
-        }
-
-        // Player code
-        const codeEl = document.getElementById('prof-code');
-        if (codeEl) {
-            if (profile?.player_code) {
-                codeEl.innerHTML = safeHTML(`
-                    <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
-                    <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; padding: 0 8px;">${profile.player_code}</span>
-                `);
-                codeEl.style.display = 'inline-flex';
-            } else {
-                codeEl.style.display = 'none';
-            }
-        }
-
-        // Followers Counts
-        const followersCountsEl = document.getElementById('prof-followers-counts');
-        if (followersCountsEl) {
-            if (profile?.player_code) {
-                followersCountsEl.style.display = 'flex';
-                document.getElementById('prof-followers-num').textContent = followers_count || 0;
-                document.getElementById('prof-following-num').textContent = following_count || 0;
-
-                const followersBtn = document.getElementById('prof-followers-btn');
-                const followingBtn = document.getElementById('prof-following-btn');
-
-                if (is_self) {
-                    followersBtn.style.cursor = 'pointer';
-                    followingBtn.style.cursor = 'pointer';
-                    followersBtn.onclick = () => ProfileViewController.showFollowsList('followers');
-                    followingBtn.onclick = () => ProfileViewController.showFollowsList('following');
+                    const reportBtn = document.getElementById('prof-report-btn');
+                    if (reportBtn) {
+                        reportBtn.onclick = () => ProfileController.reportPlayer(user.id);
+                    }
                 } else {
-                    followersBtn.style.cursor = 'default';
-                    followingBtn.style.cursor = 'default';
-                    followersBtn.onclick = null;
-                    followingBtn.onclick = null;
+                    reportContainer.style.display = 'none';
                 }
-            } else {
-                followersCountsEl.style.display = 'none';
             }
-        }
 
-        // Meta pills (location, hand)
-        const metaEl = document.getElementById('prof-meta');
-        if (metaEl) {
-            const items = [];
-            const metaStyle = `display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.02); padding:4px 12px 4px 4px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
-            const iconCircle = `width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);`;
-            const labelStyle = `font-size:9px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px;`;
+            // Names (Nickname + Full Name)
+            const nickEl = document.getElementById('prof-nickname');
+            if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
 
-            if (profile?.location) {
-                items.push(`
-                    <div style="${metaStyle}">
-                        <div style="${iconCircle}">📍</div>
-                        <span style="${labelStyle}">${profile.location}</span>
-                    </div>
-                `);
+            const fullEl = document.getElementById('prof-fullname');
+            if (fullEl) {
+                if (profile?.nickname) {
+                    fullEl.textContent = user.first_name + ' ' + user.last_name;
+                    fullEl.style.display = 'block';
+                } else {
+                    fullEl.style.display = 'none';
+                }
             }
-            if (profile?.playing_side) {
-                const label = profile.playing_side === 'flexible' ? 'Flexible' : profile.playing_side + ' side';
-                items.push(`
-                    <div style="${metaStyle}">
-                        <div style="${iconCircle}">🎾</div>
-                        <span style="${labelStyle}">${label}</span>
-                    </div>
-                `);
+
+            // Player code
+            const codeEl = document.getElementById('prof-code');
+            if (codeEl) {
+                if (profile?.player_code) {
+                    codeEl.innerHTML = safeHTML(`
+                        <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
+                        <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; padding: 0 8px;">${profile.player_code}</span>
+                    `);
+                    codeEl.style.display = 'inline-flex';
+                } else {
+                    codeEl.style.display = 'none';
+                }
             }
-            if (profile?.age) {
-                items.push(`
-                    <div style="${metaStyle}">
-                        <div style="${iconCircle}">🎂</div>
-                        <span style="${labelStyle}">Age ${profile.age}</span>
-                    </div>
-                `);
+
+            // Followers Counts
+            const followersCountsEl = document.getElementById('prof-followers-counts');
+            if (followersCountsEl) {
+                if (profile?.player_code) {
+                    followersCountsEl.style.display = 'flex';
+                    document.getElementById('prof-followers-num').textContent = followers_count || 0;
+                    document.getElementById('prof-following-num').textContent = following_count || 0;
+
+                    const followersBtn = document.getElementById('prof-followers-btn');
+                    const followingBtn = document.getElementById('prof-following-btn');
+
+                    if (is_self) {
+                        followersBtn.style.cursor = 'pointer';
+                        followingBtn.style.cursor = 'pointer';
+                        followersBtn.onclick = () => ProfileViewController.showFollowsList('followers');
+                        followingBtn.onclick = () => ProfileViewController.showFollowsList('following');
+                    } else {
+                        followersBtn.style.cursor = 'default';
+                        followingBtn.style.cursor = 'default';
+                        followersBtn.onclick = null;
+                        followingBtn.onclick = null;
+                    }
+                } else {
+                    followersCountsEl.style.display = 'none';
+                }
             }
-            metaEl.innerHTML = items.join('');
-            metaEl.style.gap = '8px';
+
+            // Meta pills (location, hand)
+            const metaEl = document.getElementById('prof-meta');
+            if (metaEl) {
+                const items = [];
+                const metaStyle = `display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.02); padding:4px 12px 4px 4px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
+                const iconCircle = `width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; font-size:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);`;
+                const labelStyle = `font-size:9px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.8px;`;
+
+                if (profile?.location) {
+                    items.push(`
+                        <div style="${metaStyle}">
+                            <div style="${iconCircle}">📍</div>
+                            <span style="${labelStyle}">${profile.location}</span>
+                        </div>
+                    `);
+                }
+                if (profile?.playing_side) {
+                    const label = profile.playing_side === 'flexible' ? 'Flexible' : profile.playing_side + ' side';
+                    items.push(`
+                        <div style="${metaStyle}">
+                            <div style="${iconCircle}">🎾</div>
+                            <span style="${labelStyle}">${label}</span>
+                        </div>
+                    `);
+                }
+                if (profile?.age) {
+                    items.push(`
+                        <div style="${metaStyle}">
+                            <div style="${iconCircle}">🎂</div>
+                            <span style="${labelStyle}">Age ${profile.age}</span>
+                        </div>
+                    `);
+                }
+                metaEl.innerHTML = items.join('');
+                metaEl.style.gap = '8px';
+            }
+
+            // Bio
+            const bioEl = document.getElementById('prof-bio');
+            if (bioEl && profile?.bio) {
+                bioEl.textContent = profile.bio;
+                bioEl.style.display = 'block';
+            }
+
+            // Stats cards
+            StatsUI.update(stats, 'pv');
+
+            // Update achievements empty msg based on context
+            const achMsg = document.getElementById('prof-achievements-empty-msg');
+            if (achMsg) {
+                achMsg.textContent = is_self ? 'Complete matches to earn trophies and special badges!' : 'This player hasn\'t earned any trophies yet.';
+            }
+
+            // Final reveal for the profile header and stats
+            const contentEl = document.getElementById('prof-view-content');
+            if (contentEl) contentEl.style.opacity = '1';
         }
-
-        // Bio
-        const bioEl = document.getElementById('prof-bio');
-        if (bioEl && profile?.bio) {
-            bioEl.textContent = profile.bio;
-            bioEl.style.display = 'block';
-        }
-
-        // Stats cards
-        StatsUI.update(stats, 'pv');
-
-        // Update achievements empty msg based on context
-        const achMsg = document.getElementById('prof-achievements-empty-msg');
-        if (achMsg) {
-            achMsg.textContent = is_self ? 'Complete matches to earn trophies and special badges!' : 'This player hasn\'t earned any trophies yet.';
-        }
-
-        // Final reveal for the profile header and stats
-        const contentEl = document.getElementById('prof-view-content');
-        if (contentEl) contentEl.style.opacity = '1';
 
         // Load matches list asynchronously so it doesn't block the instant navigation
         if (!isSilent) {
@@ -1831,10 +1843,14 @@ const ProfileViewController = {
             await new Promise(r => setTimeout(r, CONFIG.SKELETON_DELAY));
         }
 
-        await ProfileViewController.loadMatches(isSilent);
+        if (currentReqId !== ProfileViewController._lastRequestId) return;
+
+        await ProfileViewController.loadMatches(isSilent, false, currentReqId);
     },
 
-    loadMatches: async function (isSilent = false, isLoadMore = false) {
+    loadMatches: async function (isSilent = false, isLoadMore = false, reqId = null) {
+        const currentReqId = reqId || ProfileViewController._lastRequestId;
+        if (currentReqId !== ProfileViewController._lastRequestId) return;
         if (ProfileViewController._isLoading) return;
         if (isLoadMore && !ProfileViewController._hasMore) return;
 
@@ -1848,11 +1864,12 @@ const ProfileViewController = {
 
         const matchPayload = {
             target_id: ProfileViewController._targetUserId,
-            limit: ProfileViewController._limit,
-            offset: ProfileViewController._offset
+            limit: isLoadMore ? ProfileViewController._limit : 20,
+            offset: isLoadMore ? ProfileViewController._offset : 0
         };
 
         const matchRes = await API.post('/matches/user', matchPayload);
+        if (currentReqId !== ProfileViewController._lastRequestId) return;
         ProfileViewController._isLoading = false;
 
         const listEl = document.getElementById('pv-matches-list');
@@ -1868,6 +1885,20 @@ const ProfileViewController = {
 
             ProfileViewController._cacheMatches = [...ProfileViewController._cacheMatches, ...newMatches];
             ProfileViewController._offset += newMatches.length;
+        } else if (isSilent) {
+            const existingTop = ProfileViewController._cacheMatches.slice(0, newMatches.length);
+            const matchesChanged = JSON.stringify(existingTop) !== JSON.stringify(newMatches);
+
+            if (!matchesChanged) {
+                // No changes in first page of matches, skip render
+                return;
+            }
+
+            const remainingMatches = ProfileViewController._cacheMatches.slice(newMatches.length);
+            ProfileViewController._cacheMatches = [...newMatches, ...remainingMatches];
+            if (ProfileViewController._offset < ProfileViewController._cacheMatches.length) {
+                ProfileViewController._offset = ProfileViewController._cacheMatches.length;
+            }
         } else {
             ProfileViewController._cacheMatches = newMatches;
             ProfileViewController._offset = newMatches.length;
@@ -1939,12 +1970,14 @@ const ProfileViewController = {
         const btn = document.getElementById('prof-follow-btn');
         if (btn) btn.disabled = true;
 
+        const activeReqId = ProfileViewController._lastRequestId;
         const res = await API.post('/profile/follow', { target_user_id: targetUserId });
         if (res && res.success) {
+            if (activeReqId !== ProfileViewController._lastRequestId) return;
             // Update cache
             cached.is_following = res.data.is_following;
             // Refresh view silently
-            ProfileViewController.init(Router.params, true);
+            ProfileViewController.init(Router.params, true, activeReqId);
         } else {
             Toast.show(res ? res.message : 'Action failed');
         }
@@ -1953,8 +1986,10 @@ const ProfileViewController = {
 
     toggleFollowInList: async function (targetUserId, btn) {
         if (btn) btn.disabled = true;
+        const activeReqId = ProfileViewController._lastRequestId;
         const res = await API.post('/profile/follow', { target_user_id: targetUserId });
         if (res && res.success) {
+            if (activeReqId !== ProfileViewController._lastRequestId) return;
             const isFollowing = res.data.is_following;
             if (isFollowing) {
                 btn.textContent = 'Following';
@@ -1964,7 +1999,7 @@ const ProfileViewController = {
                 btn.style.background = 'var(--c-primary)';
             }
             // Update profile view silently in case it affects the current counts
-            ProfileViewController.init(Router.params, true);
+            ProfileViewController.init(Router.params, true, activeReqId);
         } else {
             Toast.show(res ? res.message : 'Action failed', 'error');
         }
