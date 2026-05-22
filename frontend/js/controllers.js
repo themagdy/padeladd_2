@@ -1046,6 +1046,12 @@ const AuthController = {
         if (agreeContainer && !Auth.hasProfile()) {
             agreeContainer.style.display = 'block';
         }
+
+        // Programmatic click binding to bypass DOMPurify sanitization
+        const agreeBtn = btnText ? btnText.closest('button') : null;
+        if (agreeBtn) {
+            agreeBtn.onclick = () => this.agreeTerms();
+        }
     },
     agreeTerms: function () {
         const title = document.getElementById('terms-agree-title');
@@ -2391,6 +2397,18 @@ const ProfileController = {
                     Toast.show('Photo removed', 'success');
                     UI.syncNav();
                 }
+            });
+        }
+
+        // Bind level selection radios (programmatic bypass for DOMPurify event stripping)
+        const levelRadios = document.querySelectorAll('input[name="player_level"]');
+        const submitLevelBtn = document.getElementById('level-selection-submit');
+        if (levelRadios.length && submitLevelBtn) {
+            levelRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    submitLevelBtn.disabled = false;
+                    submitLevelBtn.classList.add('active');
+                });
             });
         }
 

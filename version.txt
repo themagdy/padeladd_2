@@ -1237,3 +1237,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.11 (Build 311) - 2026-05-22
 - Profile: Implemented request ID tracking and silent background fetch merging in ProfileViewController to resolve race conditions, singleton state corruption, and layout flickering during navigation or SWR updates.
 - Version: 2.3.11 (Build 311)
+
+2.3.12 (Build 312) - 2026-05-22
+- Onboarding: Fixed Terms of Service "Agree" button and Level Selection "Save & Continue" button being non-functional by programmatically binding event listeners to bypass DOMPurify template sanitization.
+- Version: 2.3.12 (Build 312)
