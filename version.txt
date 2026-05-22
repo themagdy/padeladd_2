@@ -1248,5 +1248,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.3.13 (Build 313)
 
 2.3.14 (Build 314) - 2026-05-22
-- Notifications: Skip background notification polling when the notification panel is open to avoid race conditions that overwrite badge visibility.
+- Notifications: Skip background notification polling when panel is open. Added global read-all mark on opening. Resolved infinite scroll race conditions and layout collapse flickering during silent SWR updates.
 - Version: 2.3.14 (Build 314)
+

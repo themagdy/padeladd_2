@@ -5788,7 +5788,6 @@ const NotificationsController = {
         if (this._notifications.length > 0) {
             this._offset = 0;
             this._hasMore = true;
-            this._notifications = []; // Clear for fresh sync, but only AFTER renderList was called above
             this.loadMore(true); // silent load
         }
     },
@@ -5811,8 +5810,8 @@ const NotificationsController = {
     loadMore: async function (isSilent = false) {
         if (this._isLoading || !this._hasMore) return;
 
+        this._isLoading = true;
         if (!isSilent) {
-            this._isLoading = true;
             this.renderList(); // Show loading indicator at bottom
         }
 
@@ -5826,11 +5825,21 @@ const NotificationsController = {
             const unreadIds = newNotifs.filter(n => !n.is_read).map(n => n.id);
             if (unreadIds.length > 0) {
                 unreadIds.forEach(id => this._visuallyUnreadIds.add(id));
-                this.markRead(unreadIds, true); // Silent update
             }
 
-            this._notifications = this._notifications.concat(newNotifs);
-            this._offset += newNotifs.length;
+            if (this._offset === 0) {
+                // Silently mark all notifications as read globally on the first page load
+                API.post('/notifications/read', { all: true });
+                newNotifs.forEach(n => n.is_read = true);
+                this._notifications = newNotifs; // Overwrite preloaded list on fresh load
+            } else {
+                if (unreadIds.length > 0) {
+                    this.markRead(unreadIds, true); // Silent update for subsequent pages
+                }
+                this._notifications = this._notifications.concat(newNotifs);
+            }
+
+            this._offset = this._notifications.length;
             this._hasMore = res.data.has_more;
         } catch (e) {
             console.error('Failed to load more notifications:', e);
