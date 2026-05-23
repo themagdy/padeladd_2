@@ -5,6 +5,32 @@
  * Slots are filled only if team 2 still has 2 open spots.
  */
 require_once __DIR__ . '/../../helpers/ranking_helper.php';
+
+function checkTeamEligibility(array $t1, array $t2): array {
+    $playerScore = function(int $points, int $matches_played): int {
+        $confidence = min(100, 5 * $matches_played);
+        return intdiv($points * (300 + $confidence), 400);
+    };
+
+    $s1_1 = $playerScore($t1[0]['points'], $t1[0]['matches_played']);
+    $s1_2 = $playerScore($t1[1]['points'], $t1[1]['matches_played']);
+    $s2_1 = $playerScore($t2[0]['points'], $t2[0]['matches_played']);
+    $s2_2 = $playerScore($t2[1]['points'], $t2[1]['matches_played']);
+
+    $teamScoreA = intdiv($s1_1 + $s1_2, 2);
+    $teamScoreB = intdiv($s2_1 + $s2_2, 2);
+
+    $gap = abs($teamScoreA - $teamScoreB);
+    $maxScore = max($teamScoreA, $teamScoreB);
+    $tolerance = 8 + intdiv($maxScore * 15, 100);
+
+    return [
+        'eligible' => ($gap <= $tolerance),
+        'gap' => $gap,
+        'tolerance' => $tolerance
+    ];
+}
+
 $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
