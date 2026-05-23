@@ -51,12 +51,6 @@ foreach ($allIds as $pid) {
     }
 }
 
-// ── Helper: PlayerMatchScore (integer-only) ───────────────────────────────
-function playerMatchScore(int $points, int $matches_played): int {
-    $confidence = min(100, 5 * $matches_played);           // confidence_i = min(100, 5 * M_i)
-    return intdiv($points * (300 + $confidence), 400);       // floor((P_i * (300 + C_i)) / 400)
-}
-
 // ── Helper: Anti-farming IntegrityFactor ─────────────────────────────────
 function integrityFactor($pdo, int $user_id, array $opponent_ids): int {
     $count = 0;
@@ -84,23 +78,48 @@ function integrityFactor($pdo, int $user_id, array $opponent_ids): int {
     return 30;
 }
 
-// ── Calculate team match scores ───────────────────────────────────────────
+// ── Calculate team eligibility ─────────────────────────────────────────────
 $teamAIds = array_map('intval', $team_a);
 $teamBIds = array_map('intval', $team_b);
 
-$scoreA1 = playerMatchScore($stats[$teamAIds[0]]['points'], $stats[$teamAIds[0]]['matches_played']);
-$scoreA2 = playerMatchScore($stats[$teamAIds[1]]['points'], $stats[$teamAIds[1]]['matches_played']);
-$scoreB1 = playerMatchScore($stats[$teamBIds[0]]['points'], $stats[$teamBIds[0]]['matches_played']);
-$scoreB2 = playerMatchScore($stats[$teamBIds[1]]['points'], $stats[$teamBIds[1]]['matches_played']);
+$match_type = $data['match_type'] ?? 'competition';
 
-$teamScoreA = intdiv($scoreA1 + $scoreA2, 2);  // floor avg
-$teamScoreB = intdiv($scoreB1 + $scoreB2, 2);
+$ptsA1 = $stats[$teamAIds[0]]['points'];
+$ptsA2 = $stats[$teamAIds[1]]['points'];
+$ptsB1 = $stats[$teamBIds[0]]['points'];
+$ptsB2 = $stats[$teamBIds[1]]['points'];
 
-// ── Eligibility check ─────────────────────────────────────────────────────
-$gap       = abs($teamScoreA - $teamScoreB);
-$maxScore  = max($teamScoreA, $teamScoreB);
-$tolerance = 8 + intdiv($maxScore * 15, 100);  // 8 + floor((max * 15) / 100)
-$eligible  = ($gap <= $tolerance);
+$allPoints = [$ptsA1, $ptsA2, $ptsB1, $ptsB2];
+
+// Check if there is at least one player who could be the creator (i.e., all other players are within range)
+$rangeLimit = ($match_type === 'competition') ? 100 : 300;
+$hasValidCreator = false;
+foreach ($allPoints as $creatorPts) {
+    $inRange = true;
+    foreach ($allPoints as $pPts) {
+        if (abs($pPts - $creatorPts) > $rangeLimit) {
+            $inRange = false;
+            break;
+        }
+    }
+    if ($inRange) {
+        $hasValidCreator = true;
+        break;
+    }
+}
+
+$eligible = $hasValidCreator;
+
+$teamScoreA = intdiv($ptsA1 + $ptsA2, 2);
+$teamScoreB = intdiv($ptsB1 + $ptsB2, 2);
+$gap = abs($teamScoreA - $teamScoreB);
+
+// For friendly match, also check team average difference <= 300
+if ($match_type === 'friendly') {
+    if ($gap > 300) {
+        $eligible = false;
+    }
+}
 
 // ── Integrity factors for all 4 players ──────────────────────────────────
 $integrityA1 = integrityFactor($pdo, $teamAIds[0], $teamBIds);
@@ -114,12 +133,12 @@ jsonResponse(true, $eligible ? 'Teams are eligible to play.' : 'Teams are too mi
     'team_a_score'   => $teamScoreA,
     'team_b_score'   => $teamScoreB,
     'gap'            => $gap,
-    'tolerance'      => $tolerance,
+    'tolerance'      => ($match_type === 'friendly') ? 300 : 200,
     'player_scores'  => [
-        $teamAIds[0] => $scoreA1,
-        $teamAIds[1] => $scoreA2,
-        $teamBIds[0] => $scoreB1,
-        $teamBIds[1] => $scoreB2,
+        $teamAIds[0] => $ptsA1,
+        $teamAIds[1] => $ptsA2,
+        $teamBIds[0] => $ptsB1,
+        $teamBIds[1] => $ptsB2,
     ],
     'integrity_factors' => [
         $teamAIds[0] => $integrityA1,
