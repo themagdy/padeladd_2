@@ -341,13 +341,21 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
     // ── 7. Update DB ──────────────────────────────────────────────────────
     foreach ($players as $p) {
-        $new_matches = $p['matches_played'] + 1;
-        $new_wins = $p['matches_won'] + ($p['won'] ? 1 : 0);
-        $new_losses = $p['matches_lost'] + ($p['won'] ? 0 : 1);
-        $new_wr = (int) floor(($new_wins * 100) / $new_matches);
-        $new_streak = $p['won']
-            ? (($p['streak'] >= 0) ? $p['streak'] + 1 : 1)
-            : (($p['streak'] <= 0) ? $p['streak'] - 1 : -1);
+        if ($p['skipped']) {
+            $new_matches = $p['matches_played'];
+            $new_wins = $p['matches_won'];
+            $new_losses = $p['matches_lost'];
+            $new_wr = $p['win_rate'];
+            $new_streak = $p['streak'];
+        } else {
+            $new_matches = $p['matches_played'] + 1;
+            $new_wins = $p['matches_won'] + ($p['won'] ? 1 : 0);
+            $new_losses = $p['matches_lost'] + ($p['won'] ? 0 : 1);
+            $new_wr = (int) floor(($new_wins * 100) / $new_matches);
+            $new_streak = $p['won']
+                ? (($p['streak'] >= 0) ? $p['streak'] + 1 : 1)
+                : (($p['streak'] <= 0) ? $p['streak'] - 1 : -1);
+        }
 
         $pdo->prepare("
             UPDATE player_stats
