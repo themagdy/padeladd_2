@@ -59,29 +59,29 @@ function playerMatchScore(int $points, int $matches_played): int {
 
 // ── Helper: Anti-farming IntegrityFactor ─────────────────────────────────
 function integrityFactor($pdo, int $user_id, array $opponent_ids): int {
-    // Count confirmed matches in the last 30 days where user faced these opponents
-    $placeholders = implode(',', array_fill(0, count($opponent_ids), '?'));
-    $stmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT mp_self.match_id) as c
-        FROM match_players mp_self
-        JOIN match_players mp_opp ON mp_opp.match_id = mp_self.match_id
-            AND mp_opp.team_no != mp_self.team_no
-            AND mp_opp.user_id IN ($placeholders)
-        JOIN matches m ON m.id = mp_self.match_id
-        WHERE mp_self.user_id = ?
-          AND m.status IN ('completed', 'full', 'open')
-          AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-    ");
-    $params = array_merge($opponent_ids, [$user_id]);
-    $stmt->execute($params);
-    $count = (int)($stmt->fetch(PDO::FETCH_ASSOC)['c'] ?? 0);
+    $count = 0;
+    foreach ($opponent_ids as $opp_id) {
+        $stmt = $pdo->prepare("
+            SELECT COUNT(s.id)
+            FROM scores s
+            JOIN matches m ON s.match_id = m.id
+            JOIN match_players mp1 ON m.id = mp1.match_id
+            JOIN match_players mp2 ON m.id = mp2.match_id
+            WHERE s.status = 'approved'
+              AND m.match_type = 'competition'
+              AND mp1.user_id = ?
+              AND mp2.user_id = ?
+              AND mp1.team_no != mp2.team_no
+              AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        ");
+        $stmt->execute([$user_id, $opp_id]);
+        $count = max($count, (int)$stmt->fetchColumn());
+    }
 
-    // Integrity scale per brief
-    if ($count <= 2)       return 100;
-    elseif ($count === 3)  return 75;
-    elseif ($count === 4)  return 50;
-    elseif ($count === 5)  return 25;
-    else                   return 10;
+    if ($count < 2)   return 100;
+    if ($count == 2)  return 70;
+    if ($count == 3)  return 50;
+    return 30;
 }
 
 // ── Calculate team match scores ───────────────────────────────────────────
