@@ -1275,6 +1275,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Fixed anti-farming progressive decay in eligibility-check.php by correcting the integrityFactor return values for 5 and 6+ repeat matches.
 - Version: 2.3.18 (Build 318)
 
+2.3.19 (Build 319) - 2026-05-23
+- Backend: Fixed warning where ptsRow could be boolean false in join-solo.php when joining a player without an existing player_stats record, replacing unsafe array offset access with safe ternary checks.
+- Version: 2.3.19 (Build 319)
+
+
 
 
 

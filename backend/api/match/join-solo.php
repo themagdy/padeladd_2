@@ -215,11 +215,14 @@ try {
     }
 
     // Insert the player
+    $rankPointsJoin   = $ptsRow ? (int)($ptsRow['rank_points'] ?? 0) : 0;
+    $bufferPointsJoin = $ptsRow ? (int)($ptsRow['current_buffer'] ?? 100) : 100;
+
     $ins = $pdo->prepare("
         INSERT INTO match_players (match_id, user_id, team_no, slot_no, join_type, status, playing_side, rank_points_at_join, buffer_points_at_join)
         VALUES (?, ?, ?, ?, 'solo', 'confirmed', ?, ?, ?)
     ");
-    $ins->execute([$match_id, $uid, $targetTeam, $targetSlot, $user_side, (int)($ptsRow['rank_points'] ?? 0), (int)($ptsRow['current_buffer'] ?? 100)]);
+    $ins->execute([$match_id, $uid, $targetTeam, $targetSlot, $user_side, $rankPointsJoin, $bufferPointsJoin]);
 
 
     // Cleanup: Use the helper to ensure waitlist is consistent for this match
