@@ -1259,5 +1259,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Unified the effective points calculation formula across all match eligibility and approval endpoints to ignore buffer points once buffer matches are exhausted.
 - Backend: Hardened the same-gender match check in join-team.php to validate the requester's gender as well as the partner's, blocking invalid team requests at invitation time.
 - Backend: Wrapped team request denial updates in match/deny.php inside a database transaction with FOR UPDATE locks to ensure atomic updates and prevent match state inconsistency.
+- Backend: Excluded self-sentinel global ban rows from the distinct blocker count query in match/block.php to prevent premature suspensions.
 - Version: 2.3.15 (Build 315)
+
+2.3.16 (Build 316) - 2026-05-23
+- Backend: Wrapped the registration uniqueness check, deletion of unverified accounts, and user registration inside a transaction block in register.php.
+- Backend: Implemented FOR UPDATE locking on matching email/mobile rows during registration to prevent race conditions and double-registration concurrency conflicts.
+- Version: 2.3.16 (Build 316)
+
 

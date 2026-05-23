@@ -44,7 +44,7 @@ try {
     $countStmt = $pdo->prepare("
         SELECT COUNT(*) AS total_blockers
         FROM blocked_partner_requests
-        WHERE blocked_user_id = ?
+        WHERE blocked_user_id = ? AND blocker_user_id != blocked_user_id
     ");
     $countStmt->execute([$requester_id]);
     $row = $countStmt->fetch(PDO::FETCH_ASSOC);

@@ -31,33 +31,34 @@ if (!preg_match('/^01[0125][0-9]{8}$/', $mobile)) {
     jsonResponse(false, 'Invalid Egyptian mobile number. Must be 11 digits starting with 01.');
 }
 
-// Check uniqueness
-$stmt = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, email, mobile FROM users WHERE email = ? OR mobile = ?");
-$stmt->execute([$email, $mobile]);
-$existingUsers = $stmt->fetchAll();
-
-foreach ($existingUsers as $existing) {
-    // A record "claims" the email/mobile ONLY if it is BOTH email AND phone verified
-    if ((int)$existing['is_email_verified'] === 1 && (int)$existing['is_phone_verified'] === 1) {
-        if ($existing['email'] === $email) {
-            jsonResponse(false, 'Email is already registered to a fully verified account.');
-        }
-        if ($existing['mobile'] === $mobile) {
-            jsonResponse(false, 'Mobile number is already registered to a fully verified account.');
-        }
-    }
-}
-
-// If we reached here, any matches are not fully verified (pending one or both). 
-// Clear them out so this new registration can take ownership of the identifiers.
-foreach ($existingUsers as $existing) {
-    $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$existing['id']]);
-}
-
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 try {
     $pdo->beginTransaction();
+
+    // Check uniqueness (lock matching rows with FOR UPDATE to prevent race conditions)
+    $stmt = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, email, mobile FROM users WHERE email = ? OR mobile = ? FOR UPDATE");
+    $stmt->execute([$email, $mobile]);
+    $existingUsers = $stmt->fetchAll();
+
+    foreach ($existingUsers as $existing) {
+        // A record "claims" the email/mobile ONLY if it is BOTH email AND phone verified
+        if ((int)$existing['is_email_verified'] === 1 && (int)$existing['is_phone_verified'] === 1) {
+            $pdo->rollBack();
+            if ($existing['email'] === $email) {
+                jsonResponse(false, 'Email is already registered to a fully verified account.');
+            }
+            if ($existing['mobile'] === $mobile) {
+                jsonResponse(false, 'Mobile number is already registered to a fully verified account.');
+            }
+        }
+    }
+
+    // If we reached here, any matches are not fully verified (pending one or both). 
+    // Clear them out so this new registration can take ownership of the identifiers.
+    foreach ($existingUsers as $existing) {
+        $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$existing['id']]);
+    }
 
     $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, mobile, email, password_hash) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$firstName, $lastName, $mobile, $email, $passwordHash]);
