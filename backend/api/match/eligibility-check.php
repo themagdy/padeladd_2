@@ -39,7 +39,7 @@ $statsRows = $statsStmt->fetchAll(PDO::FETCH_ASSOC);
 $stats = [];
 foreach ($statsRows as $row) {
     $stats[(int)$row['user_id']] = [
-        'points'         => (int)($row['rank_points'] ?? 0) + (int)($row['current_buffer'] ?? 100),
+        'points'         => (int)($row['rank_points'] ?? 0) + ((int)($row['buffer_matches_left'] ?? 0) > 0 ? (int)($row['current_buffer'] ?? 100) : 0),
         'matches_played' => (int)$row['matches_played'],
     ];
 }

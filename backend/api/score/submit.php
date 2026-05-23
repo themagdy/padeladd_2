@@ -97,17 +97,20 @@ if (!$mySlot) {
 }
 
 // 3. Max 5 submissions check
-$countStmt = $pdo->prepare("SELECT COUNT(*) FROM scores WHERE match_id = ?");
-$countStmt->execute([$match_id]);
-if ((int)$countStmt->fetchColumn() >= 5) {
-    jsonResponse(false, 'Maximum of 5 match results allowed per session.', null, 400);
-}
-
-// (Check removed to allow multiple match results in one session as per the "Max 5" rule)
-
-// 5. Insert score
 $pdo->beginTransaction();
 try {
+    // Lock the match row to prevent concurrent submissions for this match
+    $lockStmt = $pdo->prepare("SELECT id FROM matches WHERE id = ? FOR UPDATE");
+    $lockStmt->execute([$match_id]);
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM scores WHERE match_id = ?");
+    $countStmt->execute([$match_id]);
+    if ((int)$countStmt->fetchColumn() >= 2) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Maximum of 2 match results allowed per match.', null, 400);
+    }
+
+    // 5. Insert score
     $ins = $pdo->prepare("
         INSERT INTO scores (match_id, submitted_by_user_id, t1_set1, t2_set1, t1_set2, t2_set2, t1_set3, t2_set3, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
@@ -117,9 +120,42 @@ try {
 
     // Handle composition switch if provided
     if ($composition && is_array($composition)) {
+        // 1. Query the match_players table to get the 4 real user_ids for this match.
+        $playersStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ?");
+        $playersStmt->execute([$match_id]);
+        $realUserIds = array_map('intval', $playersStmt->fetchAll(PDO::FETCH_COLUMN));
+
+        // 2. Check that the submitted composition array contains exactly those same 4 user_ids (no external users allowed).
+        $submittedUserIds = array_map(function($p) {
+            return (int)($p['user_id'] ?? 0);
+        }, $composition);
+
+        sort($realUserIds);
+        sort($submittedUserIds);
+
+        if ($realUserIds !== $submittedUserIds) {
+            $pdo->rollBack();
+            jsonResponse(false, 'Invalid player composition. Must contain exactly the 4 match players.', null, 422);
+        }
+
+        // 3. Verify that the composition array assigns exactly 2 players to team_no = 1 and exactly 2 players to team_no = 2.
+        $team1Count = 0;
+        $team2Count = 0;
+        foreach ($composition as $p) {
+            $teamNo = (int)($p['team_no'] ?? 0);
+            if ($teamNo === 1) {
+                $team1Count++;
+            } elseif ($teamNo === 2) {
+                $team2Count++;
+            }
+        }
+
+        if ($team1Count !== 2 || $team2Count !== 2) {
+            $pdo->rollBack();
+            jsonResponse(false, 'Invalid team composition. Each team must have exactly 2 players.', null, 422);
+        }
+
         // We'll store the suggested composition in a new column or just handle it at approval.
-        // The brief says "it's optional to switch teams/partners while submission".
-        // I'll add a column 'composition_json' to the scores table to store this.
         $updateComp = $pdo->prepare("UPDATE scores SET composition_json = ? WHERE id = ?");
         $updateComp->execute([json_encode($composition), $score_id]);
     }

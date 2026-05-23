@@ -27,7 +27,7 @@ $myInfo = $myInfoStmt->fetch(PDO::FETCH_ASSOC);
 
 $myPoints = 100;
 if ($myInfo) {
-    $myPoints = (int) ($myInfo['rank_points'] ?? 0) + (int) ($myInfo['current_buffer'] ?? 100);
+    $myPoints = (int)($myInfo['rank_points'] ?? 0) + ((int)($myInfo['buffer_matches_left'] ?? 0) > 0 ? (int)($myInfo['current_buffer'] ?? 100) : 0);
 }
 $myGender = $myInfo['gender'] ?? 'male';
 

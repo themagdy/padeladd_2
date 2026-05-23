@@ -31,7 +31,7 @@ $upRow = $ups->fetch();
 $creator_side   = $upRow ? $upRow['playing_side'] : 'flexible';
 $creator_points = 100;
 if ($upRow) {
-    $creator_points = (int)($upRow['rank_points'] ?? 0) + (int)($upRow['current_buffer'] ?? 100);
+    $creator_points = (int)($upRow['rank_points'] ?? 0) + ((int)($upRow['buffer_matches_left'] ?? 0) > 0 ? (int)($upRow['current_buffer'] ?? 100) : 0);
 }
 
 // Compute locked eligibility range

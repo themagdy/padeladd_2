@@ -12,19 +12,24 @@ if ($wl_id <= 0) {
     jsonResponse(false, 'waiting_list_id is required.', null, 422);
 }
 
-$wlStmt = $pdo->prepare("
-    SELECT * FROM waiting_list WHERE id = ? AND partner_id = ? AND request_status = 'pending'
-");
-$wlStmt->execute([$wl_id, $uid]);
-$wl = $wlStmt->fetch(PDO::FETCH_ASSOC);
-if (!$wl) {
-    jsonResponse(false, 'Request not found or you are not the partner.', null, 404);
-}
+try {
+    $pdo->beginTransaction();
+
+    // Fetch and lock the request
+    $wlStmt = $pdo->prepare("
+        SELECT * FROM waiting_list WHERE id = ? AND partner_id = ? AND request_status = 'pending' FOR UPDATE
+    ");
+    $wlStmt->execute([$wl_id, $uid]);
+    $wl = $wlStmt->fetch(PDO::FETCH_ASSOC);
+    if (!$wl) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Request not found or you are not the partner.', null, 404);
+    }
 
     $pdo->prepare("UPDATE waiting_list SET request_status = 'denied' WHERE id = ?")->execute([$wl_id]);
 
     // Check if this was a Team 1 partner match creation invite
-    $mStmt = $pdo->prepare("SELECT * FROM matches WHERE id = ?");
+    $mStmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? FOR UPDATE");
     $mStmt->execute([(int)$wl['match_id']]);
     $match = $mStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -40,4 +45,12 @@ if (!$wl) {
     // Cleanup: Remove the team_invite notification for the partner who just denied it
     deleteNotification($pdo, (int)$uid, 'team_invite', (int)$wl['match_id']);
 
-jsonResponse(true, 'Request denied.', null);
+    $pdo->commit();
+    jsonResponse(true, 'Request denied.', null);
+
+} catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    jsonResponse(false, 'Deny failed: ' . $e->getMessage(), null, 500);
+}

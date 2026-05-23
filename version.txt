@@ -1251,3 +1251,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Notifications: Skip background notification polling when panel is open. Added global read-all mark on opening. Resolved infinite scroll race conditions and layout collapse flickering during silent SWR updates.
 - Version: 2.3.14 (Build 314)
 
+2.3.15 (Build 315) - 2026-05-23
+- Backend: Fixed TOCTOU race condition in submit.php by moving the score count check inside the database transaction and adding a SELECT FOR UPDATE lock on the match row.
+- Backend: Updated the maximum allowed score submissions per match from 5 to 2 to align with the frontend UI design.
+- Backend: Implemented player composition validation in submit.php to prevent score approval bypass by validating the composition payload against actual match players.
+- Backend: Relocated the duplicate player check in match/approve.php to execute prior to the special-case match creation team 1 approval block, preventing duplicate partner insertions.
+- Backend: Unified the effective points calculation formula across all match eligibility and approval endpoints to ignore buffer points once buffer matches are exhausted.
+- Backend: Hardened the same-gender match check in join-team.php to validate the requester's gender as well as the partner's, blocking invalid team requests at invitation time.
+- Backend: Wrapped team request denial updates in match/deny.php inside a database transaction with FOR UPDATE locks to ensure atomic updates and prevent match state inconsistency.
+- Version: 2.3.15 (Build 315)
+

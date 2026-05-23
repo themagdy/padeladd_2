@@ -48,6 +48,19 @@ try {
     $ptsMap = [];
     foreach ($ptsRows as $pr) { $ptsMap[(int)$pr['user_id']] = $pr; }
 
+    // Ensure neither player is already in the match
+    $dupCheck = $pdo->prepare("SELECT id FROM match_players WHERE match_id = ? AND user_id = ?");
+    $dupCheck->execute([$match_id, $requester_id]);
+    if ($dupCheck->fetch()) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Requester is already in this match.', null, 409);
+    }
+    $dupCheck->execute([$match_id, $partner_id]);
+    if ($dupCheck->fetch()) {
+        $pdo->rollBack();
+        jsonResponse(false, 'You are already in this match.', null, 409);
+    }
+
     // --- SPECIAL CASE: Match Creation Team 1 Approval ---
     if ($match['status'] === 'on_hold' && (int)$match['creator_id'] === $requester_id && (int)$match['created_with_partner'] === 1) {
         
@@ -96,19 +109,6 @@ try {
         jsonResponse(true, 'You have approved the request and joined the match as the creator\'s partner.', null);
     }
 
-    // Ensure neither player is already in the match
-    $dupCheck = $pdo->prepare("SELECT id FROM match_players WHERE match_id = ? AND user_id = ?");
-    $dupCheck->execute([$match_id, $requester_id]);
-    if ($dupCheck->fetch()) {
-        $pdo->rollBack();
-        jsonResponse(false, 'Requester is already in this match.', null, 409);
-    }
-    $dupCheck->execute([$match_id, $partner_id]);
-    if ($dupCheck->fetch()) {
-        $pdo->rollBack();
-        jsonResponse(false, 'You are already in this match.', null, 409);
-    }
-
     // Verify team 2 still has 2 open slots
     $slotsStmt = $pdo->prepare("SELECT user_id, team_no, slot_no FROM match_players WHERE match_id = ? FOR UPDATE");
     $slotsStmt->execute([$match_id]);
@@ -154,7 +154,7 @@ try {
         $statsStmt->execute($allCheckIds);
         $statsMap = [];
         foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-            $pts = (int)$r['buffer_matches_left'] > 0 ? (int)($r['current_buffer'] ?? 100) : (int)($r['rank_points'] ?? 50);
+            $pts = (int)($r['rank_points'] ?? 0) + ((int)($r['buffer_matches_left'] ?? 0) > 0 ? (int)($r['current_buffer'] ?? 100) : 0);
             $statsMap[(int)$r['user_id']] = ['points' => $pts, 'matches_played' => (int)$r['matches_played']];
         }
         foreach ($allCheckIds as $pid) {

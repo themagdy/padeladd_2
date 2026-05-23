@@ -21,7 +21,7 @@ $myPtsStmt->execute([$uid]);
 $ptsRow = $myPtsStmt->fetch(PDO::FETCH_ASSOC);
 $myPoints = 100;
 if ($ptsRow) {
-    $myPoints = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 100);
+    $myPoints = (int)($ptsRow['rank_points'] ?? 0) + ((int)($ptsRow['buffer_matches_left'] ?? 0) > 0 ? (int)($ptsRow['current_buffer'] ?? 100) : 0);
 }
 
 // Helper: get slot occupancy counts for a match
