@@ -353,7 +353,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
             UPDATE player_stats
             SET current_buffer    = ?,
                 buffer_matches_left = ?,
-                rank_points       = rank_points + ?,
+                rank_points       = GREATEST(0, rank_points + ?),
                 matches_played    = ?,
                 matches_won       = ?,
                 matches_lost      = ?,

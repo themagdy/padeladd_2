@@ -1291,9 +1291,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Aligned default starting points for unranked players without a stats record in eligibility-check.php from 50 to 100 to match create.php and join-solo.php.
 - Version: 2.3.22 (Build 322)
 
-2.3.23 (Build 323) - 2026-05-23
-- Backend: Rewrote matchmaking eligibility checks in eligibility-check.php and approve.php to strictly enforce the official specifications (creator-based ranges for all players, and <=300 points team average difference limits for friendly matches).
-- Version: 2.3.23 (Build 323)
+2.3.24 (Build 324) - 2026-05-23
+- Backend: Enforced points floor clamping in ranking_helper.php post-match updates so rank_points never drop below 0.
+- Backend: Corrected tolerance output format for competition matches in eligibility-check.php to align with creator range limits (100 instead of 200).
+- Version: 2.3.24 (Build 324)
 
 
 

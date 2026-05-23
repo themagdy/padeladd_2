@@ -133,7 +133,7 @@ jsonResponse(true, $eligible ? 'Teams are eligible to play.' : 'Teams are too mi
     'team_a_score'   => $teamScoreA,
     'team_b_score'   => $teamScoreB,
     'gap'            => $gap,
-    'tolerance'      => ($match_type === 'friendly') ? 300 : 200,
+    'tolerance'      => ($match_type === 'friendly') ? 300 : 100,
     'player_scores'  => [
         $teamAIds[0] => $ptsA1,
         $teamAIds[1] => $ptsA2,
