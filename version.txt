@@ -1271,5 +1271,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Updated the misleading comment in submit.php to match the actual limit of 2 score submissions instead of 5.
 - Version: 2.3.17 (Build 317)
 
+2.3.18 (Build 318) - 2026-05-23
+- Backend: Fixed anti-farming progressive decay in eligibility-check.php by correcting the integrityFactor return values for 5 and 6+ repeat matches.
+- Version: 2.3.18 (Build 318)
+
+
 
 

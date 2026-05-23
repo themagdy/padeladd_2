@@ -80,7 +80,8 @@ function integrityFactor($pdo, int $user_id, array $opponent_ids): int {
     if ($count <= 2)       return 100;
     elseif ($count === 3)  return 75;
     elseif ($count === 4)  return 50;
-    else                   return max(10, 25);
+    elseif ($count === 5)  return 25;
+    else                   return 10;
 }
 
 // ── Calculate team match scores ───────────────────────────────────────────
