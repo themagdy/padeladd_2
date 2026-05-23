@@ -96,7 +96,7 @@ if (!$mySlot) {
     jsonResponse(false, 'Only match participants can submit scores.', null, 403);
 }
 
-// 3. Max 5 submissions check
+// 3. Max 2 submissions check
 $pdo->beginTransaction();
 try {
     // Lock the match row to prevent concurrent submissions for this match

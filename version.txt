@@ -1267,4 +1267,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Implemented FOR UPDATE locking on matching email/mobile rows during registration to prevent race conditions and double-registration concurrency conflicts.
 - Version: 2.3.16 (Build 316)
 
+2.3.17 (Build 317) - 2026-05-23
+- Backend: Updated the misleading comment in submit.php to match the actual limit of 2 score submissions instead of 5.
+- Version: 2.3.17 (Build 317)
+
+
 
