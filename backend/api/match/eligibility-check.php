@@ -47,7 +47,7 @@ foreach ($statsRows as $row) {
 // If any player has no stats row yet, default to starting values
 foreach ($allIds as $pid) {
     if (!isset($stats[$pid])) {
-        $stats[$pid] = ['points' => 50, 'matches_played' => 0];
+        $stats[$pid] = ['points' => 100, 'matches_played' => 0];
     }
 }
 
