@@ -299,6 +299,177 @@ var ConfirmModal = {
     }
 };
 
+var InviteModal = {
+    _modal: null,
+    _isOpen: false,
+
+    show: function (invites, onUpdate) {
+        // Create container if not exists
+        if (!this._modal) {
+            this._modal = document.createElement('div');
+            this._modal.id = 'invite-modal-overlay';
+            this._modal.style.cssText = `
+                position:fixed; top:0; left:0; width:100%; height:100%;
+                background:rgba(0,0,0,0.8);
+                display:flex; align-items:center; justify-content:center;
+                z-index:100000; opacity:0; pointer-events:none;
+                transition:opacity 0.25s ease; padding:32px;
+            `;
+            document.body.appendChild(this._modal);
+        }
+
+        const slotsHtml = invites.map((inv, idx) => {
+            const isUsed = !!inv.used_at;
+            let slotContent = '';
+            if (isUsed) {
+                let initials = '?';
+                if (inv.used_by_name) {
+                    initials = inv.used_by_name.substring(0, 2).toUpperCase();
+                }
+                const avatarHtml = UI.getAvatarHtml(inv.used_by_avatar, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:32px; height:32px; border-radius:50%; flex-shrink:0; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.06); color:#fff;', initials);
+                slotContent = `
+                    <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                        ${avatarHtml}
+                        <div style="flex:1; text-align:left; min-width:0;">
+                            <div style="font-weight:700; font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Used by ${inv.used_by_name}</div>
+                            <div style="font-size:10px; color:var(--c-orange); font-weight:800; font-family:monospace; margin-top:2px;">CODE: ${inv.code}</div>
+                        </div>
+                        <span style="font-size:18px; color:var(--c-green); flex-shrink:0;">✓</span>
+                    </div>
+                `;
+            } else {
+                slotContent = `
+                    <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size:15px; font-weight:800; color:#fff; letter-spacing:0.5px;">${inv.code}</span>
+                        <button onclick="InviteModal.copyCode('${inv.code}', this)" class="btn btn-sm" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:6px 14px; border-radius:8px; font-size:11px; font-weight:700; transition:all 0.2s; cursor:pointer;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                            COPY
+                        </button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div style="display:flex; align-items:center; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:14px 18px; margin-bottom:12px; transition:all 0.2s;">
+                    ${slotContent}
+                </div>
+            `;
+        }).join('');
+
+        this._modal.innerHTML = safeHTML(`
+            <div id="invite-modal-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:32px; padding:28px; width:100%; max-width:340px; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
+                    <div style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg, var(--c-orange), #ff8b00); opacity:0.15; filter:blur(10px);"></div>
+                    <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);"></div>
+                    <div style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">🎟️</div>
+                </div>
+                <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:8px; letter-spacing:-0.5px; line-height:1.2;">Exclusive Invites</h2>
+                <p style="font-size:12px; color:var(--c-text-muted); line-height:1.6; margin-bottom:24px; font-weight:400; padding:0 8px; text-align:center;">
+                    Your friends need one of these exclusive codes to register. Give them out wisely!
+                </p>
+
+                <div style="margin-bottom:24px;">
+                    ${slotsHtml}
+                </div>
+
+                <div>
+                    <button onclick="InviteModal.close()" class="btn" style="background:var(--c-primary); color:#fff; border:none; width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25); transition:transform 0.2s;">
+                        CLOSE
+                    </button>
+                </div>
+            </div>
+        `);
+
+        // Close on overlay click
+        this._modal.onclick = (e) => {
+            if (e.target === this._modal) this.close();
+        };
+
+        // Disable scroll
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+
+        this._isOpen = true;
+
+        // Trigger animation
+        this._modal.style.opacity = '1';
+        this._modal.style.pointerEvents = 'auto';
+        setTimeout(() => {
+            const card = document.getElementById('invite-modal-card');
+            if (card) {
+                card.style.transform = 'scale(1)';
+                card.style.opacity = '1';
+            }
+        }, 10);
+    },
+
+    copyCode: function (code, btn) {
+        if (!navigator.clipboard) {
+            // Fallback for older browsers / Capacitor webview
+            const textArea = document.createElement("textarea");
+            textArea.value = code;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                this.onCopySuccess(btn);
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+            document.body.removeChild(textArea);
+            return;
+        }
+
+        navigator.clipboard.writeText(code).then(() => {
+            this.onCopySuccess(btn);
+        }).catch(err => {
+            console.error('Clipboard copy failed', err);
+        });
+    },
+
+    onCopySuccess: function (btn) {
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = 'COPIED!';
+            btn.style.borderColor = 'var(--c-green)';
+            btn.style.color = 'var(--c-green)';
+            btn.style.background = 'rgba(16,185,129,0.1)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                btn.style.color = '#fff';
+                btn.style.background = 'rgba(255,255,255,0.05)';
+            }, 2000);
+        }
+        Toast.show('Invitation code copied to clipboard!', 'success');
+    },
+
+    close: function () {
+        if (!this._modal) return;
+
+        // Restore scroll
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+
+        this._isOpen = false;
+
+        this._modal.style.opacity = '0';
+        this._modal.style.pointerEvents = 'none';
+        const card = document.getElementById('invite-modal-card');
+        if (card) {
+            card.style.transform = 'scale(0.95)';
+            card.style.opacity = '0';
+        }
+    }
+};
+
 var PollManager = {
     _timer: null,
     _activeTask: null,

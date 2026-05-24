@@ -1953,5 +1953,84 @@ window.AdminControllers = {
                 </tr>
             `).join('');
         }
+    },
+
+    // ── Invitations Controller ──────────────────────────────────────────
+    invitations: {
+        allPromos: [],
+        async init() {
+            await this.fetchSettings();
+            await this.loadPromoCodes();
+        },
+        async fetchSettings() {
+            const res = await _admFetch('../backend/api/admin/system/get_settings.php', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                const active = data.data.invite_only_mode === '1';
+                const statusEl = document.getElementById('exclusivity-status');
+                if (statusEl) {
+                    statusEl.innerText = active ? 'Active' : 'Disabled';
+                    statusEl.style.background = active ? 'rgba(255,149,0,0.1)' : 'rgba(255,255,255,0.05)';
+                    statusEl.style.color = active ? 'var(--c-orange)' : 'var(--c-text-muted)';
+                }
+            }
+        },
+        async toggleExclusivity() {
+            const res = await _admFetch('../backend/api/admin/system/toggle_setting.php', {
+                method: 'POST',
+                body: JSON.stringify({ setting_key: 'invite_only_mode' })
+            });
+            const data = await res.json();
+            if (data.success) {
+                AdminApp.toast('Invite-Only Mode status updated.');
+                await this.fetchSettings();
+            }
+        },
+        async loadPromoCodes() {
+            const res = await _admFetch('../backend/api/admin/system/list_promos.php', { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                this.allPromos = data.data;
+                this.render();
+            }
+        },
+        async generatePromoCode() {
+            const input = document.getElementById('promo-custom-code');
+            const code = input ? input.value.trim() : '';
+            const res = await _admFetch('../backend/api/admin/system/generate_promo.php', {
+                method: 'POST',
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json();
+            if (data.success) {
+                AdminApp.toast('Promo code generated!');
+                if (input) input.value = '';
+                await this.loadPromoCodes();
+            } else {
+                AdminApp.toast(data.message, 'error');
+            }
+        },
+        render() {
+            const tbody = document.getElementById('promo-codes-list-body');
+            if (!tbody) return;
+            if (this.allPromos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--c-text-muted);">No campaign codes generated yet.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = this.allPromos.map(p => `
+                <tr>
+                     <td><b style="color:#fff; font-family:monospace;">${p.code}</b></td>
+                     <td><small style="color:var(--c-text-muted)">${new Date(p.created_at).toLocaleDateString()}</small></td>
+                     <td style="text-align:center;">
+                         <span class="status-tag ${p.used_at ? 'rejected' : 'completed'}" style="font-size:9px; padding:2px 8px;">
+                             ${p.used_at ? 'USED' : 'ACTIVE'}
+                         </span>
+                     </td>
+                     <td style="color:var(--c-text-muted)">
+                         ${p.used_at ? `${p.used_by_name} <small>(${p.used_by_code})</small>` : '<span style="opacity:0.3">---</span>'}
+                     </td>
+                </tr>
+            `).join('');
+        }
     }
 };

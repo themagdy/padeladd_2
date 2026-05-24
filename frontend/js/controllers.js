@@ -809,6 +809,21 @@ const AuthController = {
 
         const q = (name) => form.querySelector(`[name="${name}"]`);
 
+        // Check invite-only mode
+        const inviteGroup = document.getElementById('reg-invite-group');
+        let inviteOnlyActive = false;
+
+        API.post('/invite/get_mode', {}).then(res => {
+            if (res && res.success && res.data && res.data.invite_only_mode) {
+                inviteOnlyActive = true;
+                if (inviteGroup) {
+                    inviteGroup.style.display = 'block';
+                }
+            }
+        }).catch(err => {
+            console.error('Error fetching invite-only mode status:', err);
+        });
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             Auth.clearAll();
@@ -819,6 +834,7 @@ const AuthController = {
             const emailInput = q('email');
             const mobileInput = q('mobile');
             const passInput = q('password');
+            const inviteInput = q('invite_code');
 
             if (!fnInput || !fnInput.value) { UI.showError('first_name', 'First name is required', form); return; }
             if (!lnInput || !lnInput.value) { UI.showError('last_name', 'Last name is required', form); return; }
@@ -830,6 +846,14 @@ const AuthController = {
                 UI.showError('mobile', 'Enter a valid 11-digit Egyptian mobile (e.g. 01012345678)', form);
                 return;
             }
+
+            if (inviteOnlyActive) {
+                if (!inviteInput || !inviteInput.value.trim()) {
+                    UI.showError('invite_code', 'Invitation code is required', form);
+                    return;
+                }
+            }
+
             if (!passInput || !passInput.value || passInput.value.length < 8) { UI.showError('password', 'Password must be at least 8 chars', form); return; }
 
             const payload = {
@@ -839,6 +863,10 @@ const AuthController = {
                 email: emailInput.value.trim().toLowerCase(),
                 password: passInput.value
             };
+
+            if (inviteOnlyActive && inviteInput) {
+                payload.invite_code = inviteInput.value.trim().toUpperCase();
+            }
 
             const btn = form.querySelector('button[type="submit"]');
             btn.disabled = true;
@@ -1168,6 +1196,7 @@ const DashboardController = {
         if (!isSilent) {
             UI.syncNav();
             StoriesController.initTray();
+            DashboardController.initInviteButton();
         }
 
         // Use cache for instant render if available
@@ -1544,6 +1573,30 @@ const DashboardController = {
         } else {
             Toast.show(res ? res.message : 'Report failed', 'error');
         }
+    },
+
+    initInviteButton: async function() {
+        const row = document.getElementById('dash-invite-row');
+        const btn = document.getElementById('btn-dash-invite');
+        if (!row || !btn) return;
+
+        try {
+            const res = await API.post('/invite/get_invites', {});
+            if (res && res.success && res.data) {
+                const invites = res.data.keys || [];
+                const unusedCount = invites.filter(inv => !inv.used_at).length;
+                btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
+                row.style.display = 'flex';
+                btn.onclick = () => {
+                    InviteModal.show(invites, (updatedInvites) => {
+                        const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
+                        btn.textContent = `Share Exclusive Invites (${newUnused} Left) 🎟️`;
+                    });
+                };
+            }
+        } catch(e) {
+            console.error('Error loading invites on dashboard:', e);
+        }
     }
 };
 
@@ -1700,6 +1753,16 @@ const ProfileViewController = {
             const actionCards = document.getElementById('prof-action-cards');
             if (actionCards) {
                 actionCards.style.display = is_self ? 'flex' : 'none';
+            }
+
+            // Invite button visibility (only for self)
+            const inviteRow = document.getElementById('prof-invite-row');
+            if (inviteRow) {
+                if (is_self) {
+                    ProfileViewController.initInviteButton();
+                } else {
+                    inviteRow.style.display = 'none';
+                }
             }
 
             // Report player button (only for others)
@@ -2061,6 +2124,30 @@ const ProfileViewController = {
             type: 'info',
             headerLayout: 'row'
         });
+    },
+
+    initInviteButton: async function() {
+        const row = document.getElementById('prof-invite-row');
+        const btn = document.getElementById('btn-prof-invite');
+        if (!row || !btn) return;
+
+        try {
+            const res = await API.post('/invite/get_invites', {});
+            if (res && res.success && res.data) {
+                const invites = res.data.keys || [];
+                const unusedCount = invites.filter(inv => !inv.used_at).length;
+                btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
+                row.style.display = 'flex';
+                btn.onclick = () => {
+                    InviteModal.show(invites, (updatedInvites) => {
+                        const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
+                        btn.textContent = `Share Exclusive Invites (${newUnused} Left) 🎟️`;
+                    });
+                };
+            }
+        } catch(e) {
+            console.error('Error loading invites on profile:', e);
+        }
     }
 };
 

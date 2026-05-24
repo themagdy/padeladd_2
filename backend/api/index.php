@@ -260,6 +260,12 @@ try {
         case 'system/report':
             require __DIR__ . '/system/report.php';
             break;
+        case 'invite/get_mode':
+            require __DIR__ . '/invite/get_mode.php';
+            break;
+        case 'invite/get_invites':
+            require __DIR__ . '/invite/get_invites.php';
+            break;
 
         default:
             $notFoundMsg = (defined('APP_ENV') && APP_ENV === 'development')

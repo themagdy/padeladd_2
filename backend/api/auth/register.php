@@ -31,10 +31,42 @@ if (!preg_match('/^01[0125][0-9]{8}$/', $mobile)) {
     jsonResponse(false, 'Invalid Egyptian mobile number. Must be 11 digits starting with 01.');
 }
 
+// Fetch invite-only mode setting
+$modeStmt = $pdo->prepare("SELECT setting_value FROM system_settings WHERE setting_key = 'invite_only_mode'");
+$modeStmt->execute();
+$modeVal = $modeStmt->fetchColumn();
+$invite_only_mode = ($modeVal === '1');
+
+$inviteCode = '';
+if ($invite_only_mode) {
+    $inviteCode = strtoupper(preg_replace('/[^A-Za-z0-9\-_]/', '', trim($data['invite_code'] ?? '')));
+    if (empty($inviteCode)) {
+        jsonResponse(false, 'An invitation code is required to register during our exclusive launch phase.');
+    }
+}
+
 $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 try {
     $pdo->beginTransaction();
+
+    // If invite-only, verify and lock the invite code row to prevent concurrent double-redemptions
+    $inviteKeyId = null;
+    if ($invite_only_mode) {
+        $inviteStmt = $pdo->prepare("SELECT id, used_by_user_id FROM invite_keys WHERE code = ? FOR UPDATE");
+        $inviteStmt->execute([$inviteCode]);
+        $inviteKey = $inviteStmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$inviteKey) {
+            $pdo->rollBack();
+            jsonResponse(false, 'The invitation code is invalid.');
+        }
+        if ($inviteKey['used_by_user_id'] !== null) {
+            $pdo->rollBack();
+            jsonResponse(false, 'This invitation code has already been used.');
+        }
+        $inviteKeyId = (int)$inviteKey['id'];
+    }
 
     // Check uniqueness (lock matching rows with FOR UPDATE to prevent race conditions)
     $stmt = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, email, mobile FROM users WHERE email = ? OR mobile = ? FOR UPDATE");
@@ -63,6 +95,12 @@ try {
     $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, mobile, email, password_hash) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([$firstName, $lastName, $mobile, $email, $passwordHash]);
     $userId = $pdo->lastInsertId();
+
+    // Consume the invitation code by linking it to the registered user
+    if ($invite_only_mode && $inviteKeyId !== null) {
+        $updateInviteStmt = $pdo->prepare("UPDATE invite_keys SET used_by_user_id = ?, used_at = NOW() WHERE id = ?");
+        $updateInviteStmt->execute([$userId, $inviteKeyId]);
+    }
 
     // Generate codes
     $emailCode = generateRandomString(32);

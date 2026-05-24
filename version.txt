@@ -1344,4 +1344,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Hardened Content-Security-Policy (CSP) headers in the API router (index.php) by completely removing cdnjs.cloudflare.com permissions from script-src and style-src rules.
 - Version: 2.3.33 (Build 333)
 
+2.3.34 (Build 334) - 2026-05-25
+- Onboarding: Implemented premium and secure Viral Invitation onboarding system. Added 3 unique single-use invites dynamically seeded on player's Dashboard/Profile.
+- Frontend: Designed premium glassmorphic, copyable, offline-resilient `InviteModal` triggerable from Dashboard/Profile wide buttons. Added "Invitation Code" input box to Registration.
+- Mod Panel: Created "Invitations" admin dashboard block with Live Exclusivity (Invite-Only) Mode toggle and batch Promo Campaign codes generator/ledger.
+- Version: 2.3.34 (Build 334)
+
 
