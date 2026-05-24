@@ -1334,3 +1334,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Refactored anti-farming checks (integrity factor) in eligibility-check.php and ranking_helper.php to count past matches against the exact pair of opponents (2 vs 2) rather than individual opponents (1 vs 1).
 - Version: 2.3.31 (Build 331)
 
+2.3.32 (Build 332) - 2026-05-25
+- Backend: Unified points eligibility logic to unconditionally add the calibration buffer across all endpoints (Option A), enabling manual admin adjustments post-calibration.
+- Backend: Optimized details.php slot query to render live ratings for upcoming matches, while preserving historical snapshots for completed games.
+- Version: 2.3.32 (Build 332)
+
+

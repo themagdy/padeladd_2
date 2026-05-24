@@ -87,7 +87,7 @@ try {
         // Points eligibility check for partner in special case Team 1 approval
         $partnerPts = 100;
         if (isset($ptsMap[$partner_id])) {
-            $partnerPts = (int)($ptsMap[$partner_id]['rank_points'] ?? 0) + ((int)($ptsMap[$partner_id]['buffer_matches_left'] ?? 0) > 0 ? (int)($ptsMap[$partner_id]['current_buffer'] ?? 100) : 0);
+            $partnerPts = (int)($ptsMap[$partner_id]['rank_points'] ?? 0) + (int)($ptsMap[$partner_id]['current_buffer'] ?? 0);
         }
 
         $eligMin = (int)$match['eligible_min'];
@@ -180,7 +180,7 @@ try {
             $statsStmt->execute($allCheckIds);
             $statsMap = [];
             foreach ($statsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-                $pts = (int)($r['rank_points'] ?? 0) + ((int)($r['buffer_matches_left'] ?? 0) > 0 ? (int)($r['current_buffer'] ?? 100) : 0);
+                $pts = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 0);
                 $statsMap[(int)$r['user_id']] = ['points' => $pts];
             }
             foreach ($allCheckIds as $pid) {

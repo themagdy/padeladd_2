@@ -27,7 +27,7 @@ $myInfo = $myInfoStmt->fetch(PDO::FETCH_ASSOC);
 
 $myPoints = 100;
 if ($myInfo) {
-    $myPoints = (int)($myInfo['rank_points'] ?? 0) + ((int)($myInfo['buffer_matches_left'] ?? 0) > 0 ? (int)($myInfo['current_buffer'] ?? 100) : 0);
+    $myPoints = (int)($myInfo['rank_points'] ?? 0) + (int)($myInfo['current_buffer'] ?? 0);
 }
 $myGender = $myInfo['gender'] ?? 'male';
 
@@ -65,10 +65,11 @@ $slotStmt = $pdo->prepare("
     SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
            u.first_name, u.last_name,
            up.player_code, up.profile_image, up.profile_image_thumb, up.nickname, up.gender,
-           COALESCE(mp.rank_points_at_join, ps.rank_points, 0) AS points,
-           COALESCE(mp.buffer_points_at_join, ps.current_buffer, 0) AS current_buffer,
+           IF(m.status IN ('completed', 'cancelled'), COALESCE(mp.rank_points_at_join, ps.rank_points, 0), COALESCE(ps.rank_points, 0)) AS points,
+           IF(m.status IN ('completed', 'cancelled'), COALESCE(mp.buffer_points_at_join, ps.current_buffer, 0), COALESCE(ps.current_buffer, 0)) AS current_buffer,
            ps.matches_played
     FROM match_players mp
+    JOIN matches m ON mp.match_id = m.id
     JOIN users u ON mp.user_id = u.id
     LEFT JOIN user_profiles up ON mp.user_id = up.user_id
     LEFT JOIN player_stats ps ON mp.user_id = ps.user_id

@@ -31,7 +31,7 @@ $upRow = $ups->fetch();
 $creator_side   = $upRow ? $upRow['playing_side'] : 'flexible';
 $creator_points = 100;
 if ($upRow) {
-    $creator_points = (int)($upRow['rank_points'] ?? 0) + ((int)($upRow['buffer_matches_left'] ?? 0) > 0 ? (int)($upRow['current_buffer'] ?? 100) : 0);
+    $creator_points = (int)($upRow['rank_points'] ?? 0) + (int)($upRow['current_buffer'] ?? 0);
 }
 
 // Compute locked eligibility range
@@ -93,7 +93,7 @@ if ($created_with_partner && $partner_code !== '') {
     $partnerPtsRow = $ptsStmt->fetch();
     $partnerPoints = 100;
     if ($partnerPtsRow) {
-        $partnerPoints = (int)($partnerPtsRow['rank_points'] ?? 0) + ((int)($partnerPtsRow['buffer_matches_left'] ?? 0) > 0 ? (int)($partnerPtsRow['current_buffer'] ?? 100) : 0);
+        $partnerPoints = (int)($partnerPtsRow['rank_points'] ?? 0) + (int)($partnerPtsRow['current_buffer'] ?? 0);
     }
 
     if ($partnerPoints < $eligible_min || $partnerPoints > $eligible_max) {

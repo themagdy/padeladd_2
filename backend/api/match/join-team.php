@@ -83,7 +83,7 @@ $ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points, buffer_ma
 $ptsStmt->execute([$uid, $partner_id]);
 $ptsMap = [];
 foreach ($ptsStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-    $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + ((int)($r['buffer_matches_left'] ?? 0) > 0 ? (int)($r['current_buffer'] ?? 100) : 0);
+    $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 0);
 }
 $myPts      = $ptsMap[$uid]        ?? 100;
 $partnerPts = $ptsMap[$partner_id] ?? 100;

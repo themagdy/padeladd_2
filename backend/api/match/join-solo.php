@@ -78,7 +78,7 @@ try {
     
     $joinerPts = 100;
     if ($ptsRow) {
-        $joinerPts = (int)($ptsRow['rank_points'] ?? 0) + ((int)($ptsRow['buffer_matches_left'] ?? 0) > 0 ? (int)($ptsRow['current_buffer'] ?? 100) : 0);
+        $joinerPts = (int)($ptsRow['rank_points'] ?? 0) + (int)($ptsRow['current_buffer'] ?? 0);
     }
 
     if ($joinerPts < $eligMin || $joinerPts > $eligMax) {
@@ -192,7 +192,7 @@ try {
         $ptsSt->execute($allIds);
         $ptsMap = [];
         foreach ($ptsSt->fetchAll(PDO::FETCH_ASSOC) as $r) {
-            $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + ((int)($r['buffer_matches_left'] ?? 0) > 0 ? (int)($r['current_buffer'] ?? 100) : 0);
+            $ptsMap[(int)$r['user_id']] = (int)($r['rank_points'] ?? 0) + (int)($r['current_buffer'] ?? 0);
         }
         foreach ($allIds as $pid) { if (!isset($ptsMap[$pid])) $ptsMap[$pid] = 100; }
 
