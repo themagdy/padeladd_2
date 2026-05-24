@@ -1320,12 +1320,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Implemented deleteScore controller action in ScoringController with confirmation prompts and instant details refresh.
 - Version: 2.3.28 (Build 328)
 
-
-
-
-
-
-
-
-
-
+2.3.29 (Build 329) - 2026-05-24
+- Frontend: Hardened ConfirmModal in app.js to support required input fields, displaying a warning and highlighting the textarea when submitted empty.
+- Frontend: Enabled strict validation in the score dispute popup so disputes cannot be submitted without a written message.
+- Version: 2.3.29 (Build 329)

@@ -6437,6 +6437,7 @@ const ScoringController = {
             title: 'What is wrong with the score?',
             message: '<b>Common reasons:</b>\n• Wrong score entered\n• I was in a different team',
             showInput: true,
+            required: true,
             inputPlaceholder: 'Wrong score / I was in a different team...',
             inputMaxLength: 250,
             tipText: 'State the correct score clearly.',

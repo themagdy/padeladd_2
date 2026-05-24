@@ -113,7 +113,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, required = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
             this._undismissable = undismissable;
@@ -184,9 +184,9 @@ var ConfirmModal = {
                     ${headerHtml}
                     
                     ${inputHtml}
-
+ 
                     <div style="font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:24px; font-weight:400; text-align:left; padding:0 8px;">${message.replace(/\n/g, '<br>')}</div>
-
+ 
                     <div style="display:flex; gap:12px; flex-direction:column;">
                         <button id="gcm-confirm" class="btn" style="background:var(--c-primary); color:#fff; border:none; width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25); transition:transform 0.2s;">
                             ${confirmText.toUpperCase()}
@@ -202,8 +202,18 @@ var ConfirmModal = {
                 if (e.target === this._modal && !this._undismissable && this._closeOnOverlayClick) this.close(false);
             };
             this._modal.querySelector('#gcm-confirm').onclick = () => {
-                const val = showInput ? this._modal.querySelector('#gcm-input').value.trim() : true;
-                this.close(val);
+                if (showInput) {
+                    const val = this._modal.querySelector('#gcm-input').value.trim();
+                    if (required && val === '') {
+                        const inp = this._modal.querySelector('#gcm-input');
+                        inp.style.borderColor = 'var(--c-red)';
+                        Toast.show('Please enter a message.', 'error');
+                        return;
+                    }
+                    this.close(val);
+                } else {
+                    this.close(true);
+                }
             };
 
             if (showInput) {
@@ -211,6 +221,7 @@ var ConfirmModal = {
                 const count = this._modal.querySelector('#gcm-counter');
                 inp.oninput = () => {
                     count.innerText = `${inp.value.length}/${inputMaxLength}`;
+                    inp.style.borderColor = 'var(--c-border)';
                 };
                 // Auto-focus with slight delay for transition
                 setTimeout(() => inp.focus(), 300);
