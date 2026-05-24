@@ -66,6 +66,12 @@ try {
         jsonResponse(false, 'This match is already completed or cancelled.', null, 403);
     }
 
+    // Cannot cancel after match start time has passed
+    if (strtotime($match['match_datetime']) <= time()) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Cannot cancel a match that has already started or passed.', null, 400);
+    }
+
     // Collect affected player IDs for the audit log
     $playersStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ?");
     $playersStmt->execute([$match_id]);

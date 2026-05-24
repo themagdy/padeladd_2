@@ -3933,6 +3933,7 @@ const MatchesController = {
 
                     if ((scores || []).length > 0) {
                         (scores || []).forEach((s, idx) => {
+                            const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                             if (idx > 0) {
                                 scoringHtml += `<div style="height:1px; background:rgba(255,255,255,0.08); margin:40px 16px;"></div>`;
                             }
@@ -3956,7 +3957,6 @@ const MatchesController = {
                                     </div>
                                 `;
                             } else if (s.status === 'pending') {
-                                const isSubmitter = parseInt(s.submitted_by_user_id) === myUserId;
                                 const submitterName = s.nickname || s.first_name;
 
                                 // Calculate relative times
@@ -4016,13 +4016,16 @@ const MatchesController = {
 
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                         
-                                        <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin-top:20px;">
+                                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; margin-top:20px; width:100%;">
                                             ${!isSubmitter ? `
                                                 <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">
                                                     ${amOpponent ? 'Please verify the result' : 'Waiting for opponents to verify...'}
                                                 </p>
                                             ` : `
-                                                <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">Waiting for opponents to verify...</p>
+                                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px; width:100%;">
+                                                    <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">Waiting for opponents to verify...</p>
+                                                    <button class="btn btn-secondary btn-sm" onclick="ScoringController.deleteScore(${s.id})" style="height:36px; padding:0 16px; font-weight:700; font-size:12px; background:rgba(255,255,255,0.05); color:var(--c-text); border:1px solid rgba(255,255,255,0.1);">Cancel Submission</button>
+                                                </div>
                                             `}
                                         </div>
                                         
@@ -4050,6 +4053,9 @@ const MatchesController = {
 
                                         <div style="padding:16px; text-align:center;">
                                             <p style="font-size:12px; color:var(--c-text-muted); margin-bottom:12px;">This result is under review by admins.</p>
+                                            ${isSubmitter ? `
+                                                <button class="btn btn-danger btn-sm" onclick="ScoringController.deleteScore(${s.id})" style="width:100%; height:44px; margin-bottom:12px; font-weight:700;">Delete Submission</button>
+                                            ` : ''}
                                             ${(user_in_match && approvedCount < 2) ? `<button class="btn btn-secondary btn-sm" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:44px;">Submit Correct Score</button>` : ''}
                                         </div>
                                     </div>
@@ -6446,6 +6452,25 @@ const ScoringController = {
             MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);
         } else {
             Toast.show(res ? res.message : 'Dispute failed', 'error');
+        }
+    },
+
+    deleteScore: async function (scoreId) {
+        const confirmed = await ConfirmModal.show({
+            title: 'Cancel Submission',
+            message: 'Are you sure you want to cancel and delete this score submission? This cannot be undone.',
+            confirmText: 'Yes, Delete',
+            type: 'warning'
+        });
+        if (!confirmed) return;
+
+        const res = await API.post('/score/delete', { score_id: scoreId });
+        if (res && res.success) {
+            Toast.show('Score submission cancelled/deleted.', 'success');
+            MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);
+            UI.syncNav();
+        } else {
+            Toast.show(res ? res.message : 'Deletion failed', 'error');
         }
     },
 

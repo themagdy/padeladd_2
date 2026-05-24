@@ -1311,6 +1311,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Refactored auto-confirm cron notifications and anti-farming eligibility checks to read player roles directly from the new columns, respecting team switches.
 - Version: 2.3.27 (Build 327)
 
+2.3.28 (Build 328) - 2026-05-24
+- Backend: Created score/delete endpoint to allow players to cancel or delete their pending or disputed score submissions.
+- Backend: Integrated score rollback logic to return the match status to 'full' and restore its upcoming story if no approved scores remain.
+- Backend: Added strict start time validation in cancel.php to block creators from cancelling past matches.
+- Frontend: Updated score list UI rendering to expose Cancel Submission and Delete Submission buttons to the original submitter.
+- Frontend: Implemented deleteScore controller action in ScoringController with confirmation prompts and instant details refresh.
+- Version: 2.3.28 (Build 328)
 
 
 

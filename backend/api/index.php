@@ -227,6 +227,9 @@ try {
         case 'score/dispute':
             require __DIR__ . '/score/dispute.php';
             break;
+        case 'score/delete':
+            require __DIR__ . '/score/delete.php';
+            break;
         case 'match/report':
             require __DIR__ . '/match/report.php';
             break;
