@@ -65,12 +65,12 @@ if ($dupCheck->fetch()) {
     jsonResponse(false, 'Your partner is already in this match.', null, 409);
 }
 
-// Check if requester already has ANY pending invitation for this match
+// Check if requester already has ANY pending invitation for this match (either as requester or partner)
 $wlCheck = $pdo->prepare("
     SELECT id FROM waiting_list
-    WHERE match_id = ? AND requester_id = ? AND request_status = 'pending'
+    WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status = 'pending'
 ");
-$wlCheck->execute([$match_id, $uid]);
+$wlCheck->execute([$match_id, $uid, $uid]);
 if ($wlCheck->fetch()) {
     jsonResponse(false, 'You already have a pending invitation for this match. Cancel it before inviting someone else.', null, 409);
 }

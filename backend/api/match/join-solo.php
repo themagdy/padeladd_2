@@ -45,10 +45,10 @@ try {
     // If they do, they cannot join as solo (must commit to team path)
     $wlCheck = $pdo->prepare("
         SELECT id FROM waiting_list
-        WHERE match_id = ? AND requester_id = ? AND request_status IN ('pending', 'approved')
+        WHERE match_id = ? AND (requester_id = ? OR partner_id = ?) AND request_status IN ('pending', 'approved')
         LIMIT 1
     ");
-    $wlCheck->execute([$match_id, $uid]);
+    $wlCheck->execute([$match_id, $uid, $uid]);
     if ($wlCheck->fetch()) {
         $pdo->rollBack();
         jsonResponse(false, 'You have a pending invitation or are already in the waiting list for this match.', null, 403);

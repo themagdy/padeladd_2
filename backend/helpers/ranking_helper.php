@@ -223,15 +223,10 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
     $heavyMod = getHeavyModifier($setsForHeavy, $wentToThree);
 
-    // ── 3. Handle composition ─────────────────────────────────────────────
+    // ── 3. Handle composition (in-memory only) ────────────────────────────
+    $composition = null;
     if (!empty($score['composition_json'])) {
         $composition = json_decode($score['composition_json'], true);
-        if ($composition) {
-            foreach ($composition as $c) {
-                $pdo->prepare("UPDATE match_players SET team_no = ?, slot_no = ? WHERE match_id = ? AND user_id = ?")
-                    ->execute([$c['team_no'], $c['slot_no'], $match_id, $c['user_id']]);
-            }
-        }
     }
 
     // ── 4. Fetch all 4 confirmed players ──────────────────────────────────
@@ -242,6 +237,19 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
     ");
     $playersStmt->execute([$match_id]);
     $participants = $playersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Override the signup team numbers in memory for points calculation
+    if ($composition && is_array($composition)) {
+        foreach ($participants as &$part) {
+            foreach ($composition as $c) {
+                if ((int)$c['user_id'] === (int)$part['user_id']) {
+                    $part['team_no'] = (int)$c['team_no'];
+                    break;
+                }
+            }
+        }
+        unset($part);
+    }
 
     if (count($participants) < 4)
         throw new Exception("Match does not have 4 confirmed players.");

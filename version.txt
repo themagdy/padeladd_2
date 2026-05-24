@@ -1300,6 +1300,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Preserved player stats (matches played, wins, losses, win rate, and streak) in ranking_helper.php when a match is skipped due to low integrity (< 0.5).
 - Version: 2.3.25 (Build 325)
 
+2.3.26 (Build 326) - 2026-05-24
+- Backend: Hardened join-solo.php and join-team.php to validate both requester_id and partner_id against the waiting list, closing a join loophole.
+- Backend: Modified ranking_helper.php to calculate points for custom compositions in-memory only, preserving historical match signup records.
+- Version: 2.3.26 (Build 326)
+
+
 
 
 
