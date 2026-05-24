@@ -47,9 +47,8 @@ try {
         $pdo->rollBack();
         jsonResponse(false, 'Cannot join or approve requests for a match that has already passed.', null, 400);
     }
-
     // Fetch current stats for snapshotting
-    $ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points FROM player_stats WHERE user_id IN (?, ?)");
+    $ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id IN (?, ?)");
     $ptsStmt->execute([$requester_id, $partner_id]);
     $ptsRows = $ptsStmt->fetchAll(PDO::FETCH_ASSOC);
     $ptsMap = [];
@@ -84,6 +83,25 @@ try {
 
         $parRP = (int)($ptsMap[$partner_id]['rank_points'] ?? 0);
         $parBP = (int)($ptsMap[$partner_id]['current_buffer'] ?? 100);
+
+        // Points eligibility check for partner in special case Team 1 approval
+        $partnerPts = 100;
+        if (isset($ptsMap[$partner_id])) {
+            $partnerPts = (int)($ptsMap[$partner_id]['rank_points'] ?? 0) + ((int)($ptsMap[$partner_id]['buffer_matches_left'] ?? 0) > 0 ? (int)($ptsMap[$partner_id]['current_buffer'] ?? 100) : 0);
+        }
+
+        $eligMin = (int)$match['eligible_min'];
+        $eligMax = (int)$match['eligible_max'];
+
+        if ($partnerPts < $eligMin || $partnerPts > $eligMax) {
+            $pdo->rollBack();
+            jsonResponse(false, "You are not eligible for this match. Your points ({$partnerPts}) must be between {$eligMin} and {$eligMax}.", [
+                'eligibility_failed' => true,
+                'partner_points' => $partnerPts,
+                'eligible_min' => $eligMin,
+                'eligible_max' => $eligMax,
+            ], 422);
+        }
 
         // Insert partner into Team 1, Slot 2
         $ins = $pdo->prepare("

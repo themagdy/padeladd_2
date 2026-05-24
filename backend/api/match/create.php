@@ -86,6 +86,24 @@ if ($created_with_partner && $partner_code !== '') {
             ], 422);
         }
     }
+
+    // ── Points eligibility check for partner ─────────────────────────────────
+    $ptsStmt = $pdo->prepare("SELECT current_buffer, rank_points, buffer_matches_left FROM player_stats WHERE user_id = ?");
+    $ptsStmt->execute([$partner_id]);
+    $partnerPtsRow = $ptsStmt->fetch();
+    $partnerPoints = 100;
+    if ($partnerPtsRow) {
+        $partnerPoints = (int)($partnerPtsRow['rank_points'] ?? 0) + ((int)($partnerPtsRow['buffer_matches_left'] ?? 0) > 0 ? (int)($partnerPtsRow['current_buffer'] ?? 100) : 0);
+    }
+
+    if ($partnerPoints < $eligible_min || $partnerPoints > $eligible_max) {
+        jsonResponse(false, "Your partner is not eligible for this match. Partner points ({$partnerPoints}) must be between {$eligible_min} and {$eligible_max}.", [
+            'eligibility_failed' => true,
+            'partner_points' => $partnerPoints,
+            'eligible_min' => $eligible_min,
+            'eligible_max' => $eligible_max,
+        ], 422);
+    }
 }
 
 function generateMatchCode($pdo) {
