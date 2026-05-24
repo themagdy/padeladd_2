@@ -20,7 +20,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $user = $input['username'] ?? '';
 $pass = $input['password'] ?? '';
 
-if ($user === ADMIN_USER && $pass === ADMIN_PASS) {
+if ($user === ADMIN_USER && password_verify($pass, ADMIN_PASS_HASH)) {
     $token = 'ADM-' . generateRandomString(40);
 
     $stmt = $pdo->prepare("INSERT INTO admin_sessions (token) VALUES (?)");

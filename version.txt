@@ -1339,4 +1339,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Optimized details.php slot query to render live ratings for upcoming matches, while preserving historical snapshots for completed games.
 - Version: 2.3.32 (Build 332)
 
+2.3.33 (Build 333) - 2026-05-25
+- Frontend: Localized all external CDN script and style dependencies (Cropper.js, DOMPurify, and Chart.js) directly into local frontend assets directories to secure Capacitor native mobile apps and enable offline loading.
+- Backend: Hardened Content-Security-Policy (CSP) headers in the API router (index.php) by completely removing cdnjs.cloudflare.com permissions from script-src and style-src rules.
+- Version: 2.3.33 (Build 333)
+
 

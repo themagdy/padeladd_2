@@ -27,10 +27,10 @@
     <!-- Priority: UI Rules - Clean, modern, minimal UI, Mobile-first -->
     <!-- Fonts loaded locally via frontend/css/fonts.css -->
     <!-- Cropper.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="stylesheet" href="frontend/css/cropper.min.css">
+    <script src="frontend/js/cropper.min.js"></script>
     <!-- CSS -->
-    <link rel="stylesheet" href="frontend/css/style.css?v=325">
+    <link rel="stylesheet" href="frontend/css/style.css?v=333">
 </head>
 
 <body>
@@ -144,9 +144,7 @@
         }
     </script>
     <!-- DOMPurify: XSS sanitization for innerHTML -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"
-        integrity="sha512-jB0TkTBeQC9ZSkBqDhdmfTv1qdfbWpGE72yJ/01Srq6hEzZIz2xkz1e57p9ai7IeHMwEG7HpzG6NdptChif5Pg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="frontend/js/purify.min.js"></script>
     <script>
         window.safeHTML = function (html) {
             if (!html) return '';
@@ -205,12 +203,12 @@
             });
         });
     </script>
-    <script src="frontend/js/config.js?v=325"></script>
-    <script src="frontend/js/auth.js?v=325"></script>
-    <script src="frontend/js/api.js?v=325"></script>
-    <script src="frontend/js/controllers.js?v=325"></script>
-    <script src="frontend/js/router.js?v=325"></script>
-    <script src="frontend/js/app.js?v=325"></script>
+    <script src="frontend/js/config.js?v=333"></script>
+    <script src="frontend/js/auth.js?v=333"></script>
+    <script src="frontend/js/api.js?v=333"></script>
+    <script src="frontend/js/controllers.js?v=333"></script>
+    <script src="frontend/js/router.js?v=333"></script>
+    <script src="frontend/js/app.js?v=333"></script>
 </body>
 
 </html>
