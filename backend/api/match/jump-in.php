@@ -29,6 +29,11 @@ try {
         throw new Exception('Match is cancelled.');
     }
 
+    // Cannot jump-in if match start time has passed
+    if (strtotime($match['match_datetime']) <= time()) {
+        throw new Exception('Cannot join or jump-in to a match that has already passed.');
+    }
+
     $wlStmt = $pdo->prepare("SELECT * FROM waiting_list WHERE id = ? AND match_id = ? FOR UPDATE");
     $wlStmt->execute([$waitlist_id, $match_id]);
     $wl = $wlStmt->fetch(PDO::FETCH_ASSOC);

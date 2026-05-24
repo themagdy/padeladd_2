@@ -42,6 +42,12 @@ try {
         jsonResponse(false, 'Match is no longer available.', null, 409);
     }
 
+    // Cannot approve request if match start time has passed
+    if (strtotime($match['match_datetime']) <= time()) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Cannot join or approve requests for a match that has already passed.', null, 400);
+    }
+
     // Fetch current stats for snapshotting
     $ptsStmt = $pdo->prepare("SELECT user_id, current_buffer, rank_points FROM player_stats WHERE user_id IN (?, ?)");
     $ptsStmt->execute([$requester_id, $partner_id]);

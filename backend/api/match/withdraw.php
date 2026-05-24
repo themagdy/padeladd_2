@@ -85,6 +85,12 @@ try {
         jsonResponse(false, 'Cannot withdraw from a completed or cancelled match.', null, 403);
     }
 
+    // Cannot withdraw after match start time
+    if (strtotime($match['match_datetime']) <= time()) {
+        $pdo->rollBack();
+        jsonResponse(false, 'Cannot withdraw from a match that has already started or passed.', null, 400);
+    }
+
     if ((int)$match['creator_id'] === $uid) {
         $pdo->rollBack();
         jsonResponse(false, 'Creators cannot leave their own match. Please cancel the match instead.', null, 403);
