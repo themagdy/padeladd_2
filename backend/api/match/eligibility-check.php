@@ -51,32 +51,41 @@ foreach ($allIds as $pid) {
     }
 }
 
-// ── Helper: Anti-farming IntegrityFactor ─────────────────────────────────
 function integrityFactor($pdo, int $user_id, array $opponent_ids): int {
-    $count = 0;
-    foreach ($opponent_ids as $opp_id) {
-        $stmt = $pdo->prepare("
-            SELECT COUNT(s.id)
-            FROM scores s
-            JOIN matches m ON s.match_id = m.id
-            WHERE s.status = 'approved'
-              AND m.match_type = 'competition'
-              AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    if (count($opponent_ids) < 2) return 100;
+    $opp_id1 = (int)$opponent_ids[0];
+    $opp_id2 = (int)$opponent_ids[1];
+
+    $stmt = $pdo->prepare("
+        SELECT COUNT(s.id)
+        FROM scores s
+        JOIN matches m ON s.match_id = m.id
+        WHERE s.status = 'approved'
+          AND m.match_type = 'competition'
+          AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          AND (
+            (
+              (s.t1_p1_user_id = ? OR s.t1_p2_user_id = ?)
               AND (
-                (
-                  (s.t1_p1_user_id = ? OR s.t1_p2_user_id = ?)
-                  AND (s.t2_p1_user_id = ? OR s.t2_p2_user_id = ?)
-                )
-                OR
-                (
-                  (s.t2_p1_user_id = ? OR s.t2_p2_user_id = ?)
-                  AND (s.t1_p1_user_id = ? OR s.t1_p2_user_id = ?)
-                )
+                (s.t2_p1_user_id = ? AND s.t2_p2_user_id = ?)
+                OR (s.t2_p1_user_id = ? AND s.t2_p2_user_id = ?)
               )
-        ");
-        $stmt->execute([$user_id, $user_id, $opp_id, $opp_id, $user_id, $user_id, $opp_id, $opp_id]);
-        $count = max($count, (int)$stmt->fetchColumn());
-    }
+            )
+            OR
+            (
+              (s.t2_p1_user_id = ? OR s.t2_p2_user_id = ?)
+              AND (
+                (s.t1_p1_user_id = ? AND s.t1_p2_user_id = ?)
+                OR (s.t1_p1_user_id = ? AND s.t1_p2_user_id = ?)
+              )
+            )
+          )
+    ");
+    $stmt->execute([
+        $user_id, $user_id, $opp_id1, $opp_id2, $opp_id2, $opp_id1,
+        $user_id, $user_id, $opp_id1, $opp_id2, $opp_id2, $opp_id1
+    ]);
+    $count = (int)$stmt->fetchColumn();
 
     if ($count < 2)   return 100;
     if ($count == 2)  return 70;

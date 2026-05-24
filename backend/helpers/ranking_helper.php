@@ -109,26 +109,42 @@ function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float
     if (count($opponents) < 2)
         return 1.0;
 
-    // Count all approved competition scores against these opponents in last 30 days
-    $count = 0;
-    foreach ($opponents as $opp_id) {
-        $checkStmt = $pdo->prepare("
-            SELECT COUNT(s.id)
-            FROM scores s
-            JOIN matches m ON s.match_id = m.id
-            JOIN match_players mp1 ON m.id = mp1.match_id
-            JOIN match_players mp2 ON m.id = mp2.match_id
-            WHERE s.status = 'approved'
-              AND m.match_type = 'competition'
-              AND m.id != ?
-              AND mp1.user_id = ?
-              AND mp2.user_id = ?
-              AND mp1.team_no != mp2.team_no
-              AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-        ");
-        $checkStmt->execute([$match_id, $user_id, $opp_id]);
-        $count = max($count, (int) $checkStmt->fetchColumn());
-    }
+    // Count all approved competition scores against this exact pair of opponents in last 30 days
+    $opp_id1 = (int)$opponents[0];
+    $opp_id2 = (int)$opponents[1];
+
+    $checkStmt = $pdo->prepare("
+        SELECT COUNT(s.id)
+        FROM scores s
+        JOIN matches m ON s.match_id = m.id
+        WHERE s.status = 'approved'
+          AND m.match_type = 'competition'
+          AND m.id != ?
+          AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+          AND (
+            (
+              (s.t1_p1_user_id = ? OR s.t1_p2_user_id = ?)
+              AND (
+                (s.t2_p1_user_id = ? AND s.t2_p2_user_id = ?)
+                OR (s.t2_p1_user_id = ? AND s.t2_p2_user_id = ?)
+              )
+            )
+            OR
+            (
+              (s.t2_p1_user_id = ? OR s.t2_p2_user_id = ?)
+              AND (
+                (s.t1_p1_user_id = ? AND s.t1_p2_user_id = ?)
+                OR (s.t1_p1_user_id = ? AND s.t1_p2_user_id = ?)
+              )
+            )
+          )
+    ");
+    $checkStmt->execute([
+        $match_id,
+        $user_id, $user_id, $opp_id1, $opp_id2, $opp_id2, $opp_id1,
+        $user_id, $user_id, $opp_id1, $opp_id2, $opp_id2, $opp_id1
+    ]);
+    $count = (int)$checkStmt->fetchColumn();
 
     if ($count < 2)
         return 1.0;

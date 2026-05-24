@@ -1329,3 +1329,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Enforced points eligibility check for partner in match creation flow (create.php).
 - Backend: Enforced points eligibility check for partner in special creator partner approval flow (approve.php).
 - Version: 2.3.30 (Build 330)
+
+2.3.31 (Build 331) - 2026-05-24
+- Backend: Refactored anti-farming checks (integrity factor) in eligibility-check.php and ranking_helper.php to count past matches against the exact pair of opponents (2 vs 2) rather than individual opponents (1 vs 1).
+- Version: 2.3.31 (Build 331)
+
