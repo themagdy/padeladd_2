@@ -287,7 +287,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
     // ── 5. Team averages & strength adjustment ────────────────────────────
     $eff = function ($p) {
-        return (int)($p['rank_points'] ?? 0) + ((int)($p['buffer_matches_left'] ?? 0) > 0 ? (int)($p['current_buffer'] ?? 100) : 0);
+        return (int)($p['rank_points'] ?? 0) + (int)($p['current_buffer'] ?? 0);
     };
     $teamAvgA = (int) floor(($eff($team1[0]) + $eff($team1[1])) / 2);
     $teamAvgB = (int) floor(($eff($team2[0]) + $eff($team2[1])) / 2);
