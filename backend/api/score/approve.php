@@ -39,16 +39,20 @@ $match_id = (int)$score['match_id'];
 $subTeamNo = null;
 $appTeamNo = null;
 
-if ($score['composition_json']) {
-    try {
-        $comp = json_decode($score['composition_json'], true);
-        if (is_array($comp)) {
-            foreach ($comp as $entry) {
-                if ((int)$entry['user_id'] === (int)$score['submitted_by_user_id']) $subTeamNo = (int)$entry['team_no'];
-                if ((int)$entry['user_id'] === $uid) $appTeamNo = (int)$entry['team_no'];
-            }
-        }
-    } catch (Exception $e) {}
+if ($score['t1_p1_user_id'] !== null) {
+    $submitterId = (int)$score['submitted_by_user_id'];
+    
+    if ($submitterId === (int)$score['t1_p1_user_id'] || $submitterId === (int)$score['t1_p2_user_id']) {
+        $subTeamNo = 1;
+    } elseif ($submitterId === (int)$score['t2_p1_user_id'] || $submitterId === (int)$score['t2_p2_user_id']) {
+        $subTeamNo = 2;
+    }
+    
+    if ($uid === (int)$score['t1_p1_user_id'] || $uid === (int)$score['t1_p2_user_id']) {
+        $appTeamNo = 1;
+    } elseif ($uid === (int)$score['t2_p1_user_id'] || $uid === (int)$score['t2_p2_user_id']) {
+        $appTeamNo = 2;
+    }
 }
 
 // Fallback to original slots if composition not found or partial

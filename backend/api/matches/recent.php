@@ -41,7 +41,7 @@ $sStmt->execute();
 $allScores = $sStmt->fetchAll(PDO::FETCH_ASSOC);
 $scoresByMatch = [];
 foreach ($allScores as $s) {
-    $scoresByMatch[$s['match_id']][] = $s;
+    $scoresByMatch[$s['match_id']][] = mapScoreComposition($s);
 }
 
 // Bulk fetch players

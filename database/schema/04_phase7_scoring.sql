@@ -12,13 +12,22 @@ CREATE TABLE IF NOT EXISTS scores (
     t2_set2 INT DEFAULT 0,
     t1_set3 INT DEFAULT 0,
     t2_set3 INT DEFAULT 0,
+    t1_p1_user_id INT NULL,
+    t1_p2_user_id INT NULL,
+    t2_p1_user_id INT NULL,
+    t2_p2_user_id INT NULL,
     status ENUM('pending', 'approved', 'disputed') DEFAULT 'pending',
+    reminder_sent TINYINT(1) NOT NULL DEFAULT 0,
     approved_by_user_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE,
     FOREIGN KEY (submitted_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (approved_by_user_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (approved_by_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (t1_p1_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (t1_p2_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (t2_p1_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (t2_p2_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS disputes (

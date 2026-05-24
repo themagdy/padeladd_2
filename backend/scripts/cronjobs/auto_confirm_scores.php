@@ -21,7 +21,8 @@ echo date('[Y-m-d H:i:s]') . " Auto-confirm cron started.\n";
 
 // ── 1. Send 12-hour reminders ─────────────────────────────────────────────
 $reminderStmt = $pdo->prepare("
-    SELECT s.id, s.match_id, s.submitted_by_user_id
+    SELECT s.id, s.match_id, s.submitted_by_user_id,
+           s.t1_p1_user_id, s.t1_p2_user_id, s.t2_p1_user_id, s.t2_p2_user_id
     FROM scores s
     WHERE s.status = 'pending'
       AND s.reminder_sent = 0
@@ -36,18 +37,17 @@ foreach ($toRemind as $score) {
     $match_id = (int)$score['match_id'];
     $submitter_id = (int)$score['submitted_by_user_id'];
 
-    // Get submitter's team
-    $teamStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
-    $teamStmt->execute([$match_id, $submitter_id]);
-    $submitterTeam = $teamStmt->fetchColumn();
+    $t1 = [(int)$score['t1_p1_user_id'], (int)$score['t1_p2_user_id']];
+    $t2 = [(int)$score['t2_p1_user_id'], (int)$score['t2_p2_user_id']];
 
-    if ($submitterTeam) {
-        // Fetch opponent player IDs
-        $oppStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND team_no != ? AND status = 'confirmed'");
-        $oppStmt->execute([$match_id, $submitterTeam]);
-        $opponents = $oppStmt->fetchAll(PDO::FETCH_COLUMN);
+    if (in_array($submitter_id, $t1, true)) {
+        $opponents = $t2;
+    } else {
+        $opponents = $t1;
+    }
 
-        foreach ($opponents as $opp_id) {
+    foreach ($opponents as $opp_id) {
+        if ($opp_id > 0) {
             createNotification($pdo, $opp_id, 'score_reminder', $match_id, 
                 "Reminder: A score is waiting for your approval. It will be auto-confirmed in 12 hours.", 
                 $submitter_id);

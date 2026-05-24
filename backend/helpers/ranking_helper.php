@@ -225,8 +225,13 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
     // ── 3. Handle composition (in-memory only) ────────────────────────────
     $composition = null;
-    if (!empty($score['composition_json'])) {
-        $composition = json_decode($score['composition_json'], true);
+    if (!empty($score['t1_p1_user_id'])) {
+        $composition = [
+            ['user_id' => (int)$score['t1_p1_user_id'], 'team_no' => 1, 'slot_no' => 1],
+            ['user_id' => (int)$score['t1_p2_user_id'], 'team_no' => 1, 'slot_no' => 2],
+            ['user_id' => (int)$score['t2_p1_user_id'], 'team_no' => 2, 'slot_no' => 1],
+            ['user_id' => (int)$score['t2_p2_user_id'], 'team_no' => 2, 'slot_no' => 2]
+        ];
     }
 
     // ── 4. Fetch all 4 confirmed players ──────────────────────────────────

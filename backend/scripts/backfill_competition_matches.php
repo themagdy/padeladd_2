@@ -16,11 +16,11 @@ $pdo = getDB();
 echo "=== Backfill Competition Matches ===\n\n";
 
 // ── Match → canonical score ID mapping ───────────────────────────────────
-// We pick the score with composition_json if available, else the last approved one.
+// We pick the score with custom composition if available, else the last approved one.
 $matchScoreMap = [];
 
 $s = $pdo->query("
-    SELECT s.id, s.match_id, s.composition_json
+    SELECT s.id, s.match_id, s.t1_p1_user_id
     FROM scores s
     JOIN matches m ON m.id = s.match_id
     WHERE m.status = 'completed' AND s.status = 'approved'
@@ -30,8 +30,8 @@ $rows = $s->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($rows as $r) {
     $mid = (int)$r['match_id'];
-    // Prefer score with composition_json; if we already have one with comp, keep it
-    if (!isset($matchScoreMap[$mid]) || !empty($r['composition_json'])) {
+    // Prefer score with custom composition; if we already have one with comp, keep it
+    if (!isset($matchScoreMap[$mid]) || !empty($r['t1_p1_user_id'])) {
         $matchScoreMap[$mid] = (int)$r['id'];
     }
 }

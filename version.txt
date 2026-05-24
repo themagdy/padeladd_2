@@ -1305,6 +1305,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Modified ranking_helper.php to calculate points for custom compositions in-memory only, preserving historical match signup records.
 - Version: 2.3.26 (Build 326)
 
+2.3.27 (Build 327) - 2026-05-24
+- Database: Migrated scores table team composition from legacy JSON column to four structured user ID columns with foreign key constraints.
+- Backend: Implemented a global score helper adapter to reconstruct the virtual composition_json array, maintaining 100% API backward compatibility.
+- Backend: Refactored auto-confirm cron notifications and anti-farming eligibility checks to read player roles directly from the new columns, respecting team switches.
+- Version: 2.3.27 (Build 327)
+
+
 
 
 

@@ -3,6 +3,7 @@
  * StoryHelper
  * Manages the lifecycle of automated match stories.
  */
+require_once __DIR__ . '/score_helper.php';
 class StoryHelper {
     /**
      * Updates the 'upcoming' story for a match.
@@ -69,7 +70,7 @@ class StoryHelper {
             $storyId = $stmt->fetchColumn();
 
             // We wrap the score in an array for backward compatibility with the frontend grouping logic
-            $scoreDataJson = json_encode([$s]);
+            $scoreDataJson = json_encode([mapScoreComposition($s)]);
 
             if ($storyId) {
                 // Update existing score story

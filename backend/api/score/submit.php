@@ -110,20 +110,31 @@ try {
         jsonResponse(false, 'Maximum of 2 match results allowed per match.', null, 400);
     }
 
-    // 5. Insert score
-    $ins = $pdo->prepare("
-        INSERT INTO scores (match_id, submitted_by_user_id, t1_set1, t2_set1, t1_set2, t2_set2, t1_set3, t2_set3, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-    ");
-    $ins->execute([$match_id, $uid, $s1_t1, $s1_t2, $s2_t1, $s2_t2, $s3_t1, $s3_t2]);
-    $score_id = $pdo->lastInsertId();
+    // Fetch current confirmed match players to determine teams and slots
+    $playersStmt = $pdo->prepare("SELECT user_id, team_no, slot_no FROM match_players WHERE match_id = ? AND status = 'confirmed'");
+    $playersStmt->execute([$match_id]);
+    $matchPlayers = $playersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $t1_p1 = null;
+    $t1_p2 = null;
+    $t2_p1 = null;
+    $t2_p2 = null;
+
+    foreach ($matchPlayers as $p) {
+        $uId = (int)$p['user_id'];
+        $team = (int)$p['team_no'];
+        $slot = (int)$p['slot_no'];
+
+        if ($team === 1 && $slot === 1) $t1_p1 = $uId;
+        elseif ($team === 1 && $slot === 2) $t1_p2 = $uId;
+        elseif ($team === 2 && $slot === 1) $t2_p1 = $uId;
+        elseif ($team === 2 && $slot === 2) $t2_p2 = $uId;
+    }
 
     // Handle composition switch if provided
     if ($composition && is_array($composition)) {
-        // 1. Query the match_players table to get the 4 real user_ids for this match.
-        $playersStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ?");
-        $playersStmt->execute([$match_id]);
-        $realUserIds = array_map('intval', $playersStmt->fetchAll(PDO::FETCH_COLUMN));
+        // 1. Get the 4 real user_ids for this match.
+        $realUserIds = array_map(function($p) { return (int)$p['user_id']; }, $matchPlayers);
 
         // 2. Check that the submitted composition array contains exactly those same 4 user_ids (no external users allowed).
         $submittedUserIds = array_map(function($p) {
@@ -155,10 +166,35 @@ try {
             jsonResponse(false, 'Invalid team composition. Each team must have exactly 2 players.', null, 422);
         }
 
-        // We'll store the suggested composition in a new column or just handle it at approval.
-        $updateComp = $pdo->prepare("UPDATE scores SET composition_json = ? WHERE id = ?");
-        $updateComp->execute([json_encode($composition), $score_id]);
+        // Override with the submitted custom composition
+        foreach ($composition as $p) {
+            $uId = (int)$p['user_id'];
+            $team = (int)$p['team_no'];
+            $slot = (int)$p['slot_no'];
+
+            if ($team === 1 && $slot === 1) $t1_p1 = $uId;
+            elseif ($team === 1 && $slot === 2) $t1_p2 = $uId;
+            elseif ($team === 2 && $slot === 1) $t2_p1 = $uId;
+            elseif ($team === 2 && $slot === 2) $t2_p2 = $uId;
+        }
     }
+
+    // 5. Insert score
+    $ins = $pdo->prepare("
+        INSERT INTO scores (
+            match_id, submitted_by_user_id, 
+            t1_set1, t2_set1, t1_set2, t2_set2, t1_set3, t2_set3, 
+            t1_p1_user_id, t1_p2_user_id, t2_p1_user_id, t2_p2_user_id,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+    ");
+    $ins->execute([
+        $match_id, $uid, 
+        $s1_t1, $s1_t2, $s2_t1, $s2_t2, $s3_t1, $s3_t2, 
+        $t1_p1, $t1_p2, $t2_p1, $t2_p2
+    ]);
+    $score_id = $pdo->lastInsertId();
 
     $pdo->commit();
 

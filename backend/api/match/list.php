@@ -269,7 +269,7 @@ $scoresStmt->execute();
 $allScores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
 $scoresByMatch = [];
 foreach ($allScores as $s) {
-    $scoresByMatch[$s['match_id']][] = $s;
+    $scoresByMatch[$s['match_id']][] = mapScoreComposition($s);
 }
 
 $wlByMatch = [];

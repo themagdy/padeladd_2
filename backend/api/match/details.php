@@ -182,7 +182,7 @@ $isPlayer = ($mySlotData !== null);
 $scores = [];
 foreach ($rawScores as $sc) {
     if ($sc['status'] === 'approved' || $isPlayer) {
-        $scores[] = $sc;
+        $scores[] = mapScoreComposition($sc);
     }
 }
 

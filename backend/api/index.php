@@ -51,6 +51,7 @@ require_once __DIR__ . '/../helpers/mail_helper.php';
 require_once __DIR__ . '/../helpers/notification_helper.php';
 require_once __DIR__ . '/../helpers/twilio_helper.php';
 require_once __DIR__ . '/../helpers/security_helper.php';
+require_once __DIR__ . '/../helpers/score_helper.php';
 
 // Parse the request URI to determine endpoint
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
