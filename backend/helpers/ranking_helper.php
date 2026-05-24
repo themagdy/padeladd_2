@@ -92,20 +92,8 @@ function getNewPlayerFactor(PDO $pdo, int $user_id): float
  * Returns the integrity factor (float) for a player in a given match.
  * Based on how many times this player has faced the same opponents in the last 30 days.
  */
-function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id): float
+function getIntegrityFactor(PDO $pdo, int $user_id, int $match_id, array $opponents): float
 {
-    // Get opponent IDs (opposing team)
-    $myTeamStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
-    $myTeamStmt->execute([$match_id, $user_id]);
-    $myTeam = $myTeamStmt->fetchColumn();
-
-    if (!$myTeam)
-        return 1.0;
-
-    $oppStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND team_no != ? AND status = 'confirmed'");
-    $oppStmt->execute([$match_id, $myTeam]);
-    $opponents = $oppStmt->fetchAll(PDO::FETCH_COLUMN);
-
     if (count($opponents) < 2)
         return 1.0;
 
@@ -328,7 +316,10 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
         // Factors
         $newFactor = getNewPlayerFactor($pdo, $p['user_id']);
-        $integrityFac = getIntegrityFactor($pdo, $p['user_id'], $match_id);
+        $opps = ($p['team_no'] == 1)
+            ? [(int)$team2[0]['user_id'], (int)$team2[1]['user_id']]
+            : [(int)$team1[0]['user_id'], (int)$team1[1]['user_id']];
+        $integrityFac = getIntegrityFactor($pdo, $p['user_id'], $match_id, $opps);
 
         // Skip if integrity too low
         if ($integrityFac < 0.5) {
