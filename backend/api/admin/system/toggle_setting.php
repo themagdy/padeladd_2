@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../../helpers/response.php';
 
 $pdo = getDB();
 
+$data = json_decode(file_get_contents('php://input'), true);
 $key = trim($data['setting_key'] ?? '');
 
 if (empty($key)) {
