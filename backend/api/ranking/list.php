@@ -28,6 +28,7 @@ $stmt = $pdo->prepare("
          JOIN matches m ON mp.match_id = m.id 
          WHERE mp.user_id = u.id 
            AND m.status = 'completed'
+           AND m.match_type = 'competition'
            AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         ) as points_this_week,
         ps.matches_played,
