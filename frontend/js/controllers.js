@@ -1388,7 +1388,7 @@ const DashboardController = {
             if (m.match_type === 'competition') {
                 matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
             } else if (m.match_type === 'friendly') {
-                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#5A91FF; padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
             }
 
             const dashHeader = `
@@ -3524,7 +3524,7 @@ const MatchesController = {
         if (m.match_type === 'competition') {
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
         } else if (m.match_type === 'friendly') {
-            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#5A91FF; padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
         }
 
         if (m.gender_type === 'same_gender') {
@@ -3561,7 +3561,7 @@ const MatchesController = {
             if (m.match_type === 'competition') {
                 matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
             } else if (m.match_type === 'friendly') {
-                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#5A91FF; padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
             }
 
             const dashHeader = `
@@ -3799,7 +3799,7 @@ const MatchesController = {
                 if (match.match_type === 'competition') {
                     typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange);">🏆 Competition</span>`;
                 } else if (match.match_type === 'friendly') {
-                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted);">🤝 Friendly</span>`;
+                    typeBadges += `<span class="status-badge-pill" style="font-weight:700; background:rgba(27, 82, 206, 0.15); color:#5A91FF;">🤝 Friendly</span>`;
                 }
 
                 if (match.gender_type === 'same_gender') {
