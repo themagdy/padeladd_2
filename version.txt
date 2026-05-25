@@ -1367,3 +1367,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Restyled the Promo Codes Ledger table to use the global admin-table CSS classes, achieving consistent padding, border separation, and alignment.
 - Frontend: Refined row columns mapping, formatting dates as human-readable (e.g. 25 May 2026) and styling redeemed users with a premium layout containing a distinct player code badge.
 - Version: 2.3.37 (Build 337)
+
+2.3.38 (Build 338) - 2026-05-25
+- Backend: Updated `stories/list.php` and `stories/user.php` queries to filter out suspended users (`status != 'active'`), preventing banned players' avatars and matches from appearing in the dashboard stories feed and playback stacks.
+- Version: 2.3.38 (Build 338)

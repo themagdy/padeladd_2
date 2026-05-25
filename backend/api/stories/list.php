@@ -23,6 +23,7 @@ $sql = "
     LEFT JOIN venues v ON s.venue_id = v.id
     JOIN matches m ON s.match_id = m.id
     JOIN match_players mp ON s.match_id = mp.match_id
+    JOIN users u ON mp.user_id = u.id AND u.status = 'active'
     LEFT JOIN follows f ON mp.user_id = f.following_id AND f.follower_id = :uidFollower
     WHERE (f.id IS NOT NULL OR mp.user_id = :uidSelf2)
       AND s.is_active = 1
@@ -44,13 +45,13 @@ $result = [];
 foreach ($stories as $s) {
     $mid = (int)$s['match_id'];
     
-    // Fetch players for this match
+    // Fetch players for this match (excluding suspended ones)
     $pStmt = $pdo->prepare("
         SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level, mp.team_no
         FROM match_players mp
         JOIN users u ON mp.user_id = u.id
         LEFT JOIN user_profiles up ON u.id = up.user_id
-        WHERE mp.match_id = ? AND mp.status = 'confirmed'
+        WHERE mp.match_id = ? AND mp.status = 'confirmed' AND u.status = 'active'
     ");
     $pStmt->execute([$mid]);
     $players = $pStmt->fetchAll(PDO::FETCH_ASSOC);
