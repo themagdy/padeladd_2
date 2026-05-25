@@ -770,7 +770,7 @@ const ScoreUI = {
             </div>
         ` : '';
 
-        const cardBorderColor = isFriendly ? 'var(--c-primary)' : 'rgba(255, 139, 0, 0.45)';
+        const cardBorderColor = isFriendly ? 'rgba(27, 82, 206, 0.6)' : 'rgba(255, 139, 0, 0.45)';
 
         return `
             <div class="msc-card ${showHeader ? 'with-header' : ''}" style="width:100%; position:relative; overflow:hidden; border-left:2px solid ${cardBorderColor};">
