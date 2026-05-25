@@ -1357,3 +1357,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Added "Actions" column to the invitations table layout in `invitations.html`.
 - Frontend: Implemented the `deletePromo` and `togglePromo` methods in `controllers.js` to support dual action options (Delete and Disable/Enable) for unused codes, and a single toggle action for used codes.
 - Version: 2.3.35 (Build 335)
+
+2.3.36 (Build 336) - 2026-05-25
+- Frontend: Reorganized the Invitations mod panel layout to position Settings and Generator cards side-by-side on top of the Promo Codes Ledger.
+- Frontend: Made the ledger table span full width (100%) and enabled interactive column sorting (Promo Code, Created At, Status, Redeemed By) with visual direction indicators.
+- Version: 2.3.36 (Build 336)

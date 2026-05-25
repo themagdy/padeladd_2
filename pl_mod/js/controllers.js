@@ -1958,9 +1958,20 @@ window.AdminControllers = {
     // ── Invitations Controller ──────────────────────────────────────────
     invitations: {
         allPromos: [],
+        sortKey: 'created_at',
+        sortOrder: 'desc',
         async init() {
             await this.fetchSettings();
             await this.loadPromoCodes();
+        },
+        toggleSort(key) {
+            if (this.sortKey === key) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                this.sortKey = key;
+                this.sortOrder = 'desc';
+            }
+            this.render();
         },
         async fetchSettings() {
             const res = await _admFetch('../backend/api/admin/system/get_settings.php', { method: 'POST' });
@@ -2064,11 +2075,62 @@ window.AdminControllers = {
         render() {
             const tbody = document.getElementById('promo-codes-list-body');
             if (!tbody) return;
+
+            // Render sorting indicators on thead
+            const thead = document.querySelector('#promo-ledger-table thead');
+            if (thead) {
+                const sortIcon = (field) => {
+                    if (this.sortKey !== field) return '<span style="opacity:0.2; margin-left:4px;">↕</span>';
+                    return `<span style="color:var(--c-primary); margin-left:4px;">${this.sortOrder === 'asc' ? '↑' : '↓'}</span>`;
+                };
+                thead.innerHTML = `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); color:#fff; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; user-select:none;">
+                        <th onclick="AdminControllers.invitations.toggleSort('code')" style="padding:10px; cursor:pointer;">Promo Code ${sortIcon('code')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('created_at')" style="padding:10px; cursor:pointer;">Created At ${sortIcon('created_at')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('status')" style="padding:10px; text-align:center; cursor:pointer;">Status ${sortIcon('status')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('used_by')" style="padding:10px; cursor:pointer;">Redeemed By ${sortIcon('used_by')}</th>
+                        <th style="padding:10px; text-align:right;">Actions</th>
+                    </tr>
+                `;
+            }
+
             if (this.allPromos.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--c-text-muted);">No campaign codes generated yet.</td></tr>';
                 return;
             }
-            tbody.innerHTML = this.allPromos.map(p => {
+
+            // Sort data copy
+            const sortedPromos = [...this.allPromos].sort((a, b) => {
+                let valA, valB;
+                if (this.sortKey === 'code') {
+                    valA = (a.code || '').toLowerCase();
+                    valB = (b.code || '').toLowerCase();
+                } else if (this.sortKey === 'created_at') {
+                    valA = new Date((a.created_at || '').replace(' ', 'T')).getTime();
+                    valB = new Date((b.created_at || '').replace(' ', 'T')).getTime();
+                } else if (this.sortKey === 'status') {
+                    // Weight: 0 = active, 1 = disabled, 2 = used
+                    const getWeight = (p) => {
+                        if (p.is_disabled) return 1;
+                        if (p.used_at) return 2;
+                        return 0;
+                    };
+                    valA = getWeight(a);
+                    valB = getWeight(b);
+                } else if (this.sortKey === 'used_by') {
+                    valA = (a.used_by_name || '').toLowerCase();
+                    valB = (b.used_by_name || '').toLowerCase();
+                } else {
+                    valA = a.id;
+                    valB = b.id;
+                }
+
+                if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            tbody.innerHTML = sortedPromos.map(p => {
                 const isUsed     = !!p.used_at;
                 const isDisabled = !!p.is_disabled;
 
