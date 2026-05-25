@@ -773,7 +773,7 @@ const ScoreUI = {
         const cardBorderColor = isFriendly ? 'var(--c-primary)' : 'rgba(255, 139, 0, 0.45)';
 
         return `
-            <div class="msc-card ${showHeader ? 'with-header' : ''}" style="width:100%; position:relative; overflow:hidden; border-left:3px solid ${cardBorderColor};">
+            <div class="msc-card ${showHeader ? 'with-header' : ''}" style="width:100%; position:relative; overflow:hidden; border-left:2px solid ${cardBorderColor};">
                 ${headerHtml}
                 <div class="msc-body" style="padding: 0 ${showHeader ? '24px' : '20px'};">
                     ${renderTeamRow(team1, t1Winner)}
