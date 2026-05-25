@@ -1371,3 +1371,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.38 (Build 338) - 2026-05-25
 - Backend: Updated `stories/list.php` and `stories/user.php` queries to filter out suspended users (`status != 'active'`), preventing banned players' avatars and matches from appearing in the dashboard stories feed and playback stacks.
 - Version: 2.3.38 (Build 338)
+
+2.3.39 (Build 339) - 2026-05-25
+- Frontend: Differentiated Match Score Card visuals inside `app.js` between Competition and Friendly matches. Competition scores use brand Orange highlights/winner markers and left borders, while Friendly scores use brand Blue highlights/winner markers and left borders. Added custom badge to headers when matching with scores.
+- Version: 2.3.39 (Build 339)
