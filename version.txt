@@ -1375,3 +1375,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.39 (Build 339) - 2026-05-25
 - Frontend: Differentiated Match Score Card visuals inside `app.js` between Competition and Friendly matches. Competition scores use brand Orange highlights/winner markers and left borders, while Friendly scores use brand Blue highlights/winner markers and left borders. Added custom badge to headers when matching with scores.
 - Version: 2.3.39 (Build 339)
+
+2.3.40 (Build 340) - 2026-05-25
+- Backend: Updated matches/recent.php and matches/user.php endpoints to include match_type and gender_type in the returned match objects array mapping, resolving the issue where completed friendly matches were not styled or Badged as Friendly on the Dashboard, Profile history, and Play > Scores views.
+- Version: 2.3.40 (Build 340)
