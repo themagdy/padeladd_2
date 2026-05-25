@@ -1381,4 +1381,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Removed the venue name and gender badges from the completed match score cards' headers across all listings (Dashboard feed, profile history, and Play > Scores lists), keeping only the date and match type badge.
 - Frontend: Dimmed the left-border orange handler on completed competition match cards (using semi-transparent rgba color) to blend better with the dark card background.
 - Frontend: Lightened the blue score numbers and friendly badge text color on completed friendly match cards (using high-readability #5A91FF sky-leaning blue) to optimize contrast against the dark background theme.
+- Frontend: Styled all friendly badges across list views and details pages to use the high-readability #5A91FF blue theme.
+- Frontend: Reduced the left-border handler thickness of completed score cards to 2px for a sleeker profile.
+- Frontend: Dimmed the left-border blue handler on completed friendly match cards (using semi-transparent rgba color) to match the visual weight of the competition card highlight.
 - Version: 2.3.40 (Build 340)
