@@ -1384,28 +1384,17 @@ const DashboardController = {
             }
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
 
-            const venueTitle = (m.venue || 'Venue TBD').split(' - ')[0].trim();
-
-            let typeBadges = '';
+            let matchTypeBadge = '';
             if (m.match_type === 'competition') {
-                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
             } else if (m.match_type === 'friendly') {
-                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
-            }
-            if (m.gender_type === 'same_gender') {
-                const isFemale = (m.creator_gender || 'male') === 'female';
-                const genderStr = isFemale ? 'Females Only' : 'Males Only';
-                const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
-                const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
-                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderStr}</span>`;
-            } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
-                typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(147,112,219,0.1); color:#9370DB; padding:2px 6px; border-radius:4px; margin-right:4px;">👫 Mixed</span>`;
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
             }
 
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>${venueTitle} &nbsp;·&nbsp; ${dayStr}</span>
-                    <div style="text-transform:none;">${typeBadges}</div>
+                    <span>${dayStr}</span>
+                    <div style="text-transform:none;">${matchTypeBadge}</div>
                 </div>
             `;
 
@@ -3568,10 +3557,17 @@ const MatchesController = {
                 dayStr = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
             }
 
+            let matchTypeBadge = '';
+            if (m.match_type === 'competition') {
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,165,0,0.1); color:var(--c-orange); padding:2px 6px; border-radius:4px; margin-right:4px;">🏆 Competition</span>`;
+            } else if (m.match_type === 'friendly') {
+                matchTypeBadge = `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:2px 6px; border-radius:4px; margin-right:4px;">🤝 Friendly</span>`;
+            }
+
             const dashHeader = `
                 <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding:0 20px; display:flex; justify-content:space-between;">
-                    <span>${mainTitle} &nbsp;·&nbsp; ${dayStr}</span>
-                    <div style="text-transform:none;">${typeBadges}</div>
+                    <span>${dayStr}</span>
+                    <div style="text-transform:none;">${matchTypeBadge}</div>
                 </div>
             `;
 
