@@ -1583,6 +1583,10 @@ const DashboardController = {
         try {
             const res = await API.post('/invite/get_invites', {});
             if (res && res.success && res.data) {
+                if (!res.data.invite_only_mode) {
+                    row.style.display = 'none';
+                    return;
+                }
                 const invites = res.data.keys || [];
                 const unusedCount = invites.filter(inv => !inv.used_at).length;
                 btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
@@ -2134,6 +2138,10 @@ const ProfileViewController = {
         try {
             const res = await API.post('/invite/get_invites', {});
             if (res && res.success && res.data) {
+                if (!res.data.invite_only_mode) {
+                    row.style.display = 'none';
+                    return;
+                }
                 const invites = res.data.keys || [];
                 const unusedCount = invites.filter(inv => !inv.used_at).length;
                 btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
