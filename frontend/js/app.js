@@ -720,7 +720,7 @@ const ScoreUI = {
             const isFriendly = match.match_type === 'friendly';
             const winnerBg = isFriendly ? 'rgba(27, 82, 206, 0.05)' : 'rgba(247,148,29,0.06)';
             const winnerBorder = isFriendly ? 'rgba(27, 82, 206, 0.15)' : 'rgba(247,148,29,0.1)';
-            const accentColor = isFriendly ? 'var(--c-primary)' : 'var(--c-orange)';
+            const accentColor = isFriendly ? '#5A91FF' : 'var(--c-orange)';
 
             return `
                 <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? winnerBg : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? winnerBorder : 'transparent'};">
@@ -756,7 +756,7 @@ const ScoreUI = {
 
         const isFriendly = match.match_type === 'friendly';
         const typeBadge = isFriendly 
-            ? `<span style="font-size:9px; background:rgba(27, 82, 206, 0.1); color:var(--c-primary); padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🤝 Friendly</span>`
+            ? `<span style="font-size:9px; background:rgba(27, 82, 206, 0.1); color:#5A91FF; padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🤝 Friendly</span>`
             : `<span style="font-size:9px; background:rgba(247,148,29,0.15); color:var(--c-orange); padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🏆 Competition</span>`;
 
         const headerHtml = showHeader ? `

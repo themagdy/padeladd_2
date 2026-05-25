@@ -1387,3 +1387,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.42 (Build 342) - 2026-05-25
 - Frontend: Dimmed the left-border orange handler on completed competition match cards (using semi-transparent rgba color) to blend better with the dark card background.
 - Version: 2.3.42 (Build 342)
+
+2.3.43 (Build 343) - 2026-05-25
+- Frontend: Lightened the blue score numbers and friendly badge text color on completed friendly match cards (using high-readability #5A91FF sky-leaning blue) to optimize contrast against the dark background theme.
+- Version: 2.3.43 (Build 343)
