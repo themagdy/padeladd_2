@@ -2020,7 +2020,7 @@ window.AdminControllers = {
             tbody.innerHTML = this.allPromos.map(p => `
                 <tr>
                      <td><b style="color:#fff; font-family:monospace;">${p.code}</b></td>
-                     <td><small style="color:var(--c-text-muted)">${new Date(p.created_at).toLocaleDateString()}</small></td>
+                     <td><small style="color:var(--c-text-muted)">${new Date(p.created_at.replace(' ', 'T')).toLocaleDateString()}</small></td>
                      <td style="text-align:center;">
                          <span class="status-tag ${p.used_at ? 'rejected' : 'completed'}" style="font-size:9px; padding:2px 8px;">
                              ${p.used_at ? 'USED' : 'ACTIVE'}
