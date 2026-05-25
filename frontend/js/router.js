@@ -328,9 +328,6 @@ const Router = {
     },
     
     handleRoute: async function() {
-        // Scroll to top on every navigation
-        window.scrollTo(0, 0);
-
         // Stop any active polling from the previous page
         if (typeof PollManager !== 'undefined') PollManager.stop();
         if (typeof ChatController !== 'undefined') ChatController.stop();
@@ -444,6 +441,7 @@ const Router = {
                 }
                 
                 appDiv.innerHTML = safeHTML(html);
+                window.scrollTo(0, 0);
                 
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
@@ -462,6 +460,7 @@ const Router = {
                         <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
                     </div>
                 `);
+                window.scrollTo(0, 0);
             }
         } else {
             if (loader) loader.style.display = 'none';
@@ -472,6 +471,7 @@ const Router = {
                     <a href="dashboard" data-link class="btn btn-primary" style="width: auto; padding: 12px 30px;">Return to Dashboard</a>
                 </div>
             `);
+            window.scrollTo(0, 0);
         }
     },
 

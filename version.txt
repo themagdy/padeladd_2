@@ -1390,3 +1390,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Audited player ranking and statistics engine (ranking_helper.php) to confirm friendly matches are strictly blocked from altering player rank points, calibration buffers, match counts, wins, losses, win rates, and streaks.
 - Backend: Hardened weekly rating points calculations (points_this_week) in ranking/list.php, stats/get.php, profile/get.php, and admin/players/list.php by adding explicit match_type = 'competition' query filters.
 - Version: 2.3.41 (Build 341)
+
+2.3.42 (Build 342) - 2026-05-25
+- Frontend: Modified page navigation scroll behavior in router.js to reset the window scroll position to (0,0) immediately when the new page template is rendered, removing duplicate scroll triggers to prevent snapping after page load.
+- Frontend: Implemented scroll position caching and restoration in app.js for ConfirmModal and InviteModal, preventing the background layout from jumping to the top when a modal opens, and restoring the page scroll position on close.
+- Version: 2.3.42 (Build 342)

@@ -237,10 +237,12 @@ var ConfirmModal = {
 
 
             // Disable scroll (Hardened for mobile)
+            const scrollY = window.scrollY || document.documentElement.scrollTop;
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.style.touchAction = 'none';
             document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
             document.body.style.width = '100%';
 
             // Prevent touchmove events from bubbling up
@@ -277,12 +279,17 @@ var ConfirmModal = {
         }
 
         // Restore scroll
+        const scrollY = parseFloat(document.body.style.top || '0') * -1;
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
         document.body.style.position = '';
+        document.body.style.top = '';
         document.body.style.width = '';
         this._modal.ontouchmove = null;
+        if (scrollY > 0) {
+            window.scrollTo(0, scrollY);
+        }
 
         this._isOpen = false;
 
@@ -385,10 +392,12 @@ var InviteModal = {
         };
 
         // Disable scroll
+        const scrollY = window.scrollY || document.documentElement.scrollTop;
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
         document.body.style.touchAction = 'none';
         document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
         document.body.style.width = '100%';
 
         this._isOpen = true;
@@ -452,11 +461,16 @@ var InviteModal = {
         if (!this._modal) return;
 
         // Restore scroll
+        const scrollY = parseFloat(document.body.style.top || '0') * -1;
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
         document.body.style.position = '';
+        document.body.style.top = '';
         document.body.style.width = '';
+        if (scrollY > 0) {
+            window.scrollTo(0, scrollY);
+        }
 
         this._isOpen = false;
 
