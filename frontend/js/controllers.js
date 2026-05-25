@@ -1589,12 +1589,12 @@ const DashboardController = {
                 }
                 const invites = res.data.keys || [];
                 const unusedCount = invites.filter(inv => !inv.used_at).length;
-                btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
+                btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${unusedCount} Left) <span style="font-size:16px;">🎟️</span></span>`;
                 row.style.display = 'flex';
                 btn.onclick = () => {
                     InviteModal.show(invites, (updatedInvites) => {
                         const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
-                        btn.textContent = `Share Exclusive Invites (${newUnused} Left) 🎟️`;
+                        btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${newUnused} Left) <span style="font-size:16px;">🎟️</span></span>`;
                     });
                 };
             }
@@ -2144,12 +2144,12 @@ const ProfileViewController = {
                 }
                 const invites = res.data.keys || [];
                 const unusedCount = invites.filter(inv => !inv.used_at).length;
-                btn.textContent = `Share Exclusive Invites (${unusedCount} Left) 🎟️`;
+                btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${unusedCount} Left) <span style="font-size:16px;">🎟️</span></span>`;
                 row.style.display = 'flex';
                 btn.onclick = () => {
                     InviteModal.show(invites, (updatedInvites) => {
                         const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
-                        btn.textContent = `Share Exclusive Invites (${newUnused} Left) 🎟️`;
+                        btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${newUnused} Left) <span style="font-size:16px;">🎟️</span></span>`;
                     });
                 };
             }
