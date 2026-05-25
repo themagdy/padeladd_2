@@ -38,14 +38,14 @@
         <div class="card" style="display:flex; flex-direction:column; overflow:hidden; margin:0;">
             <h3 style="color:#fff; margin-top:0; margin-bottom:20px;">Promo Codes Ledger</h3>
             <div style="flex:1; overflow-y:auto; max-height:480px;">
-                <table id="promo-ledger-table" style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; color:#d1d5db;">
+                <table id="promo-ledger-table" class="admin-table" style="width:100%;">
                     <thead>
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05); color:#fff; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; user-select:none;">
-                            <th onclick="AdminControllers.invitations.toggleSort('code')" style="padding:10px; cursor:pointer;">Promo Code <span style="opacity:0.2; margin-left:4px;">↕</span></th>
-                            <th onclick="AdminControllers.invitations.toggleSort('created_at')" style="padding:10px; cursor:pointer;">Created At <span style="opacity:0.2; margin-left:4px;">↕</span></th>
-                            <th onclick="AdminControllers.invitations.toggleSort('status')" style="padding:10px; text-align:center; cursor:pointer;">Status <span style="opacity:0.2; margin-left:4px;">↕</span></th>
-                            <th onclick="AdminControllers.invitations.toggleSort('used_by')" style="padding:10px; cursor:pointer;">Redeemed By <span style="opacity:0.2; margin-left:4px;">↕</span></th>
-                            <th style="padding:10px; text-align:right;">Actions</th>
+                        <tr style="user-select:none;">
+                            <th onclick="AdminControllers.invitations.toggleSort('code')" style="cursor:pointer;">Promo Code <span style="opacity:0.2; margin-left:4px;">↕</span></th>
+                            <th onclick="AdminControllers.invitations.toggleSort('created_at')" style="cursor:pointer;">Created At <span style="opacity:0.2; margin-left:4px;">↕</span></th>
+                            <th onclick="AdminControllers.invitations.toggleSort('status')" style="text-align:center; cursor:pointer;">Status <span style="opacity:0.2; margin-left:4px;">↕</span></th>
+                            <th onclick="AdminControllers.invitations.toggleSort('used_by')" style="cursor:pointer;">Redeemed By <span style="opacity:0.2; margin-left:4px;">↕</span></th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="promo-codes-list-body">

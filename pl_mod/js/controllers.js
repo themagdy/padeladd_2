@@ -2084,12 +2084,12 @@ window.AdminControllers = {
                     return `<span style="color:var(--c-primary); margin-left:4px;">${this.sortOrder === 'asc' ? '↑' : '↓'}</span>`;
                 };
                 thead.innerHTML = `
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.05); color:#fff; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; user-select:none;">
-                        <th onclick="AdminControllers.invitations.toggleSort('code')" style="padding:10px; cursor:pointer;">Promo Code ${sortIcon('code')}</th>
-                        <th onclick="AdminControllers.invitations.toggleSort('created_at')" style="padding:10px; cursor:pointer;">Created At ${sortIcon('created_at')}</th>
-                        <th onclick="AdminControllers.invitations.toggleSort('status')" style="padding:10px; text-align:center; cursor:pointer;">Status ${sortIcon('status')}</th>
-                        <th onclick="AdminControllers.invitations.toggleSort('used_by')" style="padding:10px; cursor:pointer;">Redeemed By ${sortIcon('used_by')}</th>
-                        <th style="padding:10px; text-align:right;">Actions</th>
+                    <tr style="user-select:none;">
+                        <th onclick="AdminControllers.invitations.toggleSort('code')" style="cursor:pointer;">Promo Code ${sortIcon('code')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('created_at')" style="cursor:pointer;">Created At ${sortIcon('created_at')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('status')" style="text-align:center; cursor:pointer;">Status ${sortIcon('status')}</th>
+                        <th onclick="AdminControllers.invitations.toggleSort('used_by')" style="cursor:pointer;">Redeemed By ${sortIcon('used_by')}</th>
+                        <th style="text-align:right;">Actions</th>
                     </tr>
                 `;
             }
@@ -2169,13 +2169,13 @@ window.AdminControllers = {
 
                 return `
                     <tr style="${isDisabled ? 'opacity:0.5;' : ''}">
-                        <td><b style="color:${isDisabled ? 'var(--c-text-muted)' : '#fff'}; font-family:monospace; text-decoration:${isDisabled ? 'line-through' : 'none'}">${p.code}</b></td>
-                        <td><small style="color:var(--c-text-muted)">${new Date(p.created_at.replace(' ', 'T')).toLocaleDateString()}</small></td>
-                        <td style="text-align:center;"><span class="${statusClass}" style="font-size:9px; padding:2px 8px;">${statusLabel}</span></td>
+                        <td><b style="color:${isDisabled ? 'var(--c-text-muted)' : '#fff'}; font-family:monospace; font-size:14px; text-decoration:${isDisabled ? 'line-through' : 'none'}">${p.code}</b></td>
+                        <td><span style="font-size:13px; color:var(--c-text-muted);">${new Date(p.created_at.replace(' ', 'T')).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</span></td>
+                        <td style="text-align:center;"><span class="${statusClass}" style="font-size:9px; padding:4px 10px;">${statusLabel}</span></td>
                         <td style="color:var(--c-text-muted)">
-                            ${isUsed ? `${p.used_by_name} <small>(${p.used_by_code})</small>` : '<span style="opacity:0.3">---</span>'}
+                            ${isUsed ? `<span style="color:#fff; font-weight:700;">${p.used_by_name}</span> <small style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); padding:3px 8px; border-radius:6px; border:1px solid rgba(27, 82, 206, 0.2); font-family:monospace; margin-left:6px; font-weight:800;">${p.used_by_code}</small>` : '<span style="opacity:0.3">---</span>'}
                         </td>
-                        <td style="text-align:right;">${actionBtn}</td>
+                        <td style="text-align:right; white-space:nowrap;">${actionBtn}</td>
                     </tr>
                 `;
             }).join('');
