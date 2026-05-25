@@ -2014,21 +2014,44 @@ window.AdminControllers = {
             const promo = this.allPromos.find(p => p.id === id);
             if (!promo) return;
 
-            // Determine action label for confirmation
-            let confirmMsg;
-            if (!promo.used_at) {
-                confirmMsg = `Permanently DELETE code "${promo.code}"? This cannot be undone.`;
-            } else if (promo.is_disabled) {
-                confirmMsg = `Re-enable code "${promo.code}"? It will be marked active again (already used — won't accept new registrations).`;
+            if (promo.used_at) {
+                AdminApp.toast('Redeemed promo codes cannot be deleted. Disable them instead.', 'error');
+                return;
+            }
+
+            if (!confirm(`Permanently DELETE code "${promo.code}"? This cannot be undone.`)) return;
+
+            const res = await _admFetch('../backend/api/admin/system/delete_promo.php', {
+                method: 'POST',
+                body: JSON.stringify({ id, action: 'delete' })
+            });
+            const data = await res.json();
+            if (data.success) {
+                AdminApp.toast(data.message);
+                await this.loadPromoCodes();
             } else {
-                confirmMsg = `Disable code "${promo.code}"? It was used by ${promo.used_by_name} but will be marked revoked in audit logs.`;
+                AdminApp.toast(data.message || 'Action failed', 'error');
+            }
+        },
+        async togglePromo(id) {
+            const promo = this.allPromos.find(p => p.id === id);
+            if (!promo) return;
+
+            const nextAction = promo.is_disabled ? 'Enable' : 'Disable';
+            let confirmMsg;
+            if (promo.used_at) {
+                confirmMsg = promo.is_disabled 
+                    ? `Re-enable code "${promo.code}"? It will be active again (already used — won't accept new registrations).`
+                    : `Disable code "${promo.code}"? It was used by ${promo.used_by_name} but will be marked revoked in audit logs.`;
+            } else {
+                confirmMsg = `${nextAction} code "${promo.code}"?`;
             }
 
             if (!confirm(confirmMsg)) return;
 
             const res = await _admFetch('../backend/api/admin/system/delete_promo.php', {
                 method: 'POST',
-                body: JSON.stringify({ id })
+                body: JSON.stringify({ id, action: 'toggle' })
             });
             const data = await res.json();
             if (data.success) {
@@ -2062,17 +2085,24 @@ window.AdminControllers = {
                     statusLabel = 'ACTIVE';
                 }
 
-                // Action button
+                // Action buttons layout
                 let actionBtn;
+                const toggleLabel = isDisabled ? '✓ Re-enable' : '⊘ Disable';
+                const toggleColor = isDisabled ? 'var(--c-green)' : 'var(--c-text-muted)';
+                const toggleBg    = isDisabled ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)';
+                const toggleBorder = isDisabled ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.1)';
+
                 if (!isUsed) {
-                    // Never used → offer permanent delete
-                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(241,90,41,0.1); color:var(--c-red); border:1px solid rgba(241,90,41,0.2); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">🗑 Delete</button>`;
-                } else if (isDisabled) {
-                    // Used and disabled → offer re-enable
-                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(16,185,129,0.1); color:var(--c-green); border:1px solid rgba(16,185,129,0.2); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">✓ Re-enable</button>`;
+                    // Unused code: show both "Disable/Re-enable" and "Delete"
+                    actionBtn = `
+                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                            <button onclick="AdminControllers.invitations.togglePromo(${p.id})" class="btn-badge" style="background:${toggleBg}; color:${toggleColor}; border:1px solid ${toggleBorder}; padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">${toggleLabel}</button>
+                            <button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(241,90,41,0.1); color:var(--c-red); border:1px solid rgba(241,90,41,0.2); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">🗑 Delete</button>
+                        </div>
+                    `;
                 } else {
-                    // Used but active → offer disable
-                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(255,255,255,0.04); color:var(--c-text-muted); border:1px solid rgba(255,255,255,0.1); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">⊘ Disable</button>`;
+                    // Used code: only offer Disable / Re-enable
+                    actionBtn = `<button onclick="AdminControllers.invitations.togglePromo(${p.id})" class="btn-badge" style="background:${toggleBg}; color:${toggleColor}; border:1px solid ${toggleBorder}; padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">${toggleLabel}</button>`;
                 }
 
                 return `

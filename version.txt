@@ -1351,9 +1351,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.3.34 (Build 334)
 
 2.3.35 (Build 335) - 2026-05-25
-- Backend: Created `delete_promo.php` endpoint to permanently delete unused promo codes or soft-disable/enable used ones.
+- Backend: Created `delete_promo.php` endpoint with delete/toggle actions to support both deleting unused codes and disabling/enabling any code.
 - Backend: Updated `list_promos.php` to include the `is_disabled` status in the response.
 - Backend: Hardened registration validation in `register.php` to block registrations using disabled promo codes.
 - Frontend: Added "Actions" column to the invitations table layout in `invitations.html`.
-- Frontend: Implemented the `deletePromo` method in `controllers.js` to handle deletion/disabling/enabling of promo codes with inline confirmation.
+- Frontend: Implemented the `deletePromo` and `togglePromo` methods in `controllers.js` to support dual action options (Delete and Disable/Enable) for unused codes, and a single toggle action for used codes.
 - Version: 2.3.35 (Build 335)
