@@ -2010,27 +2010,83 @@ window.AdminControllers = {
                 AdminApp.toast(data.message, 'error');
             }
         },
+        async deletePromo(id) {
+            const promo = this.allPromos.find(p => p.id === id);
+            if (!promo) return;
+
+            // Determine action label for confirmation
+            let confirmMsg;
+            if (!promo.used_at) {
+                confirmMsg = `Permanently DELETE code "${promo.code}"? This cannot be undone.`;
+            } else if (promo.is_disabled) {
+                confirmMsg = `Re-enable code "${promo.code}"? It will be marked active again (already used — won't accept new registrations).`;
+            } else {
+                confirmMsg = `Disable code "${promo.code}"? It was used by ${promo.used_by_name} but will be marked revoked in audit logs.`;
+            }
+
+            if (!confirm(confirmMsg)) return;
+
+            const res = await _admFetch('../backend/api/admin/system/delete_promo.php', {
+                method: 'POST',
+                body: JSON.stringify({ id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                AdminApp.toast(data.message);
+                await this.loadPromoCodes();
+            } else {
+                AdminApp.toast(data.message || 'Action failed', 'error');
+            }
+        },
         render() {
             const tbody = document.getElementById('promo-codes-list-body');
             if (!tbody) return;
             if (this.allPromos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--c-text-muted);">No campaign codes generated yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--c-text-muted);">No campaign codes generated yet.</td></tr>';
                 return;
             }
-            tbody.innerHTML = this.allPromos.map(p => `
-                <tr>
-                     <td><b style="color:#fff; font-family:monospace;">${p.code}</b></td>
-                     <td><small style="color:var(--c-text-muted)">${new Date(p.created_at.replace(' ', 'T')).toLocaleDateString()}</small></td>
-                     <td style="text-align:center;">
-                         <span class="status-tag ${p.used_at ? 'rejected' : 'completed'}" style="font-size:9px; padding:2px 8px;">
-                             ${p.used_at ? 'USED' : 'ACTIVE'}
-                         </span>
-                     </td>
-                     <td style="color:var(--c-text-muted)">
-                         ${p.used_at ? `${p.used_by_name} <small>(${p.used_by_code})</small>` : '<span style="opacity:0.3">---</span>'}
-                     </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = this.allPromos.map(p => {
+                const isUsed     = !!p.used_at;
+                const isDisabled = !!p.is_disabled;
+
+                // Status badge
+                let statusClass, statusLabel;
+                if (isDisabled) {
+                    statusClass = 'status-tag on_hold';
+                    statusLabel = 'DISABLED';
+                } else if (isUsed) {
+                    statusClass = 'status-tag rejected';
+                    statusLabel = 'USED';
+                } else {
+                    statusClass = 'status-tag completed';
+                    statusLabel = 'ACTIVE';
+                }
+
+                // Action button
+                let actionBtn;
+                if (!isUsed) {
+                    // Never used → offer permanent delete
+                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(241,90,41,0.1); color:var(--c-red); border:1px solid rgba(241,90,41,0.2); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">🗑 Delete</button>`;
+                } else if (isDisabled) {
+                    // Used and disabled → offer re-enable
+                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(16,185,129,0.1); color:var(--c-green); border:1px solid rgba(16,185,129,0.2); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">✓ Re-enable</button>`;
+                } else {
+                    // Used but active → offer disable
+                    actionBtn = `<button onclick="AdminControllers.invitations.deletePromo(${p.id})" class="btn-badge" style="background:rgba(255,255,255,0.04); color:var(--c-text-muted); border:1px solid rgba(255,255,255,0.1); padding:5px 12px; font-size:10px; font-weight:800; border-radius:8px;">⊘ Disable</button>`;
+                }
+
+                return `
+                    <tr style="${isDisabled ? 'opacity:0.5;' : ''}">
+                        <td><b style="color:${isDisabled ? 'var(--c-text-muted)' : '#fff'}; font-family:monospace; text-decoration:${isDisabled ? 'line-through' : 'none'}">${p.code}</b></td>
+                        <td><small style="color:var(--c-text-muted)">${new Date(p.created_at.replace(' ', 'T')).toLocaleDateString()}</small></td>
+                        <td style="text-align:center;"><span class="${statusClass}" style="font-size:9px; padding:2px 8px;">${statusLabel}</span></td>
+                        <td style="color:var(--c-text-muted)">
+                            ${isUsed ? `${p.used_by_name} <small>(${p.used_by_code})</small>` : '<span style="opacity:0.3">---</span>'}
+                        </td>
+                        <td style="text-align:right;">${actionBtn}</td>
+                    </tr>
+                `;
+            }).join('');
         }
     }
 };

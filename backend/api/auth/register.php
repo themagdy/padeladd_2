@@ -53,7 +53,7 @@ try {
     // If invite-only, verify and lock the invite code row to prevent concurrent double-redemptions
     $inviteKeyId = null;
     if ($invite_only_mode) {
-        $inviteStmt = $pdo->prepare("SELECT id, used_by_user_id FROM invite_keys WHERE code = ? FOR UPDATE");
+        $inviteStmt = $pdo->prepare("SELECT id, used_by_user_id, is_disabled FROM invite_keys WHERE code = ? FOR UPDATE");
         $inviteStmt->execute([$inviteCode]);
         $inviteKey = $inviteStmt->fetch(PDO::FETCH_ASSOC);
 
@@ -61,12 +61,17 @@ try {
             $pdo->rollBack();
             jsonResponse(false, 'The invitation code is invalid.');
         }
+        if ((int)$inviteKey['is_disabled'] === 1) {
+            $pdo->rollBack();
+            jsonResponse(false, 'This invitation code has been revoked.');
+        }
         if ($inviteKey['used_by_user_id'] !== null) {
             $pdo->rollBack();
             jsonResponse(false, 'This invitation code has already been used.');
         }
         $inviteKeyId = (int)$inviteKey['id'];
     }
+
 
     // Check uniqueness (lock matching rows with FOR UPDATE to prevent race conditions)
     $stmt = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, email, mobile FROM users WHERE email = ? OR mobile = ? FOR UPDATE");

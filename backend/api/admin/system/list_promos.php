@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../../helpers/response.php';
 $pdo = getDB();
 
 $stmt = $pdo->prepare("
-    SELECT ik.id, ik.code, ik.created_at, ik.used_at,
+    SELECT ik.id, ik.code, ik.created_at, ik.used_at, ik.is_disabled,
            u.first_name, u.last_name, up.nickname AS used_by_nickname, up.player_code AS used_by_code
     FROM invite_keys ik
     LEFT JOIN users u ON ik.used_by_user_id = u.id
@@ -37,6 +37,7 @@ foreach ($promos as $p) {
         'code' => $p['code'],
         'created_at' => $p['created_at'],
         'used_at' => $p['used_at'],
+        'is_disabled' => (int)$p['is_disabled'],
         'used_by_name' => $usedByName,
         'used_by_code' => $p['used_by_code']
     ];
