@@ -1486,3 +1486,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.58 (Build 358) - 2026-05-26
 - Ranking Page (Mobile): Rolled back the temporary static weekly +/- points diff simulation. The mobile badge now displays actual live data using `r.points_this_week` and remains hidden if the change is empty or zero.
 - Version: 2.3.58 (Build 358)
+
+2.3.59 (Build 359) - 2026-05-26
+- Mobile UX (Native Back Button): Standardized the Capacitor back button handler in app.js. When viewing stories (StoriesController) or the exclusive invite/coupon overlay (InviteModal), clicking the physical/native back button now dismisses the overlays first instead of navigating back the underlying route or exiting the app.
+- Version: 2.3.59 (Build 359)

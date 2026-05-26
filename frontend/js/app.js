@@ -1015,7 +1015,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Priority 2: Close notifications if open
+            // Priority 2: Close exclusive invites (coupon codes) if open
+            if (typeof InviteModal !== 'undefined' && InviteModal._isOpen) {
+                InviteModal.close();
+                return;
+            }
+
+            // Priority 3: Close stories overlay if viewing stories
+            if (typeof StoriesController !== 'undefined' && StoriesController._isShowing) {
+                StoriesController.closePlayer();
+                return;
+            }
+
+            // Priority 4: Close notifications if open
             if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
                 NotificationsController.close();
                 return;
