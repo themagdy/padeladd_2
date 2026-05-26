@@ -1461,3 +1461,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Renamed the player profile stats box label from "Current Rank" to "Ranked".
 - Version: 2.3.53 (Build 353)
 
+2.3.54 (Build 354) - 2026-05-26
+- UI/UX: Resized stats box icons 10% smaller (to 41px) in style.css to optimize visual weight.
+- UI/UX: Integrated localized rank medal assets (rank1.png, rank2.png, rank3.png) into the top 3 leaderboard rows for both the Dashboard and Ranking pages.
+- UI/UX: Scaled medal images to be larger (42px on Dashboard, 50px on Ranking page) and resolved flex stretch issues by centering wrapper containers.
+- Version: 2.3.54 (Build 354)
+

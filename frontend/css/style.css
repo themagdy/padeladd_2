@@ -2107,8 +2107,8 @@ form {
   position: absolute;
   top: 16px;
   right: 13px;
-  width: 46px;
-  height: 46px;
+  width: 41px;
+  height: 41px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2123,8 +2123,8 @@ form {
 }
 
 .stat-box .ico img {
-  width: 46px;
-  height: 46px;
+  width: 41px;
+  height: 41px;
   object-fit: contain;
 }
 

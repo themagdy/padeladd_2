@@ -1509,16 +1509,16 @@ const DashboardController = {
 
             let rankHtml = `<span style="font-weight:800; color:#fff; font-size:15px;">${r.rank}</span>`;
             if (r.rank === 1) {
-                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; border:1.5px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #FFD700, #B8860B) border-box; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#FFD700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.15);">${r.rank}</div>`;
+                rankHtml = `<img src="assets/icons/rank/rank1.png" style="width:42px; height:42px; object-fit:contain;" alt="Gold Medal">`;
             } else if (r.rank === 2) {
-                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; border:1.5px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #E0E0E0, #808080) border-box; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#C0C0C0; box-shadow: 0 0 8px rgba(192, 192, 192, 0.15);">${r.rank}</div>`;
+                rankHtml = `<img src="assets/icons/rank/rank2.png" style="width:42px; height:42px; object-fit:contain;" alt="Silver Medal">`;
             } else if (r.rank === 3) {
-                rankHtml = `<div style="width:28px; height:28px; border-radius:50%; border:1.5px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #CD7F32, #8B4513) border-box; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#CD7F32; box-shadow: 0 0 8px rgba(205, 127, 50, 0.15);">${r.rank}</div>`;
+                rankHtml = `<img src="assets/icons/rank/rank3.png" style="width:42px; height:42px; object-fit:contain;" alt="Bronze Medal">`;
             }
 
             html += `
                 <div onclick="Router.navigate('/profile/view/${r.player_code}')" class="rank-grid-dash" style="padding:12px 10px 12px 8px; align-items:center; transition:all 0.2s; cursor:pointer; border-bottom: ${isLast ? 'none' : '1px solid rgba(255,255,255,0.05)'};" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                    <div style="display:flex; justify-content:center;">${rankHtml}</div>
+                    <div style="display:flex; justify-content:center; align-items:center;">${rankHtml}</div>
                     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
                         ${avatarHtml}
                         <div style="min-width:0; overflow:hidden;">
@@ -6738,13 +6738,13 @@ const RankingController = {
 
             // Rank
             const rankWrap = document.createElement('div');
-            rankWrap.style.cssText = 'display:flex; justify-content:center;';
+            rankWrap.style.cssText = 'display:flex; justify-content:center; align-items:center;';
             if (r.rank === 1) {
-                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #FFD700, #B8860B) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#FFD700; box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.1), 0 0 12px rgba(255, 215, 0, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank1.png" style="width:50px; height:50px; object-fit:contain;" alt="Gold Medal">`;
             } else if (r.rank === 2) {
-                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #E0E0E0, #808080) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#C0C0C0; box-shadow: inset 0 0 8px rgba(192, 192, 192, 0.1), 0 0 12px rgba(192, 192, 192, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank2.png" style="width:50px; height:50px; object-fit:contain;" alt="Silver Medal">`;
             } else if (r.rank === 3) {
-                rankWrap.innerHTML = `<div style="width:34px; height:34px; border-radius:50%; border:2px solid transparent; background: linear-gradient(var(--c-bg), var(--c-bg)) padding-box, linear-gradient(135deg, #CD7F32, #8B4513) border-box; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:#CD7F32; box-shadow: inset 0 0 8px rgba(205, 127, 50, 0.1), 0 0 12px rgba(205, 127, 50, 0.15);">${r.rank}</div>`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank3.png" style="width:50px; height:50px; object-fit:contain;" alt="Bronze Medal">`;
             } else {
                 const rankText = document.createElement('span');
                 rankText.style.cssText = 'text-align:left; font-size:20px; font-weight:700; color:#fff;';
