@@ -85,7 +85,11 @@ const UI = {
 
     getAvatarHtml: function (thumb, style = '', wrapperStyle = '', initials = '?', className = '', extraAttr = '') {
         if (thumb) {
-            return `<div class="avatar-wrap ${className}" style="${wrapperStyle}" ${extraAttr}><img src="${CONFIG.ASSET_BASE}/${thumb}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';"></div>`;
+            const avatarUrl = `${CONFIG.ASSET_BASE}/${thumb}`;
+            // If the element is rendered dynamically, we add a class/attr to check for duplication.
+            // On load, we tag the image. On subsequent renders, if the browser sees the exact same img tag
+            // with the same src/data-src, adding class='loaded' immediately or storing the cache state prevents flickering.
+            return `<div class="avatar-wrap ${className}" style="${wrapperStyle}" ${extraAttr} data-avatar-src="${avatarUrl}"><img src="${avatarUrl}" style="${style}" onload="this.parentElement.classList.add('loaded')" onerror="this.parentElement.classList.add('loaded'); this.style.display='none';"></div>`;
         } else {
             return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}" ${extraAttr}>${initials}</div>`;
         }
@@ -6005,66 +6009,119 @@ const NotificationsController = {
             const todayItems = grouped.filter(n => isToday(n.created_at));
             const earlierItems = grouped.filter(n => !isToday(n.created_at));
 
-            const renderGroup = (label, items) => {
-                if (items.length === 0) return '';
-                return `
-                    <div style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--c-text-muted); padding:16px 20px 8px; opacity:0.7;">${label}</div>
-                    ${items.map(n => {
-                    // Phase 6: Keep items blue if they were originally unread in this session
-                    // For groups, check if the newest one is unread (representative)
-                    const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
-                    // Phase 6: Consistent avatar style with emoji badge
-                    const emoji = typeIcon[n.type] || '🔔';
+            // To strictly prevent flickering during smart scrolling (infinite scroll/silent loads),
+            // we reconcile the existing DOM items with the incoming items by tracking data-notif-id.
+            // If the element already exists, we preserve it (avoiding avatar reload).
+            
+            // Build key-value map of new items
+            const newItemsMap = new Map();
+            grouped.forEach(n => newItemsMap.set(String(n.id), n));
 
-                    const thumb = n.sender_avatar_thumb || n.sender_avatar;
-                    let initials = '';
-                    if (n.sender_first_name || n.sender_last_name || n.sender_nickname) {
-                        if (n.sender_first_name || n.sender_last_name) {
-                            initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
-                        } else if (n.sender_nickname) {
-                            initials = n.sender_nickname[0].toUpperCase();
-                        }
-                    } else {
-                        // System notification (no sender)
-                        // Use Time emoji for auto-approvals, otherwise use the type emoji
-                        if (n.type === 'score_approved') {
-                            initials = '⏳';
-                        } else {
-                            initials = emoji;
-                        }
+            // 1. Remove DOM elements that are no longer in the list
+            const existingItems = listEl.querySelectorAll('.notif-item');
+            existingItems.forEach(el => {
+                const id = el.getAttribute('data-notif-id');
+                if (id && !newItemsMap.has(id)) {
+                    el.remove();
+                }
+            });
+
+            // Clean up old headers before rebuilding structure
+            listEl.querySelectorAll('.notif-header-label').forEach(el => el.remove());
+            const loadMoreTrigger = document.getElementById('load-more-trigger');
+            if (loadMoreTrigger) loadMoreTrigger.remove();
+            const notifLoading = document.getElementById('notif-loading');
+            if (notifLoading) notifLoading.remove();
+
+            // 2. Build or update items in order
+            const renderSingleItemHtml = (n) => {
+                const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
+                const emoji = typeIcon[n.type] || '🔔';
+                const thumb = n.sender_avatar_thumb || n.sender_avatar;
+                
+                let initials = '';
+                if (n.sender_first_name || n.sender_last_name || n.sender_nickname) {
+                    if (n.sender_first_name || n.sender_last_name) {
+                        initials = ((n.sender_first_name?.[0] || '') + (n.sender_last_name?.[0] || '')).toUpperCase();
+                    } else if (n.sender_nickname) {
+                        initials = n.sender_nickname[0].toUpperCase();
                     }
+                } else {
+                    initials = n.type === 'score_approved' ? '⏳' : emoji;
+                }
+                if (!initials) initials = 'P';
 
-                    if (!initials) initials = 'P';
-
-                    const avatarHtml = `
-                            <div style="position:relative; flex-shrink:0;">
-                                <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
-                                    ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
-                                </div>
-                                <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
-                                    ${emoji}
-                                </div>
-                            </div>
-                        `;
-
-                    return `
-                        <div class="notif-item ${isReadVisually ? '' : 'notif-unread'}" onclick="NotificationsController.handleNotifClick(${JSON.stringify(n).replace(/"/g, '&quot;')})"
-                             style="display:flex; align-items:flex-start; gap:12px; padding:14px 20px; cursor:pointer; transition:background 0.15s; border-bottom:1px solid rgba(255,255,255,0.04); position:relative;">
-                            ${avatarHtml}
-                            <div style="flex:1; min-width:0;">
-                                <div style="font-size:13px; color:var(--c-text); line-height:1.4; font-weight:${isReadVisually ? '400' : '500'}; word-break:break-word;">
-                                    ${n.message_text.replace(/: (.*)/, ': <span style="font-weight:700;">$1</span>')}${n.group_suffix || ''}
-                                </div>
-                                <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px; opacity:0.7;">${relTime(n.created_at)}</div>
-                            </div>
-                            ${!isReadVisually ? '<div style="width:8px; height:8px; background:var(--c-primary); border-radius:50%; flex-shrink:0; margin-top:6px;"></div>' : ''}
+                const avatarHtml = `
+                    <div style="position:relative; flex-shrink:0;">
+                        <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
+                            ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
                         </div>
-                    `;
-                }).join('')}
+                        <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
+                            ${emoji}
+                        </div>
+                    </div>
+                `;
+
+                return `
+                    ${avatarHtml}
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:13px; color:var(--c-text); line-height:1.4; font-weight:${isReadVisually ? '400' : '500'}; word-break:break-word;">
+                            ${n.message_text.replace(/: (.*)/, ': <span style="font-weight:700;">$1</span>')}${n.group_suffix || ''}
+                        </div>
+                        <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px; opacity:0.7;">${relTime(n.created_at)}</div>
+                    </div>
+                    ${!isReadVisually ? '<div class="unread-dot" style="width:8px; height:8px; background:var(--c-primary); border-radius:50%; flex-shrink:0; margin-top:6px;"></div>' : ''}
                 `;
             };
 
-            listEl.innerHTML = safeHTML(renderGroup('Today', todayItems) + renderGroup('Earlier', earlierItems));
+            const processGroup = (label, items) => {
+                if (items.length === 0) return;
+                
+                // Add group header label
+                const header = document.createElement('div');
+                header.className = 'notif-header-label';
+                header.style.cssText = 'font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--c-text-muted); padding:16px 20px 8px; opacity:0.7;';
+                header.textContent = label;
+                listEl.appendChild(header);
+
+                items.forEach(n => {
+                    const stringId = String(n.id);
+                    let existingEl = listEl.querySelector(`.notif-item[data-notif-id="${stringId}"]`);
+                    const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
+
+                    if (existingEl) {
+                        // Element exists: ONLY update text or read status classes to completely preserve loaded avatars
+                        if (isReadVisually) {
+                            existingEl.classList.remove('notif-unread');
+                            const dot = existingEl.querySelector('.unread-dot');
+                            if (dot) dot.remove();
+                        } else {
+                            existingEl.classList.add('notif-unread');
+                        }
+                        
+                        // Move it to the bottom to maintain ordering without destroying DOM node
+                        listEl.appendChild(existingEl);
+                    } else {
+                        // Create brand new element
+                        const itemEl = document.createElement('div');
+                        itemEl.className = `notif-item ${isReadVisually ? '' : 'notif-unread'}`;
+                        itemEl.setAttribute('data-notif-id', stringId);
+                        itemEl.style.cssText = 'display:flex; align-items:flex-start; gap:12px; padding:14px 20px; cursor:pointer; transition:background 0.15s; border-bottom:1px solid rgba(255,255,255,0.04); position:relative;';
+                        itemEl.onclick = () => NotificationsController.handleNotifClick(n);
+                        itemEl.innerHTML = safeHTML(renderSingleItemHtml(n));
+                        listEl.appendChild(itemEl);
+                    }
+                });
+            };
+
+            // If it's a completely empty render, wipe it once
+            const currentNotifItems = listEl.querySelectorAll('.notif-item');
+            if (currentNotifItems.length === 0) {
+                listEl.innerHTML = '';
+            }
+
+            processGroup('Today', todayItems);
+            processGroup('Earlier', earlierItems);
 
             // Phase 6: Add loading indicator and scroll listener
             if (this._isLoading) {
