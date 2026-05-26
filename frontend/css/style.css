@@ -12,7 +12,8 @@
    ------------------------------------------------------- */
 :root {
   /* Colors */
-  --c-bg: #11161E;
+  --c-bg: #0B0E14;
+  /* old: #11161E */
   --c-nav-bg: #171C26;
   --c-bg-card: #1E2535;
   --c-bg-input: #212A3A;
@@ -4462,11 +4463,6 @@ form {
   .match-vs-wrapper {
     min-height: 40px;
     padding: 10px 0;
-  }
-
-  .match-vs-wrapper::before {
-    display: none;
-    /* Cleaner on mobile */
   }
 }
 
