@@ -1471,3 +1471,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Redesigned the "PRO LEAGUE" badge on the Ranking page with a premium dark-gold aesthetic — gold gradient text, layered bevel border, inline star SVG icon, and a deep warm dark background.
 - Version: 2.3.55 (Build 355)
 
+2.3.56 (Build 356) - 2026-05-26
+- Ranking Page: Removed the "+" prefix from the points column so all values display as plain numbers.
+- Ranking Page: Reduced top-3 medal icons by 10% (50px → 45px); dashboard medals unchanged.
+- Ranking Page: Points column is now always white (#fff) and bolder (font-weight 800); removed orange tint for top 3.
+- Ranking Page: Added 5px right padding to the points column.
+- Ranking Page (Mobile): Added a compact +/- weekly diff badge below the points number on mobile only; badge is hidden when there is no weekly change. Simulated static values (+8 / -5) added temporarily for visual preview.
+- Version: 2.3.56 (Build 356)

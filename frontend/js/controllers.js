@@ -6725,7 +6725,7 @@ const RankingController = {
         listEl.innerHTML = '';
 
         list.forEach(r => {
-            const pointsColor = r.rank <= 3 ? 'var(--c-orange)' : '#fff';
+            const pointsColor = '#fff';
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
 
@@ -6740,11 +6740,11 @@ const RankingController = {
             const rankWrap = document.createElement('div');
             rankWrap.style.cssText = 'display:flex; justify-content:center; align-items:center;';
             if (r.rank === 1) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank1.png" style="width:50px; height:50px; object-fit:contain;" alt="Gold Medal">`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank1.png" style="width:45px; height:45px; object-fit:contain;" alt="Gold Medal">`;
             } else if (r.rank === 2) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank2.png" style="width:50px; height:50px; object-fit:contain;" alt="Silver Medal">`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank2.png" style="width:45px; height:45px; object-fit:contain;" alt="Silver Medal">`;
             } else if (r.rank === 3) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank3.png" style="width:50px; height:50px; object-fit:contain;" alt="Bronze Medal">`;
+                rankWrap.innerHTML = `<img src="assets/icons/rank/rank3.png" style="width:45px; height:45px; object-fit:contain;" alt="Bronze Medal">`;
             } else {
                 const rankText = document.createElement('span');
                 rankText.style.cssText = 'text-align:left; font-size:20px; font-weight:700; color:#fff;';
@@ -6811,9 +6811,32 @@ const RankingController = {
             diff.style.cssText = `text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};`;
             diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
 
+            // Points column wrapper (mobile: stacked number + badge)
+            const totalWrap = document.createElement('div');
+            totalWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; padding-right:5px;';
+
             const total = document.createElement('span');
-            total.style.cssText = `text-align:right; font-size:16px; font-weight:600; color:${pointsColor};`;
-            total.textContent = (r.points >= 0 ? '+' : '') + r.points;
+            total.style.cssText = `text-align:right; font-size:16px; font-weight:800; color:${pointsColor};`;
+            total.textContent = r.points;
+
+            totalWrap.appendChild(total);
+
+            // Mobile-only diff badge — only shown when there is a non-zero change
+            // SIMULATION: force static values for preview
+            const simulatedDiff = r.rank % 2 === 0 ? -5 : +8;
+            const diffValue = simulatedDiff;
+            if (diffValue !== 0) {
+                const diffBadge = document.createElement('span');
+                diffBadge.className = 'rank-pts-diff-badge';
+                if (diffValue > 0) {
+                    diffBadge.style.cssText = 'color:var(--c-green); background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25);';
+                    diffBadge.textContent = '+' + diffValue;
+                } else {
+                    diffBadge.style.cssText = 'color:#ef4444; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25);';
+                    diffBadge.textContent = diffValue;
+                }
+                totalWrap.appendChild(diffBadge);
+            }
 
             row.appendChild(rankWrap);
             row.appendChild(infoWrap);
@@ -6821,7 +6844,7 @@ const RankingController = {
             row.appendChild(played);
             row.appendChild(rate);
             row.appendChild(diff);
-            row.appendChild(total);
+            row.appendChild(totalWrap);
 
             listEl.appendChild(row);
         });

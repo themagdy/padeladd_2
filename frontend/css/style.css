@@ -4529,6 +4529,10 @@ form {
   align-items: center;
 }
 
+.rank-pts-diff-badge {
+  display: none;
+}
+
 @media (max-width: 600px) {
   .rank-grid-dash {
     grid-template-columns: 45px 1fr 70px !important;
@@ -4542,6 +4546,17 @@ form {
 
   .hide-mobile {
     display: none !important;
+  }
+
+  .rank-pts-diff-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    text-align: center;
+    line-height: 1.4;
   }
 }
 
