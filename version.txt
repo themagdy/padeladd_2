@@ -1510,3 +1510,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.64 (Build 364) - 2026-05-26
 - UI/UX Polish (Stats Box Typography): Tightened line spacing inside stats dashboard boxes inside `style.css` by decreasing values margins. Made the subtitle text (ranking detail text, points gains, matches records) slightly smaller (from 11.5px to 9.5px) for a more compact and elegant layout. Changed the profile stats box title "Ranked" to "Ranking" in `view.html` to maintain perfect consistency with the main dashboard.
 - Version: 2.3.64 (Build 364)
+
+2.3.65 (Build 365) - 2026-05-26
+- UI/UX Polish (Tighter Stats Labels): Further polished the stats box text elements inside `style.css`. Shrank the middle text labels (`.lbl` - e.g., Ranking, Points, Matches) down to `11px` with capital styling (`text-transform: uppercase`) and a clean `letter-spacing: 0.5px`. Additionally, scaled down the bottom indicator subtitles (`.sub` - e.g., highest rank, green points indicators, W/L record) to `8.5px` to provide maximum spacing contrast and a highly polished micro-dashboard aesthetic.
+- Version: 2.3.65 (Build 365)
