@@ -22,14 +22,14 @@ const Router = {
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
         '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
-        '/rules': { 
-            template: 'frontend/pages/rules.html', 
+        '/rules': {
+            template: 'frontend/pages/rules.html',
             init: () => {
                 let matchesPlayed = 0;
                 let bufferPoints = 100;
                 let rankingPoints = 0;
 
-                window.toggleCalibrationSim = function(mode) {
+                window.toggleCalibrationSim = function (mode) {
                     if (matchesPlayed >= 20) return;
 
                     const container = document.querySelector('.calibration-simulator');
@@ -82,12 +82,12 @@ const Router = {
                     if (mode === 'win') {
                         container.classList.add('state-win');
                         if (arrow) {
-                            arrow.style.color = '#ffffff';
+                            arrow.style.color = 'var(--c-green)';
                             arrow.style.transform = 'scale(1.2)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '⚡ ➔ 🏆';
-                            statusLabel.style.color = '#ffffff';
+                            statusLabel.style.color = 'var(--c-green)';
                             statusLabel.style.background = 'rgba(0, 206, 0, 0.08)';
                         }
 
@@ -112,12 +112,12 @@ const Router = {
                     } else {
                         container.classList.add('state-loss');
                         if (arrow) {
-                            arrow.style.color = '#ffffff';
+                            arrow.style.color = 'var(--c-pink)';
                             arrow.style.transform = 'scale(1.2)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '⚡ ➔ 💨';
-                            statusLabel.style.color = '#ffffff';
+                            statusLabel.style.color = 'var(--c-pink)';
                             statusLabel.style.background = 'rgba(216, 27, 96, 0.08)';
                         }
 
@@ -141,12 +141,12 @@ const Router = {
                     function triggerCompletion() {
                         const controls = document.getElementById('sim-controls');
                         const banner = document.getElementById('sim-completion-banner');
-                        
+
                         if (controls) controls.style.display = 'none';
                         if (banner) banner.style.display = 'block';
                         if (statusLabel) {
                             statusLabel.textContent = '🎯';
-                            statusLabel.style.color = '#ffffff';
+                            statusLabel.style.color = 'var(--c-green)';
                             statusLabel.style.background = 'rgba(0, 206, 0, 0.15)';
                         }
                     }
@@ -156,7 +156,7 @@ const Router = {
                 const btnWin = document.getElementById('sim-btn-win');
                 const btnLoss = document.getElementById('sim-btn-loss');
                 const btnReset = document.getElementById('sim-btn-reset');
-                
+
                 if (btnWin) {
                     btnWin.addEventListener('click', () => {
                         window.toggleCalibrationSim('win');
@@ -198,12 +198,12 @@ const Router = {
                         if (controls) controls.style.display = 'flex';
                         if (banner) banner.style.display = 'none';
                         if (arrow) {
-                            arrow.style.color = '#ffffff';
+                            arrow.style.color = 'var(--c-border)';
                             arrow.style.transform = 'scale(1)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '👇';
-                            statusLabel.style.color = '#ffffff';
+                            statusLabel.style.color = 'var(--c-text-muted)';
                             statusLabel.style.background = 'transparent';
                         }
                     });
@@ -212,11 +212,11 @@ const Router = {
         },
         '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() }
     },
-    
+
     navDepth: 0,
     _templateCache: {},
-    
-    init: function() {
+
+    init: function () {
         // Initialize depth if not present (direct landing)
         if (!history.state || typeof history.state.depth === 'undefined') {
             history.replaceState({ depth: 0 }, null, window.location.href);
@@ -234,9 +234,9 @@ const Router = {
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
             const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
-            const isDynamicBackBar = path.startsWith('/matches/M-') || 
-                                     path.startsWith('/p/') || 
-                                     (path.startsWith('/profile/view/') && path !== '/profile/view');
+            const isDynamicBackBar = path.startsWith('/matches/M-') ||
+                path.startsWith('/p/') ||
+                (path.startsWith('/profile/view/') && path !== '/profile/view');
             const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
             // 2. If no back bar (main tab) and we are moving back, we should eventually land on Dashboard
@@ -263,7 +263,7 @@ const Router = {
             if (target) {
                 e.preventDefault();
                 let href = target.getAttribute('href');
-                
+
                 // Clear sub-tabs when navigating via main menu items
                 if (target.classList.contains('nav-item')) {
                     sessionStorage.removeItem('last_sub_tab_play');
@@ -275,8 +275,8 @@ const Router = {
         });
         this.handleRoute(); // Process initial load
     },
-    
-    navigate: function(path, addToHistory = true, replace = false) {
+
+    navigate: function (path, addToHistory = true, replace = false) {
         let finalPath = path;
         // Auto-prefix with BASE_PATH if needed
         if (finalPath.startsWith('/') && !finalPath.startsWith(CONFIG.BASE_PATH)) {
@@ -294,16 +294,16 @@ const Router = {
         this.handleRoute();
     },
 
-    back: function() {
+    back: function () {
         const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
         const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
         const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
-        const isDynamicBackBar = path.startsWith('/matches/M-') || 
-                                 path.startsWith('/p/') || 
-                                 (path.startsWith('/profile/view/') && path !== '/profile/view');
+        const isDynamicBackBar = path.startsWith('/matches/M-') ||
+            path.startsWith('/p/') ||
+            (path.startsWith('/profile/view/') && path !== '/profile/view');
         const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
         if (hasBackBar && this.navDepth > 0) {
@@ -326,8 +326,8 @@ const Router = {
             this.navigate('/dashboard', true, true);
         }
     },
-    
-    handleRoute: async function() {
+
+    handleRoute: async function () {
         // Stop any active polling from the previous page
         if (typeof PollManager !== 'undefined') PollManager.stop();
         if (typeof ChatController !== 'undefined') ChatController.stop();
@@ -338,13 +338,13 @@ const Router = {
         if (path.startsWith(CONFIG.BASE_PATH)) {
             path = path.slice(CONFIG.BASE_PATH.length);
         }
-        
+
         // Ensure path starts with / and has no trailing slash
         if (!path.startsWith('/')) path = '/' + path;
         if (path !== '/' && path.endsWith('/')) {
             path = path.slice(0, -1);
         }
-        
+
         const appDiv = document.getElementById('app-content');
         if (!appDiv) return;
 
@@ -358,7 +358,7 @@ const Router = {
 
         const loader = document.getElementById('global-loader');
         if (loader && !isMainTab) loader.style.display = 'flex';
-        
+
         // Global Protection: Redirect to login if not authenticated and trying to access private route
         const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
         const isPublic = publicRoutes.includes(path);
@@ -372,27 +372,27 @@ const Router = {
 
         // If authenticated, don't allow hitting /login or /register
         if (Auth.isAuthenticated() && (path === '/login' || path === '/register' || path === '/')) {
-             if (Auth.hasProfile() && Auth.hasLevel()) {
-                 this.navigate('/dashboard');
-                 return;
-             }
+            if (Auth.hasProfile() && Auth.hasLevel()) {
+                this.navigate('/dashboard');
+                return;
+            }
         }
 
         const isPublicVanity = path.startsWith('/p/') || path.startsWith('/profile/view/');
 
         // Force profile completion sequence: Terms -> Profile Edit
         if (Auth.isAuthenticated() && (!Auth.hasProfile() || !Auth.hasLevel()) && path !== '/verify' && !isPublicVanity) {
-             const hasAgreed = sessionStorage.getItem('padeladd_agreed_terms') === 'true';
-             
-             if (!hasAgreed && path !== '/terms') {
-                 this.navigate('/terms');
-                 return;
-             }
-             
-             if (hasAgreed && path !== '/profile/edit' && path !== '/terms') {
-                 this.navigate('/profile/edit');
-                 return;
-             }
+            const hasAgreed = sessionStorage.getItem('padeladd_agreed_terms') === 'true';
+
+            if (!hasAgreed && path !== '/terms') {
+                this.navigate('/terms');
+                return;
+            }
+
+            if (hasAgreed && path !== '/profile/edit' && path !== '/terms') {
+                this.navigate('/profile/edit');
+                return;
+            }
         }
 
         this.updateNavVisibility(path);
@@ -400,7 +400,7 @@ const Router = {
         // Find route with parameter support
         let matchedParams = null;
         let route = this.routes[path];
-        
+
         if (!route) {
             // Try matching dynamic routes (e.g. /profile/view/:id)
             for (const [rPath, rTarget] of Object.entries(this.routes)) {
@@ -420,9 +420,9 @@ const Router = {
                 }
             }
         }
-        
+
         this.params = matchedParams || {};
-        
+
         if (route) {
             try {
                 let html;
@@ -430,19 +430,19 @@ const Router = {
                     html = this._templateCache[route.template];
                 } else {
                     // Ensure we fetch relative to the base URL
-                    const v = new Date().getTime(); 
+                    const v = new Date().getTime();
                     const targetUrl = CONFIG.BASE_PATH + '/' + route.template + '?v=' + v;
-                    
+
                     const response = await fetch(targetUrl, { cache: 'no-cache' });
                     if (!response.ok) throw new Error('Template not found');
                     html = await response.text();
-                    
+
                     this._templateCache[route.template] = html;
                 }
-                
+
                 appDiv.innerHTML = safeHTML(html);
                 window.scrollTo(0, 0);
-                
+
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
                     await route.init(matchedParams);
@@ -475,7 +475,7 @@ const Router = {
         }
     },
 
-    updateNavVisibility: function(path) {
+    updateNavVisibility: function (path) {
         const nav = document.getElementById('main-nav');
         const bnav = document.getElementById('bottom-nav');
         const tbar = document.getElementById('top-bar-nav');
@@ -492,16 +492,16 @@ const Router = {
 
         // Pages that need the unified back bar
         const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
-        const isDynamicBackBar = nPath.startsWith('/matches/M-') || 
-                                 nPath.startsWith('/p/') || 
-                                 (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
-                                 
+        const isDynamicBackBar = nPath.startsWith('/matches/M-') ||
+            nPath.startsWith('/p/') ||
+            (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
+
         const needsBackBar = backBarRoutes.includes(nPath) || isDynamicBackBar;
 
         if (needsBackBar) {
             tbar.style.display = 'flex';
             document.body.classList.add('has-fixed-bar');
-            
+
             const tbarInner = document.getElementById('top-bar-inner');
             if (tbarInner) {
                 if (nPath === '/profile/edit') {
@@ -521,7 +521,7 @@ const Router = {
                     tbarInner.style.padding = '0 16px';
                 }
             }
-            
+
             // Special case for logout on profile edit (only if new user)
             if (nPath === '/profile/edit' && tactions) {
                 if (!Auth.hasProfile()) {
@@ -543,14 +543,14 @@ const Router = {
             nav.style.display = 'flex';
             if (bnav) bnav.style.display = 'flex';
             document.body.classList.add('has-nav');
-            
+
             // Set active item for both navs
             const allNavs = [nav, bnav].filter(el => el !== null);
             allNavs.forEach(navEl => {
                 navEl.querySelectorAll('.nav-item').forEach(item => {
                     item.classList.remove('active');
                     const href = item.getAttribute('href') || '';
-                    
+
                     // Precise matching
                     const isDashboard = (path === '/dashboard' && href === 'dashboard');
                     const isRanking = (path.startsWith('/ranking') && href === 'ranking');

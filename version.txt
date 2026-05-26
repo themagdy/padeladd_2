@@ -1402,7 +1402,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.3.43 (Build 343)
 
 2.3.44 (Build 344) - 2026-05-26
-- Frontend: Styled all text in rules.html as solid white (#ffffff) and full opacity (1.0) to maximize contrast and clarity on the dark theme page, replacing any low-contrast colored text highlights.
-- Frontend: Updated the calibration simulator javascript logic in router.js to ensure the dynamic arrow and status text remains white and clearly visible over background blocks.
+- Frontend: Improved text readability on the rules page by setting all copy, descriptions, and paragraphs (which previously used the low-contrast var(--c-text-muted) gray) to solid white (#ffffff) at full opacity.
+- Frontend: Preserved all premium brand accents, colored tags, highlights, and simulator states to retain the original color-coding system.
 - Version: 2.3.44 (Build 344)
 
