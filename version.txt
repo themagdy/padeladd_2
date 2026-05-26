@@ -1420,3 +1420,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Enabled the vertical divider line (::before pseudo-element of .match-vs-wrapper) on mobile viewports by removing the mobile display: none override.
 - Version: 2.3.46 (Build 346)
 
+2.3.47 (Build 347) - 2026-05-26
+- Mobile: Added the custom 3D VS icon to git tracking and corrected its file permissions to resolve the broken image link on native mobile devices.
+- Version: 2.3.47 (Build 347)
+
