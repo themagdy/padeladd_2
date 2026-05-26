@@ -1455,3 +1455,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Scaled up the ranking header titles responsively to keep typography bold and premium on all viewports.
 - Version: 2.3.52 (Build 352)
 
+2.3.53 (Build 353) - 2026-05-26
+- UI/UX: Resized stats box icons to 46px and absolute-positioned them at top: 16px, right: 13px to center them vertically with the big numbers.
+- UI/UX: Extracted the dynamic "+700 Buffer" indicator from the big numbers element and displayed it as a clean tag next to the white "Points" label in the stats box.
+- UI/UX: Renamed the player profile stats box label from "Current Rank" to "Ranked".
+- Version: 2.3.53 (Build 353)
+

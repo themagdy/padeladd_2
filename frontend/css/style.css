@@ -2054,6 +2054,7 @@ form {
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
+  position: relative;
 }
 
 @keyframes glassShimmer {
@@ -2078,6 +2079,8 @@ form {
   font-size: 13px;
   font-weight: 600;
   color: #fff;
+  display: flex;
+  align-items: center;
 }
 
 .stat-box .sub {
@@ -2101,17 +2104,27 @@ form {
 }
 
 .stat-box .ico {
+  position: absolute;
+  top: 16px;
+  right: 13px;
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-right: -8px;
+  opacity: 0.85;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.stat-box:hover .ico {
+  transform: scale(1.12) rotate(3deg);
+  opacity: 1;
 }
 
 .stat-box .ico img {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
 }
 

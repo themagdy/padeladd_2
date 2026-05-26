@@ -918,21 +918,15 @@ const StatsUI = {
             if (el) {
                 el.innerHTML = ''; // Clear previous
                 if (key === 'points' && stats.current_buffer !== undefined) {
-                    el.textContent = val + ' ';
-                    const bufWrap = document.createElement('span');
-                    bufWrap.style.cssText = 'display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 4px; line-height: 1; text-align: left;';
-                    
-                    const bufVal = document.createElement('span');
-                    bufVal.style.cssText = 'font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;';
-                    bufVal.textContent = '+ ' + stats.current_buffer;
-                    
-                    const bufLbl = document.createElement('span');
-                    bufLbl.style.cssText = 'font-size: 7.5px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;';
-                    bufLbl.textContent = 'Buffer';
-                    
-                    bufWrap.appendChild(bufVal);
-                    bufWrap.appendChild(bufLbl);
-                    el.appendChild(bufWrap);
+                    el.textContent = val;
+                    const lblEl = el.parentNode.querySelector('.lbl');
+                    if (lblEl) {
+                        lblEl.innerHTML = 'Points';
+                        const bufWrap = document.createElement('span');
+                        bufWrap.style.cssText = 'font-size: 9.5px; font-weight: 800; color: var(--c-orange); background: rgba(255, 139, 0, 0.12); border: 1px solid rgba(255, 139, 0, 0.25); padding: 2px 6px; border-radius: 4px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.3px; display: inline-flex; align-items: center; line-height: 1;';
+                        bufWrap.textContent = `+${stats.current_buffer} Buffer`;
+                        lblEl.appendChild(bufWrap);
+                    }
                 } else {
                     el.textContent = val;
                 }
