@@ -1406,3 +1406,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Preserved all premium brand accents, colored tags, highlights, and simulator states to retain the original color-coding system.
 - Version: 2.3.44 (Build 344)
 
+2.3.45 (Build 345) - 2026-05-26
+- Frontend: Upgraded stats boxes on the Dashboard and Player Profile view to use local 3D Fluent Design icons (Trophy, Coin, custom Padel Racket, and Bullseye) instead of standard Unicode emojis.
+- Frontend: Generated a custom 3D Padel Racket icon (matching the Fluent 3D aesthetic and brand palette) and saved it to the local assets folder, replacing the generic tennis ball.
+- Frontend: Downloaded and localized all Fluent 3D icons (Trophy, Coin, Padel Racket, Bullseye, Fire, Sparkles, and Magnifying Glass) to `assets/icons/` to support offline load.
+- Frontend: Refined the stats box layout to slide the 3D icons 8px to the right (via a negative margin) for improved text spacing.
+- Frontend: Upgraded the Dashboard action buttons (My Matches, Create, Join) to use local 3D Fluent Design icons (Fire, Sparkles, and Magnifying Glass).
+- Frontend: Redesigned the `.stat-box` style to render a simple, elegant glassmorphism gradient background with high-density backdrop blur and soft shadows, without heavy shimmer animations.
+- Version: 2.3.45 (Build 345)
+
