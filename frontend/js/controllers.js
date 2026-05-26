@@ -1618,7 +1618,13 @@ const ProfileViewController = {
             return;
         }
 
-        if (!isSilent) UI.syncNav();
+        if (!isSilent) {
+            UI.syncNav();
+            // Instantly hide the full-screen spinner so the layout structure, details, 
+            // and match skeleton placeholders render dynamically on page load.
+            const loader = document.getElementById('global-loader');
+            if (loader) loader.style.display = 'none';
+        }
 
         // Determine currentReqId based on whether the call is silent or has an explicit reqId
         const currentReqId = reqId || (isSilent ? ProfileViewController._lastRequestId : ++ProfileViewController._lastRequestId);
@@ -6787,12 +6793,17 @@ const RankingController = {
             return;
         }
 
+        // 1. Remove initial/default static skeletons or error messages from the listEl first
+        // Skeletons do not have 'data-player-code', so we identify and remove them cleanly.
+        const skeletons = listEl.querySelectorAll('.rank-grid-full:not([data-player-code])');
+        skeletons.forEach(el => el.remove());
+
         // Build key-value map of new items
         const newPlayersMap = new Map();
         list.forEach(r => newPlayersMap.set(String(r.player_code), r));
 
-        // 1. Remove rows that are no longer in the filtered list
-        const existingRows = listEl.querySelectorAll('.rank-grid-full');
+        // 2. Remove rows that are no longer in the filtered list
+        const existingRows = listEl.querySelectorAll('.rank-grid-full[data-player-code]');
         existingRows.forEach(el => {
             const code = el.getAttribute('data-player-code');
             if (code && !newPlayersMap.has(code)) {
@@ -6801,7 +6812,7 @@ const RankingController = {
         });
 
         // If it's a completely empty list layout (e.g. was error or empty search before), wipe it once
-        const currentRows = listEl.querySelectorAll('.rank-grid-full');
+        const currentRows = listEl.querySelectorAll('.rank-grid-full[data-player-code]');
         if (currentRows.length === 0) {
             listEl.innerHTML = '';
         }

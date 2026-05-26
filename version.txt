@@ -1502,3 +1502,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.62 (Build 362) - 2026-05-26
 - UI Performance Optimization (Task #3): Offloaded off-screen layout and rendering calculations by appending GPU scroll containment rules inside `style.css`. Long list items (`.rank-grid-full`, `.match-card`, `.notif-item`) now leverage modern `content-visibility: auto` paired with an intrinsic sizing height of `80px`. This instructs rendering engines to bypass drawing and calculations for nodes outside the active viewport, dramatically boosting scroll speeds and lowering CPU utilization in the Capacitor WebView.
 - Version: 2.3.62 (Build 362)
+
+2.3.63 (Build 363) - 2026-05-26
+- UI Bugfix (Ranking Skeletons Cleanup): Resolved a bug where returning to the Ranking page from a player's profile left empty skeleton placeholder lines at the top of the table. Standardized the DOM reconciliation engine in `controllers.js` to identify and remove all elements matching `.rank-grid-full:not([data-player-code])` (static loading templates) before parsing and sorting the live player list.
+- Version: 2.3.63 (Build 363)
