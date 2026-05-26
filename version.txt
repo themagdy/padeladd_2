@@ -1467,3 +1467,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Scaled medal images to be larger (42px on Dashboard, 50px on Ranking page) and resolved flex stretch issues by centering wrapper containers.
 - Version: 2.3.54 (Build 354)
 
+2.3.55 (Build 355) - 2026-05-26
+- UI/UX: Redesigned the "PRO LEAGUE" badge on the Ranking page with a premium dark-gold aesthetic — gold gradient text, layered bevel border, inline star SVG icon, and a deep warm dark background.
+- Version: 2.3.55 (Build 355)
+
