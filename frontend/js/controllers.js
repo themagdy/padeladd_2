@@ -6695,12 +6695,21 @@ const RankingController = {
             return;
         }
 
-        const filtered = this._fullList.filter(r =>
-            r.nickname.toLowerCase().includes(q) ||
-            r.first_name.toLowerCase().includes(q) ||
-            r.last_name.toLowerCase().includes(q) ||
-            r.player_code.toUpperCase().includes(q.toUpperCase())
-        );
+        const filtered = this._fullList.filter(r => {
+            const fullName = ((r.first_name || '') + ' ' + (r.last_name || '')).toLowerCase();
+            const nickCode = ((r.nickname || '') + ' ' + (r.player_code || '')).toLowerCase();
+            // Every word in the query must appear somewhere across the combined fields
+            const words = q.split(/\s+/).filter(Boolean);
+            const haystack = [
+                (r.nickname || '').toLowerCase(),
+                (r.first_name || '').toLowerCase(),
+                (r.last_name || '').toLowerCase(),
+                (r.player_code || '').toLowerCase(),
+                fullName,
+                nickCode
+            ].join(' ');
+            return words.every(w => haystack.includes(w));
+        });
         this.render(filtered);
     },
 

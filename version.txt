@@ -1478,3 +1478,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Ranking Page: Added 5px right padding to the points column.
 - Ranking Page (Mobile): Added a compact +/- weekly diff badge below the points number on mobile only; badge is hidden when there is no weekly change. Simulated static values (+8 / -5) added temporarily for visual preview.
 - Version: 2.3.56 (Build 356)
+
+2.3.57 (Build 357) - 2026-05-26
+- Ranking Search Fix: Fixed multi-word search on the ranking page. Queries like "Ahmed Magdy" or "Mola m29" now correctly match by splitting the query into individual words and checking each word across all combined fields (first name, last name, nickname, player code, and their combinations).
+- Version: 2.3.57 (Build 357)
