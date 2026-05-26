@@ -2072,7 +2072,7 @@ form {
   font-weight: 700;
   color: var(--c-orange);
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .stat-box .lbl {
@@ -2084,10 +2084,10 @@ form {
 }
 
 .stat-box .sub {
-  font-size: 11.5px;
+  font-size: 9.5px;
   font-weight: 700;
   min-height: 14px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .stat-box .sub.green {
