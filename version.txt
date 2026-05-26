@@ -1438,3 +1438,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Typography: Localized and hosted the Oxanium variable font files directly in frontend assets, removing external Google Fonts CDN imports to enable full offline and Capacitor native app support while keeping the Montserrat font assets unused but available for future rollback.
 - Version: 2.3.49 (Build 349)
 
+2.3.50 (Build 350) - 2026-05-26
+- Typography: Reverted the global app font back to Montserrat and removed the Oxanium variable font files and references from the project.
+- Version: 2.3.50 (Build 350)
+
