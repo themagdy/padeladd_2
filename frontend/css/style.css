@@ -5692,3 +5692,11 @@ body {
   color: var(--c-pink);
   background: rgba(216, 27, 96, 0.1);
 }
+
+/* GPU Rendering Offload & Scroll Optimization */
+.rank-grid-full,
+.match-card,
+.notif-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 80px;
+}

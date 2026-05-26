@@ -1498,3 +1498,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.61 (Build 361) - 2026-05-26
 - UI Performance Optimization (Task #1): Extended the smart DOM reconciliation engine to the **Ranking List** renderer in `controllers.js`. Swapping tabs, searching, or loading lists will no longer wipe the entire table container using `innerHTML`. The renderer now dynamically matches rows using `data-player-code`, keeping existing rows completely intact in the DOM. This strictly preserves loaded user avatars, medal graphics, and inline elements, eliminating flashing/flickering entirely while sorting nodes in-place.
 - Version: 2.3.61 (Build 361)
+
+2.3.62 (Build 362) - 2026-05-26
+- UI Performance Optimization (Task #3): Offloaded off-screen layout and rendering calculations by appending GPU scroll containment rules inside `style.css`. Long list items (`.rank-grid-full`, `.match-card`, `.notif-item`) now leverage modern `content-visibility: auto` paired with an intrinsic sizing height of `80px`. This instructs rendering engines to bypass drawing and calculations for nodes outside the active viewport, dramatically boosting scroll speeds and lowering CPU utilization in the Capacitor WebView.
+- Version: 2.3.62 (Build 362)
