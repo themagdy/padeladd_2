@@ -1395,3 +1395,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Frontend: Modified page navigation scroll behavior in router.js to reset the window scroll position to (0,0) immediately when the new page template is rendered, removing duplicate scroll triggers to prevent snapping after page load.
 - Frontend: Implemented scroll position caching and restoration in app.js for ConfirmModal and InviteModal, preventing the background layout from jumping to the top when a modal opens, and restoring the page scroll position on close.
 - Version: 2.3.42 (Build 342)
+
+2.3.43 (Build 343) - 2026-05-26
+- Configuration: Updated match points eligibility limits. Increased competition tolerance range from 100 to 150 points and friendly match team skill gap difference limit from 300 to 400 points.
+- Frontend: Updated rules.html to display the new match eligibility limits of ±150 pts for Ranked Matches and ±400 pts for Friendly Matches.
+- Version: 2.3.43 (Build 343)

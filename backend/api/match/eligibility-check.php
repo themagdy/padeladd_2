@@ -107,7 +107,7 @@ $ptsB2 = $stats[$teamBIds[1]]['points'];
 $allPoints = [$ptsA1, $ptsA2, $ptsB1, $ptsB2];
 
 // Check if there is at least one player who could be the creator (i.e., all other players are within range)
-$rangeLimit = ($match_type === 'competition') ? 100 : 300;
+$rangeLimit = ($match_type === 'competition') ? 150 : 400;
 $hasValidCreator = false;
 foreach ($allPoints as $creatorPts) {
     $inRange = true;
@@ -129,9 +129,9 @@ $teamScoreA = intdiv($ptsA1 + $ptsA2, 2);
 $teamScoreB = intdiv($ptsB1 + $ptsB2, 2);
 $gap = abs($teamScoreA - $teamScoreB);
 
-// For friendly match, also check team average difference <= 300
+// For friendly match, also check team average difference <= 400
 if ($match_type === 'friendly') {
-    if ($gap > 300) {
+    if ($gap > 400) {
         $eligible = false;
     }
 }
@@ -148,7 +148,7 @@ jsonResponse(true, $eligible ? 'Teams are eligible to play.' : 'Teams are too mi
     'team_a_score'   => $teamScoreA,
     'team_b_score'   => $teamScoreB,
     'gap'            => $gap,
-    'tolerance'      => ($match_type === 'friendly') ? 300 : 100,
+    'tolerance'      => ($match_type === 'friendly') ? 400 : 150,
     'player_scores'  => [
         $teamAIds[0] => $ptsA1,
         $teamAIds[1] => $ptsA2,

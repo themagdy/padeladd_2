@@ -136,7 +136,7 @@ try {
         }
     }
 
-    // C. Friendly Match Team Points average difference check (<= 300)
+    // C. Friendly Match Team Points average difference check (<= 400)
     $newCount = count($players) + count($targetSlots);
     if ($match['match_type'] === 'friendly' && $newCount === 4) {
         $proj = [];
@@ -172,8 +172,8 @@ try {
             $avgA = array_sum($t1pts) / 2;
             $avgB = array_sum($t2pts) / 2;
             $teamDiff = abs($avgA - $avgB);
-            if ($teamDiff > 300) {
-                throw new Exception("Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 300).");
+            if ($teamDiff > 400) {
+                throw new Exception("Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 400).");
             }
         }
     }

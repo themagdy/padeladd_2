@@ -169,7 +169,7 @@ try {
     $par_side = $data['playing_side'] ?? ($sidesMap[$partner_id] ?? 'flexible');
 
     // ── Team-level Eligibility Check (per brief) ───────────────────────────
-    // Friendly matches: check that team average points difference is <= 300
+    // Friendly matches: check that team average points difference is <= 400
     if ($match['match_type'] === 'friendly') {
         $team1Players = array_values(array_filter($occupied, fn($o) => (int)$o['team_no'] === 1));
         if (count($team1Players) === 2) {
@@ -191,9 +191,9 @@ try {
             $avgA = array_sum($t1pts) / 2;
             $avgB = array_sum($t2pts) / 2;
             $teamDiff = abs($avgA - $avgB);
-            if ($teamDiff > 300) {
+            if ($teamDiff > 400) {
                 $pdo->rollBack();
-                jsonResponse(false, "Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 300).", [
+                jsonResponse(false, "Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 400).", [
                     'eligibility_failed' => true,
                     'team_diff' => round($teamDiff),
                 ], 422);

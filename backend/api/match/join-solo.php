@@ -184,7 +184,7 @@ try {
 
 
 
-    // Friendly match only: when this join makes the match full, check team avg diff <= 300
+    // Friendly match only: when this join makes the match full, check team avg diff <= 400
     if ($match['match_type'] === 'friendly' && count($occupied) + 1 === 4) {
         $allIds = array_merge(array_column($occupied, 'user_id'), [$uid]);
         $ph = implode(',', array_fill(0, count($allIds), '?'));
@@ -204,9 +204,9 @@ try {
             $avgA = array_sum($t1pts) / 2;
             $avgB = array_sum($t2pts) / 2;
             $teamDiff = abs($avgA - $avgB);
-            if ($teamDiff > 300) {
+            if ($teamDiff > 400) {
                 $pdo->rollBack();
-                jsonResponse(false, "Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 300). Try a different slot.", [
+                jsonResponse(false, "Team skill gap is too large for a friendly match (diff: {$teamDiff}, max allowed: 400). Try a different slot.", [
                     'eligibility_failed' => true,
                     'team_diff' => round($teamDiff),
                 ], 422);

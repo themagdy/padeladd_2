@@ -35,7 +35,7 @@ if ($upRow) {
 }
 
 // Compute locked eligibility range
-$elig_range  = ($match_type === 'competition') ? 100 : 300;
+$elig_range  = ($match_type === 'competition') ? 150 : 400;
 $eligible_min = max(0, $creator_points - $elig_range);
 $eligible_max = $creator_points + $elig_range;
 
