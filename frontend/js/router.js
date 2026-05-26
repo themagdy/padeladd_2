@@ -82,12 +82,12 @@ const Router = {
                     if (mode === 'win') {
                         container.classList.add('state-win');
                         if (arrow) {
-                            arrow.style.color = 'var(--c-green)';
+                            arrow.style.color = '#ffffff';
                             arrow.style.transform = 'scale(1.2)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '⚡ ➔ 🏆';
-                            statusLabel.style.color = 'var(--c-green)';
+                            statusLabel.style.color = '#ffffff';
                             statusLabel.style.background = 'rgba(0, 206, 0, 0.08)';
                         }
 
@@ -112,12 +112,12 @@ const Router = {
                     } else {
                         container.classList.add('state-loss');
                         if (arrow) {
-                            arrow.style.color = 'var(--c-pink)';
+                            arrow.style.color = '#ffffff';
                             arrow.style.transform = 'scale(1.2)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '⚡ ➔ 💨';
-                            statusLabel.style.color = 'var(--c-pink)';
+                            statusLabel.style.color = '#ffffff';
                             statusLabel.style.background = 'rgba(216, 27, 96, 0.08)';
                         }
 
@@ -146,7 +146,7 @@ const Router = {
                         if (banner) banner.style.display = 'block';
                         if (statusLabel) {
                             statusLabel.textContent = '🎯';
-                            statusLabel.style.color = 'var(--c-green)';
+                            statusLabel.style.color = '#ffffff';
                             statusLabel.style.background = 'rgba(0, 206, 0, 0.15)';
                         }
                     }
@@ -198,12 +198,12 @@ const Router = {
                         if (controls) controls.style.display = 'flex';
                         if (banner) banner.style.display = 'none';
                         if (arrow) {
-                            arrow.style.color = 'var(--c-border)';
+                            arrow.style.color = '#ffffff';
                             arrow.style.transform = 'scale(1)';
                         }
                         if (statusLabel) {
                             statusLabel.textContent = '👇';
-                            statusLabel.style.color = 'var(--c-text-muted)';
+                            statusLabel.style.color = '#ffffff';
                             statusLabel.style.background = 'transparent';
                         }
                     });
