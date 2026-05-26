@@ -6787,130 +6787,179 @@ const RankingController = {
             return;
         }
 
-        // Clear previous list
-        listEl.innerHTML = '';
+        // Build key-value map of new items
+        const newPlayersMap = new Map();
+        list.forEach(r => newPlayersMap.set(String(r.player_code), r));
+
+        // 1. Remove rows that are no longer in the filtered list
+        const existingRows = listEl.querySelectorAll('.rank-grid-full');
+        existingRows.forEach(el => {
+            const code = el.getAttribute('data-player-code');
+            if (code && !newPlayersMap.has(code)) {
+                el.remove();
+            }
+        });
+
+        // If it's a completely empty list layout (e.g. was error or empty search before), wipe it once
+        const currentRows = listEl.querySelectorAll('.rank-grid-full');
+        if (currentRows.length === 0) {
+            listEl.innerHTML = '';
+        }
 
         list.forEach(r => {
             const pointsColor = '#fff';
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
 
-            const row = document.createElement('div');
-            row.className = 'rank-grid-full';
-            row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
-            row.onclick = () => Router.navigate('/profile/view/' + r.player_code);
-            row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
-            row.onmouseout = function () { this.style.background = 'transparent'; };
+            let row = listEl.querySelector(`.rank-grid-full[data-player-code="${r.player_code}"]`);
 
-            // Rank
-            const rankWrap = document.createElement('div');
-            rankWrap.style.cssText = 'display:flex; justify-content:center; align-items:center;';
-            if (r.rank === 1) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank1.png" style="width:45px; height:45px; object-fit:contain;" alt="Gold Medal">`;
-            } else if (r.rank === 2) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank2.png" style="width:45px; height:45px; object-fit:contain;" alt="Silver Medal">`;
-            } else if (r.rank === 3) {
-                rankWrap.innerHTML = `<img src="assets/icons/rank/rank3.png" style="width:45px; height:45px; object-fit:contain;" alt="Bronze Medal">`;
-            } else {
-                const rankText = document.createElement('span');
-                rankText.style.cssText = 'text-align:left; font-size:20px; font-weight:700; color:#fff;';
-                rankText.textContent = r.rank;
-                rankWrap.appendChild(rankText);
-            }
-
-            // Player Info
-            const infoWrap = document.createElement('div');
-            infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; position:relative;';
-
-            const hasStory = !!r.has_active_story;
-            const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
-            const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
-
-            const avatarDiv = document.createElement('div');
-            avatarDiv.innerHTML = safeHTML(avatarHtml);
-
-            const nameWrap = document.createElement('div');
-            nameWrap.style.cssText = 'min-width:0; overflow:hidden;';
-
-            const nameLine = document.createElement('div');
-            nameLine.style.cssText = 'display:flex; align-items:center; gap:8px;';
-
-            const nick = document.createElement('div');
-            nick.style.cssText = 'font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
-            nick.textContent = r.nickname;
-
-            const code = document.createElement('span');
-            code.style.cssText = 'font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase; flex-shrink:0;';
-            code.textContent = r.player_code;
-
-            nameLine.appendChild(nick);
-            nameLine.appendChild(code);
-
-            const full = document.createElement('div');
-            full.style.cssText = 'font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;';
-            full.textContent = (r.first_name || '') + ' ' + (r.last_name || '');
-
-            nameWrap.appendChild(nameLine);
-            nameWrap.appendChild(full);
-
-            infoWrap.appendChild(avatarDiv);
-            infoWrap.appendChild(nameWrap);
-
-            // Stats
-            const age = document.createElement('span');
-            age.className = 'hide-mobile';
-            age.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);';
-            age.textContent = r.age || '—';
-
-            const played = document.createElement('span');
-            played.className = 'hide-mobile';
-            played.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text);';
-            played.textContent = r.matches_played;
-
-            const rate = document.createElement('span');
-            rate.className = 'hide-mobile';
-            rate.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-green);';
-            rate.textContent = r.win_rate + '%';
-
-            const diff = document.createElement('span');
-            diff.className = 'hide-mobile';
-            diff.style.cssText = `text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};`;
-            diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
-
-            // Points column wrapper (mobile: stacked number + badge)
-            const totalWrap = document.createElement('div');
-            totalWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; padding-right:5px;';
-
-            const total = document.createElement('span');
-            total.style.cssText = `text-align:right; font-size:16px; font-weight:800; color:${pointsColor};`;
-            total.textContent = r.points;
-
-            totalWrap.appendChild(total);
-
-            // Mobile-only diff badge — only shown when there is a non-zero change
-            const diffValue = r.points_this_week;
-            if (diffValue !== 0 && diffValue !== null && diffValue !== undefined) {
-                const diffBadge = document.createElement('span');
-                diffBadge.className = 'rank-pts-diff-badge';
-                if (diffValue > 0) {
-                    diffBadge.style.cssText = 'color:var(--c-green); background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25);';
-                    diffBadge.textContent = '+' + diffValue;
+            const renderRankWrapHtml = (rankVal) => {
+                if (rankVal === 1) {
+                    return `<img src="assets/icons/rank/rank1.png" style="width:45px; height:45px; object-fit:contain;" alt="Gold Medal">`;
+                } else if (rankVal === 2) {
+                    return `<img src="assets/icons/rank/rank2.png" style="width:45px; height:45px; object-fit:contain;" alt="Silver Medal">`;
+                } else if (rankVal === 3) {
+                    return `<img src="assets/icons/rank/rank3.png" style="width:45px; height:45px; object-fit:contain;" alt="Bronze Medal">`;
                 } else {
-                    diffBadge.style.cssText = 'color:#ef4444; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25);';
-                    diffBadge.textContent = diffValue;
+                    return `<span class="rank-text-val" style="text-align:left; font-size:20px; font-weight:700; color:#fff;">${rankVal}</span>`;
                 }
-                totalWrap.appendChild(diffBadge);
+            };
+
+            const renderTotalWrapHtml = (pointsVal, diffValue) => {
+                let badgeHtml = '';
+                if (diffValue !== 0 && diffValue !== null && diffValue !== undefined) {
+                    if (diffValue > 0) {
+                        badgeHtml = `<span class="rank-pts-diff-badge" style="color:var(--c-green); background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); display:inline-block;">+${diffValue}</span>`;
+                    } else {
+                        badgeHtml = `<span class="rank-pts-diff-badge" style="color:#ef4444; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); display:inline-block;">${diffValue}</span>`;
+                    }
+                }
+                return `
+                    <span class="points-num-val" style="text-align:right; font-size:16px; font-weight:800; color:${pointsColor};">${pointsVal}</span>
+                    ${badgeHtml}
+                `;
+            };
+
+            if (row) {
+                // ROW EXISTS: ONLY update contents that change (preserves loaded avatar in infoWrap)
+                
+                // 1. Update Rank
+                const rankWrap = row.querySelector('.rank-wrap-el');
+                if (rankWrap) rankWrap.innerHTML = safeHTML(renderRankWrapHtml(r.rank));
+
+                // 2. Update Stats
+                const age = row.querySelector('.stat-age');
+                if (age) age.textContent = r.age || '—';
+
+                const played = row.querySelector('.stat-played');
+                if (played) played.textContent = r.matches_played;
+
+                const rate = row.querySelector('.stat-rate');
+                if (rate) rate.textContent = r.win_rate + '%';
+
+                const diff = row.querySelector('.stat-diff');
+                if (diff) {
+                    diff.style.color = r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)';
+                    diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
+                }
+
+                // 3. Update Points Column (and mobile stacked badge)
+                const totalWrap = row.querySelector('.total-wrap-el');
+                if (totalWrap) totalWrap.innerHTML = safeHTML(renderTotalWrapHtml(r.points, r.points_this_week));
+
+                // Move DOM element to current position to respect new sorting order without rebuilding it
+                listEl.appendChild(row);
+            } else {
+                // ROW DOES NOT EXIST: Create it brand new
+                row = document.createElement('div');
+                row.className = 'rank-grid-full';
+                row.setAttribute('data-player-code', r.player_code);
+                row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
+                row.onclick = () => Router.navigate('/profile/view/' + r.player_code);
+                row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
+                row.onmouseout = function () { this.style.background = 'transparent'; };
+
+                // Rank
+                const rankWrap = document.createElement('div');
+                rankWrap.className = 'rank-wrap-el';
+                rankWrap.style.cssText = 'display:flex; justify-content:center; align-items:center;';
+                rankWrap.innerHTML = safeHTML(renderRankWrapHtml(r.rank));
+
+                // Player Info (Avatar & Name)
+                const infoWrap = document.createElement('div');
+                infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; position:relative;';
+
+                const hasStory = !!r.has_active_story;
+                const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
+                const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.innerHTML = safeHTML(avatarHtml);
+
+                const nameWrap = document.createElement('div');
+                nameWrap.style.cssText = 'min-width:0; overflow:hidden;';
+
+                const nameLine = document.createElement('div');
+                nameLine.style.cssText = 'display:flex; align-items:center; gap:8px;';
+
+                const nick = document.createElement('div');
+                nick.style.cssText = 'font-size:15px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+                nick.textContent = r.nickname;
+
+                const code = document.createElement('span');
+                code.style.cssText = 'font-size:10px; background:rgba(255,255,255,0.1); padding:1px 5px; border-radius:4px; color:var(--c-text-muted); font-family:monospace; font-weight:600; text-transform:uppercase; flex-shrink:0;';
+                code.textContent = r.player_code;
+
+                nameLine.appendChild(nick);
+                nameLine.appendChild(code);
+
+                const full = document.createElement('div');
+                full.style.cssText = 'font-size:12px; color:var(--c-text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px;';
+                full.textContent = (r.first_name || '') + ' ' + (r.last_name || '');
+
+                nameWrap.appendChild(nameLine);
+                nameWrap.appendChild(full);
+
+                infoWrap.appendChild(avatarDiv);
+                infoWrap.appendChild(nameWrap);
+
+                // Stats
+                const age = document.createElement('span');
+                age.className = 'hide-mobile stat-age';
+                age.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);';
+                age.textContent = r.age || '—';
+
+                const played = document.createElement('span');
+                played.className = 'hide-mobile stat-played';
+                played.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text);';
+                played.textContent = r.matches_played;
+
+                const rate = document.createElement('span');
+                rate.className = 'hide-mobile stat-rate';
+                rate.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-green);';
+                rate.textContent = r.win_rate + '%';
+
+                const diff = document.createElement('span');
+                diff.className = 'hide-mobile stat-diff';
+                diff.style.cssText = `text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};`;
+                diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
+
+                // Points column wrapper (mobile: stacked number + badge)
+                const totalWrap = document.createElement('div');
+                totalWrap.className = 'total-wrap-el';
+                totalWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; padding-right:5px;';
+                totalWrap.innerHTML = safeHTML(renderTotalWrapHtml(r.points, r.points_this_week));
+
+                row.appendChild(rankWrap);
+                row.appendChild(infoWrap);
+                row.appendChild(age);
+                row.appendChild(played);
+                row.appendChild(rate);
+                row.appendChild(diff);
+                row.appendChild(totalWrap);
+
+                listEl.appendChild(row);
             }
-
-            row.appendChild(rankWrap);
-            row.appendChild(infoWrap);
-            row.appendChild(age);
-            row.appendChild(played);
-            row.appendChild(rate);
-            row.appendChild(diff);
-            row.appendChild(totalWrap);
-
-            listEl.appendChild(row);
         });
     }
 

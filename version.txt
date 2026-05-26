@@ -1494,3 +1494,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.60 (Build 360) - 2026-05-26
 - UI/UX Polish (Strict Anti-Flicker): Refactored the notifications list renderer in `controllers.js`. Instead of wiping and rebuilding the entire DOM list via `innerHTML` on every infinite scroll or update trigger, a smart reconciliation engine now processes the nodes. It strictly matches notification items by `data-notif-id`, preserving loaded `<img>` tags and only adding new items or updating statuses in-place. Additionally, refined `UI.getAvatarHtml` to utilize explicit caching cues (`data-avatar-src`) to ensure the browser strictly avoids duplicate assets reload.
 - Version: 2.3.60 (Build 360)
+
+2.3.61 (Build 361) - 2026-05-26
+- UI Performance Optimization (Task #1): Extended the smart DOM reconciliation engine to the **Ranking List** renderer in `controllers.js`. Swapping tabs, searching, or loading lists will no longer wipe the entire table container using `innerHTML`. The renderer now dynamically matches rows using `data-player-code`, keeping existing rows completely intact in the DOM. This strictly preserves loaded user avatars, medal graphics, and inline elements, eliminating flashing/flickering entirely while sorting nodes in-place.
+- Version: 2.3.61 (Build 361)
