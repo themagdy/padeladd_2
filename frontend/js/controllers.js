@@ -6831,10 +6831,8 @@ const RankingController = {
             totalWrap.appendChild(total);
 
             // Mobile-only diff badge — only shown when there is a non-zero change
-            // SIMULATION: force static values for preview
-            const simulatedDiff = r.rank % 2 === 0 ? -5 : +8;
-            const diffValue = simulatedDiff;
-            if (diffValue !== 0) {
+            const diffValue = r.points_this_week;
+            if (diffValue !== 0 && diffValue !== null && diffValue !== undefined) {
                 const diffBadge = document.createElement('span');
                 diffBadge.className = 'rank-pts-diff-badge';
                 if (diffValue > 0) {
