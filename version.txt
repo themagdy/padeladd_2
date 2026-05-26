@@ -1512,5 +1512,5 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version: 2.3.64 (Build 364)
 
 2.3.65 (Build 365) - 2026-05-26
-- UI/UX Polish (Tighter Stats Labels): Further polished the stats box text elements inside `style.css`. Shrank the middle text labels (`.lbl` - e.g., Ranking, Points, Matches) down to `11px` with capital styling (`text-transform: uppercase`) and a clean `letter-spacing: 0.5px`. Additionally, scaled down the bottom indicator subtitles (`.sub` - e.g., highest rank, green points indicators, W/L record) to `8.5px` to provide maximum spacing contrast and a highly polished micro-dashboard aesthetic.
+- UI/UX Polish (Stats Box Sub-text): Further reduced the font size of the stats boxes sub labels (`.stat-box .sub`) from 9.5px to an elegant micro-level of 8px for increased layout compactness and clean visuals.
 - Version: 2.3.65 (Build 365)
