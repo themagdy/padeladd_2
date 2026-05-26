@@ -920,14 +920,14 @@ const StatsUI = {
                 if (key === 'points' && stats.current_buffer !== undefined) {
                     el.textContent = val + ' ';
                     const bufWrap = document.createElement('span');
-                    bufWrap.style.cssText = 'display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 8px; line-height: 1; text-align: left;';
+                    bufWrap.style.cssText = 'display: inline-flex; flex-direction: column; vertical-align: middle; margin-left: 4px; line-height: 1; text-align: left;';
                     
                     const bufVal = document.createElement('span');
                     bufVal.style.cssText = 'font-size: 14px; font-weight: 900; color: var(--c-orange); opacity: 0.9;';
                     bufVal.textContent = '+ ' + stats.current_buffer;
                     
                     const bufLbl = document.createElement('span');
-                    bufLbl.style.cssText = 'font-size: 9px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;';
+                    bufLbl.style.cssText = 'font-size: 7.5px; font-weight: 800; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px;';
                     bufLbl.textContent = 'Buffer';
                     
                     bufWrap.appendChild(bufVal);
@@ -1007,7 +1007,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile Status Bar Fix
     const StatusBar = window.Capacitor?.Plugins?.StatusBar;
     if (StatusBar) {
-        StatusBar.setBackgroundColor({ color: '#11161E' });
+        StatusBar.setBackgroundColor({ color: '#0D1117' }); // old: #11161E
         StatusBar.setStyle({ style: 'DARK' });
     }
 

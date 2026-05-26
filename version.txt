@@ -1424,3 +1424,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Mobile: Added the custom 3D VS icon to git tracking and corrected its file permissions to resolve the broken image link on native mobile devices.
 - Version: 2.3.47 (Build 347)
 
+2.3.48 (Build 348) - 2026-05-26
+- UI/UX: Darkened the global app background to a premium #0D1117 and updated all related status bar configurations (Capacitor plugin, meta theme-color, and sticky headers) to match.
+- UI/UX: Capitalized and styled the main action buttons on the Dashboard (MY MATCHES, CREATE, JOIN) to be bolder and smaller.
+- UI/UX: Capitalized the MALES/FEMALES tabs on the Leaderboard page and increased their font-weight to 800.
+- UI/UX: Localized and downloaded premium Microsoft Fluent 3D icons for Chat, Location, and Share buttons on the Match Details page, resolving live dependency reliance.
+- UI/UX: Replaced the flat magnifying glass emoji in the search bar with the 3D magnifying glass asset.
+- UI/UX: Temporarily loaded Google Fonts "Oxanium" app-wide for design testing and evaluation.
+- UI/UX: Optimized stats card font sizes on both Dashboard and Profile views, setting main values to 29px, labels to 11px, and the Calibration "Buffer" indicators to be smaller (7.5px) and closer (4px margin).
+- Version: 2.3.48 (Build 348)
+

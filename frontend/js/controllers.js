@@ -4342,7 +4342,7 @@ const MatchesController = {
                     chatBtnHtml += `
                         <!-- Premium Chat Button -->
                         <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
-                            <span style="font-size:20px; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));">💬</span> 
+                            <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
                             <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                             ${badgeHtml}
                         </button>
@@ -4354,10 +4354,10 @@ const MatchesController = {
                     <div style="margin-top: ${isAuthorized ? '14px' : '0'}; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                         ${match.venue_location_link ? `
                         <a href="${match.venue_location_link}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
-                            <span style="font-size:16px;">📍</span> Location
+                            <img src="assets/icons/location_3d.png" style="width:18px; height:18px; object-fit:contain;" alt="Location"> Location
                         </a>` : ''}
                         <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
-                            <span style="font-size:16px;">🔗</span> Share
+                            <img src="assets/icons/share_3d.png" style="width:18px; height:18px; object-fit:contain;" alt="Share"> Share
                         </button>
                     </div>
                 `;
