@@ -1543,3 +1543,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Replaced the words "Male" and "Female" (and their plurals) with "Men" and "Women" across the entire application interface (app and admin panel).
 - Version: 2.3.74 (Build 374)
 
+2.3.75 (Build 375) - 2026-05-27
+- UI/UX: Increased the font size and font weight for the Win/Loss stats (e.g., "6W / 11L") under the Matches stat box to improve readability.
+- Version: 2.3.75 (Build 375)
+

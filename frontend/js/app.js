@@ -976,6 +976,9 @@ const StatsUI = {
         const wlEl = document.getElementById(`${prefix}-wl`);
         if (wlEl && stats.matches_played > 0) {
             wlEl.textContent = `${stats.matches_won}W / ${stats.matches_lost}L`;
+            wlEl.style.fontSize = '11px';
+            wlEl.style.fontWeight = '800';
+            wlEl.style.letterSpacing = '0.5px';
         }
     }
 };
