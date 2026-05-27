@@ -1574,7 +1574,11 @@ const DashboardController = {
         if (!row || !btn) return;
 
         try {
-            const res = await API.post('/invite/get_invites', {});
+            let res = window._cachedInvitesRes;
+            if (!res) {
+                res = await API.post('/invite/get_invites', {});
+                window._cachedInvitesRes = res;
+            }
             if (res && res.success && res.data) {
                 if (!res.data.invite_only_mode) {
                     row.style.display = 'none';
@@ -1586,6 +1590,7 @@ const DashboardController = {
                 row.style.display = 'flex';
                 btn.onclick = () => {
                     InviteModal.show(invites, (updatedInvites) => {
+                        res.data.keys = updatedInvites;
                         const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
                         btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${newUnused} Left) <span style="font-size:16px;">🎟️</span></span>`;
                     });
@@ -1708,11 +1713,11 @@ const ProfileViewController = {
                 }
 
                 if (profile && thumb) {
-                    av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
+                    av.innerHTML = safeHTML(UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:43%; object-fit:cover;', 'width:100%; height:100%; border-radius:43%;', initials) + (isSilent ? '' : '<div class="avatar-scan-overlay"></div>'));
                     av.classList.remove('avatar-placeholder');
                     av.style.background = 'none';
                 } else {
-                    av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:43%;', initials) + '<div class="avatar-scan-overlay"></div>');
+                    av.innerHTML = safeHTML(UI.getAvatarHtml(null, '', 'width:100%; height:100%; border-radius:43%;', initials) + (isSilent ? '' : '<div class="avatar-scan-overlay"></div>'));
                     av.classList.add('avatar-placeholder');
                     av.style.background = has_active_story ? 'none' : 'var(--g-primary)';
                 }
@@ -1730,7 +1735,7 @@ const ProfileViewController = {
                         followContainer.style.display = 'block';
                         const followBtn = document.getElementById('prof-follow-btn');
                         if (followBtn) {
-                            followBtn.style.height = '28px';
+                            followBtn.style.height = '32px';
                             followBtn.style.fontSize = '11px';
                             followBtn.style.fontWeight = '700';
                             followBtn.style.textTransform = 'uppercase';
@@ -2135,7 +2140,11 @@ const ProfileViewController = {
         if (!row || !btn) return;
 
         try {
-            const res = await API.post('/invite/get_invites', {});
+            let res = window._cachedInvitesRes;
+            if (!res) {
+                res = await API.post('/invite/get_invites', {});
+                window._cachedInvitesRes = res;
+            }
             if (res && res.success && res.data) {
                 if (!res.data.invite_only_mode) {
                     row.style.display = 'none';
@@ -2147,6 +2156,7 @@ const ProfileViewController = {
                 row.style.display = 'flex';
                 btn.onclick = () => {
                     InviteModal.show(invites, (updatedInvites) => {
+                        res.data.keys = updatedInvites;
                         const newUnused = updatedInvites.filter(inv => !inv.used_at).length;
                         btn.innerHTML = `<span>Share Exclusive Invites</span><span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(${newUnused} Left) <span style="font-size:16px;">🎟️</span></span>`;
                     });
@@ -3858,7 +3868,7 @@ const MatchesController = {
                         <span>👤</span> by <span style="color:var(--c-primary); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
                         ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
                     </div>
-                    <button onclick="ScoringController.reportIssue(${match.id})" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); padding:6px 14px; border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; gap:6px; transition:all 0.2s;">
+                    <button onclick="ScoringController.reportIssue(${match.id})" style="height:32px; padding:0 18px; background:rgba(255,255,255,0.05); color:var(--c-text-muted); border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
                         <span>🚩</span> Report a problem
                     </button>
                 </div>

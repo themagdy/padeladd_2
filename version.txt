@@ -1547,3 +1547,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Increased the font size and font weight for the Win/Loss stats (e.g., "6W / 11L") under the Matches stat box to improve readability.
 - Version: 2.3.75 (Build 375)
 
+2.3.76 (Build 376) - 2026-05-27
+- UI/UX: Made dashboard tab indicators bolder, standardized Follow/Report buttons size and styling across profile and match details, prevented avatar animation on silent data updates, and cached invites check to reduce API calls.
+- Version: 2.3.76 (Build 376)
+

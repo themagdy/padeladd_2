@@ -9,7 +9,7 @@
       <div class="dash-hero">
         <h1 class="dash-title" style="font-size:46px; font-weight:400; margin-bottom: -2px; color:#fff; line-height:0.95;">
           Hello <strong id="dash-name" style="font-weight:800;"></strong> 🥷</h1>
-        <p id="dash-subtitle" style="color:var(--c-text-muted); font-size:18px; margin-bottom:16px; min-height:1.2em;">
+        <p id="dash-subtitle" style="color:var(--c-text-muted); font-size:18px; margin-top:3px; margin-left:2px; margin-bottom:16px; min-height:1.2em;">
         </p>
       </div>
 
@@ -77,7 +77,7 @@
             style="background:linear-gradient(135deg, #1b52ce, #0d3ba1); color:#fff; display:flex; align-items:center; justify-content:space-between; flex:1; padding:18px 24px; border-radius:var(--r-lg); border:none; box-shadow:0 8px 16px rgba(0,0,0,0.15); width:100%;"
             onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
             <div style="display:flex; flex-direction:column; align-items:flex-start; gap:2px;">
-              <div style="font-size:15px; font-weight:900; letter-spacing:0.5px;">MY MATCHES</div>
+              <div style="font-size:15px; font-weight:800; letter-spacing:0.5px;">MY MATCHES</div>
               <div style="font-size:12px; opacity:0.9; font-weight:600;">View your schedule</div>
             </div>
             <div style="display:flex; align-items:center; justify-content:center; width:36px; height:36px;"><img
@@ -89,7 +89,7 @@
             <button onclick="Router.navigate('/matches/create')" class="btn"
               style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);"
               onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
-              <span style="font-size:13px; font-weight:900; letter-spacing:0.5px;">CREATE</span>
+              <span style="font-size:13px; font-weight:800; letter-spacing:0.5px;">CREATE</span>
               <div style="display:flex; align-items:center; justify-content:center; width:24px; height:24px;"><img
                   src="assets/icons/sparkles_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Create">
               </div>
@@ -97,7 +97,7 @@
             <button onclick="Router.navigate('/matches')" class="btn"
               style="background:var(--c-bg-card); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 20px; min-height:50px; border-radius:var(--r-lg);"
               onmouseover="this.style.background='#344154'" onmouseout="this.style.background='var(--c-bg-card)'">
-              <span style="font-size:13px; font-weight:900; letter-spacing:0.5px;">JOIN</span>
+              <span style="font-size:13px; font-weight:800; letter-spacing:0.5px;">JOIN</span>
               <div style="display:flex; align-items:center; justify-content:center; width:24px; height:24px;"><img
                   src="assets/icons/magnifying_glass_3d.png" style="width:24px; height:24px; object-fit:contain;"
                   alt="Join"></div>
@@ -134,9 +134,9 @@
         <!-- Gender Tabs -->
         <div style="display:flex; gap:32px; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
           <span id="tab-males" onclick="DashboardController.switchRankTab('male')"
-            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Men</span>
+            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:3px solid var(--c-primary); color:var(--c-text); margin-bottom:-3px;">Men</span>
           <span id="tab-females" onclick="DashboardController.switchRankTab('female')"
-            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:1px solid transparent; color:var(--c-text-muted); margin-bottom:-1.5px;">Women</span>
+            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:3px solid transparent; color:var(--c-text-muted); margin-bottom:-3px;">Women</span>
         </div>
 
         <!-- Table header -->
@@ -196,7 +196,7 @@
         <!-- Match Tabs -->
         <div style="display:flex; gap:32px; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
           <span id="tab-completed" onclick="DashboardController.switchMatchTab('completed')"
-            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:1px solid var(--c-primary); color:var(--c-text); margin-bottom:-1.5px;">Scores</span>
+            style="font-size:16px; font-weight:600; padding-bottom:16px; cursor:pointer; border-bottom:3px solid var(--c-primary); color:var(--c-text); margin-bottom:-3px;">Scores</span>
         </div>
 
         <!-- Match Cards -->
