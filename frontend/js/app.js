@@ -42,7 +42,7 @@ var SoundManager = {
             source.start(0);
             this._unlocked = true;
         };
-        ['touchstart', 'click', 'mousedown'].forEach(e => 
+        ['touchstart', 'click', 'mousedown'].forEach(e =>
             document.addEventListener(e, unlock, { once: true, passive: true })
         );
         document.addEventListener('click', (e) => {
@@ -62,8 +62,8 @@ var SoundManager = {
         source.start(0);
         const Haptics = window.Capacitor?.Plugins?.Haptics;
         if (Haptics) {
-            if (type === 'tap') Haptics.selectionChanged().catch(() => {});
-            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => {});
+            if (type === 'tap') Haptics.selectionChanged().catch(() => { });
+            else if (type === 'success') Haptics.notification({ type: 'SUCCESS' }).catch(() => { });
         }
     }
 };
@@ -419,7 +419,7 @@ var InviteModal = {
             // Fallback for older browsers / Capacitor webview
             const textArea = document.createElement("textarea");
             textArea.value = code;
-            textArea.style.position = "fixed"; 
+            textArea.style.position = "fixed";
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
@@ -769,7 +769,7 @@ const ScoreUI = {
             : '';
 
         const isFriendly = match.match_type === 'friendly';
-        const typeBadge = isFriendly 
+        const typeBadge = isFriendly
             ? `<span style="font-size:9px; background:rgba(27, 82, 206, 0.1); color:#5A91FF; padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🤝 Friendly</span>`
             : `<span style="font-size:9px; background:rgba(247,148,29,0.15); color:var(--c-orange); padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🏆 Competition</span>`;
 
@@ -949,9 +949,8 @@ const StatsUI = {
             if (buffer > 0) {
                 // Buffer still active — show buffer badge, suppress weekly diff
                 const trend = document.createElement('span');
-                trend.className = 'stat-trend up';
-                trend.appendChild(getUpIcon());
-                trend.append(` +${buffer} BUFFER`);
+                trend.style.cssText = 'color: var(--c-orange); background: rgba(255, 139, 0, 0.12); border: 1px solid rgba(255, 139, 0, 0.25); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: baseline; gap: 6px;';
+                trend.innerHTML = `<span style="font-size: 13px; font-weight: 800;">+${buffer}</span><span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">BUFFER</span>`;
                 pwEl.appendChild(trend);
                 pwEl.style.color = '';
             } else if (stats.points_this_week !== undefined) {

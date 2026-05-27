@@ -1535,3 +1535,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bugfix (Admin Dashboard Graph): Replaced the corrupt `chart.umd.min.js` file (which was a saved 404 HTML page) with the real Chart.js v4.4.4 UMD bundle. The activity graph on the admin dashboard now loads correctly.
 - Version: 2.3.70 (Build 370)
 
+2.3.73 (Build 373) - 2026-05-27
+- UI/UX Fix (Points Stat Box): Improved the buffer badge styling. It now renders as a fully styled orange badge in the sub-text row, with enlarged buffer points text for better visibility.
+- Version: 2.3.73 (Build 373)
+
