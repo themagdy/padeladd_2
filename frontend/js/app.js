@@ -917,19 +917,7 @@ const StatsUI = {
             const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
             if (el) {
                 el.innerHTML = ''; // Clear previous
-                if (key === 'points' && stats.current_buffer !== undefined) {
-                    el.textContent = val;
-                    const lblEl = el.parentNode.querySelector('.lbl');
-                    if (lblEl) {
-                        lblEl.innerHTML = 'Points';
-                        const bufWrap = document.createElement('span');
-                        bufWrap.style.cssText = 'font-size: 9.5px; font-weight: 800; color: var(--c-orange); background: rgba(255, 139, 0, 0.12); border: 1px solid rgba(255, 139, 0, 0.25); padding: 2px 6px; border-radius: 4px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.3px; display: inline-flex; align-items: center; line-height: 1;';
-                        bufWrap.textContent = `+${stats.current_buffer} Buffer`;
-                        lblEl.appendChild(bufWrap);
-                    }
-                } else {
-                    el.textContent = val;
-                }
+                el.textContent = val;
             }
         }
 
@@ -953,22 +941,36 @@ const StatsUI = {
         }
 
         const pwEl = document.getElementById(`${prefix}-points-week`);
-        if (pwEl && stats.points_this_week !== undefined) {
+        if (pwEl) {
             pwEl.innerHTML = '';
-            if (stats.points_this_week > 0) {
+
+            const buffer = stats.current_buffer ?? 0;
+
+            if (buffer > 0) {
+                // Buffer still active — show buffer badge, suppress weekly diff
                 const trend = document.createElement('span');
                 trend.className = 'stat-trend up';
                 trend.appendChild(getUpIcon());
-                trend.append(` +${stats.points_this_week} THIS WEEK`);
+                trend.append(` +${buffer} BUFFER`);
                 pwEl.appendChild(trend);
                 pwEl.style.color = '';
-            } else if (stats.points_this_week < 0) {
-                const trend = document.createElement('span');
-                trend.className = 'stat-trend down';
-                trend.appendChild(getDownIcon());
-                trend.append(` ${stats.points_this_week} THIS WEEK`);
-                pwEl.appendChild(trend);
-                pwEl.style.color = '';
+            } else if (stats.points_this_week !== undefined) {
+                // Buffer exhausted — show weekly change as normal
+                if (stats.points_this_week > 0) {
+                    const trend = document.createElement('span');
+                    trend.className = 'stat-trend up';
+                    trend.appendChild(getUpIcon());
+                    trend.append(` +${stats.points_this_week} THIS WEEK`);
+                    pwEl.appendChild(trend);
+                    pwEl.style.color = '';
+                } else if (stats.points_this_week < 0) {
+                    const trend = document.createElement('span');
+                    trend.className = 'stat-trend down';
+                    trend.appendChild(getDownIcon());
+                    trend.append(` ${stats.points_this_week} THIS WEEK`);
+                    pwEl.appendChild(trend);
+                    pwEl.style.color = '';
+                }
             }
         }
 
