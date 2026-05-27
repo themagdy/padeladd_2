@@ -26,6 +26,10 @@ try {
     $updateReset = $pdo->prepare("UPDATE password_resets SET is_used = 1 WHERE id = ?");
     $updateReset->execute([$reset['id']]);
 
+    // Security: invalidate all active sessions on all devices after password reset
+    $pdo->prepare("DELETE FROM user_sessions WHERE user_id = (SELECT id FROM users WHERE email = ?)")
+        ->execute([$reset['email']]);
+
     $pdo->commit();
     jsonResponse(true, 'Password successfully reset.');
 } catch (Exception $e) {

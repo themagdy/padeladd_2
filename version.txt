@@ -1519,3 +1519,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX Polish (Dashboard Greeting): Reduced the "Hello [Name] 🥷" heading font size from 46px to 36px on desktop (min-width: 993px) only. Mobile size is unchanged.
 - Version: 2.3.66 (Build 366)
 
+2.3.67 (Build 367) - 2026-05-27
+- Security Fix (Password Reset): After a successful password reset, all active sessions across all devices are now immediately invalidated. Previously, existing tokens remained valid for up to 90 days even after a password change, which was a security gap.
+- Version: 2.3.67 (Build 367)
+
