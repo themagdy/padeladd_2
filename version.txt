@@ -1527,3 +1527,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Admin Session: Extended admin session duration from 24 hours to 15 days in `admin_auth.php`.
 - Version: 2.3.68 (Build 368)
 
+2.3.69 (Build 369) - 2026-05-27
+- Bugfix (Admin Login): Fixed broken logo image on the admin login page. Corrected the `src` path from `../frontend/assets/logo_ico.png` (non-existent) to `../assets/logo_ico.png` (correct).
+- Version: 2.3.69 (Build 369)
+
