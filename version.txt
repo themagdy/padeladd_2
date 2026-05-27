@@ -1555,3 +1555,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX: Added realistic 3D bounce animation to stat box icons (with physics-based scaling and rotation) triggered on tap, and ensured they render fully opaque at rest.
 - Version: 2.3.77 (Build 377)
 
+2.3.78 (Build 378) - 2026-05-27
+- Security/Backend: Updated OTP resend rate limits. Enforced a maximum of 3 attempts per User ID and 3 attempts per IP Address per rolling 24-hour window.
+- Version: 2.3.78 (Build 378)
+

@@ -13,10 +13,17 @@ if ($userId <= 0) {
     jsonResponse(false, 'User ID is required.');
 }
 
-// Rate limit: max 3 resend attempts per user per hour
-$_rlKey = 'resend_' . $userId;
-checkRateLimit($pdo, $_rlKey, 3, 3600);
-recordAttempt($pdo, $_rlKey);
+// Rate limit: max 3 resend attempts per user per 24 hours (86400 seconds)
+$_rlUserKey = 'resend_user_' . $userId;
+checkRateLimit($pdo, $_rlUserKey, 3, 86400);
+
+// Rate limit: max 3 resend attempts per IP per 24 hours
+$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+$_rlIpKey = 'resend_ip_' . $ip;
+checkRateLimit($pdo, $_rlIpKey, 3, 86400);
+
+recordAttempt($pdo, $_rlUserKey);
+recordAttempt($pdo, $_rlIpKey);
 
 // Fetch user mobile
 $stmt = $pdo->prepare("SELECT mobile, is_phone_verified FROM users WHERE id = ?");
