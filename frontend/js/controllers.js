@@ -2629,7 +2629,7 @@ const MatchesController = {
             const updateGenderLabel = (p) => {
                 if (!p || !p.gender) return;
                 const isFemale = p.gender.toLowerCase() === 'female';
-                genderBtn.textContent = isFemale ? 'Females Only' : 'Males Only';
+                genderBtn.textContent = isFemale ? 'Women Only' : 'Men Only';
                 if (isFemale && genderBtn.classList.contains('active')) {
                     genderBtn.style.background = 'var(--c-pink)';
                 }
@@ -2915,7 +2915,7 @@ const MatchesController = {
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        if (btn.textContent.includes('Females Only')) activeBg = 'var(--c-pink)';
+        if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
         btn.style.background = activeBg;
         btn.style.color = '#fff';
     },
@@ -3092,7 +3092,7 @@ const MatchesController = {
                 const updateLabel = (p) => {
                     if (!p || !p.gender) return;
                     const isFemale = p.gender.toLowerCase() === 'female';
-                    btn.textContent = isFemale ? 'Females' : 'Males';
+                    btn.textContent = isFemale ? 'Women' : 'Men';
                 };
 
                 if (DashboardController._currentProfile) {
@@ -3539,7 +3539,7 @@ const MatchesController = {
 
         if (m.gender_type === 'same_gender') {
             const isFemale = (m.creator_gender || 'male') === 'female';
-            const genderStr = isFemale ? 'Females Only' : 'Males Only';
+            const genderStr = isFemale ? 'Women Only' : 'Men Only';
             const genderIcon = isFemale ? '👩' : '👨';
             const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
             const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
@@ -3814,7 +3814,7 @@ const MatchesController = {
 
                 if (match.gender_type === 'same_gender') {
                     const isFemale = (match.creator_gender || 'male') === 'female';
-                    const genderStr = isFemale ? 'Females Only' : 'Males Only';
+                    const genderStr = isFemale ? 'Women Only' : 'Men Only';
                     const genderIcon = isFemale ? '👩' : '👨';
                     const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
                     const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';

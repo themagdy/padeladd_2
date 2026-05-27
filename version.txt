@@ -1539,3 +1539,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI/UX Fix (Points Stat Box): Improved the buffer badge styling. It now renders as a fully styled orange badge in the sub-text row, with enlarged buffer points text for better visibility.
 - Version: 2.3.73 (Build 373)
 
+2.3.74 (Build 374) - 2026-05-27
+- UI/UX: Replaced the words "Male" and "Female" (and their plurals) with "Men" and "Women" across the entire application interface (app and admin panel).
+- Version: 2.3.74 (Build 374)
+
