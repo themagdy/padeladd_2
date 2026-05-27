@@ -1523,3 +1523,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Security Fix (Password Reset): After a successful password reset, all active sessions across all devices are now immediately invalidated. Previously, existing tokens remained valid for up to 90 days even after a password change, which was a security gap.
 - Version: 2.3.67 (Build 367)
 
+2.3.68 (Build 368) - 2026-05-27
+- Admin Session: Extended admin session duration from 24 hours to 15 days in `admin_auth.php`.
+- Version: 2.3.68 (Build 368)
+
