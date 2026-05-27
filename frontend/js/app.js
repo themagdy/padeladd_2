@@ -50,6 +50,14 @@ var SoundManager = {
             if (el && !el.hasAttribute('data-no-sound')) {
                 this.play('tap');
             }
+
+            const statBox = e.target.closest('.stat-box');
+            if (statBox) {
+                statBox.classList.remove('clicked');
+                void statBox.offsetWidth; // trigger reflow
+                statBox.classList.add('clicked');
+                setTimeout(() => statBox.classList.remove('clicked'), 600);
+            }
         }, true);
     },
 

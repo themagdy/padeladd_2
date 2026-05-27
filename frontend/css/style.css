@@ -2117,15 +2117,29 @@ form {
   pointer-events: none;
 }
 
-.stat-box:hover .ico {
-  transform: scale(1.12) rotate(3deg);
-  opacity: 1;
+@media (hover: hover) {
+  .stat-box:hover .ico {
+    transform: scale(1.12) rotate(3deg);
+  }
 }
 
 .stat-box .ico img {
   width: 41px;
   height: 41px;
   object-fit: contain;
+}
+
+@keyframes iconBounce {
+  0% { transform: scale(1) rotate(0deg); animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  35% { transform: scale(1.45) rotate(12deg); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+  60% { transform: scale(0.88) rotate(-5deg); animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  78% { transform: scale(1.12) rotate(2deg); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+  90% { transform: scale(0.96) rotate(-1deg); animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.stat-box.clicked .ico {
+  animation: iconBounce 0.7s forwards !important;
 }
 
 .dash-upcoming-alert {
