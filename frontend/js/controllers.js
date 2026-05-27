@@ -1939,9 +1939,10 @@ const ProfileViewController = {
             }
         }
 
+        const currentLength = ProfileViewController._cacheMatches ? ProfileViewController._cacheMatches.length : 0;
         const matchPayload = {
             target_id: ProfileViewController._targetUserId,
-            limit: isLoadMore ? ProfileViewController._limit : 20,
+            limit: isSilent ? Math.max(20, currentLength) : (isLoadMore ? ProfileViewController._limit : 20),
             offset: isLoadMore ? ProfileViewController._offset : 0
         };
 
@@ -1960,21 +1961,17 @@ const ProfileViewController = {
             const loader = listEl.querySelector('.pagination-loader');
             if (loader) loader.remove();
 
-            ProfileViewController._cacheMatches = [...ProfileViewController._cacheMatches, ...newMatches];
+            const existingIds = new Set(ProfileViewController._cacheMatches.map(m => m.id));
+            const uniqueNewMatches = newMatches.filter(m => !existingIds.has(m.id));
+            ProfileViewController._cacheMatches = [...ProfileViewController._cacheMatches, ...uniqueNewMatches];
             ProfileViewController._offset += newMatches.length;
         } else if (isSilent) {
-            const existingTop = ProfileViewController._cacheMatches.slice(0, newMatches.length);
-            const matchesChanged = JSON.stringify(existingTop) !== JSON.stringify(newMatches);
-
-            if (!matchesChanged) {
-                // No changes in first page of matches, skip render
+            const existing = ProfileViewController._cacheMatches || [];
+            if (JSON.stringify(existing) !== JSON.stringify(newMatches)) {
+                ProfileViewController._cacheMatches = newMatches;
+                ProfileViewController._offset = newMatches.length;
+            } else {
                 return;
-            }
-
-            const remainingMatches = ProfileViewController._cacheMatches.slice(newMatches.length);
-            ProfileViewController._cacheMatches = [...newMatches, ...remainingMatches];
-            if (ProfileViewController._offset < ProfileViewController._cacheMatches.length) {
-                ProfileViewController._offset = ProfileViewController._cacheMatches.length;
             }
         } else {
             ProfileViewController._cacheMatches = newMatches;
@@ -3196,12 +3193,13 @@ const MatchesController = {
             if (list) list.style.display = 'block';
         }
 
+        const currentLength = MatchesController._cache[cacheKey] ? MatchesController._cache[cacheKey].length : 0;
         let endpoint = '/match/list';
         let payload = {
             mode: MatchesController._currentTab,
             match_type: MatchesController._playFilterType,
             gender_type: MatchesController._playFilterGender,
-            limit: isSilent ? 10 : MatchesController._limit,
+            limit: isSilent ? Math.max(10, currentLength) : MatchesController._limit,
             offset: isSilent ? 0 : MatchesController._offset
         };
 
@@ -3253,26 +3251,13 @@ const MatchesController = {
 
         const newMatches = res.data.matches || [];
 
-        // Polling (isSilent) logic: only refresh the first 10
+        // Polling (isSilent) logic: refresh the entire loaded list safely
         if (isSilent) {
-            // Update the top of the cache/list
-            if (MatchesController._cache[cacheKey]) {
-                // Merge fresh top 10 into existing list
-                const existing = MatchesController._cache[cacheKey];
-                let hasChanges = false;
-                newMatches.forEach((nm, idx) => {
-                    if (idx < existing.length) {
-                        // Compare data to prevent unnecessary re-renders
-                        if (JSON.stringify(existing[idx]) !== JSON.stringify(nm)) {
-                            existing[idx] = nm;
-                            hasChanges = true;
-                        }
-                    }
-                });
-                // Only re-render if data has changed
-                if (hasChanges) {
-                    MatchesController.renderList(existing);
-                }
+            const existing = MatchesController._cache[cacheKey] || [];
+            if (JSON.stringify(existing) !== JSON.stringify(newMatches)) {
+                MatchesController._cache[cacheKey] = newMatches;
+                MatchesController._offset = newMatches.length;
+                MatchesController.renderList(MatchesController._cache[cacheKey]);
             }
             return;
         }
