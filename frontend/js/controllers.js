@@ -1943,7 +1943,8 @@ const ProfileViewController = {
         const matchPayload = {
             target_id: ProfileViewController._targetUserId,
             limit: isSilent ? Math.max(20, currentLength) : (isLoadMore ? ProfileViewController._limit : 20),
-            offset: isLoadMore ? ProfileViewController._offset : 0
+            offset: isLoadMore ? ProfileViewController._offset : 0,
+            status: 'completed'
         };
 
         const matchRes = await API.post('/matches/user', matchPayload);
@@ -2282,11 +2283,11 @@ const ProfileController = {
             }
         }
 
-        // Populate years (1961 - 2012 for 14-65yo)
+        // Populate years (for 16-65yo)
         const yearSelect = q('dob_year');
         if (yearSelect) {
             const currentYear = new Date().getFullYear();
-            for (let i = currentYear - 14; i >= currentYear - 65; i--) {
+            for (let i = currentYear - 16; i >= currentYear - 65; i--) {
                 yearSelect.options.add(new Option(i, i));
             }
         }
@@ -2540,8 +2541,8 @@ const ProfileController = {
             if (!dobYear) { UI.showError('dob_year', 'Select year', form); return; }
 
             const age = new Date().getFullYear() - parseInt(dobYear);
-            if (age < 14 || age > 65) {
-                UI.showError('dob_year', 'Age must be between 14 and 65', form);
+            if (age < 16 || age > 65) {
+                UI.showError('dob_year', 'Age must be between 16 and 65', form);
                 return;
             }
 
@@ -3209,7 +3210,11 @@ const MatchesController = {
             payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         } else if (MatchesController._currentTab === 'mine_completed') {
             endpoint = '/matches/user';
-            payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
+            payload = { 
+                limit: isSilent ? 10 : MatchesController._limit, 
+                offset: isSilent ? 0 : MatchesController._offset,
+                status: 'completed'
+            };
         }
 
         // Store expected state to prevent race conditions if user changes tabs/filters during fetch

@@ -1563,3 +1563,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bug Fix: Completely overhauled the background polling (isSilent) logic in both MatchesController and ProfileViewController. Polling now dynamically fetches the entire active scroll length to completely prevent UI duplications or missing entries caused by array index shifting when records are inserted/deleted in the database.
 - Version: 2.3.79 (Build 379)
 
+2.3.80 (Build 380) - 2026-06-03
+- Bug Fix: Added status filtering support on backend `/matches/user` endpoint to query completed matches exclusively.
+- Bug Fix: Updated frontend `MatchesController` and `ProfileViewController` to pass `status: 'completed'` to `/matches/user` when loading scores, resolving a pagination layout deadlock on smart scroll.
+- Optimization: Enabled pagination and `has_more` count support for recent scores on `/matches/recent` endpoint.
+- Bug Fix: Corrected touch scrolling inside popups/ConfirmModal on mobile native app by letting touchmove events bypass the global overlay preventDefault check if the target has a `.custom-scroll` class.
+- Version: 2.3.80 (Build 380)
+

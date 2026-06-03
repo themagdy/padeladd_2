@@ -253,8 +253,11 @@ var ConfirmModal = {
             document.body.style.top = `-${scrollY}px`;
             document.body.style.width = '100%';
 
-            // Prevent touchmove events from bubbling up
-            this._modal.ontouchmove = (e) => e.preventDefault();
+            // Prevent touchmove events from bubbling up, except inside scrollable elements
+            this._modal.ontouchmove = (e) => {
+                if (e.target.closest('.custom-scroll')) return;
+                e.preventDefault();
+            };
 
             // Set state
             this._isOpen = true;

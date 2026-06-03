@@ -26,9 +26,10 @@ if ($target_id === null) {
 
 $limit = (int)($data['limit'] ?? 20);
 $offset = (int)($data['offset'] ?? 0);
+$status_filter = isset($data['status']) ? trim($data['status']) : null;
 
 // Fetch total count for pagination
-$countStmt = $pdo->prepare("
+$countQuery = "
     SELECT COUNT(*) FROM matches m
     WHERE (
         -- Condition A: User was a confirmed participant
@@ -42,16 +43,25 @@ $countStmt = $pdo->prepare("
         )
     )
     AND m.status != 'cancelled'
-");
-$countStmt->execute([
+";
+if ($status_filter) {
+    $countQuery .= " AND m.status = :status";
+}
+
+$countStmt = $pdo->prepare($countQuery);
+$countParams = [
     ':uid1' => $target_id,
     ':uid2' => $target_id,
     ':uid3' => $target_id
-]);
+];
+if ($status_filter) {
+    $countParams[':status'] = $status_filter;
+}
+$countStmt->execute($countParams);
 $totalMatches = (int)$countStmt->fetchColumn();
 
 // Fetch matches where user is a participant OR an active waiting list entry (with LIMIT and OFFSET)
-$stmt = $pdo->prepare("
+$selectQuery = "
     SELECT m.*, v.name AS official_venue_name
     FROM matches m
     LEFT JOIN venues v ON m.venue_id = v.id
@@ -67,12 +77,22 @@ $stmt = $pdo->prepare("
         )
     )
     AND m.status != 'cancelled'
+";
+if ($status_filter) {
+    $selectQuery .= " AND m.status = :status";
+}
+$selectQuery .= "
     ORDER BY m.match_datetime DESC
     LIMIT :limit OFFSET :offset
-");
+";
+
+$stmt = $pdo->prepare($selectQuery);
 $stmt->bindValue(':uid1', $target_id, PDO::PARAM_INT);
 $stmt->bindValue(':uid2', $target_id, PDO::PARAM_INT);
 $stmt->bindValue(':uid3', $target_id, PDO::PARAM_INT);
+if ($status_filter) {
+    $stmt->bindValue(':status', $status_filter, PDO::PARAM_STR);
+}
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();

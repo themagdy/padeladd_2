@@ -4,20 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | Padeladd</title>
+    <link rel="icon" href="assets/logo_ico.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --c-bg: #0B0F19;
-            --c-card: rgba(30, 37, 53, 0.6);
-            --c-primary: #1B52CE;
-            --c-orange: #ff8b00;
-            --c-text: #FFFFFF;
-            --c-text-muted: #8B9BB4;
-            --c-border: rgba(255, 255, 255, 0.08);
+            /* Corporate Trust Dark Theme */
+            --c-bg: #0B0F19; /* Deep navy/black background */
+            --c-surface: #131A2A; /* Slightly lighter surface for content */
+            --c-primary: #1B52CE; /* Corporate blue */
+            --c-primary-light: #3B72EE;
+            --c-text-main: #F3F4F6;
+            --c-text-muted: #9CA3AF;
+            --c-border: #1F2937;
+            
             --font-main: 'Montserrat', sans-serif;
-            --font-title: 'Outfit', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
         }
 
         * {
@@ -28,102 +31,79 @@
 
         body {
             background-color: var(--c-bg);
-            color: var(--c-text);
+            color: var(--c-text-main);
             font-family: var(--font-main);
-            line-height: 1.7;
-            padding: 100px 20px 40px;
-            overflow-x: hidden;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Decorative background elements */
-        .bg-glow {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(27, 82, 206, 0.15) 0%, rgba(27, 82, 206, 0) 70%);
-            top: -100px;
-            right: -100px;
-            z-index: -1;
-            filter: blur(60px);
+        .header-wrapper {
+            background-color: var(--c-surface);
+            border-bottom: 1px solid var(--c-border);
+            padding: 40px 20px;
+            text-align: center;
         }
 
-        .bg-glow-bottom {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255, 139, 0, 0.05) 0%, rgba(255, 139, 0, 0) 70%);
-            bottom: -150px;
-            left: -150px;
-            z-index: -1;
-            filter: blur(80px);
-        }
-
-        .container {
+        .header-container {
             max-width: 800px;
             margin: 0 auto;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 60px;
+        .logo {
+            height: 48px;
+            margin-bottom: 24px;
         }
 
         h1 {
-            font-family: var(--font-title);
-            font-size: 42px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, var(--c-text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFFFFF;
             margin-bottom: 16px;
+            letter-spacing: -0.5px;
         }
 
-        .last-updated {
+        .effective-date {
             font-size: 14px;
-            color: var(--c-orange);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--c-text-muted);
+            font-weight: 500;
         }
 
-        .content-card {
-            background: var(--c-card);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--c-border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        .content-container {
+            max-width: 800px;
+            margin: 40px auto 80px;
+            padding: 0 24px;
         }
 
         section {
-            margin-bottom: 40px;
+            margin-bottom: 48px;
         }
 
         h2 {
-            font-family: var(--font-title);
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 600;
+            color: #60A5FA; /* Bright vibrant light blue */
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--c-border);
         }
 
-        h2::before {
-            content: '';
-            width: 4px;
-            height: 24px;
-            background: var(--c-orange);
-            border-radius: 4px;
-            display: block;
+        h3 {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 600;
+            color: #7DD3FC; /* Very light vibrant blue */
+            margin-top: 24px;
+            margin-bottom: 12px;
+            margin-left: 16px; /* Indent for A., B., C. sections */
         }
 
         p {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             color: var(--c-text-muted);
-            font-size: 16px;
+            font-size: 15px;
         }
 
         ul {
@@ -133,120 +113,179 @@
 
         li {
             position: relative;
-            padding-left: 24px;
-            margin-bottom: 12px;
+            padding-left: 20px;
+            margin-bottom: 10px;
             color: var(--c-text-muted);
+            font-size: 15px;
         }
 
         li::before {
-            content: '→';
+            content: '•';
             position: absolute;
             left: 0;
             color: var(--c-primary);
-            font-weight: 800;
+            font-weight: bold;
         }
 
-        .contact-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--c-border);
-            padding: 24px;
-            border-radius: 16px;
-            margin-top: 20px;
+        .highlight-box {
+            background-color: rgba(27, 82, 206, 0.05);
+            border-left: 4px solid var(--c-primary);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
         }
 
-        .contact-box strong {
-            color: #fff;
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--c-text-main);
+        }
+
+        a {
+            color: var(--c-primary-light);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #FFFFFF;
+            text-decoration: underline;
         }
 
         footer {
             text-align: center;
-            margin-top: 60px;
-            padding-bottom: 40px;
+            padding: 32px 20px;
+            border-top: 1px solid var(--c-border);
+            color: var(--c-text-muted);
             font-size: 14px;
-            color: var(--c-text-dim);
+            background-color: var(--c-surface);
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 32px; }
-            .content-card { padding: 24px; }
-            body { padding: 20px 15px; }
+            h1 { font-size: 28px; }
+            h2 { font-size: 20px; }
+            .header-wrapper { padding: 30px 20px; }
+            .content-container { margin: 30px auto; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-glow"></div>
-    <div class="bg-glow-bottom"></div>
 
-    <div class="container">
-        <header style="margin-top: 60px;">
-            <div style="margin-bottom: 24px; display: inline-block;">
-                <img src="assets/logo.png" alt="Padeladd Logo" style="height: 48px; filter: drop-shadow(0 0 15px rgba(27, 82, 206, 0.2));">
+    <div class="header-wrapper">
+        <div class="header-container">
+            <img src="assets/logo.png" alt="Padeladd Logo" class="logo">
+            <h1>Privacy Policy</h1>
+            <div class="effective-date">Effective Date: May 2026</div>
+        </div>
+    </div>
+
+    <div class="content-container">
+        
+        <section>
+            <h2>1. Introduction</h2>
+            <p>At Padeladd, we are deeply committed to protecting your privacy and ensuring the security of your personal data. This Privacy Policy outlines our practices regarding the collection, use, protection, and disclosure of information when you use our web and mobile applications (the "Service").</p>
+            <p>By accessing or using the Service, you agree to the collection and use of information in accordance with this Privacy Policy. If you do not agree with this policy, please do not use our Service.</p>
+        </section>
+
+        <section>
+            <h2>2. Minimum Age Restriction (Children's Privacy)</h2>
+            <div class="highlight-box">
+                <p><strong>Age Requirement:</strong> Our Service currently operates within Egypt. You must be at least 16 years of age to create an account and use Padeladd.</p>
             </div>
-            <h1 style="margin-bottom: 12px; letter-spacing: -1px;">Privacy Policy</h1>
-            <div class="last-updated" style="display: inline-block; background: rgba(255, 139, 0, 0.1); border: 1px solid rgba(255, 139, 0, 0.2); padding: 4px 14px; border-radius: 100px; font-size: 11px;">Last Updated: May 2026</div>
-        </header>
+            <p>We do not knowingly collect personal information from anyone under the age of 16. If we become aware that we have collected personal data from a child under 16 without verified parental consent, we will take immediate steps to delete that information.</p>
+        </section>
 
-        <main class="content-card">
-            <section>
-                <h2>1. Introduction</h2>
-                <p>Welcome to Padeladd. We are committed to protecting your personal data and your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our web and mobile applications.</p>
-            </section>
-
-            <section>
-                <h2>2. Information We Collect</h2>
-                <p>We collect information that you provide directly to us, including:</p>
+        <section>
+            <h2>3. Information We Collect</h2>
+            <p>We collect several different types of information for various purposes to provide and improve our Service to you.</p>
+            
+            <div style="margin-left: 16px; padding-left: 10px;">
+                <h3 style="margin-left: 0;">A. Personal Data</h3>
+                <p>While using our Service, we may ask you to provide us with certain personally identifiable information, including but not limited to:</p>
                 <ul>
-                    <li>Account information (Name, Email, Phone Number)</li>
-                    <li>Profile details (Nickname, Gender, Skill Level, Profile Image)</li>
-                    <li>Match data (Matches created, joined, and results submitted)</li>
-                    <li>Communication data (Messages sent through our in-app chat)</li>
+                    <li><strong>Identity Data:</strong> First name, last name, date of birth, and gender.</li>
+                    <li><strong>Contact Data:</strong> Email address and mobile phone number (used for secure OTP verification).</li>
+                    <li><strong>Profile Data:</strong> Nickname, skill level, and profile image.</li>
                 </ul>
-            </section>
 
-            <section>
-                <h2>3. How We Use Your Data</h2>
-                <p>Your information is used to provide and improve the Padeladd experience, specifically to:</p>
+                <h3 style="margin-left: 0;">B. Usage and Device Data</h3>
+                <p>We automatically collect information on how the Service is accessed and used. This may include:</p>
                 <ul>
-                    <li>Facilitate match scheduling and player coordination</li>
-                    <li>Calculate and maintain your ranking and performance stats</li>
-                    <li>Enable communication between match participants</li>
-                    <li>Send important notifications about your matches and account</li>
-                    <li>Ensure platform integrity and fair play</li>
+                    <li>Your device's Internet Protocol (IP) address.</li>
+                    <li>Browser type and browser version.</li>
+                    <li>The pages of our Service that you visit and the time spent on those pages.</li>
+                    <li>Unique device identifiers and other diagnostic data.</li>
                 </ul>
-            </section>
 
-            <section>
-                <h2>4. Data Sharing</h2>
-                <p>We do not sell your personal data. Your nickname, skill level, and ranking are visible to other players to facilitate match-making. Your phone number is only shared with match participants when explicitly requested and approved by you.</p>
-            </section>
-
-            <section>
-                <h2>5. Mobile Specific Data</h2>
-                <p>Our mobile application may request access to:</p>
+                <h3 style="margin-left: 0;">C. Mobile Device Permissions</h3>
+                <p>To provide specific features, our mobile applications may request access to:</p>
                 <ul>
                     <li><strong>Push Notifications:</strong> To alert you about match requests, chat messages, and score approvals.</li>
-                    <li><strong>Camera/Gallery:</strong> To allow you to upload a profile picture.</li>
+                    <li><strong>Camera and Photo Library:</strong> To allow you to take or select a profile picture. We only access images you explicitly choose to upload.</li>
                 </ul>
-            </section>
+            </div>
+        </section>
 
-            <section>
-                <h2>6. Your Rights</h2>
-                <p>You have the right to access, correct, or delete your personal data at any time through your profile settings. For any data-related requests that cannot be handled through the app, please contact us.</p>
-            </section>
+        <section>
+            <h2>4. How We Use Your Information</h2>
+            <p>Padeladd uses the collected data for the following legitimate business purposes:</p>
+            <ul>
+                <li>To provide and maintain our Service, including facilitating match scheduling.</li>
+                <li>To manage your account and calculate your ranking/performance statistics.</li>
+                <li>To notify you about changes to our Service or updates regarding your matches.</li>
+                <li>To enable peer-to-peer communication between match participants.</li>
+                <li>To monitor the usage of our Service and detect, prevent, and address technical issues.</li>
+            </ul>
+        </section>
 
-            <section>
-                <h2>7. Contact Us</h2>
-                <p>If you have any questions about this Privacy Policy, please contact our support team:</p>
-                <div class="contact-box">
-                    <strong>Email:</strong> support@padeladd.com<br>
-                    <strong>Subject:</strong> Privacy Inquiry
-                </div>
-            </section>
-        </main>
+        <section>
+            <h2>5. Data Sharing and Disclosure</h2>
+            <p>We hold your privacy in the highest regard. We do not sell, rent, or trade your personal information to third parties. We may disclose your data only under the following circumstances:</p>
+            <ul>
+                <li><strong>Platform Visibility:</strong> Your nickname, skill level, and ranking are visible to other players to facilitate fair match-making.</li>
+                <li><strong>Match Participants:</strong> Your phone number is strictly kept private and is only shared with other players in your specific match if you explicitly approve a contact request.</li>
+                <li><strong>Legal Requirements:</strong> If required by law, we may disclose your information to comply with a legal obligation, court order, or governmental request.</li>
+            </ul>
+        </section>
 
-        <footer>
-            &copy; 2026 Padeladd. All rights reserved.
-        </footer>
+        <section>
+            <h2>6. Data Security and Retention</h2>
+            <p>The security of your data is critical to us. We implement industry-standard security measures, including encryption and secure server hosting, to protect your personal information against unauthorized access, alteration, or destruction.</p>
+            <p>We will retain your personal data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our legal agreements.</p>
+        </section>
+
+        <section>
+            <h2>7. Your Privacy Rights</h2>
+            <p>As a user of our Service, you have the right to control your personal data. You may:</p>
+            <ul>
+                <li><strong>Access and Update:</strong> Review and modify your profile information at any time within the application.</li>
+                <li><strong>Data Deletion:</strong> Request the complete deletion of your account and associated personal data.</li>
+                <li><strong>Withdraw Consent:</strong> Revoke permissions (such as Camera or Notifications) at any time via your device settings.</li>
+            </ul>
+            <p>You can manage your data directly within your profile settings. For complete account deletion or other privacy requests, please contact our support team.</p>
+        </section>
+
+        <section>
+            <h2>8. Changes to This Privacy Policy</h2>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the "Effective Date" at the top. You are advised to review this Privacy Policy periodically for any changes.</p>
+        </section>
+
+        <section>
+            <h2>9. Contact Us</h2>
+            <p>If you have any questions, concerns, or requests regarding this Privacy Policy or how we handle your data, please contact our Data Protection Officer:</p>
+            <div class="highlight-box" style="margin-top: 16px;">
+                <p><strong>Email:</strong> <a href="mailto:privacy@padeladd.com">privacy@padeladd.com</a></p>
+                <p><strong>Support:</strong> <a href="mailto:support@padeladd.com">support@padeladd.com</a></p>
+            </div>
+        </section>
+
     </div>
+
+    <footer>
+        <div style="max-width: 800px; margin: 0 auto;">
+            &copy; 2026 Padeladd. All rights reserved. <br>
+            <span style="font-size: 12px; margin-top: 8px; display: inline-block;">This document is provided for informational purposes and constitutes a binding agreement upon use of the Padeladd application.</span>
+        </div>
+    </footer>
+
 </body>
 </html>

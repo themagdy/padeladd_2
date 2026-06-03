@@ -8,6 +8,16 @@ $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
 $limit = (int)($data['limit'] ?? 10);
+$offset = (int)($data['offset'] ?? 0);
+
+// Fetch total count for pagination
+$countStmt = $pdo->prepare("
+    SELECT COUNT(*) FROM matches m
+    WHERE m.status = 'completed'
+      AND m.id IN (SELECT match_id FROM scores WHERE status = 'approved')
+");
+$countStmt->execute();
+$totalMatches = (int)$countStmt->fetchColumn();
 
 // Fetch recent completed matches that have approved scores
 $stmt = $pdo->prepare("
@@ -17,15 +27,21 @@ $stmt = $pdo->prepare("
     WHERE m.status = 'completed'
       AND m.id IN (SELECT match_id FROM scores WHERE status = 'approved')
     ORDER BY m.match_datetime DESC
-    LIMIT ?
+    LIMIT :limit OFFSET :offset
 ");
-$stmt->execute([$limit]);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $result = [];
 
 if (empty($matches)) {
-    jsonResponse(true, 'No recent matches found.', ['matches' => []]);
+    jsonResponse(true, 'No recent matches found.', [
+        'matches' => [],
+        'has_more' => false,
+        'offset' => $offset
+    ]);
 }
 
 $matchIds = array_map(fn($m) => (int)$m['id'], $matches);
@@ -107,4 +123,10 @@ foreach ($matches as $m) {
     ];
 }
 
-jsonResponse(true, 'Recent matches loaded.', ['matches' => $result]);
+$has_more = ($offset + count($result)) < $totalMatches;
+
+jsonResponse(true, 'Recent matches loaded.', [
+    'matches' => $result,
+    'has_more' => $has_more,
+    'offset' => $offset
+]);

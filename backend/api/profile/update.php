@@ -16,6 +16,17 @@ if (empty($first) || empty($last) || empty($dob) || empty($gender) || empty($pla
     jsonResponse(false, 'First name, last name, date of birth, gender, playing side, and location are required.');
 }
 
+// Age validation
+$birthDate = new DateTime($dob);
+$today = new DateTime('today');
+$age = $birthDate->diff($today)->y;
+if ($age < 16) {
+    jsonResponse(false, 'You must be at least 16 years old to use Padeladd.');
+}
+if ($age > 65) {
+    jsonResponse(false, 'The maximum allowed age to register is 65.');
+}
+
 // Validate location ID
 $locCheck = $pdo->prepare("SELECT id FROM locations WHERE id = ?");
 $locCheck->execute([$locationId]);
