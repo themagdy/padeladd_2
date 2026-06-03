@@ -1570,3 +1570,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bug Fix: Corrected touch scrolling inside popups/ConfirmModal on mobile native app by letting touchmove events bypass the global overlay preventDefault check if the target has a `.custom-scroll` class.
 - Version: 2.3.80 (Build 380)
 
+2.3.81 (Build 381) - 2026-06-03
+- Domain Transition: Migrated live domain from `ahmedmagdy.com/pl` to `https://padeladd.com` hosted at the root level.
+- Configuration: Updated config.js paths, Content-Security-Policy headers in index.php, and mail helper logo/from details to point to the new domain.
+- Version: 2.3.81 (Build 381)
+

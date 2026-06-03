@@ -26,6 +26,6 @@ const CONFIG = {
     ASSET_BASE: isCapacitor ? 'https://padeladd.com' : (isLocal ? '/padeladd4' : ''),
     LIVE_URL: 'https://padeladd.com',
     APP_ENV: isLocal ? 'development' : 'production',
-    APP_BUILD_REF: isCapacitor ? "2.3.80" : "Web",
+    APP_BUILD_REF: isCapacitor ? "2.3.81" : "Web",
     SKELETON_DELAY: 300
 };
