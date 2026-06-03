@@ -1575,3 +1575,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Configuration: Updated config.js paths, Content-Security-Policy headers in index.php, and mail helper logo/from details to point to the new domain.
 - Version: 2.3.81 (Build 381)
 
+2.3.82 (Build 382) - 2026-06-03
+- Configuration: Updated production database credentials in config.php to connect to dabfhrmy_padeladd_r1 database.
+- Configuration: Set live site URL to https://padeladd.com in core configuration.
+- Version: 2.3.82 (Build 382)
+
