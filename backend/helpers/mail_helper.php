@@ -1,10 +1,10 @@
 <?php
 
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
-    $fromEmail = 'noreply@ahmedmagdy.com';
+    $fromEmail = 'noreply@padeladd.com';
     
     // HTML Email Template
-    $logoUrl = 'https://ahmedmagdy.com/pl/assets/logo.png';
+    $logoUrl = 'https://padeladd.com/assets/logo.png';
     
     // Handle line breaks for content
     $htmlContent = nl2br(htmlspecialchars($content));
@@ -59,8 +59,8 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
 
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: Padeladd <noreply@ahmedmagdy.com>\r\n";
-    $headers .= "Reply-To: noreply@ahmedmagdy.com\r\n";
+    $headers .= "From: Padeladd <noreply@padeladd.com>\r\n";
+    $headers .= "Reply-To: noreply@padeladd.com\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
 
     return mail($to, $subject, $message, $headers);

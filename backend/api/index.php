@@ -36,7 +36,7 @@ if ($_isLocalHost || empty($_origin)) {
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://ahmedmagdy.com; connect-src 'self' https://ahmedmagdy.com; font-src 'self' https://fonts.gstatic.com;");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://padeladd.com; connect-src 'self' https://padeladd.com; font-src 'self' https://fonts.gstatic.com;");
 date_default_timezone_set('Africa/Cairo');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

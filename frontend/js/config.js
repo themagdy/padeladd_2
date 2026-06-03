@@ -6,26 +6,26 @@ const isLocalWww = isLocal && window.location.pathname.includes('/mobile_app/www
 
 // On mobile, we ALWAYS want the live URL
 // On local web, we want /padeladd4
-// On live web, we want /pl
-let BASE_PATH = isLocal ? '/padeladd4' : '/pl';
+// On live web, we want root /
+let BASE_PATH = isLocal ? '/padeladd4' : '';
 if (isLocalWww) {
     BASE_PATH = window.location.pathname.split('/index.html')[0];
     if (BASE_PATH.endsWith('/')) BASE_PATH = BASE_PATH.slice(0, -1);
 }
 
-let API_BASE = isLocal && !isCapacitor ? '/padeladd4/backend/api' : 'https://ahmedmagdy.com/pl/backend/api';
+let API_BASE = isLocal && !isCapacitor ? '/padeladd4/backend/api' : 'https://padeladd.com/backend/api';
 
 if (isCapacitor) {
-    API_BASE = 'https://ahmedmagdy.com/pl/backend/api';
+    API_BASE = 'https://padeladd.com/backend/api';
     BASE_PATH = ''; // Mobile assets are root-relative
 }
 
 const CONFIG = {
     BASE_PATH: BASE_PATH,
     API_BASE_URL: API_BASE,
-    ASSET_BASE: isCapacitor ? 'https://ahmedmagdy.com/pl' : (isLocal ? '/padeladd4' : '/pl'),
-    LIVE_URL: 'https://ahmedmagdy.com/pl',
+    ASSET_BASE: isCapacitor ? 'https://padeladd.com' : (isLocal ? '/padeladd4' : ''),
+    LIVE_URL: 'https://padeladd.com',
     APP_ENV: isLocal ? 'development' : 'production',
-    APP_BUILD_REF: isCapacitor ? "2.3.79" : "Web",
+    APP_BUILD_REF: isCapacitor ? "2.3.80" : "Web",
     SKELETON_DELAY: 300
 };

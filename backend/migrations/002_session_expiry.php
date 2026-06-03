@@ -2,7 +2,7 @@
 /**
  * Migration: Add created_at column to user_sessions for 90-day token expiry.
  * Safe to run multiple times - checks if column exists first.
- * Run at: https://ahmedmagdy.com/pl/backend/migrations/002_session_expiry.php
+ * Run at: https://padeladd.com/backend/migrations/002_session_expiry.php
  */
 require_once __DIR__ . '/../core/db.php';
 
