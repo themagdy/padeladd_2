@@ -14,7 +14,7 @@
             var isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             if (!isLocal) {
                 var b = document.querySelector('base');
-                if (b) b.href = '/pl/';
+                if (b) b.href = '/';
             }
             if (typeof window.Capacitor !== 'undefined' || window.location.protocol === 'capacitor:') {
                 var b = document.querySelector('base');
