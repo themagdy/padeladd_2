@@ -1585,3 +1585,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Hotfix: Fixed `<base href>` in index.html — was still pointing to the old `/pl/` subdirectory path on the live server, causing all CSS/JS assets to 404. Updated to `/` for the root domain.
 - Version: 2.3.83 (Build 383)
 
+2.3.84 (Build 384) - 2026-06-04
+- UI Cleanup: Removed "By [player]" creator label from match cards in "My Matches" and "Play" listing on all screens.
+- Mobile Polish: Hidden the status badge pill (Completed, Full, Incomplete, etc.) on mobile screens (≤600px) for a cleaner match card layout.
+- Version: 2.3.84 (Build 384)

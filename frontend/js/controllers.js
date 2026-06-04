@@ -3616,9 +3616,8 @@ const MatchesController = {
                </div>
                ${typeBadges ? `<div style="margin-top:8px;">${typeBadges}</div>` : ''}
             </div>
-            <div style="text-align:right; flex-shrink:0;">
+            <div class="mc-right-col" style="text-align:right; flex-shrink:0;">
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
-               <div class="text-truncate" style="font-size:10px; color:var(--c-text-dim); margin-top:6px; font-weight:600; max-width: 100px;">By ${m.creator_nickname || m.creator_name}</div>
             </div>
           </div>
           <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; margin-top:20px; border:1px solid rgba(255,255,255,0.03);">

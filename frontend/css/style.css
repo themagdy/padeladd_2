@@ -3822,6 +3822,10 @@ form {
     right: 16px;
     z-index: 2;
   }
+
+  .mc-right-col {
+    display: none !important;
+  }
 }
 
 #mv-venue-name {
