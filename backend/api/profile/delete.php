@@ -34,7 +34,11 @@ try {
     // 4. release unique constraints on email and mobile by prepending timestamp
     $timestamp = time();
     $newEmail = '#' . $timestamp . '_' . $user['email'];
-    $newMobile = '#' . $timestamp . '_' . $user['mobile'];
+
+    // Mobile column has VARCHAR(20) limit in database.
+    // Use hexadecimal representation of timestamp (8 chars) + last 10 chars of mobile.
+    $hexTime = dechex($timestamp);
+    $newMobile = '#' . $hexTime . '_' . substr($user['mobile'], -10);
 
     // Update primary user table (status to deleted, scramble email/phone, clear name & auth_token)
     $stmtUser = $pdo->prepare("
