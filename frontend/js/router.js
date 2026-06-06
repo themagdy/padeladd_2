@@ -233,7 +233,7 @@ const Router = {
             if (e.state && e.state.ignoreRoute) return;
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
             const isDynamicBackBar = path.startsWith('/matches/M-') ||
                 path.startsWith('/p/') ||
                 (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -296,11 +296,11 @@ const Router = {
 
     back: function () {
         const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms'];
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = path.startsWith('/matches/M-') ||
             path.startsWith('/p/') ||
             (path.startsWith('/profile/view/') && path !== '/profile/view');
@@ -360,7 +360,7 @@ const Router = {
         if (loader && !isMainTab) loader.style.display = 'flex';
 
         // Global Protection: Redirect to login if not authenticated and trying to access private route
-        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify'];
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms'];
         const isPublic = publicRoutes.includes(path);
 
         if (!Auth.isAuthenticated() && !isPublic) {
@@ -491,7 +491,7 @@ const Router = {
         const isAuthPage = authRoutes.includes(nPath) || nPath === '/' || nPath === '/index.html';
 
         // Pages that need the unified back bar
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = nPath.startsWith('/matches/M-') ||
             nPath.startsWith('/p/') ||
             (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
@@ -506,6 +506,9 @@ const Router = {
             if (tbarInner) {
                 if (nPath === '/profile/edit') {
                     tbarInner.style.maxWidth = '500px';
+                    tbarInner.style.padding = '0 20px';
+                } else if (nPath === '/terms') {
+                    tbarInner.style.maxWidth = '520px';
                     tbarInner.style.padding = '0 20px';
                 } else if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
                     tbarInner.style.maxWidth = '1200px';

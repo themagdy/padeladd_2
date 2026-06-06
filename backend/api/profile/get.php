@@ -4,8 +4,16 @@ $user = getAuthenticatedUser($pdo);
 
 // Update last build used if provided (only for self)
 if (isset($data['app_build_ref']) && !isset($data['target_id']) && !isset($data['player_code'])) {
-    $stmtUp = $pdo->prepare("UPDATE users SET last_build_ref = ? WHERE id = ?");
-    $stmtUp->execute([$data['app_build_ref'], $user['id']]);
+    $ref = $data['app_build_ref'];
+    if ($ref === 'Web') {
+        // Web visit — update legacy field + web timestamp
+        $stmtUp = $pdo->prepare("UPDATE users SET last_build_ref = ?, last_web_active = NOW() WHERE id = ?");
+        $stmtUp->execute([$ref, $user['id']]);
+    } else {
+        // Native app visit — update legacy field + native build version
+        $stmtUp = $pdo->prepare("UPDATE users SET last_build_ref = ?, last_native_build = ? WHERE id = ?");
+        $stmtUp->execute([$ref, $ref, $user['id']]);
+    }
 }
 
 // Logic: If target_id or player_code is provided, fetch THAT user. Otherwise, fetch self.

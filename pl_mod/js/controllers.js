@@ -1851,6 +1851,7 @@ window.AdminControllers = {
     versions: {
         allUsers: [],
         searchQuery: '',
+        versionFilter: '',
         sortKey: 'last_activity', // Default sort
         sortOrder: 'desc',
 
@@ -1865,13 +1866,71 @@ window.AdminControllers = {
                 const data = await res.json();
                 if (data.success) {
                     this.allUsers = data.data;
+                    this.renderStats();
+                    this.populateVersionDropdown();
                     this.render();
                 }
             } catch (err) { console.error('Fetch Versions Error:', err); }
         },
 
+        renderStats() {
+            const all = this.allUsers;
+            const appUsers  = all.filter(u => u.last_native_build);
+            const webUsers  = all.filter(u => u.last_web_active);
+            const latestRef = this._getLatestVersion(appUsers);
+
+            const onLatest = latestRef ? appUsers.filter(u => u.last_native_build === latestRef).length : 0;
+            const outdated = latestRef ? appUsers.filter(u => u.last_native_build !== latestRef).length : 0;
+
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            set('ver-stat-total',    appUsers.length);
+            set('ver-stat-latest',   onLatest);
+            set('ver-stat-outdated', outdated);
+            set('ver-stat-never',    webUsers.length);
+        },
+
+        // Compare semver strings like "2.3.82" correctly
+        _compareSemver(a, b) {
+            const pa = (a || '').split('.').map(Number);
+            const pb = (b || '').split('.').map(Number);
+            for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const na = pa[i] || 0, nb = pb[i] || 0;
+                if (na !== nb) return na - nb;
+            }
+            return 0;
+        },
+
+        _getLatestVersion(users) {
+            const versions = [...new Set(users.map(u => u.last_build_ref).filter(Boolean))];
+            if (!versions.length) return null;
+            return versions.sort((a, b) => this._compareSemver(a, b)).pop();
+        },
+
+        populateVersionDropdown() {
+            const sel = document.getElementById('ver-filter-version');
+            if (!sel) return;
+
+            // Collect unique native app build refs, sorted newest first by semver
+            const builds = [...new Set(
+                this.allUsers
+                    .map(u => u.last_native_build)
+                    .filter(Boolean)
+            )].sort((a, b) => this._compareSemver(b, a)); // desc
+
+            sel.innerHTML = '<option value="">All Versions</option>' +
+                '<option value="Web">Web Users</option>' +
+                builds.map(b => `<option value="${b}">${b}</option>`).join('');
+
+            if (this.versionFilter) sel.value = this.versionFilter;
+        },
+
         setSearch(query) {
             this.searchQuery = query.toLowerCase().trim();
+            this.render();
+        },
+
+        setVersionFilter(val) {
+            this.versionFilter = val;
             this.render();
         },
 
@@ -1891,6 +1950,15 @@ window.AdminControllers = {
             if (!list) return;
 
             let filtered = [...this.allUsers];
+
+            // Version filter (filters on native build or Web)
+            if (this.versionFilter) {
+                if (this.versionFilter === 'Web') {
+                    filtered = filtered.filter(u => u.last_web_active);
+                } else {
+                    filtered = filtered.filter(u => u.last_native_build === this.versionFilter);
+                }
+            }
 
             // Sort
             filtered.sort((a, b) => {
@@ -1922,8 +1990,40 @@ window.AdminControllers = {
                 return;
             }
 
+            // Find latest native semver to flag outdated users in table rows
+            const latestRef = this._getLatestVersion(
+                this.allUsers.filter(u => u.last_native_build)
+            );
+
             empty.style.display = 'none';
-            list.innerHTML = filtered.map(u => `
+            list.innerHTML = filtered.map(u => {
+                const nativeBuild  = u.last_native_build;
+                const hasWeb       = !!u.last_web_active;
+                const isLatest     = nativeBuild && nativeBuild === latestRef;
+                const isOutdated   = nativeBuild && !isLatest;
+
+                // Native tag styles
+                const nativeColor  = isLatest ? 'var(--c-green)' : 'var(--c-orange)';
+                const nativeBg     = isLatest ? 'rgba(0,206,0,0.08)' : 'rgba(247,148,29,0.08)';
+                const nativeBorder = isLatest ? 'rgba(0,206,0,0.2)' : 'rgba(247,148,29,0.2)';
+                const nativeLabel  = isLatest ? '✓ Latest' : 'Outdated';
+
+                const nativeTag = nativeBuild ? `
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:${nativeBg}; border:1px solid ${nativeBorder}; border-radius:8px; padding:5px 10px;">
+                        <span style="font-size:13px;">📱</span>
+                        <span style="font-weight:800; font-family:monospace; color:${nativeColor}; font-size:12px;">${nativeBuild}</span>
+                        <span style="font-size:9px; font-weight:800; color:${nativeColor}; text-transform:uppercase; opacity:0.8;">${nativeLabel}</span>
+                    </div>
+                ` : '';
+
+                const webTag = hasWeb ? `
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(27,82,206,0.07); border:1px solid rgba(27,82,206,0.18); border-radius:8px; padding:5px 10px;">
+                        <span style="font-size:13px;">🌐</span>
+                        <span style="font-weight:800; font-family:monospace; color:var(--c-primary); font-size:12px;">Web</span>
+                    </div>
+                ` : '';
+
+                return `
                 <tr>
                     <td>
                         <div class="player-info-cell">
@@ -1935,11 +2035,9 @@ window.AdminControllers = {
                         </div>
                     </td>
                     <td>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span class="icon" style="font-size:16px;">📱</span>
-                            <span style="font-weight:800; color:#fff; font-family:monospace; background:rgba(27, 82, 206, 0.1); color:var(--c-primary); padding:4px 10px; border-radius:6px; border:1px solid rgba(27, 82, 206, 0.2);">
-                                ${u.last_build_ref || 'N/A'}
-                            </span>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            ${nativeTag || '<span style="font-size:12px; color:var(--c-text-muted); opacity:0.4;">No app</span>'}
+                            ${webTag}
                         </div>
                     </td>
                     <td>
@@ -1951,7 +2049,7 @@ window.AdminControllers = {
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
     },
 

@@ -1075,7 +1075,7 @@ const AuthController = {
         if (btnText) btnText.innerHTML = 'AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق';
 
         const agreeContainer = document.getElementById('terms-agree-container');
-        if (agreeContainer && !Auth.hasProfile()) {
+        if (agreeContainer && Auth.isAuthenticated() && !Auth.hasProfile()) {
             agreeContainer.style.display = 'block';
         }
 
@@ -2167,6 +2167,27 @@ const ProfileViewController = {
 };
 
 const ProfileController = {
+
+    confirmDeleteAccount: async function () {
+        const confirmed = await ConfirmModal.show({
+            title: 'Delete Account?',
+            message: 'Are you sure you want to delete your account?\nThis will permanently delete your profile details, ranking points, and deactivate your access. You will be logged out immediately.',
+            confirmText: 'Yes, Delete Account',
+            cancelText: 'Cancel',
+            type: 'warning'
+        });
+
+        if (!confirmed) return;
+
+        const res = await API.post('/profile/delete', {});
+        if (res && res.success) {
+            Toast.show('Account successfully deleted.', 'success');
+            Auth.clearAll();
+            Router.navigate('/login');
+        } else {
+            Toast.show(res ? res.message : 'Deletion failed. Please try again.', 'error');
+        }
+    },
 
     reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({

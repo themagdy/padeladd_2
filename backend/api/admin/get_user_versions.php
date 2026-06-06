@@ -12,6 +12,8 @@ $sql = "
         u.first_name, 
         u.last_name, 
         u.last_build_ref, 
+        u.last_native_build,
+        u.last_web_active,
         u.updated_at as last_activity,
         up.player_code,
         up.nickname,
