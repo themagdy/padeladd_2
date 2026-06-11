@@ -2254,29 +2254,54 @@ const ProfileController = {
             this._cropper.destroy();
             this._cropper = null;
 
-            const res = await fetch(CONFIG.API_BASE_URL + '/profile/upload_image', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + Auth.getToken() },
-                body: formData
-            }).then(r => r.json());
+            // Save original states in case of failure
+            const imgEl = document.getElementById('edit-avatar-img');
+            const previewEl = document.getElementById('edit-avatar-preview');
+            const origImgDisplay = imgEl ? imgEl.style.display : 'none';
+            const origPreviewDisplay = previewEl ? previewEl.style.display : 'flex';
+            const origPreviewHtml = previewEl ? previewEl.innerHTML : '';
 
-            if (res && res.success) {
-                const displayImg = res.data.profile_image_thumb || res.data.profile_image;
-                const imgEl = document.getElementById('edit-avatar-img');
-                const previewEl = document.getElementById('edit-avatar-preview');
-                const removeBtn = document.getElementById('remove-avatar-btn');
+            if (imgEl && previewEl) {
+                imgEl.style.display = 'none';
+                previewEl.innerHTML = `<div class="pagination-spinner" style="width:36px; height:36px; border-width:4px; border-top-color:var(--c-orange);"></div>`;
+                previewEl.style.display = 'flex';
+            }
 
-                if (imgEl && previewEl) {
-                    imgEl.src = CONFIG.ASSET_BASE + '/' + displayImg;
-                    imgEl.style.display = 'block';
-                    previewEl.style.display = 'none';
+            try {
+                const res = await fetch(CONFIG.API_BASE_URL + '/profile/upload_image', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + Auth.getToken() },
+                    body: formData
+                }).then(r => r.json());
+
+                if (res && res.success) {
+                    const displayImg = res.data.profile_image_thumb || res.data.profile_image;
+                    const removeBtn = document.getElementById('remove-avatar-btn');
+
+                    if (imgEl && previewEl) {
+                        imgEl.src = CONFIG.ASSET_BASE + '/' + displayImg;
+                        imgEl.style.display = 'block';
+                        previewEl.style.display = 'none';
+                    }
+
+                    if (removeBtn) removeBtn.style.display = 'block';
+                    Toast.show('Photo updated', 'success');
+                    UI.syncNav();
+                } else {
+                    if (imgEl && previewEl) {
+                        imgEl.style.display = origImgDisplay;
+                        previewEl.style.display = origPreviewDisplay;
+                        previewEl.innerHTML = origPreviewHtml;
+                    }
+                    Toast.show(res ? res.message : 'Upload failed', 'error');
                 }
-
-                if (removeBtn) removeBtn.style.display = 'block';
-                Toast.show('Photo updated', 'success');
-                UI.syncNav();
-            } else {
-                Toast.show(res ? res.message : 'Upload failed');
+            } catch (err) {
+                if (imgEl && previewEl) {
+                    imgEl.style.display = origImgDisplay;
+                    previewEl.style.display = origPreviewDisplay;
+                    previewEl.innerHTML = origPreviewHtml;
+                }
+                Toast.show('Upload failed', 'error');
             }
         }, 'image/png');
     },
@@ -2343,6 +2368,32 @@ const ProfileController = {
             if (titleEl) titleEl.textContent = 'Complete Your Profile';
             if (subtitleEl) subtitleEl.style.display = 'block';
             if (submitBtn) submitBtn.textContent = 'Join Leaderboard →'; // Match initial design
+        }
+
+        // Preload avatar instantly from profile view cache for immediate feedback
+        const selfCache = ProfileViewController._viewCache['self'];
+        if (selfCache) {
+            const p = selfCache.profile;
+            const u = selfCache.user;
+            const imgEl = document.getElementById('edit-avatar-img');
+            const previewEl = document.getElementById('edit-avatar-preview');
+            const removeBtn = document.getElementById('remove-avatar-btn');
+
+            if (imgEl && previewEl) {
+                const displayImg = p?.profile_image_thumb || p?.profile_image;
+                if (displayImg) {
+                    imgEl.src = CONFIG.ASSET_BASE + '/' + displayImg;
+                    imgEl.style.display = 'block';
+                    previewEl.style.display = 'none';
+                    if (removeBtn) removeBtn.style.display = 'block';
+                } else if (u) {
+                    const initials = (u.first_name[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase();
+                    previewEl.innerHTML = `<span style="font-size:28px;">${initials}</span>`;
+                    previewEl.style.display = 'flex';
+                    imgEl.style.display = 'none';
+                    if (removeBtn) removeBtn.style.display = 'none';
+                }
+            }
         }
 
         // Fetch data to pre-fill (even for new users to get first/last name from reg step)
@@ -2521,10 +2572,23 @@ const ProfileController = {
             removeAvatarBtn.addEventListener('click', async () => {
                 const res = await API.post('/profile/remove_image', {});
                 if (res && res.success) {
+                    const cached = ProfileViewController._viewCache['self'];
+                    if (cached && cached.profile) {
+                        cached.profile.profile_image = null;
+                        cached.profile.profile_image_thumb = null;
+                    }
                     const imgEl = document.getElementById('edit-avatar-img');
                     const previewEl = document.getElementById('edit-avatar-preview');
                     if (imgEl) imgEl.style.display = 'none';
-                    if (previewEl) previewEl.style.display = 'flex';
+                    if (previewEl) {
+                        let initials = '?';
+                        if (cached && cached.user) {
+                            const u = cached.user;
+                            initials = (u.first_name[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase();
+                        }
+                        previewEl.innerHTML = `<span style="font-size:28px;">${initials}</span>`;
+                        previewEl.style.display = 'flex';
+                    }
                     removeAvatarBtn.style.display = 'none';
                     Toast.show('Photo removed', 'success');
                     UI.syncNav();

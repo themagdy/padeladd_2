@@ -96,4 +96,19 @@ function generateUniquePlayerCode($pdo) {
     return null;
 }
 
+function renameProfileImages($profileImage, $profileImageThumb) {
+    $pathsToRename = [$profileImage, $profileImageThumb];
+    foreach ($pathsToRename as $p) {
+        if ($p) {
+            $fullPath = __DIR__ . '/../../' . $p;
+            if (file_exists($fullPath) && is_file($fullPath)) {
+                $dir = dirname($fullPath);
+                $base = basename($fullPath);
+                $newPath = $dir . '/removed_' . $base;
+                rename($fullPath, $newPath);
+            }
+        }
+    }
+}
+
 ?>

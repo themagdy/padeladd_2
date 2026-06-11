@@ -23,10 +23,22 @@ if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
 
+// Get player_code or pre-generate it
+$stmtCode = $pdo->prepare("SELECT player_code FROM user_profiles WHERE user_id = ?");
+$stmtCode->execute([$user['id']]);
+$playerCode = $stmtCode->fetchColumn();
+
+if (!$playerCode) {
+    $playerCode = generateUniquePlayerCode($pdo);
+    if (!$playerCode) {
+        jsonResponse(false, 'Unable to generate unique player code.');
+    }
+}
+
 // Derive extension from REAL MIME type (verified via finfo)
 $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
 $ext = $mimeToExt[$realMimeType] ?? 'jpg';
-$baseName = $user['id'] . '_' . time();
+$baseName = $playerCode . '_' . time();
 $filename = $baseName . '.' . $ext;
 $thumbFilename = $baseName . '_thumb.' . $ext;
 $targetPath = $uploadDir . $filename;
@@ -84,19 +96,13 @@ if (!$image) {
     imagedestroy($image);
 }
 
-// Delete old images if they exist
+// Rename old images if they exist
 $oldImageStmt = $pdo->prepare("SELECT profile_image, profile_image_thumb FROM user_profiles WHERE user_id = ?");
 $oldImageStmt->execute([$user['id']]);
 $oldData = $oldImageStmt->fetch(PDO::FETCH_ASSOC);
 
 if ($oldData) {
-    $pathsToDelete = [$oldData['profile_image'], $oldData['profile_image_thumb']];
-    foreach ($pathsToDelete as $p) {
-        if ($p) {
-            $fullPath = __DIR__ . '/../../../' . $p;
-            if (file_exists($fullPath) && is_file($fullPath)) unlink($fullPath);
-        }
-    }
+    renameProfileImages($oldData['profile_image'], $oldData['profile_image_thumb']);
 }
 
 // Update DB
@@ -110,30 +116,11 @@ if ($stmtProf->rowCount() > 0) {
     $update = $pdo->prepare("UPDATE user_profiles SET profile_image = ?, profile_image_thumb = ? WHERE user_id = ?");
     $update->execute([$relativePath, $relativeThumbPath, $user['id']]);
 } else {
-    // Use a small retry loop in case of a rare race condition (duplicate player_code)
-    $maxRetries = 3;
-    $playerCode = null;
-    while ($maxRetries > 0) {
-        $playerCode = generateUniquePlayerCode($pdo);
-        if (!$playerCode) {
-            jsonResponse(false, 'Unable to generate unique player code.');
-        }
-
-        try {
-            $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, profile_image_thumb, player_code) VALUES (?, ?, ?, ?)");
-            $insert->execute([$user['id'], $relativePath, $relativeThumbPath, $playerCode]);
-            break; // Success
-        } catch (PDOException $e) {
-            if ($e->getCode() == '23000') { // Duplicate entry
-                $maxRetries--;
-                continue;
-            }
-            throw $e;
-        }
-    }
-    
-    if ($maxRetries <= 0) {
-        jsonResponse(false, 'Failed to generate a unique code after multiple attempts.');
+    try {
+        $insert = $pdo->prepare("INSERT INTO user_profiles (user_id, profile_image, profile_image_thumb, player_code) VALUES (?, ?, ?, ?)");
+        $insert->execute([$user['id'], $relativePath, $relativeThumbPath, $playerCode]);
+    } catch (PDOException $e) {
+        jsonResponse(false, 'Failed to save profile details.');
     }
 }
 

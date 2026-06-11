@@ -53,7 +53,15 @@ try {
     ");
     $stmtUser->execute([$newEmail, $newMobile, $uid]);
 
-    // 5. Clear profile details
+    // 5. Clear profile details and rename active images on disk
+    $stmtImg = $pdo->prepare("SELECT profile_image, profile_image_thumb FROM user_profiles WHERE user_id = ?");
+    $stmtImg->execute([$uid]);
+    $oldData = $stmtImg->fetch(PDO::FETCH_ASSOC);
+
+    if ($oldData) {
+        renameProfileImages($oldData['profile_image'], $oldData['profile_image_thumb']);
+    }
+
     $stmtProf = $pdo->prepare("
         UPDATE user_profiles 
         SET nickname = 'Deleted Player', 

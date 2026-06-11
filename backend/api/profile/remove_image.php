@@ -2,18 +2,15 @@
 $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 
-// Get current image
-$stmt = $pdo->prepare("SELECT profile_image FROM user_profiles WHERE user_id = ?");
+// Get current image and thumbnail
+$stmt = $pdo->prepare("SELECT profile_image, profile_image_thumb FROM user_profiles WHERE user_id = ?");
 $stmt->execute([$user['id']]);
-$image = $stmt->fetchColumn();
+$oldData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($image) {
-    $path = __DIR__ . '/../../../' . $image;
-    if (file_exists($path) && is_file($path)) {
-        unlink($path);
-    }
+if ($oldData) {
+    renameProfileImages($oldData['profile_image'], $oldData['profile_image_thumb']);
     
-    $update = $pdo->prepare("UPDATE user_profiles SET profile_image = NULL WHERE user_id = ?");
+    $update = $pdo->prepare("UPDATE user_profiles SET profile_image = NULL, profile_image_thumb = NULL WHERE user_id = ?");
     $update->execute([$user['id']]);
 }
 
