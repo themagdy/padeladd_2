@@ -1594,3 +1594,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Compliance: Implemented privacy-compliant soft-deletion (timestamp prefixing for email/mobile, status 'deleted', and stripping all player PII) on backend profile API and Edit Profile danger zone to comply with Apple Developer Agreement guidelines.
 - Compliance: Added direct Privacy Policy link on registration page footer and enabled public unauthenticated access to the Terms of Use page.
 - Version: 2.3.85 (Build 385)
+
+2.3.86 (Build 386) - 2026-06-11
+- UI/UX: Made followers and following count clicks immediately open a loading state modal, then fetch and lazy load the player list asynchronously.
+- Version: 2.3.86 (Build 386)

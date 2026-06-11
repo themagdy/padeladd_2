@@ -2083,19 +2083,36 @@ const ProfileViewController = {
 
     showFollowsList: async function (type) {
         const title = type === 'followers' ? 'Followers' : 'Following';
+
+        // Immediately open the modal with a loading spinner
+        ConfirmModal.show({
+            title: title,
+            message: `<div id="follows-list-loader" style="text-align:center; padding:30px 0;"><div class="pagination-spinner" style="margin:0 auto;"></div></div>`,
+            icon: '👥',
+            showCancel: false,
+            confirmText: 'Close',
+            type: 'info',
+            headerLayout: 'row'
+        });
+
         const res = await API.post(`/profile/follows_list`, { type: type });
 
+        // Ensure the loader element still exists (modal wasn't closed or changed)
+        const loaderEl = document.getElementById('follows-list-loader');
+        if (!loaderEl) return;
+
         if (!res || !res.success) {
-            Toast.show('Failed to load list', 'error');
+            loaderEl.parentElement.innerHTML = `<div style="text-align:center; color:var(--c-red); padding:10px 0;">Failed to load list.</div>`;
             return;
         }
 
         const list = res.data || [];
 
         if (list.length === 0) {
-            Toast.show(`No ${type} found.`, 'info');
+            loaderEl.parentElement.innerHTML = `<div style="text-align:center; color:var(--c-text-muted); padding:10px 0;">No ${type} found.</div>`;
             return;
         }
+
         const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
         let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
         list.forEach(u => {
@@ -2121,15 +2138,7 @@ const ProfileViewController = {
         });
         html += '</div>';
 
-        ConfirmModal.show({
-            title: title,
-            message: html,
-            icon: '👥',
-            showCancel: false,
-            confirmText: 'Close',
-            type: 'info',
-            headerLayout: 'row'
-        });
+        loaderEl.parentElement.innerHTML = html;
     },
 
     initInviteButton: async function() {
