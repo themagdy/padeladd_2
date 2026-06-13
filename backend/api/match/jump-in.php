@@ -7,6 +7,14 @@ $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid = $user['id'];
 
+// Check if player is suspended (admin-imposed)
+$suspendCheck = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+$suspendCheck->execute([$uid]);
+$suspendRow = $suspendCheck->fetch(PDO::FETCH_ASSOC);
+if ($suspendRow && $suspendRow['status'] === 'suspended') {
+    jsonResponse(false, 'Your account has been suspended. You cannot join matches at this time. Please contact support.', ['suspended' => true], 403);
+}
+
 $match_id = (int)($data['match_id'] ?? 0);
 $waitlist_id = (int)($data['waitlist_id'] ?? 0);
 

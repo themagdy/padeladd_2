@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     is_email_verified TINYINT(1) DEFAULT 0,
     is_phone_verified TINYINT(1) DEFAULT 0,
-    status ENUM('active', 'suspended', 'deleted') DEFAULT 'active',
+    status ENUM('active', 'suspended', 'deleted', 'banned') DEFAULT 'active',
     auth_token VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

@@ -148,7 +148,11 @@ window.AdminControllers = {
                 await this.fetchPlayers();
                 const searchInput = document.getElementById('player-search');
                 if (searchInput) {
-                    searchInput.addEventListener('input', (e) => this.filterPlayers(e.target.value));
+                    searchInput.addEventListener('input', () => this.filterPlayers());
+                }
+                const statusFilter = document.getElementById('player-status-filter');
+                if (statusFilter) {
+                    statusFilter.addEventListener('change', () => this.filterPlayers());
                 }
                 const editForm = document.getElementById('edit-player-form');
                 if (editForm) {
@@ -165,7 +169,7 @@ window.AdminControllers = {
                 const data = await res.json();
                 if (data.success) {
                     this.allPlayers = data.data.players;
-                    this.renderPlayers(this.allPlayers);
+                    this.filterPlayers();
                 } else {
                     console.error('Failed to fetch players:', data.message);
                 }
@@ -220,24 +224,37 @@ window.AdminControllers = {
                         <span class="status-tag ${p.account_status || 'active'}">${p.account_status || 'active'}</span>
                     </td>
                     <td style="text-align:right;">
-                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                        <div style="display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
                             <button onclick="AdminControllers.players.openModal(${p.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 16px; font-weight:700;">Edit</button>
-                            <button onclick="AdminControllers.players.toggleStatus(${p.id}, '${p.account_status || 'active'}')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:8px 16px; font-weight:700;">
-                                ${p.account_status === 'suspended' ? 'Unban' : 'Ban'}
+                            <button onclick="AdminControllers.players.toggleSuspension(${p.id}, '${p.account_status || 'active'}')" class="btn-badge" style="background:rgba(234,179,8,0.1); color:#EAB308; border:1px solid rgba(234,179,8,0.2); padding:8px 14px; font-weight:700;">
+                                ${p.account_status === 'suspended' ? '✓ Unsuspend' : '⛔ Suspend'}
+                            </button>
+                            <button onclick="AdminControllers.players.toggleStatus(${p.id}, '${p.account_status || 'active'}')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:8px 14px; font-weight:700;">
+                                ${p.account_status === 'banned' ? '✓ Unban' : '🚫 Ban'}
                             </button>
                         </div>
                     </td>
                 </tr>
             `).join('');
         },
-        filterPlayers(query) {
-            const q = query.toLowerCase();
-            const filtered = this.allPlayers.filter(p => 
-                (p.full_name && p.full_name.toLowerCase().includes(q)) || 
-                p.phone.includes(q) || 
-                p.email.toLowerCase().includes(q) ||
-                p.player_code.toLowerCase().includes(q)
-            );
+        filterPlayers() {
+            const queryInput = document.getElementById('player-search');
+            const statusSelect = document.getElementById('player-status-filter');
+            const q = queryInput ? queryInput.value.toLowerCase() : '';
+            const status = statusSelect ? statusSelect.value : 'all';
+
+            const filtered = this.allPlayers.filter(p => {
+                const matchesSearch = !q || 
+                    (p.full_name && p.full_name.toLowerCase().includes(q)) || 
+                    (p.phone && p.phone.includes(q)) || 
+                    (p.email && p.email.toLowerCase().includes(q)) ||
+                    (p.player_code && p.player_code.toLowerCase().includes(q));
+                
+                const playerStatus = p.account_status || 'active';
+                const matchesStatus = status === 'all' || playerStatus === status;
+
+                return matchesSearch && matchesStatus;
+            });
             this.renderPlayers(filtered);
         },
         openModal(userId) {
@@ -316,20 +333,39 @@ window.AdminControllers = {
             }
         },
         async toggleStatus(userId, currentStatus) {
-            const isActive = currentStatus === 'active';
-            if (!confirm(`Are you sure you want to ${isActive ? 'BAN' : 'UNBAN'} this player?`)) return;
-            const token = localStorage.getItem('admin_token');
+            const isBanned = currentStatus === 'banned';
+            if (!confirm(`Are you sure you want to ${isBanned ? 'UNBAN' : 'BAN'} this player? A ban is a permanent account block.`)) return;
             const payload = {
                 action: 'toggle_status',
                 user_id: userId,
-                status: currentStatus === 'active' ? 'suspended' : 'active'
+                status: isBanned ? 'active' : 'banned'
             };
             const res = await _admFetch(`../backend/api/admin/players/update.php`, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
-            if (data.success) this.fetchPlayers();
+            if (data.success) {
+                AdminApp.toast(isBanned ? 'Player unbanned.' : 'Player banned.', isBanned ? 'success' : 'error');
+                this.fetchPlayers();
+            } else {
+                AdminApp.toast(data.message || 'Action failed', 'error');
+            }
+        },
+        async toggleSuspension(userId, currentStatus) {
+            const isSuspended = currentStatus === 'suspended';
+            if (!confirm(`Are you sure you want to ${isSuspended ? 'LIFT the suspension for' : 'SUSPEND'} this player?\n\n${isSuspended ? 'They will be able to join/create matches again.' : 'They will NOT be able to join or create matches until unsuspended.'}`)) return;
+            const res = await _admFetch(`../backend/api/admin/players/update.php`, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'toggle_suspension', user_id: userId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                AdminApp.toast(isSuspended ? 'Suspension lifted.' : 'Player suspended.', isSuspended ? 'success' : 'warning');
+                this.fetchPlayers();
+            } else {
+                AdminApp.toast(data.message || 'Action failed', 'error');
+            }
         },
         setSort(field) {
             if (this.currentSort === field) {
@@ -1191,7 +1227,7 @@ window.AdminControllers = {
         async viewStats(id) {
             const token = localStorage.getItem('admin_token');
             try {
-                const res = await _admFetch(`../backend/api/admin/messages/get_stats.php&message_id=${id}`);
+                const res = await _admFetch(`../backend/api/admin/messages/get_stats.php?message_id=${id}`);
                 const data = await res.json();
                 if (data.success) {
                     this.renderStats(data.data);

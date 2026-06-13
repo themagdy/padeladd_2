@@ -41,6 +41,14 @@ if ($blockCheck->fetch()) {
     jsonResponse(false, 'You are currently blocked from sending team requests for 1 month due to repeated blocks.', null, 403);
 }
 
+// Check if player is suspended (admin-imposed)
+$suspendCheck = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+$suspendCheck->execute([$uid]);
+$suspendRow = $suspendCheck->fetch(PDO::FETCH_ASSOC);
+if ($suspendRow && $suspendRow['status'] === 'suspended') {
+    jsonResponse(false, 'Your account has been suspended. You cannot join matches at this time. Please contact support.', ['suspended' => true], 403);
+}
+
 // Check match exists and is not completed/cancelled
 $mStmt = $pdo->prepare("SELECT * FROM matches WHERE id = ? AND status IN ('open', 'full')");
 $mStmt->execute([$match_id]);

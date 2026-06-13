@@ -36,7 +36,9 @@ $stmt->execute([$message_id]);
 $views = $stmt->fetchAll();
 
 // 3. Summary stats
-$totalPlayers = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE status = 'active'")->fetchColumn();
+$totalPlayers = !empty($message['target_user_id']) 
+    ? 1 
+    : (int)$pdo->query("SELECT COUNT(*) FROM users WHERE status = 'active'")->fetchColumn();
 $seenCount = count($views);
 
 $summary = [

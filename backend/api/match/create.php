@@ -8,6 +8,14 @@ $pdo  = getDB();
 $user = getAuthenticatedUser($pdo);
 $uid  = $user['id'];
 
+// Check if player is suspended
+$suspendCheck = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+$suspendCheck->execute([$uid]);
+$suspendRow = $suspendCheck->fetch(PDO::FETCH_ASSOC);
+if ($suspendRow && $suspendRow['status'] === 'suspended') {
+    jsonResponse(false, 'Your account has been suspended. You cannot create matches at this time. Please contact support.', ['suspended' => true], 403);
+}
+
 $venue_id             = (int)($data['venue_id'] ?? 0);
 $venue_name           = trim($data['venue_name'] ?? '');
 $court_name           = trim($data['court_name'] ?? '');

@@ -1631,3 +1631,37 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.93 (Build 393) - 2026-06-14
 - Profile: Level badge background changed to solid app background color (var(--c-bg)) for a clean, seamless look against the profile photo ring. Badge position adjusted 10px lower.
 - Version: 2.3.93 (Build 393)
+
+2.3.94 (Build 394) - 2026-06-14
+- Database: Modified `users.status` column to include the `'banned'` option in the MySQL enum definition, resolving SQLSTATE 1265 "Data truncated" database errors when banning players.
+- Authentication: Updated `getAuthenticatedUser` to support both `'active'` and `'suspended'` user statuses, allowing suspended players to browse and view their profiles normally while keeping match creation/joining blocked.
+- Version: 2.3.94 (Build 394)
+
+2.3.95 (Build 395) - 2026-06-14
+- Authentication: Modified login (`login.php`) to allow suspended users to log in, rather than blocking them entirely with a suspension notice.
+- Profile: Updated the user details retrieval query in `profile/get.php` to fetch basic user data for suspended users (status `suspended` or `active`), allowing them to load and see profiles.
+- Password Reset: Updated forgot-password checks (`forgot_password.php`) to support suspended accounts.
+- Version: 2.3.95 (Build 395)
+
+2.3.96 (Build 396) - 2026-06-14
+- Admin UI: Added a status filter dropdown (All, Active, Suspended, Banned) next to the search bar in the admin players view (`players.html`).
+- Admin JS: Updated the search and filter logic in `controllers.js` to dynamically combine text queries and status filters, and ensure the active filter state is preserved on table updates/re-fetches.
+- Version: 2.3.96 (Build 396)
+
+2.3.97 (Build 397) - 2026-06-14
+- Admin UI: Fixed status filter select element text truncation (from "Suspende" to "Suspended") by increasing dropdown width to 175px and adjusting internal padding.
+- Version: 2.3.97 (Build 397)
+
+2.3.98 (Build 398) - 2026-06-14
+- Admin JS: Fixed the "stats" button URL in the in-app-msgs dashboard controller (`controllers.js`) by replacing the invalid `&` parameter separator with a `?` separator, preventing routing failure and "Only POST method is allowed." error response.
+- Version: 2.3.98 (Build 398)
+
+2.3.99 (Build 399) - 2026-06-14
+- Admin JS: Fixed in-app messages read rate statistics calculation for targeted messages in `get_stats.php` to accurately count targeted users, ensuring a 100% read rate displays when the single target player views the message.
+- Version: 2.3.99 (Build 399)
+
+
+
+
+
+

@@ -15,7 +15,7 @@ if (empty($email)) {
 }
 
 // Always return the same message — prevents email enumeration
-$stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND status = 'active'");
+$stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND status IN ('active', 'suspended')");
 $stmt->execute([$email]);
 if ($stmt->rowCount() > 0) {
     $token = generateRandomString(40);

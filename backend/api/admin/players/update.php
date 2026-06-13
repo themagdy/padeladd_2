@@ -74,9 +74,28 @@ try {
     } 
     else if ($action === 'toggle_status') {
         $newStatus = $input['status'] ?? 'active'; // 'active' or 'banned'
+        if (!in_array($newStatus, ['active', 'banned', 'suspended'])) {
+            jsonResponse(false, 'Invalid status.', null, 400);
+        }
         $stmt = $pdo->prepare("UPDATE users SET status = ? WHERE id = ?");
         $stmt->execute([$newStatus, $userId]);
         jsonResponse(true, 'Player account status updated.');
+    }
+    else if ($action === 'toggle_suspension') {
+        // Lightweight suspension: blocks join/create match but account remains active otherwise.
+        // Status values: 'active' <-> 'suspended'
+        $currentStmt = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+        $currentStmt->execute([$userId]);
+        $row = $currentStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            jsonResponse(false, 'Player not found.', null, 404);
+        }
+        if ($row['status'] === 'banned') {
+            jsonResponse(false, 'This player is banned. Unban them before changing suspension status.', null, 409);
+        }
+        $newStatus = ($row['status'] === 'suspended') ? 'active' : 'suspended';
+        $pdo->prepare("UPDATE users SET status = ? WHERE id = ?")->execute([$newStatus, $userId]);
+        jsonResponse(true, 'Player suspension updated.', ['new_status' => $newStatus]);
     } 
     else {
         jsonResponse(false, 'Invalid action.', null, 400);

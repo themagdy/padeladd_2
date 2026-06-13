@@ -66,6 +66,15 @@ try {
         jsonResponse(false, 'You are currently blocked from joining team matches due to repeated denied requests. Solo join is also unavailable during this period.', null, 403);
     }
 
+    // Check if player is suspended (admin-imposed)
+    $suspendCheck = $pdo->prepare("SELECT status FROM users WHERE id = ?");
+    $suspendCheck->execute([$uid]);
+    $suspendRow = $suspendCheck->fetch(PDO::FETCH_ASSOC);
+    if ($suspendRow && $suspendRow['status'] === 'suspended') {
+        $pdo->rollBack();
+        jsonResponse(false, 'Your account has been suspended. You cannot join matches at this time. Please contact support.', ['suspended' => true], 403);
+    }
+
     // ── Eligibility Check ────────────────────────────────────────────────
     // Fetch match eligibility range (locked at creation)
     $eligMin = (int)$match['eligible_min'];

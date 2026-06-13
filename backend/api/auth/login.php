@@ -25,9 +25,9 @@ if (!$user || !password_verify($password, $user['password_hash'])) {
 }
 
 // Now check account status
-if ($user['status'] === 'suspended') {
-    jsonResponse(false, 'Your account is currently suspended. Please contact Padeladd Support for assistance.');
-} else if ($user['status'] !== 'active') {
+if ($user['status'] === 'banned') {
+    jsonResponse(false, 'Your account is currently banned. Please contact Padeladd Support for assistance.');
+} else if ($user['status'] !== 'active' && $user['status'] !== 'suspended') {
     jsonResponse(false, 'Your account is not active. Please contact support.');
 }
 
