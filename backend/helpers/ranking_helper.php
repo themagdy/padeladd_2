@@ -308,7 +308,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
         if ($lowerWon) {
             $strengthAdj = $isWinner ? +$adj : -$adj;  // upset: winner gets bonus, loser penalised extra
         } else {
-            $strengthAdj = $isWinner ? -$adj : +$adj;  // expected: winner gets less, loser loses less
+            $strengthAdj = 0;  // expected outcome: no strength bonus/penalty applied
         }
 
         // Base + adj + heavy

@@ -1609,3 +1609,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Backend: Updated team strength difference scoring to use the more aggressive Option 2 calculation scale (up to ±9 points maximum adjustment).
 - UI/UX: Updated the rules page to display the new ±0-9 pts team strength adjustment range.
 - Version: 2.3.88 (Build 388)
+
+2.3.89 (Build 389) - 2026-06-13
+- Backend: Disabled team strength adjustments for expected outcomes (when the higher-rated team wins). Expected wins now award the full base +6 points to winners and deduct -6 points from losers, leaving the strength bonus active exclusively for upsets.
+- Version: 2.3.89 (Build 389)
