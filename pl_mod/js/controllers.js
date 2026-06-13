@@ -21,14 +21,14 @@ window.AdminControllers = {
                     document.getElementById('stat-scores').innerText = s.scores_submitted.toLocaleString();
                     document.getElementById('stat-reports').innerText = s.pending_reports.toLocaleString();
                     document.getElementById('stat-violations').innerText = s.pending_violations.toLocaleString();
-                    
+
                     if (document.getElementById('stat-venues')) {
                         document.getElementById('stat-venues').innerText = s.venue_requests.toLocaleString();
                     }
 
                     this.renderActivityChart(s.activity_chart);
                 }
-            } catch(e) { console.error('Dashboard stats error:', e); }
+            } catch (e) { console.error('Dashboard stats error:', e); }
         },
         renderActivityChart(chartData) {
             const ctx = document.getElementById('activityChart');
@@ -192,10 +192,10 @@ window.AdminControllers = {
                     <td>
                         <div style="display:flex; align-items:center; gap:12px;">
                             <div class="player-avatar-small">
-                                ${p.profile_image_thumb 
-                                    ? `<img src="../${p.profile_image_thumb}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
-                                    : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(p.nickname || p.first_name || 'S')[0]}</div>`
-                                }
+                                ${p.profile_image_thumb
+                    ? `<img src="../${p.profile_image_thumb}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
+                    : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(p.nickname || p.first_name || 'S')[0]}</div>`
+                }
                             </div>
                             <div class="player-info-cell">
                                 <span class="player-name">${p.full_name || 'No Name'}</span>
@@ -244,12 +244,12 @@ window.AdminControllers = {
             const status = statusSelect ? statusSelect.value : 'all';
 
             const filtered = this.allPlayers.filter(p => {
-                const matchesSearch = !q || 
-                    (p.full_name && p.full_name.toLowerCase().includes(q)) || 
-                    (p.phone && p.phone.includes(q)) || 
+                const matchesSearch = !q ||
+                    (p.full_name && p.full_name.toLowerCase().includes(q)) ||
+                    (p.phone && p.phone.includes(q)) ||
                     (p.email && p.email.toLowerCase().includes(q)) ||
                     (p.player_code && p.player_code.toLowerCase().includes(q));
-                
+
                 const playerStatus = p.account_status || 'active';
                 const matchesStatus = status === 'all' || playerStatus === status;
 
@@ -261,20 +261,20 @@ window.AdminControllers = {
             const p = this.allPlayers.find(x => x.id == userId);
             if (!p) return;
             document.getElementById('edit-player-id').value = p.id;
-            
+
             // Map Name
             document.getElementById('edit-first-name').value = p.first_name || '';
             document.getElementById('edit-last-name').value = p.last_name || '';
             document.getElementById('edit-email').value = p.email || '';
             document.getElementById('edit-nickname').value = p.nickname || '';
             document.getElementById('edit-gender').value = p.gender || 'male';
-            
+
             // Map Stats
             document.getElementById('edit-rank-points').value = p.rank_points || 0;
             document.getElementById('edit-current-buffer').value = p.current_buffer || 0;
             document.getElementById('edit-buffer-matches').value = p.buffer_matches_left || 0;
             document.getElementById('edit-status').value = p.account_status || 'active';
-            
+
             // Map Avatar
             const preview = document.getElementById('edit-avatar-preview');
             const removeBtn = document.getElementById('btn-remove-avatar');
@@ -412,26 +412,26 @@ window.AdminControllers = {
         async investigate() {
             const btn = document.querySelector('#header-actions button');
             const originalBtnText = btn ? btn.innerText : 'INVESTIGATE';
-            
+
             try {
                 const input = document.getElementById('match-code-input');
                 if (!input) return;
-                
+
                 const code = input.value.trim();
                 if (!code) {
                     AdminApp.toast("Please enter a match code.", 'error');
                     return;
                 }
-                
+
                 if (btn) {
                     btn.disabled = true;
                     btn.innerText = 'LOADING...';
                 }
-                
+
                 const token = localStorage.getItem('admin_token');
                 const res = await _admFetch(`../backend/api/admin/matches/investigate.php?code=${code}`);
                 if (!res.ok) throw new Error("Network error");
-                
+
                 const data = await res.json();
                 if (data.success) {
                     AdminControllers.matches.renderInvestigation(data.data);
@@ -471,7 +471,7 @@ window.AdminControllers = {
                 const scores = data.scores || [];
                 const team1 = players.filter(p => p.team_no == 1);
                 const team2 = players.filter(p => p.team_no == 2);
-                
+
                 container.innerHTML = `
                     <div class="investigator-header" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
                         <div class="card" style="margin-bottom:0; padding:20px;">
@@ -529,7 +529,7 @@ window.AdminControllers = {
                                 ${scores.length ? scores.map(s => `
                                     <tr>
                                         <td>${s.submitter_name || '---'} <small style="opacity:0.6">(${s.submitter_code || '---'})</small></td>
-                                        <td><b style="color:#fff">${s.t1_set1}-${s.t2_set1} | ${s.t1_set2}-${s.t2_set2} ${s.t1_set3 ? '| '+s.t1_set3+'-'+s.t2_set3 : ''}</b></td>
+                                        <td><b style="color:#fff">${s.t1_set1}-${s.t2_set1} | ${s.t1_set2}-${s.t2_set2} ${s.t1_set3 ? '| ' + s.t1_set3 + '-' + s.t2_set3 : ''}</b></td>
                                         <td style="text-align:right;"><span class="status-tag ${s.status}">${s.status}</span></td>
                                     </tr>
                                 `).join('') : '<tr><td colspan="3" style="text-align:center; padding:32px; color:var(--c-text-muted)">No scores submitted yet.</td></tr>'}
@@ -537,7 +537,7 @@ window.AdminControllers = {
                         </table>
                     </div>
                 `;
-                
+
                 this.renderLogsTable();
             } catch (err) {
                 console.error("Render Investigation Error:", err);
@@ -591,23 +591,23 @@ window.AdminControllers = {
                     </thead>
                     <tbody>
                         ${logs.length ? logs.map(l => {
-                            let actionText = l.action || '---';
-                            let color = 'var(--c-text-muted)';
-                            let weight = '700';
-                            const isChat = actionText.startsWith('Chat:');
-                            const isHidden = l.is_hidden == 1;
-                            
-                            if (actionText.includes('Joined') || actionText.includes('Accepted')) color = 'var(--c-green)';
-                            if (actionText.includes('Withdrew') || actionText.includes('Cancelled')) color = 'var(--c-red)';
-                            
-                            if (isChat) {
-                                color = 'var(--c-primary)';
-                                actionText = actionText.replace('Chat:', '💬 Chat:');
-                                weight = '400';
-                                if (isHidden) actionText = `<span style="color:var(--c-orange); font-weight:800;">[HIDDEN]</span> ` + actionText;
-                            }
-                            
-                            return `
+                let actionText = l.action || '---';
+                let color = 'var(--c-text-muted)';
+                let weight = '700';
+                const isChat = actionText.startsWith('Chat:');
+                const isHidden = l.is_hidden == 1;
+
+                if (actionText.includes('Joined') || actionText.includes('Accepted')) color = 'var(--c-green)';
+                if (actionText.includes('Withdrew') || actionText.includes('Cancelled')) color = 'var(--c-red)';
+
+                if (isChat) {
+                    color = 'var(--c-primary)';
+                    actionText = actionText.replace('Chat:', '💬 Chat:');
+                    weight = '400';
+                    if (isHidden) actionText = `<span style="color:var(--c-orange); font-weight:800;">[HIDDEN]</span> ` + actionText;
+                }
+
+                return `
                             <tr style="${isHidden ? 'opacity:0.5; background:rgba(241, 90, 41, 0.02);' : ''}">
                                 <td><b style="color:#fff">${l.player || 'System'}</b> ${l.player_code ? `<small style="color:var(--c-text-muted)">(${l.player_code})</small>` : ''}</td>
                                 <td><span style="color:${color}; font-weight:${weight};">${actionText}</span></td>
@@ -620,7 +620,7 @@ window.AdminControllers = {
                                     ` : ''}
                                 </td>
                             </tr>`;
-                        }).join('') : '<tr><td colspan="4" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
+            }).join('') : '<tr><td colspan="4" style="text-align:center; padding:32px; color:var(--c-text-muted)">No activity logged yet.</td></tr>'}
                     </tbody>
                 </table>
             `;
@@ -655,7 +655,7 @@ window.AdminControllers = {
             console.log('--- Reports Init Start ---');
             this.searchQuery = '';
             await this.fetchReports();
-            
+
             const toggle = document.getElementById('show-archived-reports');
             if (toggle) toggle.checked = this.showArchived;
         },
@@ -666,7 +666,7 @@ window.AdminControllers = {
                 const res = await _admFetch(`../backend/api/admin/reports/list.php`);
                 const data = await res.json();
                 console.log('API Response received:', data);
-                
+
                 if (data.success) {
                     this.allReports = data.data;
                     console.log('Data stored in allReports:', this.allReports);
@@ -689,7 +689,7 @@ window.AdminControllers = {
                 const head = document.getElementById('reports-head');
                 const list = document.getElementById('reports-list');
                 const empty = document.getElementById('reports-empty');
-                
+
                 if (!head || !list) {
                     console.error('Table elements NOT found in DOM!');
                     return;
@@ -705,7 +705,7 @@ window.AdminControllers = {
                 else if (this.currentTab === 'match') reports = (this.allReports.match_reports || []);
                 else if (this.currentTab === 'dispute') reports = (this.allReports.score_disputes || []);
                 else if (this.currentTab === 'system') reports = (this.allReports.system_reports || []);
-                
+
                 if (!this.showArchived) {
                     reports = reports.filter(r => !r.is_archived || r.is_archived == 0);
                 } else {
@@ -720,12 +720,12 @@ window.AdminControllers = {
                         const target = (r.target_name || '').toLowerCase();
                         const targetCode = (r.target_code || '').toLowerCase();
                         const match = (r.match_code || '').toLowerCase();
-                        return reporter.includes(this.searchQuery) || 
-                               repCode.includes(this.searchQuery) ||
-                               reason.includes(this.searchQuery) || 
-                               target.includes(this.searchQuery) || 
-                               targetCode.includes(this.searchQuery) ||
-                               match.includes(this.searchQuery);
+                        return reporter.includes(this.searchQuery) ||
+                            repCode.includes(this.searchQuery) ||
+                            reason.includes(this.searchQuery) ||
+                            target.includes(this.searchQuery) ||
+                            targetCode.includes(this.searchQuery) ||
+                            match.includes(this.searchQuery);
                     });
                 }
 
@@ -733,7 +733,7 @@ window.AdminControllers = {
                 reports.sort((a, b) => {
                     let valA = a[this.sortField];
                     let valB = b[this.sortField];
-                    
+
                     if (this.sortField === 'created_at') {
                         valA = new Date(valA).getTime();
                         valB = new Date(valB).getTime();
@@ -741,7 +741,7 @@ window.AdminControllers = {
                         valA = valA.toLowerCase();
                         valB = valB.toLowerCase();
                     }
-                    
+
                     if (valA < valB) return this.sortOrder === 'ASC' ? -1 : 1;
                     if (valA > valB) return this.sortOrder === 'ASC' ? 1 : -1;
                     return 0;
@@ -760,7 +760,7 @@ window.AdminControllers = {
                     if (empty) empty.style.display = 'block';
                     return;
                 }
-                
+
                 if (empty) empty.style.display = 'none';
 
                 if (this.currentTab === 'profile') {
@@ -801,7 +801,7 @@ window.AdminControllers = {
                             <td>
                                 <div style="font-weight:800; color:var(--c-primary); margin-bottom:4px;">${r.match_code || '---'}</div>
                                 <div style="font-size:12px; font-weight:700; color:#fff;">
-                                    ${r.t1_set1}-${r.t2_set1} | ${r.t1_set2}-${r.t2_set2} ${r.t1_set3 ? '| '+r.t1_set3+'-'+r.t2_set3 : ''}
+                                    ${r.t1_set1}-${r.t2_set1} | ${r.t1_set2}-${r.t2_set2} ${r.t1_set3 ? '| ' + r.t1_set3 + '-' + r.t2_set3 : ''}
                                 </div>
                                 <div style="font-size:10px; color:var(--c-text-muted); margin-top:2px;">Submitted by ${r.target_name || 'Unknown'}</div>
                             </td>
@@ -852,12 +852,12 @@ window.AdminControllers = {
             const mUnarchived = (this.allReports.match_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const dUnarchived = (this.allReports.score_disputes || []).filter(r => !r.is_archived || r.is_archived == 0).length;
             const sUnarchived = (this.allReports.system_reports || []).filter(r => !r.is_archived || r.is_archived == 0).length;
-            
+
             const pCountEl = document.getElementById('count-profile-reports');
             const mCountEl = document.getElementById('count-match-reports');
             const dCountEl = document.getElementById('count-dispute-reports');
             const sCountEl = document.getElementById('count-system-reports');
-            
+
             if (pCountEl) pCountEl.innerText = pUnarchived;
             if (mCountEl) mCountEl.innerText = mUnarchived;
             if (dCountEl) dCountEl.innerText = dUnarchived;
@@ -868,10 +868,10 @@ window.AdminControllers = {
             this.renderReports();
         },
         async resolveDispute(disputeId, action) {
-            const confirmMsg = action === 'approve' 
-                ? "Are you sure you want to OVERRIDE the dispute and APPROVE this score?" 
+            const confirmMsg = action === 'approve'
+                ? "Are you sure you want to OVERRIDE the dispute and APPROVE this score?"
                 : "Are you sure you want to REJECT this score? It will be deleted and players will need to submit it again.";
-            
+
             if (!confirm(confirmMsg)) return;
 
             const token = localStorage.getItem('admin_token');
@@ -896,7 +896,7 @@ window.AdminControllers = {
             if (type === 'match') apiType = 'match_report';
             if (type === 'dispute') apiType = 'score_dispute';
             if (type === 'system') apiType = 'system_report';
-            
+
             try {
                 const res = await _admFetch(`../backend/api/admin/system/archive_item.php`, {
                     method: 'POST',
@@ -909,7 +909,7 @@ window.AdminControllers = {
                     if (type === 'match') listKey = 'match_reports';
                     if (type === 'dispute') listKey = 'score_disputes';
                     if (type === 'system') listKey = 'system_reports';
-                    
+
                     const idx = this.allReports[listKey].findIndex(r => r.id == id);
                     if (idx !== -1) this.allReports[listKey][idx].is_archived = newStatus;
                     this.updateCounts();
@@ -929,7 +929,7 @@ window.AdminControllers = {
         async updateSystemStatus(id, currentStatus) {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentStatus === 'pending' ? 'resolved' : 'pending';
-            
+
             if (!confirm(`Mark this report as ${newStatus.toUpperCase()}?`)) return;
 
             try {
@@ -958,7 +958,7 @@ window.AdminControllers = {
             this.renderReports();
         }
     },
-    
+
     // ── In-App Messages Controller ───────────────────────────────────────────
     messages: {
         allMessages: [],
@@ -1022,7 +1022,7 @@ window.AdminControllers = {
 
             let filtered = this.allMessages;
             if (this.searchQuery) {
-                filtered = filtered.filter(m => 
+                filtered = filtered.filter(m =>
                     m.heading.toLowerCase().includes(this.searchQuery) ||
                     m.body.toLowerCase().includes(this.searchQuery) ||
                     (m.target_name || '').toLowerCase().includes(this.searchQuery) ||
@@ -1120,7 +1120,7 @@ window.AdminControllers = {
             this.toggleTargetInput(msg.target_user_id ? 'specific' : 'all');
             this.toggleActionFields(msg.action_type);
         },
-        
+
         previewMessage(id) {
             const msg = this.allMessages.find(m => m.id == id);
             if (!msg) return;
@@ -1129,7 +1129,7 @@ window.AdminControllers = {
             document.getElementById('preview-heading').innerText = msg.heading;
             document.getElementById('preview-body').innerHTML = msg.body;
             document.getElementById('preview-button').innerText = msg.button_text || 'Got it';
-            
+
             document.getElementById('preview-modal').style.display = 'flex';
             AdminApp.updateModalScrollLock();
         },
@@ -1155,10 +1155,10 @@ window.AdminControllers = {
             const formData = new FormData(form);
             const token = localStorage.getItem('admin_token');
             const editId = formData.get('id');
-            
+
             // Sync Rich Text Editor to hidden input
             const bodyContent = document.getElementById('message-body-editor').innerHTML;
-            
+
             if (!token) {
                 AdminApp.toast('Admin session expired. Please login again.', 'error');
                 return;
@@ -1202,7 +1202,7 @@ window.AdminControllers = {
                 } else {
                     AdminApp.toast(resData.message || 'Failed to create message.', 'error');
                 }
-            } catch (err) { 
+            } catch (err) {
                 console.error('Save Message Error:', err);
                 AdminApp.toast('Network error or server failed.', 'error');
             }
@@ -1245,7 +1245,7 @@ window.AdminControllers = {
         renderStats(data) {
             const summary = data.summary;
             const views = data.views;
-            
+
             const summaryEl = document.getElementById('stats-summary');
             const listEl = document.getElementById('stats-list');
 
@@ -1288,7 +1288,7 @@ window.AdminControllers = {
         async init() {
             this.showHidden = false; // Reset
             await this.fetchAllData();
-            
+
             const approveForm = document.getElementById('approve-venue-form');
             if (approveForm) {
                 approveForm.addEventListener('submit', (e) => {
@@ -1332,7 +1332,7 @@ window.AdminControllers = {
             this.currentTab = tab;
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${tab}-venues`).classList.add('active');
-            
+
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById(`tab-content-${tab}`).style.display = 'block';
             this.render();
@@ -1509,7 +1509,7 @@ window.AdminControllers = {
                     body: JSON.stringify({ task: task })
                 });
                 const data = await res.json();
-                
+
                 if (data.success) {
                     if (data.data.output) {
                         const lines = data.data.output.split('\n');
@@ -1525,8 +1525,8 @@ window.AdminControllers = {
                 } else {
                     consoleEl.innerHTML += `<div class="log-entry task-error">❌ Error: ${data.message}</div>`;
                 }
-            } catch (e) { 
-                consoleEl.innerHTML += `<div class="log-entry task-error">❌ Network error. Check server logs.</div>`; 
+            } catch (e) {
+                consoleEl.innerHTML += `<div class="log-entry task-error">❌ Network error. Check server logs.</div>`;
             }
             consoleEl.scrollTop = consoleEl.scrollHeight;
         }
@@ -1539,11 +1539,11 @@ window.AdminControllers = {
         async init() {
             console.log('Violations controller init...');
             await this.fetchViolations();
-            
+
             // Sync toggle state if input exists
             const toggle = document.getElementById('show-archived-violations');
             if (toggle) toggle.checked = this.showArchived;
-            
+
             // Bind search - Look specifically in the header actions first
             const searchInput = document.getElementById('violation-search');
             if (searchInput) {
@@ -1570,18 +1570,18 @@ window.AdminControllers = {
         },
         filterViolations(query) {
             const q = query.toLowerCase();
-            let filtered = this.allViolations.filter(v => 
+            let filtered = this.allViolations.filter(v =>
                 (v.match_code && v.match_code.toLowerCase().includes(q)) ||
                 (v.player_code && v.player_code.toLowerCase().includes(q)) ||
                 (v.player_name && v.player_name.toLowerCase().includes(q)) ||
                 (v.event_type && v.event_type.toLowerCase().includes(q)) ||
                 (v.reason && v.reason.toLowerCase().includes(q))
             );
-            
+
             if (!this.showArchived) {
                 filtered = filtered.filter(v => !v.is_archived || v.is_archived == 0);
             }
-            
+
             this.renderViolations(filtered);
         },
         toggleArchived(checked) {
@@ -1621,7 +1621,7 @@ window.AdminControllers = {
                 const isWithdrawal = v.event_type === 'late_withdrawal';
                 const tagClass = isWithdrawal ? 'withdrawal' : 'cancellation';
                 const tagLabel = isWithdrawal ? 'LATE WITHDRAWAL' : 'LATE CANCEL';
-                
+
                 return `
                     <tr>
                         <td>
@@ -1655,11 +1655,11 @@ window.AdminControllers = {
         async init() {
             console.log('Logs controller init...');
             await this.fetchLogs();
-            
+
             // Bind search and filter
             const search = document.getElementById('log-search');
             const type = document.getElementById('log-type-filter');
-            
+
             if (search) {
                 search.addEventListener('input', (e) => this.fetchLogs(e.target.value, type.value));
             }
@@ -1695,17 +1695,17 @@ window.AdminControllers = {
                 const typeLabel = l.event_type.replace('_', ' ');
                 const isChat = l.event_type === 'chat_message';
                 const isHidden = l.is_hidden == 1;
-                
+
                 return `
                     <tr style="${isHidden ? 'opacity:0.5; background:rgba(241, 90, 41, 0.02);' : ''}">
                         <td style="color:var(--c-text-muted); font-size:12px; font-family:monospace;">${time}</td>
                         <td>
                             <div style="display:flex; align-items:center; gap:12px;">
                                 <div class="player-avatar-small">
-                                    ${l.user_avatar 
-                                        ? `<img src="../${l.user_avatar}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
-                                        : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(l.user_name || 'S')[0]}</div>`
-                                    }
+                                    ${l.user_avatar
+                        ? `<img src="../${l.user_avatar}" alt="" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`
+                        : `<div style="width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:10px;">${(l.user_name || 'S')[0]}</div>`
+                    }
                                 </div>
                                 <div>
                                     <div style="font-weight:700; color:#fff;">${l.user_name || 'System'}</div>
@@ -1824,7 +1824,7 @@ window.AdminControllers = {
             try {
                 const response = await fetch('../backend/api/admin/players/delete_flag.php', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
                     },
@@ -1856,7 +1856,7 @@ window.AdminControllers = {
             try {
                 const response = await fetch('../backend/api/admin/players/add_flag.php', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
                     },
@@ -1911,18 +1911,18 @@ window.AdminControllers = {
 
         renderStats() {
             const all = this.allUsers;
-            const appUsers  = all.filter(u => u.last_native_build);
-            const webUsers  = all.filter(u => u.last_web_active);
+            const appUsers = all.filter(u => u.last_native_build);
+            const webUsers = all.filter(u => u.last_web_active);
             const latestRef = this._getLatestVersion(appUsers);
 
             const onLatest = latestRef ? appUsers.filter(u => u.last_native_build === latestRef).length : 0;
             const outdated = latestRef ? appUsers.filter(u => u.last_native_build !== latestRef).length : 0;
 
             const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-            set('ver-stat-total',    appUsers.length);
-            set('ver-stat-latest',   onLatest);
+            set('ver-stat-total', appUsers.length);
+            set('ver-stat-latest', onLatest);
             set('ver-stat-outdated', outdated);
-            set('ver-stat-never',    webUsers.length);
+            set('ver-stat-never', webUsers.length);
         },
 
         // Compare semver strings like "2.3.82" correctly
@@ -2012,7 +2012,7 @@ window.AdminControllers = {
             });
 
             if (this.searchQuery) {
-                filtered = filtered.filter(u => 
+                filtered = filtered.filter(u =>
                     (u.first_name + ' ' + u.last_name).toLowerCase().includes(this.searchQuery) ||
                     (u.nickname || '').toLowerCase().includes(this.searchQuery) ||
                     (u.player_code || '').toLowerCase().includes(this.searchQuery) ||
@@ -2033,16 +2033,16 @@ window.AdminControllers = {
 
             empty.style.display = 'none';
             list.innerHTML = filtered.map(u => {
-                const nativeBuild  = u.last_native_build;
-                const hasWeb       = !!u.last_web_active;
-                const isLatest     = nativeBuild && nativeBuild === latestRef;
-                const isOutdated   = nativeBuild && !isLatest;
+                const nativeBuild = u.last_native_build;
+                const hasWeb = !!u.last_web_active;
+                const isLatest = nativeBuild && nativeBuild === latestRef;
+                const isOutdated = nativeBuild && !isLatest;
 
                 // Native tag styles
-                const nativeColor  = isLatest ? 'var(--c-green)' : 'var(--c-orange)';
-                const nativeBg     = isLatest ? 'rgba(0,206,0,0.08)' : 'rgba(247,148,29,0.08)';
+                const nativeColor = isLatest ? 'var(--c-green)' : 'var(--c-orange)';
+                const nativeBg = isLatest ? 'rgba(0,206,0,0.08)' : 'rgba(247,148,29,0.08)';
                 const nativeBorder = isLatest ? 'rgba(0,206,0,0.2)' : 'rgba(247,148,29,0.2)';
-                const nativeLabel  = isLatest ? '✓ Latest' : 'Outdated';
+                const nativeLabel = isLatest ? '✓ Latest' : 'Outdated';
 
                 const nativeTag = nativeBuild ? `
                     <div style="display:inline-flex; align-items:center; gap:6px; background:${nativeBg}; border:1px solid ${nativeBorder}; border-radius:8px; padding:5px 10px;">
@@ -2078,10 +2078,10 @@ window.AdminControllers = {
                     </td>
                     <td>
                         <div style="font-size:13px; color:var(--c-text-muted);">
-                            ${u.last_activity 
-                                ? new Date(u.last_activity).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) 
-                                : 'Never'
-                            }
+                            ${u.last_activity
+                        ? new Date(u.last_activity).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                        : 'Never'
+                    }
                         </div>
                     </td>
                 </tr>
@@ -2185,7 +2185,7 @@ window.AdminControllers = {
             const nextAction = promo.is_disabled ? 'Enable' : 'Disable';
             let confirmMsg;
             if (promo.used_at) {
-                confirmMsg = promo.is_disabled 
+                confirmMsg = promo.is_disabled
                     ? `Re-enable code "${promo.code}"? It will be active again (already used — won't accept new registrations).`
                     : `Disable code "${promo.code}"? It was used by ${promo.used_by_name} but will be marked revoked in audit logs.`;
             } else {
@@ -2265,7 +2265,7 @@ window.AdminControllers = {
             });
 
             tbody.innerHTML = sortedPromos.map(p => {
-                const isUsed     = !!p.used_at;
+                const isUsed = !!p.used_at;
                 const isDisabled = !!p.is_disabled;
 
                 // Status badge
@@ -2285,7 +2285,7 @@ window.AdminControllers = {
                 let actionBtn;
                 const toggleLabel = isDisabled ? '✓ Re-enable' : '⊘ Disable';
                 const toggleColor = isDisabled ? 'var(--c-green)' : 'var(--c-text-muted)';
-                const toggleBg    = isDisabled ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)';
+                const toggleBg = isDisabled ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.04)';
                 const toggleBorder = isDisabled ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.1)';
 
                 if (!isUsed) {
@@ -2329,7 +2329,7 @@ window.AdminControllers = {
             this.activeMatchId = null;
             this.lastChatMsgId = 0;
             this.stopChatPolling();
-            
+
             // Fetch matches and venues
             await this.fetchVenues();
             await this.fetchMatches();
@@ -2435,12 +2435,12 @@ window.AdminControllers = {
 
         filterMatches() {
             const q = (document.getElementById('match-search').value || '').toLowerCase();
-            const filtered = this.allMatches.filter(m => 
-                m.match_code.toLowerCase().includes(q) || 
+            const filtered = this.allMatches.filter(m =>
+                m.match_code.toLowerCase().includes(q) ||
                 (m.venue_name && m.venue_name.toLowerCase().includes(q)) ||
                 (m.creator_name && m.creator_name.toLowerCase().includes(q))
             );
-            
+
             const container = document.getElementById('control-match-list');
             if (!container) return;
 
@@ -2469,7 +2469,7 @@ window.AdminControllers = {
             this.activeMatchId = matchId;
             this.lastChatMsgId = 0;
             this.stopChatPolling();
-            
+
             // Re-render selection indicator
             this.renderMatchList();
 
@@ -2500,14 +2500,14 @@ window.AdminControllers = {
             document.getElementById('ctrl-match-id').value = m.id;
             document.getElementById('ctrl-match-code').innerText = m.match_code;
             document.getElementById('ctrl-match-creator').innerText = `${m.creator_first_name} ${m.creator_last_name} (${m.creator_code})`;
-            
+
             const badge = document.getElementById('ctrl-match-badge');
             badge.innerText = (m.status || 'open').toUpperCase();
             badge.className = `status-tag ${m.status || 'open'}`;
 
             document.getElementById('ctrl-type-badge').innerText = m.match_type.toUpperCase();
-            document.getElementById('ctrl-gender-badge').innerText = m.gender_type === 'same_gender' 
-                ? (m.creator_gender === 'female' ? 'WOMEN ONLY' : 'MEN ONLY') 
+            document.getElementById('ctrl-gender-badge').innerText = m.gender_type === 'same_gender'
+                ? (m.creator_gender === 'female' ? 'WOMEN ONLY' : 'MEN ONLY')
                 : 'MIXED';
 
             // Populate form
@@ -2524,7 +2524,7 @@ window.AdminControllers = {
         renderRoster(players) {
             const t1Container = document.getElementById('ctrl-team-1-slots');
             const t2Container = document.getElementById('ctrl-team-2-slots');
-            
+
             const t1 = players.filter(p => p.team_no == 1);
             const t2 = players.filter(p => p.team_no == 2);
 
@@ -2613,13 +2613,13 @@ window.AdminControllers = {
                         messages.forEach(m => {
                             const isSystemAdmin = m.player_code === 'ADMIN';
                             const senderName = isSystemAdmin ? 'Padeladd Admin' : (m.nickname || m.first_name);
-                            
+
                             const msgRow = document.createElement('div');
-                            msgRow.style.cssText = `display:flex; flex-direction:column; gap:4px; max-width:85%; width:fit-content; padding:10px 14px; border-radius:16px; margin-bottom:12px; font-size:13px;` 
-                                + (isSystemAdmin 
-                                    ? `background:rgba(27, 82, 206, 0.15); border:1px solid rgba(27, 82, 206, 0.25); align-self:flex-end; border-bottom-right-radius:4px;` 
+                            msgRow.style.cssText = `display:flex; flex-direction:column; gap:4px; max-width:85%; width:fit-content; padding:10px 14px; border-radius:16px; margin-bottom:12px; font-size:13px;`
+                                + (isSystemAdmin
+                                    ? `background:rgba(27, 82, 206, 0.15); border:1px solid rgba(27, 82, 206, 0.25); align-self:flex-end; border-bottom-right-radius:4px;`
                                     : `background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); align-self:flex-start; border-bottom-left-radius:4px;`);
-                            
+
                             msgRow.innerHTML = `
                                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%;">
                                     <div style="display:flex; align-items:center; gap:6px;">
@@ -2629,7 +2629,7 @@ window.AdminControllers = {
                                     <span onclick="AdminControllers.match_control.removeChatMessage(${m.id})" style="cursor:pointer; opacity:0.4; font-size:10px; padding:2px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4" title="Delete Message">❌</span>
                                 </div>
                                 <div style="color:#fff; line-height:1.4; word-break:break-word; margin-top:2px;">${m.message_text}</div>
-                                <span style="font-size:9px; opacity:0.4; align-self:flex-end; margin-top:2px;">${new Date(m.created_at.replace(' ', 'T')).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                <span style="font-size:9px; opacity:0.4; align-self:flex-end; margin-top:2px;">${new Date(m.created_at.replace(' ', 'T')).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             `;
                             chatBox.appendChild(msgRow);
                             this.lastChatMsgId = Math.max(this.lastChatMsgId, m.id);
