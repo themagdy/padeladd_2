@@ -2337,6 +2337,15 @@ window.AdminControllers = {
             // Setup detail views
             document.getElementById('control-empty-state').style.display = 'flex';
             document.getElementById('control-active-panel').style.display = 'none';
+
+            // Close venue dropdown on clicking outside
+            document.addEventListener('click', (e) => {
+                const search = document.getElementById('ctrl-venue-search');
+                const dropdown = document.getElementById('ctrl-venue-dropdown');
+                if (search && dropdown && !search.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
         },
 
         async fetchVenues() {
@@ -2345,14 +2354,47 @@ window.AdminControllers = {
                 const data = await res.json();
                 if (data.success) {
                     this.allVenues = data.data.venues || [];
-                    const select = document.getElementById('ctrl-venue');
-                    if (select) {
-                        select.innerHTML = this.allVenues.map(v => `
-                            <option value="${v.id}">${v.name}</option>
-                        `).join('');
-                    }
                 }
             } catch (err) { console.error('Fetch venues error:', err); }
+        },
+
+        filterVenues() {
+            const input = document.getElementById('ctrl-venue-search');
+            const dropdown = document.getElementById('ctrl-venue-dropdown');
+            if (!input || !dropdown) return;
+
+            const q = (input.value || '').trim().toLowerCase();
+            if (q.length === 0) {
+                this.renderVenueDropdown(this.allVenues);
+                return;
+            }
+
+            const filtered = this.allVenues.filter(v => v.name.toLowerCase().includes(q));
+            this.renderVenueDropdown(filtered);
+        },
+
+        renderVenueDropdown(venues) {
+            const dropdown = document.getElementById('ctrl-venue-dropdown');
+            if (!dropdown) return;
+
+            if (venues.length === 0) {
+                dropdown.innerHTML = '<li style="color:var(--c-text-muted); cursor:default; font-style:italic;">No venues found</li>';
+            } else {
+                dropdown.innerHTML = venues.map(v => `
+                    <li onclick="AdminControllers.match_control.selectVenue(${v.id}, '${v.name.replace(/'/g, "\\'")}')">${v.name}</li>
+                `).join('');
+            }
+            dropdown.style.display = 'block';
+        },
+
+        selectVenue(id, name) {
+            const searchInput = document.getElementById('ctrl-venue-search');
+            const idInput = document.getElementById('ctrl-venue');
+            const dropdown = document.getElementById('ctrl-venue-dropdown');
+
+            if (searchInput) searchInput.value = name;
+            if (idInput) idInput.value = id;
+            if (dropdown) dropdown.style.display = 'none';
         },
 
         async fetchMatches() {
@@ -2472,6 +2514,8 @@ window.AdminControllers = {
             document.getElementById('ctrl-court').value = m.court_name || '';
             document.getElementById('ctrl-datetime').value = m.match_datetime.replace(' ', 'T').substring(0, 16);
             document.getElementById('ctrl-venue').value = m.venue_id || '';
+            const venueObj = this.allVenues.find(v => v.id === m.venue_id);
+            document.getElementById('ctrl-venue-search').value = venueObj ? venueObj.name : (m.venue_name || '');
 
             // Populate roster
             this.renderRoster(details.players || []);
