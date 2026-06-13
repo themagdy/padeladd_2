@@ -1,31 +1,55 @@
 <div class="page active" style="background:var(--c-bg);">
 
 
-  <div id="prof-view-content" style="width:100%; max-width:1200px; margin:0 auto; padding:15px 20px 100px; opacity:0; transition:opacity 0.2s;">
-    
+  <div id="prof-view-content"
+    style="width:100%; max-width:1200px; margin:0 auto; padding:15px 20px 100px; opacity:0; transition:opacity 0.2s;">
+
     <!-- HEADER -->
     <div class="prof-header" style="padding:20px 0 48px; border-bottom: 1px solid var(--c-border);">
-      
-      <div class="prof-header-top" style="display:flex; flex-wrap:wrap; align-items:start; justify-content:space-between; gap:32px; margin-bottom:40px;">
-        
-        <div class="v-main-header" style="display:grid; grid-template-areas: 'avatar names' 'avatar details'; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; align-items:start; column-gap:48px; row-gap:12px; min-width:300px;">
-          <div style="grid-area:avatar; position:relative; width:150px; height:150px; cursor:pointer;" id="prof-avatar-wrap">
-            <div id="prof-avatar" class="v-avatar" style="width:100%; height:100%; border-radius:43%; overflow:hidden; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; box-shadow:0 15px 45px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">?</div>
+
+      <div class="prof-header-top"
+        style="display:flex; flex-wrap:wrap; align-items:start; justify-content:space-between; gap:32px; margin-bottom:40px;">
+
+        <div class="v-main-header"
+          style="display:grid; grid-template-areas: 'avatar names' 'avatar details'; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; align-items:start; column-gap:48px; row-gap:12px; min-width:300px;">
+          <div style="grid-area:avatar; position:relative; width:150px; height:150px; cursor:pointer;"
+            id="prof-avatar-wrap">
+            <div id="prof-avatar" class="v-avatar"
+              style="width:100%; height:100%; border-radius:43%; overflow:hidden; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; box-shadow:0 15px 45px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+              ?</div>
             <div id="prof-ring" class="story-ring-overlay" style="display:none;"></div>
+            <!-- Level Badge -->
+            <div id="prof-level-badge"
+              style="position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg, #D35400 0%, #A04000 50%, #7E2F00 100%); color:#fff; font-weight:900; font-family:'Outfit', 'Montserrat', sans-serif; font-size:17.6px; width:36px; height:36px; border-radius:50%; display:none; align-items:center; justify-content:center; border:0.75px solid rgba(255, 255, 255, 0.25); box-shadow:0 0 0 3px var(--c-bg, #0b0e11), 0 6px 16px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.4); text-shadow:0 1px 2px rgba(0,0,0,0.4); z-index:10; letter-spacing:-0.5px; padding:0; line-height:1;">
+              —</div>
           </div>
-          
+
           <div class="v-names" style="grid-area:names; display:flex; flex-direction:column; gap:0; padding-top:6px;">
             <div style="display:flex; align-items:center; gap:16px; margin-bottom:12px; min-width:0;">
-                <h1 id="prof-nickname" class="v-nickname text-truncate" style="font-weight:700; letter-spacing:-1px; margin:0; color:#fff; line-height:1.1; max-width:100%;">Loading...</h1>
+              <h1 id="prof-nickname" class="v-nickname text-truncate"
+                style="font-weight:700; letter-spacing:-1px; margin:0; color:#fff; line-height:1.1; max-width:100%;">
+                Loading...</h1>
             </div>
-            <div id="prof-fullname" style="font-size:16px; font-weight:600; color:var(--c-text-muted); opacity:0.8; margin-bottom:10px; line-height:1.2;"></div>
-            
-            <div class="prof-code-followers-wrap" style="display:flex; align-items:center; gap:20px; margin-bottom:12px;">
-                <div id="prof-code" class="profile-code" style="display:none; align-items:center; width:fit-content; gap:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:6px 12px 6px 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border-right: 3px solid var(--c-orange); transition: transform 0.2s, box-shadow 0.2s; cursor: default; font-size:17px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.2)';"></div>
-                <div id="prof-followers-counts" style="display:none; align-items:center; gap:16px; font-size:16px; color:#fff;">
-                    <div id="prof-followers-btn" style="display:flex; align-items:baseline; gap:6px; cursor:default;"><span id="prof-followers-num" style="font-weight:700;">0</span> <span style="font-weight:400; color:rgba(255,255,255,0.8);">followers</span></div>
-                    <div id="prof-following-btn" style="display:flex; align-items:baseline; gap:6px; cursor:default;"><span id="prof-following-num" style="font-weight:700;">0</span> <span style="font-weight:400; color:rgba(255,255,255,0.8);">following</span></div>
-                </div>
+            <div id="prof-fullname"
+              style="font-size:16px; font-weight:600; color:var(--c-text-muted); opacity:0.8; margin-bottom:10px; line-height:1.2;">
+            </div>
+
+            <div class="prof-code-followers-wrap"
+              style="display:flex; align-items:center; gap:20px; margin-bottom:12px;">
+              <div id="prof-code" class="profile-code"
+                style="display:none; align-items:center; width:fit-content; gap:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:6px 12px 6px 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); backdrop-filter: blur(10px); border-right: 3px solid var(--c-orange); transition: transform 0.2s, box-shadow 0.2s; cursor: default; font-size:17px;"
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 40px rgba(0,0,0,0.3)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.2)';">
+              </div>
+              <div id="prof-followers-counts"
+                style="display:none; align-items:center; gap:16px; font-size:16px; color:#fff;">
+                <div id="prof-followers-btn" style="display:flex; align-items:baseline; gap:6px; cursor:default;"><span
+                    id="prof-followers-num" style="font-weight:700;">0</span> <span
+                    style="font-weight:400; color:rgba(255,255,255,0.8);">followers</span></div>
+                <div id="prof-following-btn" style="display:flex; align-items:baseline; gap:6px; cursor:default;"><span
+                    id="prof-following-num" style="font-weight:700;">0</span> <span
+                    style="font-weight:400; color:rgba(255,255,255,0.8);">following</span></div>
+              </div>
             </div>
           </div>
 
@@ -34,31 +58,37 @@
               <div id="prof-meta" style="display:flex; flex-wrap:wrap; gap:16px; align-items:center;"></div>
             </div>
             <!-- Bio -->
-            <p id="prof-bio" style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px;"></p>
+            <p id="prof-bio"
+              style="font-size:14px; color:var(--c-text-muted); line-height:1.6; display:none; max-width:600px;"></p>
           </div>
         </div>
-        
-        
+
+
         <div class="prof-actions-row">
-            <div id="prof-follow-container" class="prof-follow-wrapper" style="display:none;">
-                <button id="prof-follow-btn" class="btn" style="height:32px; padding:0 20px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:linear-gradient(135deg, #0055FF, #0033BB); border:1px solid #0044CC; color:#fff; transition:all 0.3s;">
-                    <span class="follow-text">Follow</span>
-                    <span class="follow-icon" style="display:none;"></span>
-                </button>
-            </div>
-            
-            <div id="prof-report-container" style="display:none;">
-              <button id="prof-report-btn" style="height:32px; padding:0 18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,0,0,0.1)'; this.style.color='#f87171'; this.style.borderColor='rgba(255,0,0,0.2)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--c-text-muted)'; this.style.borderColor='rgba(255,255,255,0.1)';">
-                <span>🚩</span> Report
-              </button>
-            </div>
+          <div id="prof-follow-container" class="prof-follow-wrapper" style="display:none;">
+            <button id="prof-follow-btn" class="btn"
+              style="height:32px; padding:0 20px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:linear-gradient(135deg, #0055FF, #0033BB); border:1px solid #0044CC; color:#fff; transition:all 0.3s;">
+              <span class="follow-text">Follow</span>
+              <span class="follow-icon" style="display:none;"></span>
+            </button>
+          </div>
+
+          <div id="prof-report-container" style="display:none;">
+            <button id="prof-report-btn"
+              style="height:32px; padding:0 18px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); border-radius:10px; font-size:11px; cursor:pointer; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;"
+              onmouseover="this.style.background='rgba(255,0,0,0.1)'; this.style.color='#f87171'; this.style.borderColor='rgba(255,0,0,0.2)';"
+              onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='var(--c-text-muted)'; this.style.borderColor='rgba(255,255,255,0.1)';">
+              <span>🚩</span> Report
+            </button>
+          </div>
         </div>
 
 
       </div>
 
       <!-- Stats Grid (Dashboard style) -->
-      <div class="prof-stats-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:stretch;">
+      <div class="prof-stats-grid"
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; align-items:stretch;">
         <div class="stat-box">
           <div>
             <div id="pv-ranking" class="val">—</div>
@@ -69,7 +99,7 @@
             <img src="assets/icons/trophy_3d.png" alt="Trophy">
           </div>
         </div>
-        
+
         <div class="stat-box">
           <div>
             <div id="pv-points" class="val">0</div>
@@ -102,30 +132,38 @@
             <img src="assets/icons/bullseye_3d.png" alt="Win Rate">
           </div>
         </div>
-        
+
         <!-- Action Cards (Only shown to owner) -->
         <div id="prof-action-cards" style="display:none; gap:12px; flex-direction:column;">
-            <div onclick="Router.navigate('/profile/edit')" style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--c-primary); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-               <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:#fff;">Edit Profile</span>
-            </div>
-            <div onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:rgba(255,59,48,0.1); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-               <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:var(--c-red);">Sign out</span>
-            </div>
+          <div onclick="Router.navigate('/profile/edit')"
+            style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:var(--c-primary); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:#fff;">Edit Profile</span>
+          </div>
+          <div onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })"
+            style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:rgba(255,59,48,0.1); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:var(--c-red);">Sign out</span>
+          </div>
         </div>
       </div>
 
       <!-- Viral Invite Button Container -->
       <div id="prof-invite-row" style="display:none; width:100%; margin-top:20px;">
-        <button id="btn-prof-invite" class="btn" style="background:rgba(255,255,255,0.02); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.06); border-right:3px solid var(--c-orange); display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:13px; letter-spacing:0.5px; text-transform:uppercase; padding:16px 24px; border-radius:var(--r-lg); width:100%; cursor:pointer; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 8px 32px rgba(0,0,0,0.15); color:#fff;" onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.transform='translateY(0)';">
+        <button id="btn-prof-invite" class="btn"
+          style="background:rgba(255,255,255,0.02); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.06); border-right:3px solid var(--c-orange); display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:13px; letter-spacing:0.5px; text-transform:uppercase; padding:16px 24px; border-radius:var(--r-lg); width:100%; cursor:pointer; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 8px 32px rgba(0,0,0,0.15); color:#fff;"
+          onmouseover="this.style.background='rgba(255,255,255,0.04)'; this.style.transform='translateY(-1px)';"
+          onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.transform='translateY(0)';">
           <span>Share Exclusive Invites</span>
-          <span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(3 Left) <span style="font-size:16px;">🎟️</span></span>
+          <span style="color:var(--c-orange); display:flex; align-items:center; gap:6px;">(3 Left) <span
+              style="font-size:16px;">🎟️</span></span>
         </button>
       </div>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="prof-content-grid" style="display:grid; grid-template-columns:1fr 340px; gap:60px; padding:60px 0 0 0;">
-      
+
       <!-- LEFT: MATCH HISTORY -->
       <div>
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:32px;">
@@ -133,16 +171,19 @@
           <span class="section-title">Match History</span>
         </div>
         <div id="pv-matches-list">
-          <div style="margin-bottom:12px; padding:16px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
+          <div
+            style="margin-bottom:12px; padding:16px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; padding:0 4px;">
               <div class="skeleton" style="width:80px; height:10px; border-radius:4px; opacity:0.6;"></div>
               <div style="width:4px; height:4px; border-radius:50%; background:var(--c-border); opacity:0.3;"></div>
               <div class="skeleton" style="width:60px; height:10px; border-radius:4px; opacity:0.4;"></div>
             </div>
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
+              <div
+                style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
                 <div style="display:flex; align-items:center; gap:8px;">
-                  <div style="width:10px; height:10px; border-radius:2px; background:var(--c-border); opacity:0.2;"></div>
+                  <div style="width:10px; height:10px; border-radius:2px; background:var(--c-border); opacity:0.2;">
+                  </div>
                   <div style="display:flex; gap:6px;">
                     <div class="skeleton" style="width:90px; height:12px; border-radius:4px;"></div>
                     <div class="skeleton" style="width:36px; height:12px; border-radius:4px; opacity:0.5;"></div>
@@ -153,7 +194,8 @@
                   <div class="skeleton" style="width:14px; height:16px; border-radius:4px; opacity:0.4;"></div>
                 </div>
               </div>
-              <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
+              <div
+                style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02);">
                 <div style="display:flex; align-items:center; gap:8px;">
                   <div style="width:10px; height:10px; border-radius:2px; background:transparent;"></div>
                   <div style="display:flex; gap:6px;">
@@ -174,171 +216,210 @@
       <!-- RIGHT: ACHIEVEMENTS -->
       <div style="padding-left:40px;">
         <div class="section-title" style="margin-bottom:32px;">Achievements</div>
-        <div style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:60px 30px; text-align:center; color:var(--c-text-dim);">
+        <div
+          style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:60px 30px; text-align:center; color:var(--c-text-dim);">
           <div style="font-size:48px; margin-bottom:20px;">🏆</div>
-          <div style="font-size:14px; font-weight:700; color:var(--c-text-muted); margin-bottom:8px;">Achievements Coming Soon</div>
-          <div id="prof-achievements-empty-msg" style="font-size:12px;">Complete matches to earn trophies and special badges!</div>
+          <div style="font-size:14px; font-weight:700; color:var(--c-text-muted); margin-bottom:8px;">Achievements
+            Coming Soon</div>
+          <div id="prof-achievements-empty-msg" style="font-size:12px;">Complete matches to earn trophies and special
+            badges!</div>
         </div>
       </div>
 
     </div>
   </div>
-  </div> <!-- end prof-view-content -->
+</div> <!-- end prof-view-content -->
 
 </div>
 
 <style>
-@media (max-width: 992px) {
-  .prof-content-grid {
-    grid-template-columns: 1fr !important;
-    gap: 40px !important;
+  @media (max-width: 992px) {
+    .prof-content-grid {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
+
+    .prof-content-grid>div:last-child {
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
   }
-  .prof-content-grid > div:last-child {
-    border-left: none !important;
-    padding-left: 0 !important;
+
+  @media (max-width: 600px) {
+    .prof-stats-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    #prof-action-cards {
+      grid-column: 1 / -1 !important;
+      flex-direction: row !important;
+    }
+
+    #prof-action-cards .btn {
+      flex: 1 !important;
+    }
+
+    .v-avatar {
+      width: 100px !important;
+      height: 100px !important;
+      font-size: 36px !important;
+      border-radius: 38% !important;
+    }
+
+    #prof-avatar-wrap {
+      width: 100px !important;
+      height: 100px !important;
+    }
+
+    #prof-avatar-wrap .story-ring-overlay {
+      border-radius: 45% !important;
+      top: -5px !important;
+      left: -5px !important;
+      right: -5px !important;
+      bottom: -5px !important;
+      padding: 3px !important;
+    }
+
+    .v-nickname {
+      font-size: 26px !important;
+    }
+
+    .v-main-header {
+      grid-template-areas: "avatar names" "details details" !important;
+      column-gap: 24px !important;
+      align-items: start !important;
+    }
+
+    .v-details {
+      margin-top: 12px !important;
+    }
+
+    .prof-header {
+      padding: 24px 0 32px !important;
+    }
+
+    .prof-header-top {
+      margin-bottom: 24px !important;
+    }
+
+    .prof-content-grid {
+      padding-top: 32px !important;
+    }
+
+    #prof-view-content {
+      padding-bottom: 30px !important;
+    }
+
+    #prof-followers-counts {
+      margin-top: 3px !important;
+      margin-bottom: -12px !important;
+      margin-left: 5px !important;
+      font-size: 14px !important;
+    }
   }
-}
-@media (max-width: 600px) {
-  .prof-stats-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-  #prof-action-cards {
-    grid-column: 1 / -1 !important;
-    flex-direction: row !important;
-  }
-  #prof-action-cards .btn {
-    flex: 1 !important;
-  }
+
+
   .v-avatar {
-    width: 100px !important;
-    height: 100px !important;
-    font-size: 36px !important;
-    border-radius: 38% !important;
+    width: 140px;
+    height: 140px;
+    font-size: 56px;
   }
-  #prof-avatar-wrap {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  #prof-avatar-wrap .story-ring-overlay {
-    border-radius: 45% !important;
-    top: -5px !important;
-    left: -5px !important;
-    right: -5px !important;
-    bottom: -5px !important;
-    padding: 3px !important;
-  }
+
   .v-nickname {
-    font-size: 26px !important;
+    font-size: 36px;
   }
-  .v-main-header {
-    grid-template-areas: "avatar names" "details details" !important;
-    column-gap: 24px !important;
-    align-items: start !important;
-  }
-  .v-details {
-    margin-top: 12px !important;
-  }
-  .prof-header {
-    padding: 24px 0 32px !important;
-  }
-  .prof-header-top {
-    margin-bottom: 24px !important;
-  }
-  .prof-content-grid {
-    padding-top: 32px !important;
-  }
-  #prof-view-content {
-    padding-bottom: 30px !important;
-  }
-  #prof-followers-counts {
-    margin-top: 3px !important;
-    margin-bottom: -12px !important;
-    margin-left: 5px !important;
-    font-size: 14px !important;
-  }
-}
 
-
-.v-avatar {
-  width: 140px;
-  height: 140px;
-  font-size: 56px;
-}
-.v-nickname {
-  font-size: 36px;
-}
-
-/* Avatar Rich Animation */
-.v-avatar {
+  /* Avatar Rich Animation */
+  .v-avatar {
     position: relative;
     overflow: hidden;
     animation: avatarAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+  }
 
-@keyframes avatarAppear {
-    0% { transform: scale(0.9) translateY(10px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-.avatar-scan-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, 
-    transparent 40%, 
-    rgba(255, 139, 0, 0.8) 50%, 
-    rgba(255, 255, 255, 1) 50.5%, 
-    rgba(255, 139, 0, 0.8) 51%, 
-    transparent 60%
-  );
-  transform: translateY(-100%);
-  animation: scanReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
-  pointer-events: none;
-  z-index: 5;
-}
-
-/* Secondary Data Grid Effect */
-.avatar-scan-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(255, 149, 0, 0.03) 2px,
-    rgba(255, 149, 0, 0.03) 4px
-  );
-  opacity: 0.5;
-}
-
-@keyframes scanReveal {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-/* Mid-scan Glow Flash */
-.v-avatar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-  opacity: 0;
-  z-index: 4;
-  pointer-events: none;
-  animation: glowFlash 1.2s ease-out 0.8s forwards;
-}
-
-@keyframes glowFlash {
-  0% { opacity: 0; transform: scale(0.5); }
-  30% { opacity: 1; transform: scale(1.2); }
-  100% { opacity: 0; transform: scale(1.5); }
-}
-
-@media (max-width: 480px) {
-    .prof-code-followers-wrap {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 12px !important;
+  @keyframes avatarAppear {
+    0% {
+      transform: scale(0.9) translateY(10px);
+      opacity: 0;
     }
-}
+
+    100% {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .avatar-scan-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+        transparent 40%,
+        rgba(255, 139, 0, 0.8) 50%,
+        rgba(255, 255, 255, 1) 50.5%,
+        rgba(255, 139, 0, 0.8) 51%,
+        transparent 60%);
+    transform: translateY(-100%);
+    animation: scanReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Secondary Data Grid Effect */
+  .avatar-scan-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 149, 0, 0.03) 2px,
+        rgba(255, 149, 0, 0.03) 4px);
+    opacity: 0.5;
+  }
+
+  @keyframes scanReveal {
+    0% {
+      transform: translateY(-100%);
+    }
+
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  /* Mid-scan Glow Flash */
+  .v-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    opacity: 0;
+    z-index: 4;
+    pointer-events: none;
+    animation: glowFlash 1.2s ease-out 0.8s forwards;
+  }
+
+  @keyframes glowFlash {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    30% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .prof-code-followers-wrap {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 12px !important;
+    }
+  }
 </style>

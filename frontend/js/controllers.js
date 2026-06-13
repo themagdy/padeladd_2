@@ -1568,7 +1568,7 @@ const DashboardController = {
         }
     },
 
-    initInviteButton: async function() {
+    initInviteButton: async function () {
         const row = document.getElementById('dash-invite-row');
         const btn = document.getElementById('btn-dash-invite');
         if (!row || !btn) return;
@@ -1596,7 +1596,7 @@ const DashboardController = {
                     });
                 };
             }
-        } catch(e) {
+        } catch (e) {
             console.error('Error loading invites on dashboard:', e);
         }
     }
@@ -1886,6 +1886,16 @@ const ProfileViewController = {
                 bioEl.style.display = 'block';
             }
 
+            // Level badge update
+            const levelBadge = document.getElementById('prof-level-badge');
+            if (levelBadge && stats) {
+                const pts = stats.points ?? 0;
+                const buf = stats.current_buffer ?? 0;
+                const calculatedLevel = ((pts + buf) / 100).toFixed(1);
+                levelBadge.textContent = calculatedLevel;
+                levelBadge.style.display = 'flex';
+            }
+
             // Stats cards
             StatsUI.update(stats, 'pv');
 
@@ -2141,7 +2151,7 @@ const ProfileViewController = {
         loaderEl.parentElement.innerHTML = html;
     },
 
-    initInviteButton: async function() {
+    initInviteButton: async function () {
         const row = document.getElementById('prof-invite-row');
         const btn = document.getElementById('btn-prof-invite');
         if (!row || !btn) return;
@@ -2169,7 +2179,7 @@ const ProfileViewController = {
                     });
                 };
             }
-        } catch(e) {
+        } catch (e) {
             console.error('Error loading invites on profile:', e);
         }
     }
@@ -3304,8 +3314,8 @@ const MatchesController = {
             payload = { limit: isSilent ? 10 : MatchesController._limit, offset: isSilent ? 0 : MatchesController._offset };
         } else if (MatchesController._currentTab === 'mine_completed') {
             endpoint = '/matches/user';
-            payload = { 
-                limit: isSilent ? 10 : MatchesController._limit, 
+            payload = {
+                limit: isSilent ? 10 : MatchesController._limit,
                 offset: isSilent ? 0 : MatchesController._offset,
                 status: 'completed'
             };
@@ -6111,7 +6121,7 @@ const NotificationsController = {
             // To strictly prevent flickering during smart scrolling (infinite scroll/silent loads),
             // we reconcile the existing DOM items with the incoming items by tracking data-notif-id.
             // If the element already exists, we preserve it (avoiding avatar reload).
-            
+
             // Build key-value map of new items
             const newItemsMap = new Map();
             grouped.forEach(n => newItemsMap.set(String(n.id), n));
@@ -6137,7 +6147,7 @@ const NotificationsController = {
                 const isReadVisually = n.is_read && !this._visuallyUnreadIds.has(n.id);
                 const emoji = typeIcon[n.type] || '🔔';
                 const thumb = n.sender_avatar_thumb || n.sender_avatar;
-                
+
                 let initials = '';
                 if (n.sender_first_name || n.sender_last_name || n.sender_nickname) {
                     if (n.sender_first_name || n.sender_last_name) {
@@ -6175,7 +6185,7 @@ const NotificationsController = {
 
             const processGroup = (label, items) => {
                 if (items.length === 0) return;
-                
+
                 // Add group header label
                 const header = document.createElement('div');
                 header.className = 'notif-header-label';
@@ -6197,7 +6207,7 @@ const NotificationsController = {
                         } else {
                             existingEl.classList.add('notif-unread');
                         }
-                        
+
                         // Move it to the bottom to maintain ordering without destroying DOM node
                         listEl.appendChild(existingEl);
                     } else {
@@ -6946,7 +6956,7 @@ const RankingController = {
 
             if (row) {
                 // ROW EXISTS: ONLY update contents that change (preserves loaded avatar in infoWrap)
-                
+
                 // 1. Update Rank
                 const rankWrap = row.querySelector('.rank-wrap-el');
                 if (rankWrap) rankWrap.innerHTML = safeHTML(renderRankWrapHtml(r.rank));
