@@ -2731,8 +2731,10 @@ const MatchesController = {
     _limit: 20,
     _hasMore: true,
     _isLoading: false,
+    _countdownInterval: null,
 
     // ── Create ──────────────────────────────────────────
+
     initCreate: function () {
         UI.syncNav();
 
@@ -3877,9 +3879,16 @@ const MatchesController = {
 
         const dt = new Date(match.match_datetime);
         const now = new Date();
-        const isToday = dt.toDateString() === now.toDateString();
+        const sameCalendarDay = dt.toDateString() === now.toDateString();
+        // Also treat as "Today" if the match is after midnight (next calendar day) but before 6 AM
+        const nextDayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+        const nextDay6AM      = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 6, 0, 0);
+        const isAfterMidnight = dt >= nextDayMidnight && dt < nextDay6AM;
+        const isToday = sameCalendarDay || isAfterMidnight;
         const dateStr = isToday ? 'Today' : dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
+
+
 
         // Hide withdrawal warning for past matches
         const withdrawalWarning = document.querySelector('.mv-withdrawal-warning');
@@ -4039,6 +4048,52 @@ const MatchesController = {
                 el.onclick = null;
             }
         });
+
+        // --- Countdown Timer ---
+        // Clear any existing countdown interval (from previous match view)
+        if (MatchesController._countdownInterval) {
+            clearInterval(MatchesController._countdownInterval);
+            MatchesController._countdownInterval = null;
+        }
+
+        const countdownWrap  = document.getElementById('mv-countdown-wrap');
+        const countdownValue = document.getElementById('mv-countdown-value');
+
+        if (countdownWrap && countdownValue) {
+            const confirmedSlots = slots.filter(s => s.status === 'confirmed').length;
+            const allFilled      = confirmedSlots >= 4;
+            const matchDt        = match.match_datetime
+                ? new Date(match.match_datetime.replace(' ', 'T'))
+                : null;
+            const nowMs          = Date.now();
+            const diffMs         = matchDt ? (matchDt.getTime() - nowMs) : -1;
+            const tenHoursMs     = 10 * 60 * 60 * 1000;
+
+            if (allFilled && matchDt && diffMs > 0 && diffMs <= tenHoursMs) {
+                countdownWrap.style.display = 'block';
+
+                const tick = () => {
+                    const remaining = matchDt.getTime() - Date.now();
+                    if (remaining <= 0) {
+                        countdownValue.textContent = '0:00:00';
+                        clearInterval(MatchesController._countdownInterval);
+                        MatchesController._countdownInterval = null;
+                        return;
+                    }
+                    const totalSec = Math.floor(remaining / 1000);
+                    const h  = Math.floor(totalSec / 3600);
+                    const m  = Math.floor((totalSec % 3600) / 60);
+                    const s  = totalSec % 60;
+                    countdownValue.textContent =
+                        `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                };
+
+                tick(); // render immediately
+                MatchesController._countdownInterval = setInterval(tick, 1000);
+            } else {
+                countdownWrap.style.display = 'none';
+            }
+        }
 
         // Action area
         const actionArea = document.getElementById('mv-action-area');

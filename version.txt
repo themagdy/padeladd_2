@@ -1622,3 +1622,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.3.91 (Build 391) - 2026-06-13
 - UI/UX: Replaced the team divider vs_3d.png with vs.svg in match details screen and reduced its size to 35.64px.
 - Version: 2.3.91 (Build 391)
+
+2.3.92 (Build 392) - 2026-06-13
+- Match Details: Added live countdown timer below the 4 player slots — shows "Match starts in H:MM:SS" when all 4 slots are confirmed and the match is within 10 hours. Compact on mobile, pulsing golden banner design.
+- Match Details: "Today" date label now correctly applies to after-midnight matches (00:00–05:59 AM on the next calendar day), viewed from the same evening.
+- Version: 2.3.92 (Build 392)

@@ -96,6 +96,15 @@
           </div>
         </div>
 
+        <!-- Countdown Timer (shown when match is within 10h and all 4 slots filled) -->
+        <div id="mv-countdown-wrap" style="display:none; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
+          <div id="mv-countdown-banner" class="mv-countdown-banner">
+            <span class="mv-countdown-icon">⏳</span>
+            <span class="mv-countdown-label">Match starts in</span>
+            <span id="mv-countdown-value" class="mv-countdown-value">0:00:00</span>
+          </div>
+        </div>
+
         <!-- Eligibility Range -->
         <div id="mv-eligibility-range"
           style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05); display:none; align-items:center; justify-content:center; gap:8px;">
@@ -324,6 +333,68 @@
   .chat-sheet-item:active {
     transform: scale(0.98);
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Countdown Banner */
+  .mv-countdown-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(247, 148, 29, 0.12), rgba(255, 200, 50, 0.07));
+    border: 1px solid rgba(247, 148, 29, 0.22);
+    border-radius: 14px;
+    padding: 14px 20px;
+    animation: countdownPulse 2s ease-in-out infinite;
+  }
+
+  .mv-countdown-icon {
+    font-size: 18px;
+  }
+
+  .mv-countdown-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--c-orange);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .mv-countdown-value {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    font-family: monospace;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px rgba(247, 148, 29, 0.5);
+  }
+
+  @keyframes countdownPulse {
+    0%, 100% { border-color: rgba(247, 148, 29, 0.22); }
+    50%       { border-color: rgba(247, 148, 29, 0.50); }
+  }
+
+  @keyframes tickBounce {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.15); }
+  }
+
+  @media (max-width: 599px) {
+    .mv-countdown-banner {
+      gap: 6px;
+      padding: 10px 14px;
+    }
+    .mv-countdown-icon {
+      font-size: 14px;
+    }
+    .mv-countdown-label {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    .mv-countdown-value {
+      font-size: 16px;
+      letter-spacing: 1px;
+    }
   }
 
   /* Withdrawal Warning Styles */
