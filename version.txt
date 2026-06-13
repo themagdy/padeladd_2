@@ -1627,3 +1627,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Details: Added live countdown timer below the 4 player slots — shows "Match starts in H:MM:SS" when all 4 slots are confirmed and the match is within 10 hours. Compact on mobile, pulsing golden banner design.
 - Match Details: "Today" date label now correctly applies to after-midnight matches (00:00–05:59 AM on the next calendar day), viewed from the same evening.
 - Version: 2.3.92 (Build 392)
+
+2.3.93 (Build 393) - 2026-06-14
+- Profile: Level badge background changed to solid app background color (var(--c-bg)) for a clean, seamless look against the profile photo ring. Badge position adjusted 10px lower.
+- Version: 2.3.93 (Build 393)
