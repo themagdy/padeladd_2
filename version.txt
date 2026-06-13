@@ -1604,3 +1604,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Profile: Fixed remove photo logic to nullify both large and thumbnail columns in database and clear memory cache on success.
 - Backend: Unified avatar removal/replacement logic under a new shared renameProfileImages function in auth_helper.php to archive un-used avatar files on disk (prefixed with "removed_"). Prefixed new avatar uploads with the player's unique code.
 - Version: 2.3.87 (Build 387)
+
+2.3.88 (Build 388) - 2026-06-13
+- Backend: Updated team strength difference scoring to use the more aggressive Option 2 calculation scale (up to ±9 points maximum adjustment).
+- UI/UX: Updated the rules page to display the new ±0-9 pts team strength adjustment range.
+- Version: 2.3.88 (Build 388)

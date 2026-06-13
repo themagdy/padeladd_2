@@ -37,8 +37,10 @@ function getStrengthAdj(int $diff): int
     if ($diff <= 50)
         return 0;
     if ($diff <= 100)
-        return 2;
-    return 4; // Max adjustment for 101-150 gap
+        return 3;
+    if ($diff <= 150)
+        return 6;
+    return 9; // Max adjustment for >150 gap
 }
 
 
