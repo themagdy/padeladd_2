@@ -6,22 +6,24 @@
     <!-- Loading skeleton -->
     <div id="mv-skeleton">
       <div style="margin-bottom:24px;">
-        <div class="skeleton" style="width:100px; height:24px; border-radius:12px; margin-bottom:12px; opacity:0.2;"></div>
+        <div class="skeleton" style="width:100px; height:24px; border-radius:12px; margin-bottom:12px; opacity:0.2;">
+        </div>
         <div class="skeleton" style="width:70%; height:32px; border-radius:8px; margin-bottom:8px;"></div>
         <div class="skeleton" style="width:40%; height:16px; border-radius:4px; opacity:0.5;"></div>
       </div>
-      
-      <div style="background:rgba(255,255,255,0.02); border-radius:var(--r-lg); padding:24px; border:1px solid rgba(255,255,255,0.05); margin-bottom:20px;">
+
+      <div
+        style="background:rgba(255,255,255,0.02); border-radius:var(--r-lg); padding:24px; border:1px solid rgba(255,255,255,0.05); margin-bottom:20px;">
         <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:center; margin-bottom:32px;">
-            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
-                <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
-            </div>
-            <div></div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
-                <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
-            </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
+            <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
+          </div>
+          <div></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <div class="skeleton" style="width:60px; height:12px; border-radius:4px; opacity:0.4;"></div>
+            <div class="skeleton" style="width:40px; height:10px; border-radius:4px; opacity:0.2;"></div>
+          </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; align-items:center;">
@@ -53,8 +55,7 @@
       </div>
 
       <!-- Slots Card -->
-      <div
-        style="background:var(--g-card); border-radius:var(--r-lg); padding:20px; margin-bottom:20px;">
+      <div style="background:var(--g-card); border-radius:var(--r-lg); padding:20px; margin-bottom:20px;">
 
         <!-- Team Headers -->
         <div style="display:grid; grid-template-columns:1fr 50px 1fr; gap:0; margin-bottom:16px;">
@@ -81,9 +82,10 @@
 
           <!-- VS divider -->
           <div class="match-vs-wrapper">
-            <div class="match-vs-badge" style="width: 44px; height: 44px;" data-no-sound onclick="FX.ignite(this)">
+            <div class="match-vs-badge" data-no-sound onclick="FX.ignite(this)">
               <div class="vs-fire-fx"></div>
-              <img src="assets/icons/vs_3d.png" style="width:44px; height:44px; object-fit:contain; border-radius: 50%;" alt="VS">
+              <img src="assets/vs.svg" style="width:35.64px; height:35.64px; object-fit:contain; border-radius: 50%;"
+                alt="VS">
             </div>
           </div>
 
@@ -93,11 +95,14 @@
             <div id="mv-team2-slot2" class="mv-slot" style="margin-top:12px;"></div>
           </div>
         </div>
-        
+
         <!-- Eligibility Range -->
-        <div id="mv-eligibility-range" style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05); display:none; align-items:center; justify-content:center; gap:8px;">
-          <span style="font-size:10px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Eligibility:</span>
-          <span id="mv-range-val" style="font-size:12px; font-weight:800; color:var(--c-text-muted); background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:6px;"></span>
+        <div id="mv-eligibility-range"
+          style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05); display:none; align-items:center; justify-content:center; gap:8px;">
+          <span
+            style="font-size:10px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Eligibility:</span>
+          <span id="mv-range-val"
+            style="font-size:12px; font-weight:800; color:var(--c-text-muted); background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:6px;"></span>
         </div>
       </div>
 
@@ -130,7 +135,8 @@
         <div class="form-group">
           <label class="form-label">Partner Player XCode</label>
           <div style="position:relative;">
-            <input type="text" id="mv-partner-code-input" class="form-input" placeholder="e.g. A123" maxlength="7" style="border: 1px solid rgba(255,255,255,0.1);" />
+            <input type="text" id="mv-partner-code-input" class="form-input" placeholder="e.g. A123" maxlength="7"
+              style="border: 1px solid rgba(255,255,255,0.1);" />
 
           </div>
           <span class="form-help" id="mv-partner-help">Your partner will receive a request to approve.</span>
@@ -146,8 +152,7 @@
 
       <!-- Waiting List -->
       <div id="mv-waiting-section" style="display:none;">
-        <div
-          style="background:var(--g-card); border-radius:var(--r-lg); padding:20px;">
+        <div style="background:var(--g-card); border-radius:var(--r-lg); padding:20px;">
           <div
             style="font-size:11px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted); margin-bottom:14px;">
             Waiting List</div>
@@ -223,8 +228,7 @@
     </div>
 
     <!-- Input Area -->
-    <div
-      style="width:100%; background:var(--c-bg-card); padding-bottom:max(0px, env(safe-area-inset-bottom));">
+    <div style="width:100%; background:var(--c-bg-card); padding-bottom:max(0px, env(safe-area-inset-bottom));">
       <div style="max-width:900px; margin:0 auto; padding:16px 20px;">
         <div style="display:flex; gap:10px; align-items:flex-end;">
           <textarea id="chat-input" placeholder="Type a message…" maxlength="500" rows="1"

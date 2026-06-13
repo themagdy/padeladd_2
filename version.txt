@@ -1618,3 +1618,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Profile: Implemented a premium, compact, dark-orange gradient level badge positioned over the bottom-center of the player profile photo.
 - Profile: Automatically calculates the player's level as (points + current_buffer) / 100 to 1 decimal place.
 - Version: 2.3.90 (Build 390)
+
+2.3.91 (Build 391) - 2026-06-13
+- UI/UX: Replaced the team divider vs_3d.png with vs.svg in match details screen and reduced its size to 35.64px.
+- Version: 2.3.91 (Build 391)
