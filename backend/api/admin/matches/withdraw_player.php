@@ -5,7 +5,7 @@
  */
 require_once __DIR__ . '/../../../helpers/admin_auth.php';
 require_once __DIR__ . '/../../../helpers/response.php';
-require_once __DIR__ . '/../../../helpers/notif_helper.php';
+require_once __DIR__ . '/../../../helpers/notification_helper.php';
 
 $pdo = getDB();
 

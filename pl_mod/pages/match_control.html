@@ -1,0 +1,173 @@
+<div class="match-control-page" style="display:flex; gap:32px; height:calc(100vh - var(--header-h) - 80px); overflow:hidden;">
+    
+    <!-- Left Column: Search & Match List -->
+    <div style="width:340px; display:flex; flex-direction:column; gap:20px; background:#111827; border:1px solid rgba(255,255,255,0.05); border-radius:24px; padding:20px; flex-shrink:0; height:100%;">
+        <div style="position:relative; width:100%;">
+            <input type="text" id="match-search" oninput="AdminControllers.match_control.filterMatches()" class="form-input" placeholder="Search match code, player..." style="padding-left:40px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:14px; width:100%;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+        </div>
+        
+        <div id="control-match-list" class="custom-scroll" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding-right:4px;">
+            <!-- Matches populated dynamically -->
+            <div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">Loading matches...</div>
+        </div>
+    </div>
+
+    <!-- Right Column: Match Editor, Roster & Chat -->
+    <div id="match-detail-panel" style="flex:1; display:flex; flex-direction:column; background:#111827; border:1px solid rgba(255,255,255,0.05); border-radius:24px; overflow:hidden; height:100%;">
+        <!-- Empty State -->
+        <div id="control-empty-state" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; color:var(--c-text-muted); padding:40px; text-align:center;">
+            <span style="font-size:48px;">🎾</span>
+            <div style="font-size:16px; font-weight:700; color:#fff;">Select a Match</div>
+            <div style="max-width:300px; font-size:13px; line-height:1.5;">Choose an upcoming match from the list on the left to manage details, rosters, and chat.</div>
+        </div>
+
+        <!-- Selected Match View (hidden by default) -->
+        <div id="control-active-panel" style="display:none; flex-direction:column; height:100%; overflow:hidden;">
+            <!-- Panel Header -->
+            <div style="padding:24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01);">
+                <div>
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:4px;">
+                        <h3 id="ctrl-match-code" style="margin:0; font-size:22px; font-weight:800; color:#fff;">M-XXXX</h3>
+                        <span id="ctrl-match-badge" class="status-tag active" style="font-size:10px; padding:3px 8px;">OPEN</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--c-text-muted);">Created by: <span id="ctrl-match-creator" style="color:#fff; font-weight:600;">---</span></div>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <span id="ctrl-type-badge" class="status-tag" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); font-size:10px;">COMPETITION</span>
+                    <span id="ctrl-gender-badge" class="status-tag" style="background:rgba(234,179,8,0.1); color:#EAB308; font-size:10px;">MEN ONLY</span>
+                </div>
+            </div>
+
+            <!-- Body split into editor/roster (left) and live chat (right) -->
+            <div style="display:flex; flex:1; overflow:hidden;">
+                <!-- Left Section: Details Edit & Players Roster -->
+                <div class="custom-scroll" style="flex:1.2; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:24px; border-right:1px solid rgba(255,255,255,0.05);">
+                    
+                    <!-- Edit Form -->
+                    <div>
+                        <div style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;">Update Match Settings</div>
+                        <form id="ctrl-edit-form" onsubmit="AdminControllers.match_control.handleUpdate(event)" style="display:flex; flex-direction:column; gap:16px;">
+                            <input type="hidden" id="ctrl-match-id">
+                            
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                                <div class="form-group" style="margin:0;">
+                                    <label>Match Date & Time</label>
+                                    <input type="datetime-local" id="ctrl-datetime" class="form-input" style="height:44px; padding:10px 14px;" required>
+                                </div>
+                                <div class="form-group" style="margin:0;">
+                                    <label>Court Name / No.</label>
+                                    <input type="text" id="ctrl-court" class="form-input" placeholder="e.g. Court 3" style="height:44px; padding:10px 14px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin:0;">
+                                <label>Venue / Club</label>
+                                <select id="ctrl-venue" class="form-input" style="height:44px; padding:10px 14px; cursor:pointer;" required>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn-primary" style="height:44px; width:100%; border-radius:12px !important; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; background:linear-gradient(135deg, var(--c-primary) 0%, #0d3b9e 100%); margin-top:4px;">
+                                Save Match Details
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Players Roster -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:24px;">
+                        <div style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;">Confirmed Players</div>
+                        
+                        <div style="display:flex; flex-direction:column; gap:14px;">
+                            <!-- Team 1 -->
+                            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:16px; padding:16px;">
+                                <div style="font-size:11px; font-weight:800; color:var(--c-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span>Team 1</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:12px;" id="ctrl-team-1-slots">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Team 2 -->
+                            <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); border-radius:16px; padding:16px;">
+                                <div style="font-size:11px; font-weight:800; color:#EAB308; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                                    <span>Team 2</span>
+                                </div>
+                                <div style="display:flex; flex-direction:column; gap:12px;" id="ctrl-team-2-slots">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: Match Room Live Chat -->
+                <div style="flex:1; display:flex; flex-direction:column; background:rgba(0,0,0,0.15); height:100%;">
+                    <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.01);">
+                        <span style="font-size:12px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:1px;">💬 Match Room Chat</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span style="width:8px; height:8px; border-radius:50%; background:var(--c-green); display:inline-block; animation:pulse 2s infinite;"></span>
+                            <span style="font-size:10px; color:var(--c-text-muted); font-weight:700;">LIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable messages timeline -->
+                    <div id="ctrl-chat-box" class="custom-scroll" style="flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px;">
+                        <!-- Messages loaded dynamically -->
+                        <div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">No messages in this match yet.</div>
+                    </div>
+
+                    <!-- Message sender form -->
+                    <form id="ctrl-chat-form" onsubmit="AdminControllers.match_control.sendChatMessage(event)" style="padding:16px; border-top:1px solid rgba(255,255,255,0.05); display:flex; gap:10px; background:rgba(17,24,39,0.8); align-items:center;">
+                        <input type="text" id="ctrl-chat-input" placeholder="Type a message as Admin..." autocomplete="off" class="form-input" style="flex:1; height:44px; background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.08); font-size:13px; border-radius:24px;" required>
+                        <button type="submit" class="btn-primary" style="height:44px; width:44px; padding:0; border-radius:50% !important; background:var(--c-primary); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                            <span style="font-size:16px; transform:rotate(45deg); display:inline-block; margin-right:2px; margin-bottom:2px;">✈️</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom animations & scroll bars for control page */
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.roster-player-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+}
+.roster-player-row:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.chat-bubble-admin {
+    background: rgba(27, 82, 206, 0.15) !important;
+    border: 1px solid rgba(27, 82, 206, 0.25) !important;
+}
+</style>

@@ -3882,7 +3882,7 @@ const MatchesController = {
         const sameCalendarDay = dt.toDateString() === now.toDateString();
         // Also treat as "Today" if the match is after midnight (next calendar day) but before 6 AM
         const nextDayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
-        const nextDay6AM      = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 6, 0, 0);
+        const nextDay6AM = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 6, 0, 0);
         const isAfterMidnight = dt >= nextDayMidnight && dt < nextDay6AM;
         const isToday = sameCalendarDay || isAfterMidnight;
         const dateStr = isToday ? 'Today' : dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -3939,7 +3939,7 @@ const MatchesController = {
 
             titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
-                    <span class="match-code-badge" style="border:none;">${matchCode}</span>
+                    <span class="status-badge-pill" style="background:rgba(255,255,255,0.05); color:var(--c-text-muted); border-color:rgba(255,255,255,0.15); justify-content:center; min-width:0; font-family:inherit;">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}" style="font-weight:700;">${statusLabel}</span>
                     ${typeBadges}
                 </div>
@@ -4056,18 +4056,18 @@ const MatchesController = {
             MatchesController._countdownInterval = null;
         }
 
-        const countdownWrap  = document.getElementById('mv-countdown-wrap');
+        const countdownWrap = document.getElementById('mv-countdown-wrap');
         const countdownValue = document.getElementById('mv-countdown-value');
 
         if (countdownWrap && countdownValue) {
             const confirmedSlots = slots.filter(s => s.status === 'confirmed').length;
-            const allFilled      = confirmedSlots >= 4;
-            const matchDt        = match.match_datetime
+            const allFilled = confirmedSlots >= 4;
+            const matchDt = match.match_datetime
                 ? new Date(match.match_datetime.replace(' ', 'T'))
                 : null;
-            const nowMs          = Date.now();
-            const diffMs         = matchDt ? (matchDt.getTime() - nowMs) : -1;
-            const tenHoursMs     = 10 * 60 * 60 * 1000;
+            const nowMs = Date.now();
+            const diffMs = matchDt ? (matchDt.getTime() - nowMs) : -1;
+            const tenHoursMs = 10 * 60 * 60 * 1000;
 
             if (allFilled && matchDt && diffMs > 0 && diffMs <= tenHoursMs) {
                 countdownWrap.style.display = 'block';
@@ -4081,9 +4081,9 @@ const MatchesController = {
                         return;
                     }
                     const totalSec = Math.floor(remaining / 1000);
-                    const h  = Math.floor(totalSec / 3600);
-                    const m  = Math.floor((totalSec % 3600) / 60);
-                    const s  = totalSec % 60;
+                    const h = Math.floor(totalSec / 3600);
+                    const m = Math.floor((totalSec % 3600) / 60);
+                    const s = totalSec % 60;
                     countdownValue.textContent =
                         `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
                 };
@@ -5675,13 +5675,20 @@ const ChatController = {
 
                         if (!isMe) {
                             const nameHeader = document.createElement('div');
-                            nameHeader.style.cssText = 'font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px;';
-                            nameHeader.innerText = name + ' ';
-                            if (code) {
-                                const codeSpan = document.createElement('span');
-                                codeSpan.style.cssText = 'font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9;';
-                                codeSpan.innerText = code;
-                                nameHeader.appendChild(codeSpan);
+                            nameHeader.style.cssText = 'font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:2px; display:flex; align-items:center;';
+                            if (code === 'ADMIN') {
+                                const adminBadge = document.createElement('span');
+                                adminBadge.style.cssText = 'background:var(--c-primary); color:#fff; font-size:8px; font-weight:900; padding:2px 6px; border-radius:100px; text-transform:uppercase; letter-spacing:0.5px;';
+                                adminBadge.innerText = 'Padeladd Admin';
+                                nameHeader.appendChild(adminBadge);
+                            } else {
+                                nameHeader.innerText = name + ' ';
+                                if (code) {
+                                    const codeSpan = document.createElement('span');
+                                    codeSpan.style.cssText = 'font-family:monospace; font-size:10px; color:var(--c-orange); opacity:0.9; margin-left:4px;';
+                                    codeSpan.innerText = code;
+                                    nameHeader.appendChild(codeSpan);
+                                }
                             }
                             col.appendChild(nameHeader);
                         }

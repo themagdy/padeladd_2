@@ -33,6 +33,10 @@ if ($playerCode) {
     $viewingId = (int)$user['id'];
 }
 
+if ($viewingId === ADMIN_SYSTEM_USER_ID && $user['id'] !== ADMIN_SYSTEM_USER_ID) {
+    jsonResponse(false, 'Player not found.');
+}
+
 // Get basic user info
 $stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile FROM users WHERE id = ? AND status IN ('active', 'suspended')");
 $stmtUser->execute([$viewingId]);

@@ -2314,5 +2314,339 @@ window.AdminControllers = {
                 `;
             }).join('');
         }
+    },
+
+    // ── Match Control Controller ──────────────────────────────────────────────
+    match_control: {
+        allMatches: [],
+        activeMatchId: null,
+        chatPollTimer: null,
+        lastChatMsgId: 0,
+        allVenues: [],
+
+        async init() {
+            console.log('Initializing Match Control Controller...');
+            this.activeMatchId = null;
+            this.lastChatMsgId = 0;
+            this.stopChatPolling();
+            
+            // Fetch matches and venues
+            await this.fetchVenues();
+            await this.fetchMatches();
+
+            // Setup detail views
+            document.getElementById('control-empty-state').style.display = 'flex';
+            document.getElementById('control-active-panel').style.display = 'none';
+        },
+
+        async fetchVenues() {
+            try {
+                const res = await _admFetch(`../backend/api/admin/venues/list.php`);
+                const data = await res.json();
+                if (data.success) {
+                    this.allVenues = data.data.venues || [];
+                    const select = document.getElementById('ctrl-venue');
+                    if (select) {
+                        select.innerHTML = this.allVenues.map(v => `
+                            <option value="${v.id}">${v.name}</option>
+                        `).join('');
+                    }
+                }
+            } catch (err) { console.error('Fetch venues error:', err); }
+        },
+
+        async fetchMatches() {
+            try {
+                const res = await _admFetch(`../backend/api/admin/matches/list.php`);
+                const data = await res.json();
+                if (data.success) {
+                    this.allMatches = data.data.matches || [];
+                    this.renderMatchList();
+                }
+            } catch (err) { console.error('Fetch matches error:', err); }
+        },
+
+        renderMatchList() {
+            const container = document.getElementById('control-match-list');
+            if (!container) return;
+
+            if (this.allMatches.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">No matches found.</div>';
+                return;
+            }
+
+            container.innerHTML = this.allMatches.map(m => {
+                const isSelected = this.activeMatchId == m.id;
+                const formattedTime = new Date(m.match_datetime.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div onclick="AdminControllers.match_control.selectMatch(${m.id})" style="padding:14px; background:${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.05)'}; border-radius:16px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}'">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-weight:800; color:#fff; font-size:14px;">${m.match_code}</span>
+                            <span class="status-tag ${m.status || 'open'}" style="font-size:9px; padding:2px 6px;">${(m.status || 'open').toUpperCase()}</span>
+                        </div>
+                        <div style="font-size:12px; color:var(--c-text-muted); margin-bottom:2px;">📍 ${m.venue_name || 'No Venue'}</div>
+                        <div style="font-size:12px; color:var(--c-text-muted);">🕒 ${formattedTime}</div>
+                    </div>
+                `;
+            }).join('');
+        },
+
+        filterMatches() {
+            const q = (document.getElementById('match-search').value || '').toLowerCase();
+            const filtered = this.allMatches.filter(m => 
+                m.match_code.toLowerCase().includes(q) || 
+                (m.venue_name && m.venue_name.toLowerCase().includes(q)) ||
+                (m.creator_name && m.creator_name.toLowerCase().includes(q))
+            );
+            
+            const container = document.getElementById('control-match-list');
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">No matching matches.</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(m => {
+                const isSelected = this.activeMatchId == m.id;
+                const formattedTime = new Date(m.match_datetime.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div onclick="AdminControllers.match_control.selectMatch(${m.id})" style="padding:14px; background:${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.05)'}; border-radius:16px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}'">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-weight:800; color:#fff; font-size:14px;">${m.match_code}</span>
+                            <span class="status-tag ${m.status || 'open'}" style="font-size:9px; padding:2px 6px;">${(m.status || 'open').toUpperCase()}</span>
+                        </div>
+                        <div style="font-size:12px; color:var(--c-text-muted); margin-bottom:2px;">📍 ${m.venue_name || 'No Venue'}</div>
+                        <div style="font-size:12px; color:var(--c-text-muted);">🕒 ${formattedTime}</div>
+                    </div>
+                `;
+            }).join('');
+        },
+
+        async selectMatch(matchId) {
+            this.activeMatchId = matchId;
+            this.lastChatMsgId = 0;
+            this.stopChatPolling();
+            
+            // Re-render selection indicator
+            this.renderMatchList();
+
+            document.getElementById('control-empty-state').style.display = 'none';
+            document.getElementById('control-active-panel').style.display = 'flex';
+
+            try {
+                // Fetch Match Details
+                const res = await _admFetch(`../backend/api/admin/matches/details.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ match_id: matchId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.renderMatchDetails(data.data);
+                } else {
+                    AdminApp.toast('Failed to load match details.', 'error');
+                }
+            } catch (err) { console.error('Select match error:', err); }
+
+            // Load & poll chat
+            await this.loadChat();
+            this.startChatPolling();
+        },
+
+        renderMatchDetails(details) {
+            const m = details.match;
+            document.getElementById('ctrl-match-id').value = m.id;
+            document.getElementById('ctrl-match-code').innerText = m.match_code;
+            document.getElementById('ctrl-match-creator').innerText = `${m.creator_first_name} ${m.creator_last_name} (${m.creator_code})`;
+            
+            const badge = document.getElementById('ctrl-match-badge');
+            badge.innerText = (m.status || 'open').toUpperCase();
+            badge.className = `status-tag ${m.status || 'open'}`;
+
+            document.getElementById('ctrl-type-badge').innerText = m.match_type.toUpperCase();
+            document.getElementById('ctrl-gender-badge').innerText = m.gender_type === 'same_gender' 
+                ? (m.creator_gender === 'female' ? 'WOMEN ONLY' : 'MEN ONLY') 
+                : 'MIXED';
+
+            // Populate form
+            document.getElementById('ctrl-court').value = m.court_name || '';
+            document.getElementById('ctrl-datetime').value = m.match_datetime.replace(' ', 'T').substring(0, 16);
+            document.getElementById('ctrl-venue').value = m.venue_id || '';
+
+            // Populate roster
+            this.renderRoster(details.players || []);
+        },
+
+        renderRoster(players) {
+            const t1Container = document.getElementById('ctrl-team-1-slots');
+            const t2Container = document.getElementById('ctrl-team-2-slots');
+            
+            const t1 = players.filter(p => p.team_no == 1);
+            const t2 = players.filter(p => p.team_no == 2);
+
+            const formatPlayerRow = (p) => {
+                return `
+                    <div class="roster-player-row">
+                        <div>
+                            <span style="font-weight:700; color:#fff;">${p.nickname || p.first_name}</span>
+                            <span style="font-family:monospace; font-size:11px; color:var(--c-orange); margin-left:6px;">${p.player_code}</span>
+                            <div style="font-size:11px; color:var(--c-text-muted); margin-top:2px;">Points: ${p.rank_points} | Buffer: ${p.current_buffer}</div>
+                        </div>
+                        <button onclick="AdminControllers.match_control.withdrawPlayer(${p.user_id})" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:4px 10px; font-size:10px;">Withdraw</button>
+                    </div>
+                `;
+            };
+
+            t1Container.innerHTML = t1.length > 0 ? t1.map(formatPlayerRow).join('') : '<div style="color:var(--c-text-muted); font-size:12px; font-style:italic;">No players confirmed.</div>';
+            t2Container.innerHTML = t2.length > 0 ? t2.map(formatPlayerRow).join('') : '<div style="color:var(--c-text-muted); font-size:12px; font-style:italic;">No players confirmed.</div>';
+        },
+
+        async handleUpdate(e) {
+            e.preventDefault();
+            const payload = {
+                match_id: document.getElementById('ctrl-match-id').value,
+                match_datetime: document.getElementById('ctrl-datetime').value,
+                court_name: document.getElementById('ctrl-court').value,
+                venue_id: document.getElementById('ctrl-venue').value
+            };
+
+            try {
+                const res = await _admFetch(`../backend/api/admin/matches/update.php`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Match details saved.');
+                    await this.fetchMatches();
+                    this.selectMatch(payload.match_id);
+                } else {
+                    AdminApp.toast(data.message || 'Update failed', 'error');
+                }
+            } catch (err) { console.error('Update match details error:', err); }
+        },
+
+        async withdrawPlayer(userId) {
+            if (!confirm('Are you sure you want to withdraw this player from the match?')) return;
+            try {
+                const res = await _admFetch(`../backend/api/admin/matches/withdraw_player.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ match_id: this.activeMatchId, user_id: userId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Player withdrawn successfully.');
+                    this.selectMatch(this.activeMatchId);
+                } else {
+                    AdminApp.toast(data.message || 'Withdrawal failed.', 'error');
+                }
+            } catch (err) { console.error('Withdraw player error:', err); }
+        },
+
+        async loadChat() {
+            if (!this.activeMatchId) return;
+            try {
+                const res = await _admFetch(`../backend/api/admin/matches/chat_list.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ match_id: this.activeMatchId, since_id: this.lastChatMsgId })
+                });
+                const data = await res.json();
+                if (data.success && data.data) {
+                    const messages = data.data.messages || [];
+                    const chatBox = document.getElementById('ctrl-chat-box');
+                    if (!chatBox) return;
+
+                    if (this.lastChatMsgId === 0) {
+                        chatBox.innerHTML = '';
+                    }
+
+                    if (messages.length > 0) {
+                        const noMsgPlaceholder = chatBox.querySelector('div');
+                        if (noMsgPlaceholder && noMsgPlaceholder.innerText.includes('No messages')) {
+                            chatBox.innerHTML = '';
+                        }
+
+                        messages.forEach(m => {
+                            const isSystemAdmin = m.player_code === 'ADMIN';
+                            const senderName = isSystemAdmin ? 'Padeladd Admin' : (m.nickname || m.first_name);
+                            
+                            const msgRow = document.createElement('div');
+                            msgRow.style.cssText = `display:flex; flex-direction:column; gap:4px; max-width:85%; width:fit-content; padding:10px 14px; border-radius:16px; margin-bottom:12px; font-size:13px;` 
+                                + (isSystemAdmin 
+                                    ? `background:rgba(27, 82, 206, 0.15); border:1px solid rgba(27, 82, 206, 0.25); align-self:flex-end; border-bottom-right-radius:4px;` 
+                                    : `background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); align-self:flex-start; border-bottom-left-radius:4px;`);
+                            
+                            msgRow.innerHTML = `
+                                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%;">
+                                    <div style="display:flex; align-items:center; gap:6px;">
+                                        <span style="font-weight:800; font-size:11px; color:${isSystemAdmin ? 'var(--c-primary)' : 'var(--c-text-muted)'};">${senderName}</span>
+                                        ${isSystemAdmin ? `<span style="background:var(--c-primary); color:#fff; font-size:8px; font-weight:900; padding:1px 5px; border-radius:100px; text-transform:uppercase;">Admin</span>` : `<span style="font-family:monospace; font-size:9px; opacity:0.6; color:var(--c-orange);">${m.player_code}</span>`}
+                                    </div>
+                                    <span onclick="AdminControllers.match_control.removeChatMessage(${m.id})" style="cursor:pointer; opacity:0.4; font-size:10px; padding:2px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.4" title="Delete Message">❌</span>
+                                </div>
+                                <div style="color:#fff; line-height:1.4; word-break:break-word; margin-top:2px;">${m.message_text}</div>
+                                <span style="font-size:9px; opacity:0.4; align-self:flex-end; margin-top:2px;">${new Date(m.created_at.replace(' ', 'T')).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            `;
+                            chatBox.appendChild(msgRow);
+                            this.lastChatMsgId = Math.max(this.lastChatMsgId, m.id);
+                        });
+
+                        // Scroll to bottom
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            } catch (err) { console.error('Load chat error:', err); }
+        },
+
+        async removeChatMessage(chatId) {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+            try {
+                const res = await _admFetch(`../backend/api/admin/system/moderate_chat.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ chat_id: chatId, hide: 1 })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Message deleted successfully.');
+                    this.lastChatMsgId = 0; // Reset chat loading to refresh the chat log completely
+                    await this.loadChat();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to delete message.', 'error');
+                }
+            } catch (err) { console.error('Remove chat message error:', err); }
+        },
+
+        async sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('ctrl-chat-input');
+            const text = (input.value || '').trim();
+            if (!text || !this.activeMatchId) return;
+
+            input.value = '';
+
+            try {
+                const res = await _admFetch(`../backend/api/admin/matches/send_admin_msg.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ match_id: this.activeMatchId, message_text: text })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    await this.loadChat();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to send message.', 'error');
+                }
+            } catch (err) { console.error('Send message error:', err); }
+        },
+
+        startChatPolling() {
+            this.chatPollTimer = setInterval(() => this.loadChat(), 3000);
+        },
+
+        stopChatPolling() {
+            if (this.chatPollTimer) {
+                clearInterval(this.chatPollTimer);
+                this.chatPollTimer = null;
+            }
+        }
     }
 };

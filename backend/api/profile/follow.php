@@ -16,6 +16,10 @@ if ((int)$target_id === (int)$uid) {
     jsonResponse(false, 'You cannot follow yourself.', null, 422);
 }
 
+if ($target_id === ADMIN_SYSTEM_USER_ID) {
+    jsonResponse(false, 'You cannot follow this user.', null, 422);
+}
+
 // Check if already following
 $stmt = $pdo->prepare("SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
 $stmt->execute([$uid, $target_id]);

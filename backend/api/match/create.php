@@ -63,7 +63,7 @@ if (!$dt || $dt <= new DateTime()) {
 // Resolve partner if provided
 $partner_id = null;
 if ($created_with_partner && $partner_code !== '') {
-    $ps = $pdo->prepare("SELECT up.user_id FROM user_profiles up WHERE up.player_code = ?");
+    $ps = $pdo->prepare("SELECT up.user_id FROM user_profiles up WHERE up.player_code = ? AND up.user_id != " . ADMIN_SYSTEM_USER_ID);
     $ps->execute([$partner_code]);
     $partnerRow = $ps->fetch();
     if (!$partnerRow) {

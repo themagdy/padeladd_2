@@ -17,7 +17,7 @@ $stmt = $pdo->prepare("
     SELECT u.first_name, up.nickname, up.user_id 
     FROM users u 
     JOIN user_profiles up ON u.id = up.user_id 
-    WHERE up.player_code = ? AND u.status = 'active'
+    WHERE up.player_code = ? AND u.status = 'active' AND u.id != " . ADMIN_SYSTEM_USER_ID . "
 ");
 $stmt->execute([$code]);
 $player = $stmt->fetch();

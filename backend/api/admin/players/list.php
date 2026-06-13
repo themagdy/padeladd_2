@@ -26,7 +26,7 @@ $sql = "
     FROM users u
     JOIN user_profiles up ON u.id = up.user_id
     LEFT JOIN player_stats ps ON u.id = ps.user_id
-    WHERE 1=1
+    WHERE u.id != " . ADMIN_SYSTEM_USER_ID . "
 ";
 
 $params = [];

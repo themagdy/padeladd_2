@@ -19,7 +19,7 @@ if ($partner_code === '') {
 }
 
 // Resolve partner
-$ps = $pdo->prepare("SELECT user_id FROM user_profiles WHERE player_code = ?");
+$ps = $pdo->prepare("SELECT user_id FROM user_profiles WHERE player_code = ? AND user_id != " . ADMIN_SYSTEM_USER_ID);
 $ps->execute([$partner_code]);
 $partnerRow = $ps->fetch(PDO::FETCH_ASSOC);
 if (!$partnerRow) {
