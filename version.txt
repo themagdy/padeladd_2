@@ -1752,3 +1752,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bundled PHPMailer core files (PHPMailer.php, SMTP.php, Exception.php) directly into backend/helpers/PHPMailer/ — no Composer required.
 - SMTP credentials (Gmail App Password) stored in config.php under SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_FROM_NAME constants.
 - Version: 2.4.16 (Build 416)
+
+2.4.17 (Build 417) - 2026-06-14
+- Google Play Store Compliance: Upgraded targetSdkVersion and compileSdkVersion to 35 (Android 15) and Android Gradle Plugin to 8.2.2.
+- Firebase iOS Configuration: Integrated and linked GoogleService-Info.plist into the Xcode App project resources.
+- Version: 2.4.17 (Build 417)
