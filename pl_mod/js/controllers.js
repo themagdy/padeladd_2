@@ -2963,9 +2963,20 @@ window.AdminControllers = {
             
             const editor = document.getElementById('announcement-body-editor');
             if (editor) editor.focus();
-            
             const html = `<a href="${formattedUrl}" target="_blank" class="announcement-btn">${text}</a>&nbsp;`;
             document.execCommand('insertHTML', false, html);
+        },
+
+        clearFormatting() {
+            if (this.editorMode !== 'rte') {
+                AdminApp.toast('Please switch to Rich Text Editor mode to clear formatting.', 'error');
+                return;
+            }
+            const editor = document.getElementById('announcement-body-editor');
+            if (editor) editor.focus();
+            
+            document.execCommand('removeFormat', false, null);
+            document.execCommand('formatBlock', false, 'p');
         },
 
         async saveAnnouncement(e) {
