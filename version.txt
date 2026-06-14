@@ -1757,3 +1757,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Google Play Store Compliance: Upgraded targetSdkVersion and compileSdkVersion to 35 (Android 15) and Android Gradle Plugin to 8.2.2.
 - Firebase iOS Configuration: Integrated and linked GoogleService-Info.plist into the Xcode App project resources.
 - Version: 2.4.17 (Build 417)
+
+2.4.18 (Build 418) - 2026-06-15
+- Play Store Compliance: Added web account deletion request page and backend API handler to satisfy data safety requirements.
+- Target Email Correction: Updated web deletion request recipient to padeladd.com@gmail.com.
+- Version: 2.4.18 (Build 418)
