@@ -1,0 +1,36 @@
+<div class="page active" id="announcement-details-page" style="background:var(--c-bg); overflow-x:hidden; padding-bottom: 60px; padding-top: 20px;">
+  
+  <div style="width:100%; max-width:800px; margin:0 auto; padding:0 20px;">
+    
+    <!-- Skeleton loader -->
+    <div id="announcement-detail-skeleton">
+      <div class="skeleton" style="width:100%; aspect-ratio:21/9; border-radius:var(--r-lg); margin-bottom:24px;"></div>
+      <div class="skeleton" style="width:70%; height:32px; border-radius:6px; margin-bottom:12px;"></div>
+      <div class="skeleton" style="width:30%; height:16px; border-radius:4px; margin-bottom:32px; opacity:0.6;"></div>
+      <div class="skeleton" style="width:100%; height:14px; border-radius:4px; margin-bottom:12px;"></div>
+      <div class="skeleton" style="width:100%; height:14px; border-radius:4px; margin-bottom:12px;"></div>
+      <div class="skeleton" style="width:90%; height:14px; border-radius:4px; margin-bottom:12px;"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="announcement-detail-content" style="display:none;">
+      
+      <!-- Cover Banner -->
+      <div class="announcement-detail-banner" style="position:relative; width:100%; aspect-ratio:21/9; border-radius:var(--r-lg); overflow:hidden; border:1px solid rgba(255,255,255,0.06); box-shadow:0 12px 32px rgba(0,0,0,0.3); margin-bottom:28px;">
+        <img id="announcement-detail-img" src="" alt="Cover" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+
+      <!-- Header Section -->
+      <h1 id="announcement-detail-title" style="font-size:32px; font-weight:800; color:#fff; line-height:1.2; margin-bottom:12px; letter-spacing:-0.5px;"></h1>
+      <div id="announcement-detail-date" style="font-size:13px; color:var(--c-text-muted); font-weight:600; margin-bottom:32px; border-bottom:1px solid var(--c-border); padding-bottom:16px;"></div>
+
+      <!-- RTE Body content -->
+      <div id="announcement-detail-body" class="announcement-body-rendered" style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.7; word-wrap:break-word;">
+        <!-- Loaded via JS -->
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

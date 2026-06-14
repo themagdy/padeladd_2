@@ -2732,5 +2732,261 @@ window.AdminControllers = {
                 this.chatPollTimer = null;
             }
         }
+    },
+
+    // ── Announcements Controller ─────────────────────────────────────────
+    announcements: {
+        allAnnouncements: [],
+        searchQuery: '',
+        editorMode: 'rte', // 'rte' or 'html'
+
+        async init() {
+            console.log('Initializing Announcements Controller...');
+            this.searchQuery = '';
+            this.editorMode = 'rte';
+            await this.fetchAnnouncements();
+        },
+
+        async fetchAnnouncements() {
+            try {
+                const res = await _admFetch('../backend/api/admin/announcements/list.php');
+                const data = await res.json();
+                if (data.success) {
+                    this.allAnnouncements = data.data.announcements || [];
+                    this.render();
+                } else {
+                    console.error('Failed to fetch announcements:', data.message);
+                }
+            } catch (err) {
+                console.error('Network error fetching announcements:', err);
+            }
+        },
+
+        setSearch(query) {
+            this.searchQuery = query.toLowerCase().trim();
+            this.render();
+        },
+
+        render() {
+            const tbody = document.getElementById('announcements-list');
+            const emptyState = document.getElementById('announcements-empty');
+
+            if (!tbody) return;
+
+            const filtered = this.allAnnouncements.filter(a => {
+                return !this.searchQuery ||
+                    (a.title && a.title.toLowerCase().includes(this.searchQuery)) ||
+                    (a.body && a.body.toLowerCase().includes(this.searchQuery));
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                if (emptyState) emptyState.style.display = 'block';
+                return;
+            }
+
+            if (emptyState) emptyState.style.display = 'none';
+
+            tbody.innerHTML = filtered.map(a => `
+                <tr>
+                    <td>
+                        <div style="width:80px; height:45px; border-radius:6px; overflow:hidden; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center;">
+                            ${a.image_url 
+                                ? `<img src="../${a.image_url}" style="width:100%; height:100%; object-fit:cover;">` 
+                                : '<span style="font-size:16px;">🖼️</span>'
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight:700; color:#fff; font-size:14px;">${a.title || 'Untitled Announcement'}</div>
+                    </td>
+                    <td style="font-size:13px; color:var(--c-text-muted);">
+                        ${a.created_at ? new Date(a.created_at).toLocaleString() : 'N/A'}
+                    </td>
+                    <td style="text-align:right;">
+                        <div style="display:flex; justify-content:flex-end; gap:8px;">
+                            <button onclick="AdminControllers.announcements.openModal(${a.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 16px; font-weight:700;">Edit</button>
+                            <button onclick="AdminControllers.announcements.deleteAnnouncement(${a.id})" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:8px 14px; font-weight:700;">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        },
+
+        openModal(id = null) {
+            const modal = document.getElementById('announcement-modal');
+            const titleInput = document.getElementById('announcement-title-input');
+            const editId = document.getElementById('edit-announcement-id');
+            const imagePreview = document.getElementById('announcement-image-preview');
+            const fileInput = document.getElementById('announcement-image-file');
+            const editor = document.getElementById('announcement-body-editor');
+            const htmlTextarea = document.getElementById('announcement-body-html');
+            const modalTitle = document.getElementById('modal-title');
+
+            if (!modal) return;
+
+            // Reset
+            editId.value = '';
+            titleInput.value = '';
+            fileInput.value = '';
+            editor.innerHTML = '';
+            htmlTextarea.value = '';
+            imagePreview.innerHTML = '<span style="font-size:24px; color:var(--c-text-muted);">🖼️</span>';
+            
+            // Set mode to RTE
+            this.editorMode = 'rte';
+            editor.style.display = 'block';
+            htmlTextarea.style.display = 'none';
+
+            if (id !== null) {
+                const a = this.allAnnouncements.find(x => x.id == id);
+                if (a) {
+                    editId.value = a.id;
+                    titleInput.value = a.title || '';
+                    editor.innerHTML = a.body || '';
+                    htmlTextarea.value = a.body || '';
+                    modalTitle.innerText = 'Edit Announcement';
+
+                    if (a.image_url) {
+                        imagePreview.innerHTML = `<img src="../${a.image_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                    }
+                }
+            } else {
+                modalTitle.innerText = 'Create Announcement';
+            }
+
+            modal.style.display = 'flex';
+        },
+
+        closeModal() {
+            const modal = document.getElementById('announcement-modal');
+            if (modal) modal.style.display = 'none';
+        },
+
+        previewImage(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const preview = document.getElementById('announcement-image-preview');
+                if (preview) {
+                    preview.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        },
+
+        toggleEditorMode() {
+            const editor = document.getElementById('announcement-body-editor');
+            const htmlTextarea = document.getElementById('announcement-body-html');
+            if (!editor || !htmlTextarea) return;
+
+            if (this.editorMode === 'rte') {
+                // Swap to HTML
+                htmlTextarea.value = editor.innerHTML;
+                editor.style.display = 'none';
+                htmlTextarea.style.display = 'block';
+                this.editorMode = 'html';
+            } else {
+                // Swap to RTE
+                editor.innerHTML = htmlTextarea.value;
+                htmlTextarea.style.display = 'none';
+                editor.style.display = 'block';
+                this.editorMode = 'rte';
+            }
+        },
+
+        async saveAnnouncement(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('edit-announcement-id').value;
+            const title = document.getElementById('announcement-title-input').value.trim();
+            const editor = document.getElementById('announcement-body-editor');
+            const htmlTextarea = document.getElementById('announcement-body-html');
+            const fileInput = document.getElementById('announcement-image-file');
+
+            let bodyContent = '';
+            if (this.editorMode === 'rte') {
+                bodyContent = editor.innerHTML;
+            } else {
+                bodyContent = htmlTextarea.value;
+            }
+
+            if (!title) {
+                AdminApp.toast('Please enter a title.', 'error');
+                return;
+            }
+
+            if (!bodyContent || bodyContent.trim() === '<br>' || bodyContent.trim() === '') {
+                AdminApp.toast('Please enter body content.', 'error');
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('body', bodyContent);
+            
+            if (fileInput.files.length > 0) {
+                formData.append('image', fileInput.files[0]);
+            } else if (!editId) {
+                AdminApp.toast('Please select a cover image.', 'error');
+                return;
+            }
+
+            const isUpdate = !!editId;
+            if (isUpdate) {
+                formData.append('id', editId);
+            }
+
+            try {
+                const url = isUpdate 
+                    ? '../backend/api/admin/announcements/update.php' 
+                    : '../backend/api/admin/announcements/create.php';
+
+                const res = await _admFetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast(isUpdate ? 'Announcement updated successfully!' : 'Announcement created successfully!');
+                    this.closeModal();
+                    await this.fetchAnnouncements();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to save announcement.', 'error');
+                }
+            } catch (err) {
+                console.error('Save announcement error:', err);
+                AdminApp.toast('A network error occurred.', 'error');
+            }
+        },
+
+        async deleteAnnouncement(id) {
+            if (!confirm('Are you sure you want to permanently delete this announcement? This will remove both the text and the cover image file.')) {
+                return;
+            }
+
+            try {
+                const res = await _admFetch('../backend/api/admin/announcements/delete.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Announcement deleted successfully!');
+                    await this.fetchAnnouncements();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to delete announcement.', 'error');
+                }
+            } catch (err) {
+                console.error('Delete announcement error:', err);
+                AdminApp.toast('A network error occurred.', 'error');
+            }
+        }
     }
 };

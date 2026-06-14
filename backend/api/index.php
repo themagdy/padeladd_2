@@ -269,6 +269,12 @@ try {
         case 'invite/get_invites':
             require __DIR__ . '/invite/get_invites.php';
             break;
+        case 'announcements/list':
+            require __DIR__ . '/announcements/list.php';
+            break;
+        case 'announcements/get':
+            require __DIR__ . '/announcements/get.php';
+            break;
 
         default:
             $notFoundMsg = (defined('APP_ENV') && APP_ENV === 'development')

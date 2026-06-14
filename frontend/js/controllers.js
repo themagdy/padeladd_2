@@ -1201,6 +1201,7 @@ const DashboardController = {
             UI.syncNav();
             StoriesController.initTray();
             DashboardController.initInviteButton();
+            DashboardController.loadAnnouncements();
         }
 
         // Use cache for instant render if available
@@ -1249,6 +1250,61 @@ const DashboardController = {
         // Start polling if this is the first load
         if (!isSilent && typeof PollManager !== 'undefined') {
             PollManager.start('dashboard', () => DashboardController.init(true), 10000);
+        }
+    },
+
+    loadAnnouncements: async function () {
+        const container = document.getElementById('announcements-carousel-container');
+        const carousel = document.getElementById('announcements-carousel');
+        const indicatorsContainer = document.getElementById('announcements-indicators');
+        
+        if (!container || !carousel) return;
+
+        try {
+            const res = await API.post('/announcements/list');
+            if (res && res.success && res.data && res.data.announcements && res.data.announcements.length > 0) {
+                const list = res.data.announcements;
+                container.style.display = 'block';
+
+                // Render Carousel Cards
+                carousel.innerHTML = list.map(a => `
+                    <div class="announcement-card" onclick="Router.navigate('/announcement/${a.id}')">
+                        <img src="${a.image_url}" class="announcement-card-img" alt="${a.title}">
+                        <div class="announcement-card-overlay">
+                            <h2 class="announcement-card-title">${a.title}</h2>
+                            <span class="announcement-card-date">${new Date(a.created_at).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Render Indicators if > 1 announcement
+                if (list.length > 1) {
+                    indicatorsContainer.innerHTML = list.map((_, idx) => `
+                        <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="document.getElementById('announcements-carousel').scrollTo({ left: ${idx} * document.getElementById('announcements-carousel').offsetWidth, behavior: 'smooth' })"></span>
+                    `).join('');
+
+                    // Update indicator active class on scroll
+                    carousel.onscroll = () => {
+                        const width = carousel.offsetWidth;
+                        const activeIndex = Math.round(carousel.scrollLeft / width);
+                        const indicators = indicatorsContainer.querySelectorAll('.indicator');
+                        indicators.forEach((ind, idx) => {
+                            if (idx === activeIndex) {
+                                ind.classList.add('active');
+                            } else {
+                                ind.classList.remove('active');
+                            }
+                        });
+                    };
+                } else {
+                    indicatorsContainer.innerHTML = '';
+                }
+            } else {
+                container.style.display = 'none';
+            }
+        } catch (e) {
+            console.error('Failed to load announcements:', e);
+            container.style.display = 'none';
         }
     },
 
@@ -7160,4 +7216,50 @@ const RankingController = {
     }
 
 };
+
+// ── Announcement Detail Controller ───────────────────────────────────────
+const AnnouncementController = {
+    init: async function (params) {
+        const id = params?.id;
+        const skeleton = document.getElementById('announcement-detail-skeleton');
+        const content = document.getElementById('announcement-detail-content');
+
+        if (!id) {
+            Router.navigate('/dashboard');
+            return;
+        }
+
+        if (skeleton) skeleton.style.display = 'block';
+        if (content) content.style.display = 'none';
+
+        try {
+            const res = await API.post('/announcements/get', { id: id });
+            if (res && res.success && res.data && res.data.announcement) {
+                const a = res.data.announcement;
+
+                document.getElementById('announcement-detail-img').src = a.image_url;
+                document.getElementById('announcement-detail-title').innerText = a.title;
+                document.getElementById('announcement-detail-date').innerText = new Date(a.created_at).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Set body HTML content safely
+                document.getElementById('announcement-detail-body').innerHTML = a.body;
+
+                if (skeleton) skeleton.style.display = 'none';
+                if (content) content.style.display = 'block';
+            } else {
+                API.toast(res.message || 'Announcement not found.', 'error');
+                Router.navigate('/dashboard');
+            }
+        } catch (e) {
+            console.error('Error loading announcement details:', e);
+            Router.navigate('/dashboard');
+        }
+    }
+};
+
 

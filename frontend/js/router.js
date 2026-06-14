@@ -12,6 +12,7 @@ const Router = {
         '/profile/view/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         '/verify-email': { template: 'frontend/pages/auth/verify_success.html', init: () => AuthController.handleEmailLink() },
         '/dashboard': { template: 'frontend/pages/dashboard.html', init: () => DashboardController.init() },
+        '/announcement/:id': { template: 'frontend/pages/announcement.html', init: (params) => AnnouncementController.init(params) },
         '/p/:id': { template: 'frontend/pages/profile/view.html', init: (params) => ProfileViewController.init(params) },
         // ── Phase 3: Match System ──────────────────────────────────────────────
         '/matches': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
@@ -236,6 +237,7 @@ const Router = {
             const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
             const isDynamicBackBar = path.startsWith('/matches/M-') ||
                 path.startsWith('/p/') ||
+                path.startsWith('/announcement/') ||
                 (path.startsWith('/profile/view/') && path !== '/profile/view');
             const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
@@ -303,6 +305,7 @@ const Router = {
         const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = path.startsWith('/matches/M-') ||
             path.startsWith('/p/') ||
+            path.startsWith('/announcement/') ||
             (path.startsWith('/profile/view/') && path !== '/profile/view');
         const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
@@ -494,6 +497,7 @@ const Router = {
         const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
         const isDynamicBackBar = nPath.startsWith('/matches/M-') ||
             nPath.startsWith('/p/') ||
+            nPath.startsWith('/announcement/') ||
             (nPath.startsWith('/profile/view/') && nPath !== '/profile/view');
 
         const needsBackBar = backBarRoutes.includes(nPath) || isDynamicBackBar;
@@ -516,7 +520,7 @@ const Router = {
                 } else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) {
                     tbarInner.style.maxWidth = '900px';
                     tbarInner.style.padding = '0 16px';
-                } else if (nPath === '/rules') {
+                } else if (nPath === '/rules' || nPath.startsWith('/announcement/')) {
                     tbarInner.style.maxWidth = '800px';
                     tbarInner.style.padding = '0 16px';
                 } else {

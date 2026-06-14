@@ -1697,3 +1697,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Desktop: Footer buttons align left, "Check our terms of use" floats right in the same row.
 - Mobile: Buttons remain side-by-side with equal height via `align-items: stretch`. Terms centered below.
 - Version: 2.4.6 (Build 406)
+
+2.4.7 (Build 407) - 2026-06-14
+- Feature: Added Announcements system in Admin MOD panel with Title, cover/featured image upload (optimized & resized by backend to 1200px width), and Body RTE (Rich Text Editor) with raw HTML source code toggling.
+- Dashboard Integration: Added a wide-card swipeable carousel on client dashboard displaying active announcements above the ranking section, complete with smooth scroll snapping and pagination indicators.
+- Announcement Reader Page: Implemented full announcement reading page showing the cover image banner, title, post date, and rich text body content, fully integrated into the SPA router with native-like pop navigation.
+- Version: 2.4.7 (Build 407)
+
