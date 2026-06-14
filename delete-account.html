@@ -148,8 +148,13 @@
             transition: background-color 0.2s;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background-color: var(--c-primary-light);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .note-box {
@@ -163,6 +168,28 @@
         .note-box p {
             margin-bottom: 0;
             color: #FCA5A5;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10B981;
+            display: block;
+        }
+
+        .alert-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            display: block;
         }
     </style>
 </head>
@@ -196,24 +223,26 @@
                 <p><strong>Warning:</strong> Deleting your account is permanent. All your data including matches, profile settings, and history will be permanently deleted and cannot be recovered.</p>
             </div>
 
-            <form action="mailto:support@padeladd.com?subject=Padeladd Account Deletion Request" method="post" enctype="text/plain">
+            <div id="alert-box" class="alert"></div>
+
+            <form id="delete-form" onsubmit="submitForm(event)">
                 <div class="form-group">
                     <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                    <input type="text" id="name" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
                     <label for="email">Registered Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="Enter your registered email">
+                    <input type="email" id="email" required placeholder="Enter your registered email">
                 </div>
                 <div class="form-group">
                     <label for="phone">Registered Phone Number</label>
-                    <input type="text" id="phone" name="phone" required placeholder="e.g. +201000000000">
+                    <input type="text" id="phone" required placeholder="e.g. +201000000000">
                 </div>
                 <div class="form-group">
                     <label for="reason">Reason for Deletion (Optional)</label>
-                    <textarea id="reason" name="reason" rows="4" placeholder="Let us know why you are leaving..."></textarea>
+                    <textarea id="reason" rows="4" placeholder="Let us know why you are leaving..."></textarea>
                 </div>
-                <button type="submit">Submit Deletion Request</button>
+                <button type="submit" id="submit-btn">Submit Deletion Request</button>
             </form>
         </section>
 
@@ -227,5 +256,55 @@
             </ul>
         </section>
     </div>
+
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const reason = document.getElementById('reason').value;
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const alertBox = document.getElementById('alert-box');
+            
+            // Clear alerts
+            alertBox.className = 'alert';
+            alertBox.style.display = 'none';
+            
+            // Disable button & show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting Request...';
+            
+            try {
+                const response = await fetch('/backend/api/profile/request-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, phone, reason })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alertBox.textContent = result.message;
+                    alertBox.className = 'alert alert-success';
+                    document.getElementById('delete-form').reset();
+                } else {
+                    alertBox.textContent = result.message || 'An error occurred. Please try again.';
+                    alertBox.className = 'alert alert-error';
+                }
+            } catch (error) {
+                console.error(error);
+                alertBox.textContent = 'Unable to connect to server. Please check your internet connection or email support@padeladd.com.';
+                alertBox.className = 'alert alert-error';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Deletion Request';
+            }
+        }
+    </script>
 </body>
 </html>

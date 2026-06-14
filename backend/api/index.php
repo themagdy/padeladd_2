@@ -117,6 +117,9 @@ try {
         case 'profile/delete':
             require __DIR__ . '/profile/delete.php';
             break;
+        case 'profile/request-delete':
+            require __DIR__ . '/profile/request_delete.php';
+            break;
         case 'profile/set_level':
             require __DIR__ . '/profile/set_level.php';
             break;
