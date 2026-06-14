@@ -1683,3 +1683,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Bug Fix: Fixed a calendar date logic flaw where matches scheduled late-night (e.g. 12:30 AM tomorrow) would improperly display as "Today" during morning hours; this late-night bleed-over rule now correctly applies only if the current time is PM.
 - UI: Removed the outer glow (`text-shadow`) on the match countdown timer and synchronized its desktop styling to exactly match the sleeker, more compact mobile layout globally.
 - Version: 2.4.3 (Build 403)
+
+2.4.4 (Build 404) - 2026-06-14
+- Bug Fix: Resolved an issue where chat push notifications were sometimes dropped when a user backgrounded the app or switched tabs. Online presence is now instantly and reliably cleared via `navigator.sendBeacon` (using a newly implemented POST `auth_token` authentication fallback) on both browser `visibilitychange` and native Capacitor `appStateChange` events, while the background JavaScript polling interval is safely terminated.
+- Version: 2.4.4 (Build 404)
