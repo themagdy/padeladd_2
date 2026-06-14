@@ -1746,3 +1746,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.15 (Build 415) - 2026-06-14
 - Cleanup: Removed explain_padeladd.html explainer page from the project root.
 - Version: 2.4.15 (Build 415)
+
+2.4.16 (Build 416) - 2026-06-14
+- Email Delivery Fix: Replaced unreliable native PHP mail() with PHPMailer (v6) using Gmail SMTP (smtp.gmail.com:587, STARTTLS). Affects both email verification on registration and forgot password reset emails.
+- Bundled PHPMailer core files (PHPMailer.php, SMTP.php, Exception.php) directly into backend/helpers/PHPMailer/ — no Composer required.
+- SMTP credentials (Gmail App Password) stored in config.php under SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, SMTP_FROM_NAME constants.
+- Version: 2.4.16 (Build 416)

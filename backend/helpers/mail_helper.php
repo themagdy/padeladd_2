@@ -1,14 +1,19 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require_once __DIR__ . '/PHPMailer/Exception.php';
+require_once __DIR__ . '/PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/PHPMailer/SMTP.php';
+
 function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = null) {
-    $fromEmail = 'noreply@padeladd.com';
-    
-    // HTML Email Template
     $logoUrl = 'https://padeladd.com/assets/logo.png';
-    
+
     // Handle line breaks for content
     $htmlContent = nl2br(htmlspecialchars($content));
-    
+
     $buttonHtml = '';
     if ($actionUrl && $actionText) {
         $buttonHtml = '
@@ -25,28 +30,20 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body { margin: 0; padding: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; background-color: #0f172a; }
-            .container { max-width: 600px; margin: 0 auto; background-color: #1e293b; padding: 40px; border-radius: 12px; margin-top: 40px; margin-bottom: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); }
-            .header { text-align: center; margin-bottom: 30px; }
-            .header img { max-height: 50px; }
-            .content { color: #f8fafc; font-size: 16px; line-height: 1.6; }
-            .footer { margin-top: 40px; text-align: center; color: #64748b; font-size: 13px; border-top: 1px solid #334155; padding-top: 20px; }
-        </style>
     </head>
-    <body style="background-color: #0f172a; padding: 20px;">
+    <body style="margin: 0; padding: 20px; font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; background-color: #0f172a;">
         <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #0f172a;">
             <tr>
                 <td align="center">
-                    <div class="container" style="max-width: 600px; background-color: #1e293b; padding: 40px; border-radius: 12px; text-align: left;">
-                        <div class="header">
+                    <div style="max-width: 600px; background-color: #1e293b; padding: 40px; border-radius: 12px; text-align: left; margin: 40px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                        <div style="text-align: center; margin-bottom: 30px;">
                             <img src="' . $logoUrl . '" alt="Padeladd Logo" style="max-height: 50px;">
                         </div>
-                        <div class="content">
+                        <div style="color: #f8fafc; font-size: 16px; line-height: 1.6;">
                             ' . $htmlContent . '
                             ' . $buttonHtml . '
                         </div>
-                        <div class="footer">
+                        <div style="margin-top: 40px; text-align: center; color: #64748b; font-size: 13px; border-top: 1px solid #334155; padding-top: 20px;">
                             <p>This is an automated message from Padeladd. Please do not reply to this email.</p>
                             <p>&copy; ' . date("Y") . ' Padeladd. All rights reserved.</p>
                         </div>
@@ -57,12 +54,35 @@ function sendEmail($to, $subject, $content, $actionText = null, $actionUrl = nul
     </body>
     </html>';
 
-    $headers = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: Padeladd <noreply@padeladd.com>\r\n";
-    $headers .= "Reply-To: noreply@padeladd.com\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
+    $mail = new PHPMailer(true);
 
-    return mail($to, $subject, $message, $headers);
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = SMTP_HOST;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = SMTP_USER;
+        $mail->Password   = SMTP_PASS;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = SMTP_PORT;
+
+        // Sender & recipient
+        $mail->setFrom(SMTP_FROM, SMTP_FROM_NAME);
+        $mail->addAddress($to);
+        $mail->addReplyTo(SMTP_FROM, SMTP_FROM_NAME);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = $subject;
+        $mail->Body    = $message;
+        $mail->AltBody = strip_tags(str_replace('<br>', "\n", $htmlContent));
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        error_log("PHPMailer Error sending to {$to}: " . $mail->ErrorInfo);
+        return false;
+    }
 }
 ?>
