@@ -1704,3 +1704,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Announcement Reader Page: Implemented full announcement reading page showing the cover image banner, title, post date, and rich text body content, fully integrated into the SPA router with native-like pop navigation.
 - Version: 2.4.7 (Build 407)
 
+2.4.8 (Build 408) - 2026-06-14
+- UI/UX Refinements: Removed the "Announcements" section title header and the date display inside carousel cards overlay on the dashboard.
+- Responsive Design: Restricted the announcements carousel to a clean mobile-card size width of 480px (centered) on desktops, utilizing a consistent 16:9 ratio globally.
+- Version: 2.4.8 (Build 408)
+
+

@@ -1272,7 +1272,6 @@ const DashboardController = {
                         <img src="${a.image_url}" class="announcement-card-img" alt="${a.title}">
                         <div class="announcement-card-overlay">
                             <h2 class="announcement-card-title">${a.title}</h2>
-                            <span class="announcement-card-date">${new Date(a.created_at).toLocaleDateString()}</span>
                         </div>
                     </div>
                 `).join('');
