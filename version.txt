@@ -1714,5 +1714,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Carousel Interaction: Set carousel cards flex width to 88% and configured custom left paddings on the scroll container to show a peak of the next announcement, encouraging users to swipe.
 - Version: 2.4.9 (Build 409)
 
+2.4.10 (Build 410) - 2026-06-14
+- UI Refinements: Set announcement cards aspect ratio on the player dashboard to 21:9 globally for a wider, sleeker visual alignment.
+- Version: 2.4.10 (Build 410)
+
+
 
 
