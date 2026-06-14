@@ -3883,7 +3883,8 @@ const MatchesController = {
         // Also treat as "Today" if the match is after midnight (next calendar day) but before 6 AM
         const nextDayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
         const nextDay6AM = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 6, 0, 0);
-        const isAfterMidnight = dt >= nextDayMidnight && dt < nextDay6AM;
+        const isCurrentTimePM = now.getHours() >= 12;
+        const isAfterMidnight = isCurrentTimePM && (dt >= nextDayMidnight && dt < nextDay6AM);
         const isToday = sameCalendarDay || isAfterMidnight;
         const dateStr = isToday ? 'Today' : dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
