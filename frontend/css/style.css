@@ -5782,8 +5782,7 @@ body {
    [26] ANNOUNCEMENTS CAROUSEL & ARTICLE
    ------------------------------------------------------- */
 .announcements-carousel-wrapper {
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
 }
 .announcements-carousel {
   display: flex;
@@ -5792,14 +5791,12 @@ body {
   scroll-behavior: smooth;
   gap: 16px;
   scrollbar-width: none;
-  padding: 0 20px;
-  scroll-padding: 0 20px;
 }
 .announcements-carousel::-webkit-scrollbar {
   display: none;
 }
 .announcement-card {
-  flex: 0 0 88%;
+  flex: 0 0 350px;
   scroll-snap-align: start;
   position: relative;
   border-radius: var(--r-lg);
@@ -5849,20 +5846,20 @@ body {
 .announcements-indicators {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 6px;
+  margin-top: 14px;
 }
 .announcements-indicators .indicator {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
   cursor: pointer;
   transition: all 0.25s ease;
 }
 .announcements-indicators .indicator.active {
   background: var(--c-primary);
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
 
 /* Announcement Detail View styling */
@@ -5891,6 +5888,9 @@ body {
 }
 
 @media (max-width: 768px) {
+  .announcement-card {
+    flex: 0 0 90%;
+  }
   .announcement-card-title {
     font-size: 18px;
   }

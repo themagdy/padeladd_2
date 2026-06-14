@@ -1718,6 +1718,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Refinements: Set announcement cards aspect ratio on the player dashboard to 21:9 globally for a wider, sleeker visual alignment.
 - Version: 2.4.10 (Build 410)
 
-
-
-
+2.4.11 (Build 411) - 2026-06-14
+- Carousel UX Refinements: Set desktop announcement cards to a fixed, compact mobile size of 350px, aligned side-by-side, taking up the full width of the container. 
+- Carousel Visuals: Removed overlay titles from the dashboard cards entirely (showing cover images only), and configured card margins to show a peek of the second announcement. Reduced indicator dots size to 5px.
+- Announcement details: Hid dates from the detail view and resized the title to a compact 24px using Montserrat font.
+- Version: 2.4.11 (Build 411)

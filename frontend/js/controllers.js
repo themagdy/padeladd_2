@@ -1276,7 +1276,7 @@ const DashboardController = {
                 // Render Indicators if > 1 announcement
                 if (list.length > 1) {
                     indicatorsContainer.innerHTML = list.map((_, idx) => `
-                        <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="const c = document.getElementById('announcements-carousel'); c.scrollTo({ left: c.children[${idx}].offsetLeft - 20, behavior: 'smooth' })"></span>
+                        <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="const c = document.getElementById('announcements-carousel'); c.scrollTo({ left: c.children[${idx}].offsetLeft, behavior: 'smooth' })"></span>
                     `).join('');
 
                     // Update indicator active class on scroll
@@ -1289,7 +1289,7 @@ const DashboardController = {
                         let activeIndex = 0;
                         let minDiff = Infinity;
                         for (let i = 0; i < carousel.children.length; i++) {
-                            const diff = Math.abs((carousel.children[i].offsetLeft - 20) - scrollPos);
+                            const diff = Math.abs(carousel.children[i].offsetLeft - scrollPos);
                             if (diff < minDiff) {
                                 minDiff = diff;
                                 activeIndex = i;
@@ -7247,12 +7247,6 @@ const AnnouncementController = {
 
                 document.getElementById('announcement-detail-img').src = a.image_url;
                 document.getElementById('announcement-detail-title').innerText = a.title;
-                document.getElementById('announcement-detail-date').innerText = new Date(a.created_at).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
                 
                 // Set body HTML content safely
                 document.getElementById('announcement-detail-body').innerHTML = a.body;
