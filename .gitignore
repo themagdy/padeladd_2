@@ -8,10 +8,10 @@ vendor/
 Thumbs.db
 
 # Environment/Secret Files
-# backend/core/config.php
+backend/core/config.php
 
 # Firebase Secrets
-# backend/core/firebase_credentials.json
+backend/core/firebase_credentials.json
 # Remove google-services.json from ignore list to allow build on GitHub
 # mobile_app/ios/App/App/GoogleService-Info.plist
 
