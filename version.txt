@@ -1687,3 +1687,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.4 (Build 404) - 2026-06-14
 - Bug Fix: Resolved an issue where chat push notifications were sometimes dropped when a user backgrounded the app or switched tabs. Online presence is now instantly and reliably cleared via `navigator.sendBeacon` (using a newly implemented POST `auth_token` authentication fallback) on both browser `visibilitychange` and native Capacitor `appStateChange` events, while the background JavaScript polling interval is safely terminated.
 - Version: 2.4.4 (Build 404)
+
+2.4.5 (Build 405) - 2026-06-14
+- Bug Fix: Reduced the chat online-presence window from 15s to 8s in both `chat/send.php` and `admin/send_admin_msg.php`. This prevents stale presence records from blocking in-app notifications for users who have already left the chat.
+- Version: 2.4.5 (Build 405)

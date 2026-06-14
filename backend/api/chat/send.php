@@ -65,10 +65,10 @@ $membersStmt = $pdo->prepare("
 $membersStmt->execute([$match_id, $match_id, $match_id]);
 $memberIds = array_column($membersStmt->fetchAll(PDO::FETCH_ASSOC), 'user_id');
 
-// Fetch users currently online in this chat (last seen within 15s)
+// Fetch users currently online in this chat (last seen within 8s — poll interval is 5s)
 $onlineStmt = $pdo->prepare("
     SELECT user_id FROM chat_presence
-    WHERE match_id = ? AND last_seen >= NOW() - INTERVAL 15 SECOND
+    WHERE match_id = ? AND last_seen >= NOW() - INTERVAL 8 SECOND
 ");
 $onlineStmt->execute([$match_id]);
 $onlineIds = array_column($onlineStmt->fetchAll(PDO::FETCH_ASSOC), 'user_id');
