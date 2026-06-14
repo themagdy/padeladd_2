@@ -1742,3 +1742,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Privacy Policy: Replaced two placeholder contact emails with the single real contact email (padeladd.com@gmail.com) in the Contact Us section.
 - Privacy Policy: Updated Effective Date from May 2026 to June 2026.
 - Version: 2.4.14 (Build 414)
+
+2.4.15 (Build 415) - 2026-06-14
+- Cleanup: Removed explain_padeladd.html explainer page from the project root.
+- Version: 2.4.15 (Build 415)
