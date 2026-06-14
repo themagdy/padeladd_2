@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account | Padeladd</title>
+    <link rel="icon" href="assets/logo_ico.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Corporate Trust Dark Theme matching privacy.html */
+            --c-bg: #0B0F19; /* Deep navy/black background */
+            --c-surface: #131A2A; /* Slightly lighter surface for content */
+            --c-primary: #1B52CE; /* Corporate blue */
+            --c-primary-light: #3B72EE;
+            --c-text-main: #F3F4F6;
+            --c-text-muted: #9CA3AF;
+            --c-border: #1F2937;
+            
+            --font-main: 'Montserrat', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--c-bg);
+            color: var(--c-text-main);
+            font-family: var(--font-main);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header-wrapper {
+            background-color: var(--c-surface);
+            border-bottom: 1px solid var(--c-border);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            height: 48px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .effective-date {
+            font-size: 14px;
+            color: var(--c-text-muted);
+            font-weight: 500;
+        }
+
+        .content-container {
+            max-width: 800px;
+            margin: 40px auto 80px;
+            padding: 0 24px;
+        }
+
+        section {
+            margin-bottom: 48px;
+            background-color: var(--c-surface);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--c-border);
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            font-size: 22px;
+            font-weight: 600;
+            color: #60A5FA; /* Bright vibrant light blue */
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--c-border);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--c-text-main);
+        }
+
+        ol, ul {
+            margin-left: 20px;
+            margin-bottom: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--c-text-main);
+        }
+
+        input[type="email"], input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--c-border);
+            border-radius: 6px;
+            background-color: var(--c-bg);
+            color: var(--c-text-main);
+            font-family: var(--font-main);
+            font-size: 16px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--c-primary-light);
+        }
+
+        button {
+            background-color: var(--c-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--c-primary-light);
+        }
+
+        .note-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #EF4444;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+
+        .note-box p {
+            margin-bottom: 0;
+            color: #FCA5A5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-wrapper">
+        <div class="header-container">
+            <img class="logo" src="assets/logo.png" alt="Padeladd Logo" onerror="this.style.display='none'">
+            <h1>Padeladd Account Deletion</h1>
+            <p class="effective-date">How to request the deletion of your account and associated data</p>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <section>
+            <h2>Option 1: In-App Deletion (Recommended)</h2>
+            <p>You can delete your account and all associated data directly from the Padeladd mobile application by following these steps:</p>
+            <ol>
+                <li>Open the <strong>Padeladd</strong> app and log in.</li>
+                <li>Go to the <strong>Profile / Settings</strong> tab (Gear Icon in the top right).</li>
+                <li>Tap on <strong>Delete Account</strong>.</li>
+                <li>Confirm your request. Your account and all associated data will be deleted immediately.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Option 2: Web Deletion Request Form</h2>
+            <p>If you have uninstalled the app or are unable to log in, you can request account deletion by filling out this form. We will process your request within 7 business days.</p>
+            
+            <div class="note-box">
+                <p><strong>Warning:</strong> Deleting your account is permanent. All your data including matches, profile settings, and history will be permanently deleted and cannot be recovered.</p>
+            </div>
+
+            <form action="mailto:support@padeladd.com?subject=Padeladd Account Deletion Request" method="post" enctype="text/plain">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Registered Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="Enter your registered email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Registered Phone Number</label>
+                    <input type="text" id="phone" name="phone" required placeholder="e.g. +201000000000">
+                </div>
+                <div class="form-group">
+                    <label for="reason">Reason for Deletion (Optional)</label>
+                    <textarea id="reason" name="reason" rows="4" placeholder="Let us know why you are leaving..."></textarea>
+                </div>
+                <button type="submit">Submit Deletion Request</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Data Retention Policies</h2>
+            <p>Upon receiving an account deletion request (whether through the app or this form):</p>
+            <ul>
+                <li><strong>Personal Data:</strong> Your name, email, phone number, and profile details are completely scrubbed from our active databases.</li>
+                <li><strong>Match History & Bookings:</strong> Your name will be removed from all past matches and displayed as "Deleted User" to protect the history of other participants.</li>
+                <li><strong>Backups:</strong> Residual copies of your data may remain in secure backup systems for up to 30 days before being completely overwritten.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
