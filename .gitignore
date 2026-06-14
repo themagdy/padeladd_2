@@ -8,7 +8,7 @@ vendor/
 Thumbs.db
 
 # Environment/Secret Files
-backend/core/config.php
+# backend/core/config.php
 
 # Firebase Secrets
 backend/core/firebase_credentials.json
