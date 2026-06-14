@@ -1737,3 +1737,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Register Page: Renamed "Terms and conditions" label to "Terms of use"; added a line break before the links in the agreement text.
 - Explainer Page: Created `explain_padeladd.html` — a standalone formatted content page explaining PadelAdd, its features, and how it works (intended for use as an in-app announcement).
 - Version: 2.4.13 (Build 413)
+
+2.4.14 (Build 414) - 2026-06-14
+- Privacy Policy: Replaced two placeholder contact emails with the single real contact email (padeladd.com@gmail.com) in the Contact Us section.
+- Privacy Policy: Updated Effective Date from May 2026 to June 2026.
+- Version: 2.4.14 (Build 414)
