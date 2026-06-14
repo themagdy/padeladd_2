@@ -182,14 +182,14 @@
             background-color: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             color: #10B981;
-            display: block;
+            display: block !important;
         }
 
         .alert-error {
             background-color: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #EF4444;
-            display: block;
+            display: block !important;
         }
     </style>
 </head>
@@ -277,8 +277,13 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting Request...';
             
+            let apiPath = '/backend/api/profile/request-delete';
+            if (location.pathname.includes('/padeladd4/')) {
+                apiPath = '/padeladd4/backend/api/profile/request-delete';
+            }
+
             try {
-                const response = await fetch('/backend/api/profile/request-delete', {
+                const response = await fetch(apiPath, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -298,7 +303,7 @@
                 }
             } catch (error) {
                 console.error(error);
-                alertBox.textContent = 'Unable to connect to server. Please check your internet connection or email support@padeladd.com.';
+                alertBox.textContent = 'Unable to connect to server. Please check your internet connection or email padeladd.com@gmail.com.';
                 alertBox.className = 'alert alert-error';
             } finally {
                 submitBtn.disabled = false;

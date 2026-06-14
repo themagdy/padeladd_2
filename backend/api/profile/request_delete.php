@@ -33,7 +33,7 @@ $content = "A new account deletion request has been submitted from the web porta
 
 // Send email to support@padeladd.com
 // Also we can send it to SMTP_FROM if we want it to land in your inbox.
-$supportEmail = 'support@padeladd.com';
+$supportEmail = 'padeladd.com@gmail.com';
 $sent = sendEmail($supportEmail, $subject, $content);
 
 if ($sent) {
