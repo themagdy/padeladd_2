@@ -639,3 +639,33 @@ input:checked+.switch-slider:before {
     accent-color: var(--c-primary);
     cursor: pointer;
 }
+
+/* Announcement Editor Content Styles */
+#announcement-body-editor a.announcement-text-link {
+    color: #ff8b00 !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+}
+
+#announcement-body-editor a.announcement-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-primary, #1B52CE);
+    color: #ffffff !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none !important;
+    padding: 10px 20px;
+    border-radius: 100px;
+    margin: 6px 0;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(27, 82, 206, 0.25);
+}
+
+#announcement-body-editor a.announcement-btn:hover {
+    background: #1A44AA;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(27, 82, 206, 0.45);
+}

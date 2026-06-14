@@ -2803,8 +2803,17 @@ window.AdminControllers = {
                     <td style="font-size:13px; color:var(--c-text-muted);">
                         ${a.created_at ? new Date(a.created_at).toLocaleString() : 'N/A'}
                     </td>
+                    <td>
+                        ${a.is_visible == 1 
+                            ? '<span class="status-tag active">Active</span>' 
+                            : '<span class="status-tag suspended">Hidden</span>'
+                        }
+                    </td>
                     <td style="text-align:right;">
                         <div style="display:flex; justify-content:flex-end; gap:8px;">
+                            <button onclick="AdminControllers.announcements.toggleVisibility(${a.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 16px; font-weight:700;">
+                                ${a.is_visible == 1 ? 'Hide' : 'Show'}
+                            </button>
                             <button onclick="AdminControllers.announcements.openModal(${a.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 16px; font-weight:700;">Edit</button>
                             <button onclick="AdminControllers.announcements.deleteAnnouncement(${a.id})" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:8px 14px; font-weight:700;">Delete</button>
                         </div>
@@ -2897,6 +2906,68 @@ window.AdminControllers = {
             }
         },
 
+        addLink() {
+            if (this.editorMode !== 'rte') {
+                AdminApp.toast('Please switch to Rich Text Editor mode to add links.', 'error');
+                return;
+            }
+            const selection = window.getSelection();
+            let selectedText = selection.toString().trim();
+            
+            const url = prompt("Enter URL (e.g. https://google.com):");
+            if (!url) return;
+            
+            let formattedUrl = url.trim();
+            if (!/^https?:\/\//i.test(formattedUrl)) {
+                formattedUrl = 'https://' + formattedUrl;
+            }
+            
+            const editor = document.getElementById('announcement-body-editor');
+            if (editor) editor.focus();
+            
+            if (!selectedText) {
+                const text = prompt("Enter link text:", "Link");
+                if (!text) return;
+                const html = `<a href="${formattedUrl}" target="_blank" class="announcement-text-link" style="color:#ff8b00; text-decoration:underline; font-weight:bold;">${text}</a>`;
+                document.execCommand('insertHTML', false, html);
+            } else {
+                document.execCommand('createLink', false, formattedUrl);
+                setTimeout(() => {
+                    const parent = selection.anchorNode ? selection.anchorNode.parentNode : null;
+                    if (parent && parent.tagName === 'A') {
+                        parent.setAttribute('target', '_blank');
+                        parent.className = 'announcement-text-link';
+                        parent.style.color = '#ff8b00';
+                        parent.style.textDecoration = 'underline';
+                        parent.style.fontWeight = 'bold';
+                    }
+                }, 10);
+            }
+        },
+
+        addButton() {
+            if (this.editorMode !== 'rte') {
+                AdminApp.toast('Please switch to Rich Text Editor mode to add buttons.', 'error');
+                return;
+            }
+            const text = prompt("Enter button label:", "Click Here");
+            if (!text) return;
+            
+            const url = prompt("Enter URL (e.g. https://google.com):");
+            if (!url) return;
+            
+            let formattedUrl = url.trim();
+            if (!/^https?:\/\//i.test(formattedUrl)) {
+                formattedUrl = 'https://' + formattedUrl;
+            }
+            
+            const editor = document.getElementById('announcement-body-editor');
+            if (editor) editor.focus();
+            
+            const html = `<a href="${formattedUrl}" target="_blank" class="announcement-btn">${text}</a>&nbsp;`;
+            document.execCommand('insertHTML', false, html);
+        },
+
         async saveAnnouncement(e) {
             e.preventDefault();
 
@@ -2985,6 +3056,26 @@ window.AdminControllers = {
                 }
             } catch (err) {
                 console.error('Delete announcement error:', err);
+                AdminApp.toast('A network error occurred.', 'error');
+            }
+        },
+
+        async toggleVisibility(id) {
+            try {
+                const res = await _admFetch('../backend/api/admin/announcements/toggle_visibility.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Visibility status updated successfully.');
+                    await this.fetchAnnouncements();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to update visibility.', 'error');
+                }
+            } catch (err) {
+                console.error('Toggle visibility error:', err);
                 AdminApp.toast('A network error occurred.', 'error');
             }
         }

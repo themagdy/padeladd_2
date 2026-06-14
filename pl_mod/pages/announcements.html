@@ -18,6 +18,7 @@
                     <th style="width:120px;">Cover</th>
                     <th>Title</th>
                     <th>Date Posted</th>
+                    <th>Status</th>
                     <th style="text-align:right;">Actions</th>
                 </tr>
             </thead>
@@ -73,6 +74,8 @@
                             <button type="button" title="Bold" onclick="document.execCommand('bold', false, null)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">B</button>
                             <button type="button" title="Primary Blue" onclick="document.execCommand('foreColor', false, '#1b52ce')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-primary); width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">A</button>
                             <button type="button" title="Orange" onclick="document.execCommand('foreColor', false, '#f15a29')" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-orange); width:28px; height:28px; border-radius:4px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">A</button>
+                            <button type="button" title="Add Link" onclick="AdminControllers.announcements.addLink()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; width:28px; height:28px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;">🔗</button>
+                            <button type="button" title="Add Button" onclick="AdminControllers.announcements.addButton()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; width:28px; height:28px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;">🔘</button>
                             <button type="button" title="Clear Formatting" onclick="document.execCommand('removeFormat', false, null)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:var(--c-text-muted); width:28px; height:28px; border-radius:4px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✖</button>
                         </div>
                     </label>

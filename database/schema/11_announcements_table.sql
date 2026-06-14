@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS `announcements` (
   `title` VARCHAR(255) NOT NULL,
   `image_url` VARCHAR(255) NOT NULL,
   `body` TEXT NOT NULL,
+  `is_visible` TINYINT(1) DEFAULT 1,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

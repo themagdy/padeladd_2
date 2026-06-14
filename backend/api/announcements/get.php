@@ -9,7 +9,7 @@ if ($id <= 0) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT * FROM announcements WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM announcements WHERE id = ? AND is_visible = 1");
     $stmt->execute([$id]);
     $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
 

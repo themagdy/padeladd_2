@@ -1728,3 +1728,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Mod Panel cleanup: Removed the redundant and non-functional "Fix Missing Stats" task button block from the Mod system configuration page.
 - Version: 2.4.12 (Build 412)
 
+2.4.13 (Build 413) - 2026-06-14
+- RTE Link/Button Integration: Added new Link (🔗) and Button (🔘) formatting controls to the announcements editor toolbar.
+- Custom Styles: Configured text links to render in bold, brand-orange style (#ff8b00), and buttons to render as rounded call-to-action blue pills.
+- Show/Hide Controls: Implemented toggle endpoints and Active/Hidden action switches in the Mod panel to control live publication.
+- Client Caching: Added client-side preloading in the dashboard carousel to make navigation instant and prevent screen flashes.
+- Version: 2.4.13 (Build 413)
