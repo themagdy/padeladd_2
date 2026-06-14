@@ -5792,12 +5792,14 @@ body {
   scroll-behavior: smooth;
   gap: 16px;
   scrollbar-width: none;
+  padding: 0 20px;
+  scroll-padding: 0 20px;
 }
 .announcements-carousel::-webkit-scrollbar {
   display: none;
 }
 .announcement-card {
-  flex: 0 0 100%;
+  flex: 0 0 88%;
   scroll-snap-align: start;
   position: relative;
   border-radius: var(--r-lg);

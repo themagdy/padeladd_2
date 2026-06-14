@@ -1709,4 +1709,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Responsive Design: Restricted the announcements carousel to a clean mobile-card size width of 480px (centered) on desktops, utilizing a consistent 16:9 ratio globally.
 - Version: 2.4.8 (Build 408)
 
+2.4.9 (Build 409) - 2026-06-14
+- UI/UX Refinements: Removed the title text overlay from the dashboard announcement cards completely, showing cover images only.
+- Carousel Interaction: Set carousel cards flex width to 88% and configured custom left paddings on the scroll container to show a peak of the next announcement, encouraging users to swipe.
+- Version: 2.4.9 (Build 409)
+
+
 

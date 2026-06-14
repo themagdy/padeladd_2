@@ -1270,23 +1270,32 @@ const DashboardController = {
                 carousel.innerHTML = list.map(a => `
                     <div class="announcement-card" onclick="Router.navigate('/announcement/${a.id}')">
                         <img src="${a.image_url}" class="announcement-card-img" alt="${a.title}">
-                        <div class="announcement-card-overlay">
-                            <h2 class="announcement-card-title">${a.title}</h2>
-                        </div>
                     </div>
                 `).join('');
 
                 // Render Indicators if > 1 announcement
                 if (list.length > 1) {
                     indicatorsContainer.innerHTML = list.map((_, idx) => `
-                        <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="document.getElementById('announcements-carousel').scrollTo({ left: ${idx} * document.getElementById('announcements-carousel').offsetWidth, behavior: 'smooth' })"></span>
+                        <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="const c = document.getElementById('announcements-carousel'); c.scrollTo({ left: c.children[${idx}].offsetLeft - 20, behavior: 'smooth' })"></span>
                     `).join('');
 
                     // Update indicator active class on scroll
                     carousel.onscroll = () => {
                         const width = carousel.offsetWidth;
-                        const activeIndex = Math.round(carousel.scrollLeft / width);
+                        const scrollPos = carousel.scrollLeft;
                         const indicators = indicatorsContainer.querySelectorAll('.indicator');
+                        
+                        // Find closest card to active scroll position
+                        let activeIndex = 0;
+                        let minDiff = Infinity;
+                        for (let i = 0; i < carousel.children.length; i++) {
+                            const diff = Math.abs((carousel.children[i].offsetLeft - 20) - scrollPos);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                activeIndex = i;
+                            }
+                        }
+
                         indicators.forEach((ind, idx) => {
                             if (idx === activeIndex) {
                                 ind.classList.add('active');
