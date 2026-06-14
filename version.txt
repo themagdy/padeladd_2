@@ -1762,3 +1762,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Play Store Compliance: Added web account deletion request page and backend API handler to satisfy data safety requirements.
 - Target Email Correction: Updated web deletion request recipient to padeladd.com@gmail.com.
 - Version: 2.4.18 (Build 418)
+
+2.4.19 (Build 419) - 2026-06-15
+- Android Release Signing: Generated a new release upload keystore and configured Gradle for automatic release signing on CI/CD pipeline.
+- GitHub Actions Integration: Updated android build workflows to decode and inject release signing keys dynamically using GitHub secrets.
+- Announcement Media Fix: Pre-fixed announcement image sources with CONFIG.ASSET_BASE to resolve broken URLs inside the native mobile app wrapper.
+- Version: 2.4.19 (Build 419)
+
