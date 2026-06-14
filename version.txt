@@ -1674,3 +1674,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI: Fixed a browser-induced autofill bug on the emoji input field in the admin message creation form, and corrected a CSS padding/height mismatch that caused horizontal misalignment with the heading input field.
 - Admin UI: The emoji preview frame inside the admin panel now correctly hides itself if no emoji is provided, and the hardcoded fallback fallback ('👋') has been fully removed from both backend scripts and frontend JS across all message types.
 - Version: 2.4.1 (Build 401)
+
+2.4.2 (Build 402) - 2026-06-14
+- UI: Refactored the "Contact Padeladd" dashboard button into a standard anchor tag (`<a>`) with `target="_blank"` to guarantee reliable external linking to Instagram on mobile webviews, while applying custom CSS (`outline: none`, `inline-flex`) to preserve its original button-like appearance without browser-injected focus rings.
+- Version: 2.4.2 (Build 402)
