@@ -1173,6 +1173,7 @@ const AuthController = {
 //  DASHBOARD CONTROLLER
 // -------------------------------------------------------
 const DashboardController = {
+    _announcementsCache: null,
     _allMatches: [],
     _currentMatchTab: 'completed',
     _currentRankTab: 'male',
