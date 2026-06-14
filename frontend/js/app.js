@@ -1027,9 +1027,19 @@ document.addEventListener('DOMContentLoaded', () => {
         StatusBar.setStyle({ style: 'DARK' });
     }
 
-    // Android Physical Back Button Handler
+    // Android Physical Back Button & App State Handler
     const App = window.Capacitor?.Plugins?.App;
     if (App) {
+        App.addListener('appStateChange', ({ isActive }) => {
+            if (!isActive && typeof ChatController !== 'undefined' && ChatController._isShowing && ChatController._matchId) {
+                // Clear chat presence instantly on mobile app backgrounding
+                ChatController.stop();
+            } else if (isActive && typeof ChatController !== 'undefined' && ChatController._isShowing && ChatController._matchId) {
+                ChatController.startPoll();
+                ChatController.loadMessages(false);
+            }
+        });
+
         App.addListener('backButton', () => {
             // Priority 1: Close confirm modal if open
             if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
