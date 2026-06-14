@@ -963,6 +963,7 @@ window.AdminControllers = {
     messages: {
         allMessages: [],
         searchQuery: '',
+        editorMode: 'rte',
 
         async init() {
             await this.fetchMessages();
@@ -1040,7 +1041,7 @@ window.AdminControllers = {
             list.innerHTML = filtered.map(m => `
                 <tr>
                     <td>
-                        <div style="font-weight:700; color:#fff;"><span style="margin-right:8px;">${m.emoji || '👋'}</span>${m.heading}</div>
+                        <div style="font-weight:700; color:#fff;"><span style="margin-right:8px;">${m.emoji || ''}</span>${m.heading}</div>
                         <div style="font-size:12px; color:var(--c-text-muted); max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.body.replace(/<[^>]*>?/gm, '')}</div>
                     </td>
                     <td>
@@ -1075,6 +1076,10 @@ window.AdminControllers = {
             document.getElementById('edit-message-id').value = '';
             document.getElementById('message-form').reset();
             document.getElementById('message-body-editor').innerHTML = '';
+            document.getElementById('message-body-html').value = '';
+            document.getElementById('message-body-editor').style.display = 'block';
+            document.getElementById('message-body-html').style.display = 'none';
+            this.editorMode = 'rte';
             this.renderBuildList();
             this.toggleTargetInput('all');
             this.toggleActionFields('close');
@@ -1098,7 +1103,7 @@ window.AdminControllers = {
             form.elements['target_type'].value = msg.target_user_id ? 'specific' : 'all';
             form.elements['target_player_code'].value = msg.target_code || '';
             form.elements['heading'].value = msg.heading;
-            form.elements['emoji'].value = msg.emoji || '👋';
+            form.elements['emoji'].value = msg.emoji !== null && msg.emoji !== undefined ? msg.emoji : '';
             form.elements['button_text'].value = msg.button_text;
             form.elements['action_type'].value = msg.action_type;
             form.elements['page_route'].value = msg.page_route || '/dashboard';
@@ -1108,6 +1113,10 @@ window.AdminControllers = {
             form.elements['is_undismissable'].checked = msg.is_undismissable == 1;
 
             document.getElementById('message-body-editor').innerHTML = msg.body;
+            document.getElementById('message-body-html').value = msg.body;
+            document.getElementById('message-body-editor').style.display = 'block';
+            document.getElementById('message-body-html').style.display = 'none';
+            this.editorMode = 'rte';
 
             let selectedBuilds = [];
             if (msg.target_build_refs) {
@@ -1125,9 +1134,19 @@ window.AdminControllers = {
             const msg = this.allMessages.find(m => m.id == id);
             if (!msg) return;
 
-            document.getElementById('preview-emoji').innerText = msg.emoji || '👋';
+            if (msg.emoji && msg.emoji.trim() !== '') {
+                document.getElementById('preview-emoji-frame').style.display = 'flex';
+                document.getElementById('preview-emoji').innerText = msg.emoji;
+                document.getElementById('preview-heading').style.textAlign = 'center';
+            } else {
+                document.getElementById('preview-emoji-frame').style.display = 'none';
+                document.getElementById('preview-heading').style.textAlign = 'left';
+            }
+
             document.getElementById('preview-heading').innerText = msg.heading;
-            document.getElementById('preview-body').innerHTML = msg.body;
+            const txt = document.createElement('textarea');
+            txt.innerHTML = msg.body;
+            document.getElementById('preview-body').innerHTML = txt.value;
             document.getElementById('preview-button').innerText = msg.button_text || 'Got it';
 
             document.getElementById('preview-modal').style.display = 'flex';
@@ -1148,6 +1167,22 @@ window.AdminControllers = {
             document.getElementById('action-external-group').style.display = val === 'external' ? 'block' : 'none';
         },
 
+        toggleEditorMode() {
+            const rte = document.getElementById('message-body-editor');
+            const htmlEditor = document.getElementById('message-body-html');
+            if (this.editorMode === 'rte') {
+                htmlEditor.value = rte.innerHTML;
+                rte.style.display = 'none';
+                htmlEditor.style.display = 'block';
+                this.editorMode = 'html';
+            } else {
+                rte.innerHTML = htmlEditor.value;
+                htmlEditor.style.display = 'none';
+                rte.style.display = 'block';
+                this.editorMode = 'rte';
+            }
+        },
+
         async saveMessage(e) {
             e.preventDefault();
             console.log('--- Saving Message ---');
@@ -1156,8 +1191,13 @@ window.AdminControllers = {
             const token = localStorage.getItem('admin_token');
             const editId = formData.get('id');
 
-            // Sync Rich Text Editor to hidden input
-            const bodyContent = document.getElementById('message-body-editor').innerHTML;
+            // Sync Rich Text Editor or HTML Editor
+            let bodyContent = '';
+            if (this.editorMode === 'rte') {
+                bodyContent = document.getElementById('message-body-editor').innerHTML;
+            } else {
+                bodyContent = document.getElementById('message-body-html').value;
+            }
 
             if (!token) {
                 AdminApp.toast('Admin session expired. Please login again.', 'error');

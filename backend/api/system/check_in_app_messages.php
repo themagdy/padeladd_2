@@ -42,5 +42,10 @@ if (!$message) {
     jsonResponse(true, 'No new messages.', null);
 }
 
+// Decode any accidentally escaped HTML from the rich text editor
+if (isset($message['body'])) {
+    $message['body'] = html_entity_decode($message['body'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
 // No longer marking as seen here. We mark as seen only when they click the button in the UI.
 jsonResponse(true, 'New in-app message found.', $message);

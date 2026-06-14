@@ -1668,3 +1668,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat: Implemented verified "Padeladd Admin" badge styling for admin-sent messages and added the ability to remove/delete chat messages including automatic cleanup of associated notification records.
 - UI: Un-hid and styled the match code badge in the details header to match the design of other status pills.
 - Version: 2.4.0 (Build 400)
+
+2.4.1 (Build 401) - 2026-06-14
+- UI: Improved the visual display of the in-app messages popup by left-aligning the message body content for better readability, and applied a subtle light-blue text gradient and a semi-bold weight to the popup heading.
+- UI: Fixed a browser-induced autofill bug on the emoji input field in the admin message creation form, and corrected a CSS padding/height mismatch that caused horizontal misalignment with the heading input field.
+- Admin UI: The emoji preview frame inside the admin panel now correctly hides itself if no emoji is provided, and the hardcoded fallback fallback ('👋') has been fully removed from both backend scripts and frontend JS across all message types.
+- Version: 2.4.1 (Build 401)

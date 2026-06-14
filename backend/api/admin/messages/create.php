@@ -10,7 +10,7 @@ $pdo = getDB();
 $data = json_decode(file_get_contents('php://input'), true);
 
 $heading = $data['heading'] ?? '';
-$emoji = $data['emoji'] ?? '👋';
+$emoji = $data['emoji'] ?? '';
 $body = $data['body'] ?? '';
 $target_type = $data['target_type'] ?? 'all';
 $target_player_code = $data['target_player_code'] ?? '';

@@ -142,7 +142,7 @@ var ConfirmModal = {
             }
 
             const isWarning = type === 'warning';
-            const icon = customIcon || (isWarning ? '⚡' : '👋');
+            const icon = customIcon !== null && customIcon !== undefined ? customIcon : (isWarning ? '⚡' : '');
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             const inputHtml = showInput ? `
@@ -163,21 +163,28 @@ var ConfirmModal = {
 
             let headerHtml = '';
             if (headerLayout === 'row') {
+                const iconHtml = icon ? `<div style="font-size:24px; line-height:1;">${icon}</div>` : '';
                 headerHtml = `
                     <div style="display:flex; align-items:flex-end; justify-content:flex-start; gap:10px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08);">
-                        <div style="font-size:24px; line-height:1;">${icon}</div>
-                        <h2 style="font-size:15px; font-weight:800; color:#fff; margin:0; text-transform:uppercase; letter-spacing:0.5px; line-height:1; padding-bottom:2px;">${title}</h2>
+                        ${iconHtml}
+                        <h2 style="font-size:15px; font-weight:800; color:#fff; margin:0; text-transform:uppercase; letter-spacing:0.5px; line-height:1; padding-bottom:2px; text-align:left;">${title}</h2>
                     </div>
                 `;
             } else {
-                headerHtml = `
+                let iconFrameHtml = '';
+                if (icon) {
+                    iconFrameHtml = `
                     <!-- Premium Emoji Frame -->
                     <div style="margin: 0 auto 20px; width:72px; height:72px; position:relative; display:flex; align-items:center; justify-content:center;">
                         <div style="position:absolute; inset:0; border-radius:50%; background:linear-gradient(135deg, var(--c-primary), #6366f1); opacity:0.15; filter:blur(10px);"></div>
                         <div style="position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.03);"></div>
                         <div style="font-size:34px; z-index:1; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">${icon}</div>
-                    </div>
-                    <h2 style="font-size:20px; font-weight:900; color:#fff; margin-bottom:20px; letter-spacing:-0.5px; line-height:1.2;">${title}</h2>
+                    </div>`;
+                }
+                const alignStyle = icon ? 'center' : 'left';
+                headerHtml = `
+                    ${iconFrameHtml}
+                    <h2 style="font-size:22px; font-weight:700; background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom:20px; letter-spacing:-0.5px; line-height:1.2; text-align:${alignStyle};">${title}</h2>
                 `;
             }
 
@@ -193,7 +200,7 @@ var ConfirmModal = {
                     
                     ${inputHtml}
  
-                    <div style="font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:24px; font-weight:400; text-align:left; padding:0 8px;">${message.replace(/\n/g, '<br>')}</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:24px; font-weight:400; text-align:left; padding:0;">${message.replace(/\n/g, '<br>')}</div>
  
                     <div style="display:flex; gap:12px; flex-direction:column;">
                         <button id="gcm-confirm" class="btn" style="background:var(--c-primary); color:#fff; border:none; width:100%; padding:14px; border-radius:16px; font-weight:800; font-size:14px; letter-spacing:0.5px; box-shadow: 0 8px 20px rgba(27, 82, 206, 0.25); transition:transform 0.2s;">
