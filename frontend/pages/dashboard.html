@@ -7,9 +7,11 @@
     ═══════════════════════════════════════════ -->
     <div class="dash-welcome" style="border-bottom: 1px solid var(--c-border);">
       <div class="dash-hero">
-        <h1 class="dash-title" style="font-size:46px; font-weight:400; margin-bottom: -2px; color:#fff; line-height:0.95;">
+        <h1 class="dash-title"
+          style="font-size:46px; font-weight:400; margin-bottom: -2px; color:#fff; line-height:0.95;">
           Hello <strong id="dash-name" style="font-weight:800;"></strong> 🥷</h1>
-        <p id="dash-subtitle" style="color:var(--c-text-muted); font-size:18px; margin-top:3px; margin-left:2px; margin-bottom:16px; min-height:1.2em;">
+        <p id="dash-subtitle"
+          style="color:var(--c-text-muted); font-size:18px; margin-top:3px; margin-left:2px; margin-bottom:16px; min-height:1.2em;">
         </p>
       </div>
 
@@ -250,18 +252,28 @@
     <!-- ═══════════════════════════════════════════
          FOOTER
     ═══════════════════════════════════════════ -->
-    <div class="dash-footer" style="display:flex; align-items:center; padding:40px 0 20px; gap:20px;">
-      <button onclick="DashboardController.reportProblem()"
-        style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
-        onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(-1px)'"
-        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Report a problem</button>
-      <a href="https://www.instagram.com/thepadeladd/" target="_blank" rel="noopener noreferrer"
-        style="display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; text-decoration:none; outline:none; background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:12px 32px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;"
-        onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateY(-1px)'"
-        onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'">Contact Padeladd</a>
-      <span class="footer-bottom-text" style="margin-left:auto; font-size:14px; color:var(--c-text-muted);">Check our <a
-          href="terms" data-link style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of
-          use</a></span>
+    <div class="dash-footer">
+      <div class="dash-footer-btns">
+        <button onclick="DashboardController.reportProblem()" class="dash-footer-btn dash-footer-btn-report">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          Report a problem
+        </button>
+        <a href="https://www.instagram.com/thepadeladd/" target="_blank" rel="noopener noreferrer"
+          class="dash-footer-btn dash-footer-btn-contact">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          Contact Padeladd
+        </a>
+      </div>
+      <span class="dash-footer-terms">Check our <a href="terms" data-link
+          style="color:var(--c-orange); font-weight:600; text-decoration:none;">terms of use</a></span>
     </div>
 
   </div> <!-- end container -->
@@ -309,15 +321,22 @@
 
     .dash-footer {
       flex-direction: column !important;
-      align-items: center !important;
+      align-items: stretch !important;
       gap: 12px !important;
       padding-bottom: 20px !important;
     }
 
-    .dash-footer .footer-bottom-text {
+    .dash-footer-btns {
+      flex-direction: column !important;
+    }
+
+    .dash-footer-btn {
+      width: 100% !important;
+    }
+
+    .dash-footer-terms {
       margin-left: 0 !important;
       text-align: center;
-      margin-top: 10px;
     }
   }
 </style>
