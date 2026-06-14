@@ -31,6 +31,12 @@ function getBearerToken() {
             return $matches[1];
         }
     }
+    
+    // Fallback for navigator.sendBeacon which cannot set Authorization headers
+    if (isset($_POST['auth_token']) && !empty($_POST['auth_token'])) {
+        return trim($_POST['auth_token']);
+    }
+    
     return null;
 }
 

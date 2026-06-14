@@ -5883,6 +5883,24 @@ window.addEventListener('popstate', function (event) {
     }
 });
 
+// Fix dropped chat notifications: Clear chat presence instantly when app goes to background
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && ChatController && ChatController._isShowing && ChatController._matchId) {
+        if (navigator.sendBeacon) {
+            const fd = new FormData();
+            fd.append('match_id', ChatController._matchId);
+            const token = Auth.getToken();
+            if (token) fd.append('auth_token', token);
+            navigator.sendBeacon(CONFIG.API_BASE_URL + '/chat/presence-clear', fd);
+        } else {
+            API.post('/chat/presence-clear', { match_id: ChatController._matchId });
+        }
+    } else if (!document.hidden && ChatController && ChatController._isShowing && ChatController._matchId) {
+        // Resume polling and instantly update online status
+        ChatController.startPoll();
+    }
+});
+
 // ── Phase 5: Phone Controller ─────────────────────────────────────────────────
 
 const PhoneController = {
