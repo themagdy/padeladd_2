@@ -1267,7 +1267,7 @@ const DashboardController = {
             // Render Carousel Cards
             carousel.innerHTML = list.map(a => `
                 <div class="announcement-card" onclick="Router.navigate('/announcement/${a.id}')">
-                    <img src="${a.image_url}" class="announcement-card-img" alt="${a.title}">
+                    <img src="${CONFIG.ASSET_BASE}/${a.image_url}" class="announcement-card-img" alt="${a.title}">
                 </div>
             `).join('');
 
@@ -7262,7 +7262,7 @@ const AnnouncementController = {
             if (res && res.success && res.data && res.data.announcement) {
                 const a = res.data.announcement;
 
-                document.getElementById('announcement-detail-img').src = a.image_url;
+                document.getElementById('announcement-detail-img').src = `${CONFIG.ASSET_BASE}/${a.image_url}`;
                 document.getElementById('announcement-detail-title').innerText = a.title;
                 
                 // Set body HTML content safely
