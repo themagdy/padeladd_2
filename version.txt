@@ -1723,3 +1723,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Carousel Visuals: Removed overlay titles from the dashboard cards entirely (showing cover images only), and configured card margins to show a peek of the second announcement. Reduced indicator dots size to 5px.
 - Announcement details: Hid dates from the detail view and resized the title to a compact 24px using Montserrat font.
 - Version: 2.4.11 (Build 411)
+
+2.4.12 (Build 412) - 2026-06-14
+- Mod Panel cleanup: Removed the redundant and non-functional "Fix Missing Stats" task button block from the Mod system configuration page.
+- Version: 2.4.12 (Build 412)
+
