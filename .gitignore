@@ -20,3 +20,7 @@ mobile_app/www/
 mobile_app/android/.gradle/
 mobile_app/android/build/
 mobile_app/ios/App/build/
+
+# Private/Secrets directory
+secrets/
+
