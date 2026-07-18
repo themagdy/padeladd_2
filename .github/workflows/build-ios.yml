@@ -27,6 +27,10 @@ jobs:
         working-directory: mobile_app
         run: npx cap sync ios
 
+      - name: Install CocoaPods Dependencies
+        working-directory: mobile_app/ios/App
+        run: pod install
+
       - name: Install Apple Certificates (Optional for Signing)
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
