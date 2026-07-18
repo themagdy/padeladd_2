@@ -1768,4 +1768,25 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - GitHub Actions Integration: Updated android build workflows to decode and inject release signing keys dynamically using GitHub secrets.
 - Announcement Media Fix: Pre-fixed announcement image sources with CONFIG.ASSET_BASE to resolve broken URLs inside the native mobile app wrapper.
 - Version: 2.4.19 (Build 419)
+2.4.20 (Build 420) - 2026-07-16
+- Android Adaptive Launcher Icons: Generated launch icons and adaptive vector sets using Capacitor Assets.
+- Specified #171C26 as the launcher background color in Android configuration resources.
+- iOS Launcher Icons: Generated unified icon sizes and launch splash images for App Store.
+- Version: 2.4.20 (Build 420)
 
+2.4.21 (Build 421) - 2026-07-16
+- Android Version Code Bump: Updated build settings to release code 422 (v2.4.22) to resolve conflict errors on Google Play Console.
+- Version: 2.4.21 (Build 421)
+
+2.4.22 (Build 422) - 2026-07-16
+- Build Sign Integration: Generated base64 binary signing payloads from Distribution Certificates and Provisioning Profiles on Desktop.
+- Updated Action Secrets pipeline to store base64 certificate parameters.
+- Version: 2.4.22 (Build 422)
+
+2.4.23 (Build 423) - 2026-07-18
+- iOS Code Signing & Archiving Fixes: Re-engineered CI/CD pipeline (build-ios.yml) to configure manual code signing directly on the runner.
+- Automation Scripts: Implemented inline Python scripts to dynamically disable automatic signing and map correct DEVELOPMENT_TEAM ("QZ23FAU7R2") and Provisioning Profile parameters.
+- Signing Type Sync: Forced Release build configuration variables to map matching certificate environments, fixing "iOS Development" signature mismatches.
+- CocoaPods Integration: Added automated pod install step to compile native capacitor libraries on macOS runner.
+- Unified Build Versions: Synchronized Android build.gradle, iOS Info.plist, and package.json to release version 2.4.23 (Build 423) for store updates.
+- Version: 2.4.23 (Build 423)
