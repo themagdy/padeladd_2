@@ -28,7 +28,6 @@ jobs:
         run: npx cap sync ios
 
       - name: Install Apple Certificates (Optional for Signing)
-        if: env.BUILD_CERTIFICATE_BASE64 != ''
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
@@ -46,7 +45,30 @@ jobs:
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/cee47eac-c3a5-41d3-a8cd-ce9db6cd100e.mobileprovision
+
+      - name: Export Options Plist Configuration
+        working-directory: mobile_app/ios/App
+        run: |
+          cat <<EOF > exportOptions.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>QZ23FAU7R2</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.padeladd.app</key>
+              <string>cee47eac-c3a5-41d3-a8cd-ce9db6cd100e</string>
+            </dict>
+          </dict>
+          </plist>
+          EOF
 
       - name: Build Xcode Archive
         working-directory: mobile_app/ios/App
@@ -56,23 +78,27 @@ jobs:
             -scheme App \
             -sdk iphoneos \
             -archivePath $PWD/build/App.xcarchive \
-            CODE_SIGNING_ALLOWED=NO
+            -allowProvisioningUpdates \
+            OTHER_CODE_SIGN_FLAGS="--keychain $RUNNER_TEMP/app-signing.keychain-db"
 
-      - name: Generate Unsigned IPA (For Local Sideloading/Testing)
-        working-directory: mobile_app/ios/App/build/App.xcarchive/Products/Applications
+      - name: Generate Signed IPA
+        working-directory: mobile_app/ios/App
         run: |
-          mkdir Payload
-          cp -r App.app Payload/
-          zip -r ../../../../App-unsigned.ipa Payload
+          xcodebuild -exportArchive \
+            -archivePath build/App.xcarchive \
+            -exportPath build/Exported \
+            -exportOptionsPlist exportOptions.plist \
+            OTHER_CODE_SIGN_FLAGS="--keychain $RUNNER_TEMP/app-signing.keychain-db"
 
-      - name: Upload Unsigned IPA Artifact
+      - name: Upload Signed IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-unsigned-ipa
-          path: mobile_app/ios/App/build/App-unsigned.ipa
+          name: app-signed-ipa
+          path: mobile_app/ios/App/build/Exported/App.ipa
 
-      - name: Upload Full XCArchive Artifact (For Store Uploads via Transporter)
+      - name: Upload Full XCArchive Artifact (For Manual Backups)
         uses: actions/upload-artifact@v4
         with:
           name: ios-xcarchive
           path: mobile_app/ios/App/build/App.xcarchive
+
