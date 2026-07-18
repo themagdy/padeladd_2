@@ -54,12 +54,15 @@ jobs:
       - name: Configure Xcode Project Signing
         working-directory: mobile_app/ios/App
         run: |
-          # Use sed to set Development Team, manual signing, and provisioning profile UUID on the main project file
           PROJECT_FILE="App.xcodeproj/project.pbxproj"
+          # Disable Automatic Provisioning Style in TargetAttributes
           sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' $PROJECT_FILE
-          sed -i '' 's/DEVELOPMENT_TEAM = [A-Z0-9]*;/DEVELOPMENT_TEAM = QZ23FAU7R2;/g' $PROJECT_FILE
-          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = "[^"]*";/PROVISIONING_PROFILE_SPECIFIER = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";/g' $PROJECT_FILE
-          sed -i '' 's/PROVISIONING_PROFILE = "[^"]*";/PROVISIONING_PROFILE = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";/g' $PROJECT_FILE
+          
+          # Replace Automatic Signing Style with Manual and append required variables under target build configurations
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;\\
+  DEVELOPMENT_TEAM = "QZ23FAU7R2";\\
+  PROVISIONING_PROFILE_SPECIFIER = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";\\
+  PROVISIONING_PROFILE = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";/g' $PROJECT_FILE
 
       - name: Export Options Plist Configuration
         working-directory: mobile_app/ios/App
