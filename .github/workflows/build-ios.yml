@@ -58,11 +58,15 @@ jobs:
           # Disable Automatic Provisioning Style in TargetAttributes
           sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' $PROJECT_FILE
           
-          # Replace Automatic Signing Style with Manual and append required variables under target build configurations
-          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;\\
-  DEVELOPMENT_TEAM = "QZ23FAU7R2";\\
-  PROVISIONING_PROFILE_SPECIFIER = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";\\
-  PROVISIONING_PROFILE = "cee47eac-c3a5-41d3-a8cd-ce9db6cd100e";/g' $PROJECT_FILE
+          # Use python to perform a safe multiline string injection without breaking YAML syntax
+          python3 -c "
+          with open('$PROJECT_FILE', 'r') as f:
+              content = f.read()
+          replacement = 'CODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = \"QZ23FAU7R2\";\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";\n\t\t\t\tPROVISIONING_PROFILE = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";'
+          content = content.replace('CODE_SIGN_STYLE = Automatic;', replacement)
+          with open('$PROJECT_FILE', 'w') as f:
+              f.write(content)
+          "
 
       - name: Export Options Plist Configuration
         working-directory: mobile_app/ios/App
