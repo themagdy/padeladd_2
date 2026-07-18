@@ -83,6 +83,7 @@ jobs:
             -sdk iphoneos \
             -archivePath $PWD/build/App.xcarchive \
             -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="QZ23FAU7R2" \
             OTHER_CODE_SIGN_FLAGS="--keychain $RUNNER_TEMP/app-signing.keychain-db"
 
       - name: Generate Signed IPA
