@@ -80,6 +80,7 @@ jobs:
           xcodebuild archive \
             -workspace App.xcworkspace \
             -scheme App \
+            -configuration Release \
             -sdk iphoneos \
             -archivePath $PWD/build/App.xcarchive \
             -allowProvisioningUpdates \
