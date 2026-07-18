@@ -58,12 +58,14 @@ jobs:
           # Disable Automatic Provisioning Style in TargetAttributes
           sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' $PROJECT_FILE
           
-          # Use python to perform a safe multiline string injection without breaking YAML syntax
+          # Replace Automatic Signing Style with Manual and append required variables under target build configurations
+          # Also change the default signing identity to Apple Distribution for Release builds
           python3 -c "
           with open('$PROJECT_FILE', 'r') as f:
               content = f.read()
           replacement = 'CODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = \"QZ23FAU7R2\";\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";\n\t\t\t\tPROVISIONING_PROFILE = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";'
           content = content.replace('CODE_SIGN_STYLE = Automatic;', replacement)
+          content = content.replace('CODE_SIGN_IDENTITY = \"iPhone Developer\";', 'CODE_SIGN_IDENTITY = \"Apple Distribution\";')
           with open('$PROJECT_FILE', 'w') as f:
               f.write(content)
           "
