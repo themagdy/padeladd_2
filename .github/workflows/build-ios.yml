@@ -31,30 +31,34 @@ jobs:
         working-directory: mobile_app
         run: |
           npx @capacitor/assets generate --ios
-          # Run python to slice all required legacy sizes directly on the runner
-          python3 -c '
-          import os, json
-          from PIL import Image
-          appiconset_dir = "ios/App/App/Assets.xcassets/AppIcon.appiconset"
-          source_img_path = os.path.join(appiconset_dir, "AppIcon-512@2x.png")
-          img = Image.open(source_img_path)
-          sizes = [
-              ("AppIcon-20x20@2x.png", 40), ("AppIcon-20x20@3x.png", 60),
-              ("AppIcon-29x29@1x.png", 29), ("AppIcon-29x29@2x.png", 58), ("AppIcon-29x29@3x.png", 87),
-              ("AppIcon-40x40@2x.png", 80), ("AppIcon-40x40@3x.png", 120),
-              ("AppIcon-60x60@2x.png", 120), ("AppIcon-60x60@3x.png", 180),
-              ("AppIcon-20x20~ipad.png", 20), ("AppIcon-20x20@2x~ipad.png", 40),
-              ("AppIcon-29x29~ipad.png", 29), ("AppIcon-29x29@2x~ipad.png", 58),
-              ("AppIcon-40x40~ipad.png", 40), ("AppIcon-40x40@2x~ipad.png", 80),
-              ("AppIcon-76x76~ipad.png", 76), ("AppIcon-76x76@2x~ipad.png", 152),
-              ("AppIcon-83.5x83.5@2x~ipad.png", 167), ("AppIcon-1024x1024.png", 1024)
-          ]
-          for filename, size in sizes:
-              resized_img = img.resize((size, size), Image.Resampling.LANCZOS)
-              resized_img.save(os.path.join(appiconset_dir, filename), "PNG")
+          
+          # Use macOS native sips tool to resize the source image into all standard sizes
+          APPICONSET_DIR="ios/App/App/Assets.xcassets/AppIcon.appiconset"
+          SOURCE_IMG="$APPICONSET_DIR/AppIcon-512@2x.png"
+          
+          sips -z 40 40 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-20x20@2x.png"
+          sips -z 60 60 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-20x20@3x.png"
+          sips -z 29 29 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-29x29@1x.png"
+          sips -z 58 58 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-29x29@2x.png"
+          sips -z 87 87 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-29x29@3x.png"
+          sips -z 80 80 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-40x40@2x.png"
+          sips -z 120 120 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-40x40@3x.png"
+          sips -z 120 120 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-60x60@2x.png"
+          sips -z 180 180 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-60x60@3x.png"
+          sips -z 20 20 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-20x20~ipad.png"
+          sips -z 40 40 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-20x20@2x~ipad.png"
+          sips -z 29 29 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-29x29~ipad.png"
+          sips -z 58 58 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-29x29@2x~ipad.png"
+          sips -z 40 40 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-40x40~ipad.png"
+          sips -z 80 80 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-40x40@2x~ipad.png"
+          sips -z 76 76 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-76x76~ipad.png"
+          sips -z 152 152 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-76x76@2x~ipad.png"
+          sips -z 167 167 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-83.5x83.5@2x~ipad.png"
+          sips -z 1024 1024 "$SOURCE_IMG" --out "$APPICONSET_DIR/AppIcon-1024x1024.png"
           
           # Force Contents.json mapping
-          contents = {
+          cat <<EOF > "$APPICONSET_DIR/Contents.json"
+          {
             "images": [
               { "size": "20x20", "idiom": "iphone", "filename": "AppIcon-20x20@2x.png", "scale": "2x" },
               { "size": "20x20", "idiom": "iphone", "filename": "AppIcon-20x20@3x.png", "scale": "3x" },
@@ -78,9 +82,7 @@ jobs:
             ],
             "info": { "version": 1, "author": "xcode" }
           }
-          with open(os.path.join(appiconset_dir, "Contents.json"), "w") as f:
-              json.dump(contents, f, indent=2)
-          '
+          EOF
 
       - name: Install CocoaPods Dependencies
         working-directory: mobile_app/ios/App
