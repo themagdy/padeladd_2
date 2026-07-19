@@ -29,7 +29,58 @@ jobs:
 
       - name: Generate Launcher Icons
         working-directory: mobile_app
-        run: npx @capacitor/assets generate --ios
+        run: |
+          npx @capacitor/assets generate --ios
+          # Run python to slice all required legacy sizes directly on the runner
+          python3 -c '
+          import os, json
+          from PIL import Image
+          appiconset_dir = "ios/App/App/Assets.xcassets/AppIcon.appiconset"
+          source_img_path = os.path.join(appiconset_dir, "AppIcon-512@2x.png")
+          img = Image.open(source_img_path)
+          sizes = [
+              ("AppIcon-20x20@2x.png", 40), ("AppIcon-20x20@3x.png", 60),
+              ("AppIcon-29x29@1x.png", 29), ("AppIcon-29x29@2x.png", 58), ("AppIcon-29x29@3x.png", 87),
+              ("AppIcon-40x40@2x.png", 80), ("AppIcon-40x40@3x.png", 120),
+              ("AppIcon-60x60@2x.png", 120), ("AppIcon-60x60@3x.png", 180),
+              ("AppIcon-20x20~ipad.png", 20), ("AppIcon-20x20@2x~ipad.png", 40),
+              ("AppIcon-29x29~ipad.png", 29), ("AppIcon-29x29@2x~ipad.png", 58),
+              ("AppIcon-40x40~ipad.png", 40), ("AppIcon-40x40@2x~ipad.png", 80),
+              ("AppIcon-76x76~ipad.png", 76), ("AppIcon-76x76@2x~ipad.png", 152),
+              ("AppIcon-83.5x83.5@2x~ipad.png", 167), ("AppIcon-1024x1024.png", 1024)
+          ]
+          for filename, size in sizes:
+              resized_img = img.resize((size, size), Image.Resampling.LANCZOS)
+              resized_img.save(os.path.join(appiconset_dir, filename), "PNG")
+          
+          # Force Contents.json mapping
+          contents = {
+            "images": [
+              { "size": "20x20", "idiom": "iphone", "filename": "AppIcon-20x20@2x.png", "scale": "2x" },
+              { "size": "20x20", "idiom": "iphone", "filename": "AppIcon-20x20@3x.png", "scale": "3x" },
+              { "size": "29x29", "idiom": "iphone", "filename": "AppIcon-29x29@1x.png", "scale": "1x" },
+              { "size": "29x29", "idiom": "iphone", "filename": "AppIcon-29x29@2x.png", "scale": "2x" },
+              { "size": "29x29", "idiom": "iphone", "filename": "AppIcon-29x29@3x.png", "scale": "3x" },
+              { "size": "40x40", "idiom": "iphone", "filename": "AppIcon-40x40@2x.png", "scale": "2x" },
+              { "size": "40x40", "idiom": "iphone", "filename": "AppIcon-40x40@3x.png", "scale": "3x" },
+              { "size": "60x60", "idiom": "iphone", "filename": "AppIcon-60x60@2x.png", "scale": "2x" },
+              { "size": "60x60", "idiom": "iphone", "filename": "AppIcon-60x60@3x.png", "scale": "3x" },
+              { "size": "20x20", "idiom": "ipad", "filename": "AppIcon-20x20~ipad.png", "scale": "1x" },
+              { "size": "20x20", "idiom": "ipad", "filename": "AppIcon-20x20@2x~ipad.png", "scale": "2x" },
+              { "size": "29x29", "idiom": "ipad", "filename": "AppIcon-29x29~ipad.png", "scale": "1x" },
+              { "size": "29x29", "idiom": "ipad", "filename": "AppIcon-29x29@2x~ipad.png", "scale": "2x" },
+              { "size": "40x40", "idiom": "ipad", "filename": "AppIcon-40x40~ipad.png", "scale": "1x" },
+              { "size": "40x40", "idiom": "ipad", "filename": "AppIcon-40x40@2x~ipad.png", "scale": "2x" },
+              { "size": "76x76", "idiom": "ipad", "filename": "AppIcon-76x76~ipad.png", "scale": "1x" },
+              { "size": "76x76", "idiom": "ipad", "filename": "AppIcon-76x76@2x~ipad.png", "scale": "2x" },
+              { "size": "83.5x83.5", "idiom": "ipad", "filename": "AppIcon-83.5x83.5@2x~ipad.png", "scale": "2x" },
+              { "size": "1024x1024", "idiom": "ios-marketing", "filename": "AppIcon-1024x1024.png", "scale": "1x" }
+            ],
+            "info": { "version": 1, "author": "xcode" }
+          }
+          with open(os.path.join(appiconset_dir, "Contents.json"), "w") as f:
+              json.dump(contents, f, indent=2)
+          '
 
       - name: Install CocoaPods Dependencies
         working-directory: mobile_app/ios/App
