@@ -54,12 +54,15 @@ try {
     $ptsMap = [];
     foreach ($ptsRows as $pr) { $ptsMap[(int)$pr['user_id']] = $pr; }
 
-    // Ensure neither player is already in the match
-    $dupCheck = $pdo->prepare("SELECT id FROM match_players WHERE match_id = ? AND user_id = ?");
-    $dupCheck->execute([$match_id, $requester_id]);
-    if ($dupCheck->fetch()) {
-        $pdo->rollBack();
-        jsonResponse(false, 'Requester is already in this match.', null, 409);
+    // Ensure neither player is already in the match (skip requester check if it is creator in on_hold match stage)
+    $isCreatorSpecialCase = ($match['status'] === 'on_hold' && (int)$match['creator_id'] === $requester_id && (int)$match['created_with_partner'] === 1);
+    if (!$isCreatorSpecialCase) {
+        $dupCheck = $pdo->prepare("SELECT id FROM match_players WHERE match_id = ? AND user_id = ?");
+        $dupCheck->execute([$match_id, $requester_id]);
+        if ($dupCheck->fetch()) {
+            $pdo->rollBack();
+            jsonResponse(false, 'Requester is already in this match.', null, 409);
+        }
     }
     $dupCheck->execute([$match_id, $partner_id]);
     if ($dupCheck->fetch()) {
