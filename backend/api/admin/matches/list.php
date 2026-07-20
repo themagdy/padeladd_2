@@ -24,9 +24,7 @@ try {
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         LEFT JOIN venues v ON m.venue_id = v.id
-        WHERE m.status IN ('open', 'full', 'on_hold')
-          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 24 HOUR)
-        ORDER BY m.match_datetime ASC
+        ORDER BY m.match_datetime DESC
     ");
     $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
