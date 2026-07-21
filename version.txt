@@ -1810,3 +1810,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Native Platform Integration: Added App Links intent filters to AndroidManifest.xml and Associated Domains entitlements to Xcode App configurations.
 - Client Routing Handler: Added App.addListener('appUrlOpen') handler in frontend/js/app.js to parse match deep links and trigger seamless client redirection.
 - Version: 2.4.27 (Build 427)
+
+2.4.28 (Build 428) - 2026-07-22
+- Android 16 Targeting Compliance: Upgraded targetSdkVersion and compileSdkVersion variables to API level 36 in variables.gradle to meet the new Google Play requirements.
+- Unified Build Versions: Synchronized build.gradle, Info.plist, and package.json to release version 2.4.28 (Build 428).
+- Version: 2.4.28 (Build 428)
