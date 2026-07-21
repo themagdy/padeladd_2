@@ -1815,3 +1815,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android 16 Targeting Compliance: Upgraded targetSdkVersion and compileSdkVersion variables to API level 36 in variables.gradle to meet the new Google Play requirements.
 - Unified Build Versions: Synchronized build.gradle, Info.plist, and package.json to release version 2.4.28 (Build 428).
 - Version: 2.4.28 (Build 428)
+
+2.4.29 (Build 429) - 2026-07-22
+- Android Push Notification Fix: Declared missing POST_NOTIFICATIONS uses-permission in AndroidManifest.xml to enable Capacitor FCM token registration on Android 13+.
+- iOS Push Notification Fix: Added aps-environment capability set to development inside App.entitlements.
+- Profile UI Polish: Adjusted level badge overlay z-index to 110 in view.html to ensure it sits on top of the story ring outline.
+- Unified Build Versions: Synchronized build.gradle, Info.plist, and package.json to release version 2.4.29 (Build 429).
+- Version: 2.4.29 (Build 429)
