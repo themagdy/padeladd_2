@@ -19,5 +19,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     # Exclude the backend/api directory from frontend routing (wildcard match)
     RewriteCond %{REQUEST_URI} !/backend/api/
+    # Exclude well-known domain association metadata directories
+    RewriteCond %{REQUEST_URI} !/\.well-known/
     RewriteRule ^ index.html [QSA,L]
 </IfModule>

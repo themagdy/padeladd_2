@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "QZ23FAU7R2.com.padeladd.app",
+        "paths": [ "/matches/*" ]
+      }
+    ]
+  }
+}

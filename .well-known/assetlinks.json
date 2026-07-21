@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.padeladd.app",
+      "sha256_cert_fingerprints": [
+        "1E:C5:5D:87:6F:E1:98:C8:FF:95:90:3A:43:08:92:28:C2:59:71:0D:37:A6:FB:F6:41:A5:71:6C:6C:51:71:D0"
+      ]
+    }
+  }
+]

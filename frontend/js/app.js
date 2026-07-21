@@ -1040,6 +1040,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // App Launch / Deep Link Handler
+        App.addListener('appUrlOpen', (data) => {
+            console.log('[App] Deep link received:', data.url);
+            if (data.url) {
+                // Example: https://padeladd.com/matches/M-J438
+                const urlObj = new URL(data.url);
+                const path = urlObj.pathname; // "/matches/M-J438"
+                if (path && path.startsWith('/matches/')) {
+                    const parts = path.split('/matches/');
+                    if (parts[1]) {
+                        const matchCode = parts[1].trim();
+                        console.log('[App] Routing to deep linked match:', matchCode);
+                        if (typeof Router !== 'undefined') {
+                            Router.navigate('/matches/' + matchCode, true, true);
+                        }
+                    }
+                }
+            }
+        });
+
         App.addListener('backButton', () => {
             // Priority 1: Close confirm modal if open
             if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
