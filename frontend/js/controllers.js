@@ -1258,7 +1258,7 @@ const DashboardController = {
         const container = document.getElementById('announcements-carousel-container');
         const carousel = document.getElementById('announcements-carousel');
         const indicatorsContainer = document.getElementById('announcements-indicators');
-        
+
         if (!container || !carousel) return;
 
         const renderList = (list) => {
@@ -1282,7 +1282,7 @@ const DashboardController = {
                     const width = carousel.offsetWidth;
                     const scrollPos = carousel.scrollLeft;
                     const indicators = indicatorsContainer.querySelectorAll('.indicator');
-                    
+
                     // Find closest card to active scroll position
                     let activeIndex = 0;
                     let minDiff = Infinity;
@@ -5402,6 +5402,18 @@ const ChatController = {
         if (otherUsers.length > 0) {
             if (meUser) {
                 html += `<div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:auto 4px; flex-shrink:0;"></div>`;
+                // Add the explicit Tip Badge with Arrow (Premium Modern Layout)
+                html += `
+                    <div style="display:flex; flex-direction:column; justify-content:center; padding:5px 12px; margin:auto 4px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.09); border-radius:12px; font-size:11px; font-weight:800; line-height:1.25; color:#cbd5e1; max-width:130px; flex-shrink:0; pointer-events:none; user-select:none;">
+                        <span style="color:#f1f5f9;">Tap for</span>
+                        <span style="color:#cbd5e1; font-weight:700; display:flex; align-items:center; gap:4px;">
+                            Mobile No. 
+                            <svg style="width:10px; height:10px; color:var(--c-orange); margin-top:1px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+                    </div>
+                `;
             }
             html += otherUsers.map(p => buildAvatar(p, false)).join('');
         }
@@ -7264,7 +7276,7 @@ const AnnouncementController = {
 
                 document.getElementById('announcement-detail-img').src = `${CONFIG.ASSET_BASE}/${a.image_url}`;
                 document.getElementById('announcement-detail-title').innerText = a.title;
-                
+
                 // Set body HTML content safely
                 document.getElementById('announcement-detail-body').innerHTML = a.body;
 

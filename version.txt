@@ -1846,3 +1846,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Post Splash Transition: Declared postSplashScreenTheme key in styles.xml to transition to NoActionBar base styles once startup splash closes, preventing default action bar rendering.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.33 (Build 433).
 - Version: 2.4.33 (Build 433)
+
+2.4.34 (Build 434) - 2026-07-22
+- Chat Header Request Phone Tip: Added a premium, modern 2-line helper tip badge with an integrated vector SVG right chevron icon to guide users to request players' phone numbers.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.34 (Build 434).
+- Version: 2.4.34 (Build 434)
