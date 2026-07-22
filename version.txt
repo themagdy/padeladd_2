@@ -1836,3 +1836,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Splash Screen Fix: Added installSplashScreen() override in MainActivity.java to properly initialize the Core SplashScreen API and prevent app boot crashes on Android 12+.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.31 (Build 431).
 - Version: 2.4.31 (Build 431)
+
+2.4.32 (Build 432) - 2026-07-22
+- Android Action Bar Fix: Changed AppTheme parent to Theme.AppCompat.Light.NoActionBar in styles.xml to disable the native Android action bar header.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.32 (Build 432).
+- Version: 2.4.32 (Build 432)
