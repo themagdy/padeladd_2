@@ -1821,5 +1821,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - iOS Push Notification Fix: Added aps-environment capability set to development inside App.entitlements.
 - Profile UI Polish: Adjusted level badge overlay z-index to 110 in view.html to ensure it sits on top of the story ring outline.
 - Password Visibility Toggle: Added eye icon buttons to password inputs on Login, Register, and Reset Password pages, with dynamic show/hide toggle logic in app.js.
+- UI Selection Fix: Disabled global text selections on mobile viewports while preserving normal input/textarea editing capabilities.
+- Gender Dropdown Options: Updated option labels in profile edit/complete screen from Men/Women to Male/Female.
 - Unified Build Versions: Synchronized build.gradle, Info.plist, and package.json to release version 2.4.29 (Build 429).
 - Version: 2.4.29 (Build 429)

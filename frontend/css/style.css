@@ -4730,6 +4730,18 @@ body {
   touch-action: pan-y;
 }
 
+body.is-mobile-app {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+body.is-mobile-app input,
+body.is-mobile-app textarea,
+body.is-mobile-app [contenteditable="true"] {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
 .btn,
 .nav-item,
 .clickable {
