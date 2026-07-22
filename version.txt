@@ -1826,3 +1826,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Splash/System Bars: Updated colorPrimary and Theme statusBarColor/navigationBarColor resources to #0D1117 in styles.xml and colors.xml to blend system bars with app background.
 - Unified Build Versions: Synchronized build.gradle, Info.plist, and package.json to release version 2.4.29 (Build 429).
 - Version: 2.4.29 (Build 429)
+
+2.4.30 (Build 430) - 2026-07-22
+- Android System Navigation Bar: Configured runtime system navigationBarColor to #0D1117 in styles.xml to blend system navbar dynamically.
+- Unified Build Versions: Bumed build.gradle, Info.plist, and package.json to release version 2.4.30 (Build 430).
+- Version: 2.4.30 (Build 430)
