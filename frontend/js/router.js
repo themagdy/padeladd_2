@@ -211,7 +211,8 @@ const Router = {
                 }
             }
         },
-        '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() }
+        '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() },
+        '/privacy': { template: 'frontend/pages/privacy.html', init: () => {} }
     },
 
     navDepth: 0,
@@ -234,7 +235,7 @@ const Router = {
             if (e.state && e.state.ignoreRoute) return;
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
             const isDynamicBackBar = path.startsWith('/matches/M-') ||
                 path.startsWith('/p/') ||
                 path.startsWith('/announcement/') ||
@@ -298,11 +299,11 @@ const Router = {
 
     back: function () {
         const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms'];
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms', '/privacy'];
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
         const isDynamicBackBar = path.startsWith('/matches/M-') ||
             path.startsWith('/p/') ||
             path.startsWith('/announcement/') ||
@@ -363,7 +364,7 @@ const Router = {
         if (loader && !isMainTab) loader.style.display = 'flex';
 
         // Global Protection: Redirect to login if not authenticated and trying to access private route
-        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms'];
+        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms', '/privacy'];
         const isPublic = publicRoutes.includes(path);
 
         if (!Auth.isAuthenticated() && !isPublic) {
@@ -499,7 +500,7 @@ const Router = {
         const isAuthPage = authRoutes.includes(nPath) || nPath === '/' || nPath === '/index.html';
 
         // Pages that need the unified back bar
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms'];
+        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
         const isDynamicBackBar = nPath.startsWith('/matches/M-') ||
             nPath.startsWith('/p/') ||
             nPath.startsWith('/announcement/') ||

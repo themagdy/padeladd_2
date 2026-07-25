@@ -1147,18 +1147,4 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
     });
-
-    // Intercept external links and open in system browser
-    document.addEventListener('click', (e) => {
-        const anchor = e.target.closest('a');
-        if (!anchor) return;
-
-        const href = anchor.getAttribute('href');
-        if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
-            if (anchor.getAttribute('target') === '_blank' || !href.includes(window.location.host)) {
-                e.preventDefault();
-                window.open(href, '_system');
-            }
-        }
-    });
 });
