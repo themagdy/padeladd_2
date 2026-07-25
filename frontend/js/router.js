@@ -444,6 +444,11 @@ const Router = {
                 }
 
                 appDiv.innerHTML = safeHTML(html);
+                if (typeof CONFIG !== 'undefined' && CONFIG.APP_BUILD_REF) {
+                    appDiv.querySelectorAll('.app-version-placeholder').forEach(el => {
+                        el.textContent = CONFIG.APP_BUILD_REF;
+                    });
+                }
                 window.scrollTo(0, 0);
 
                 // Initialize specific route logic

@@ -1887,3 +1887,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Domain Fingerprint Fix: Corrected the SHA-256 Google Play App Signing key fingerprint in assetlinks.json matching the production application signature to resolve the App Links verification failure.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.41 (Build 441).
 - Version: 2.4.41 (Build 441)
+
+2.4.42 (Build 442) - 2026-07-25
+- External Links Interception: Added a global click event listener in app.js to catch external links (including the Privacy Policy link) and open them in the native system browser via window.open(href, '_system'), preventing app navigation and keeping native back button behavior correct.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.42 (Build 442).
+- Version: 2.4.42 (Build 442)
