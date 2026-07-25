@@ -1872,3 +1872,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Version Bump: Cleaned release build versions and bumped package definitions for Play Store Closed Testing distribution.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.38 (Build 438).
 - Version: 2.4.38 (Build 438)
+
+2.4.39 (Build 439) - 2026-07-25
+- Android Spacing Fix: Configured the Capacitor StatusBar plugin with overlaysWebView({ overlay: false }) on Android to natively draw the WebView below the status bar, and removed dynamic JS safe-area inset fallbacks to eliminate double margin spacing issues.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.39 (Build 439).
+- Version: 2.4.39 (Build 439)
+
+2.4.40 (Build 440) - 2026-07-25
+- Android App Links Update: Added www.padeladd.com host explicitly into the AndroidManifest.xml intent filter to prevent deep link resolution failures for www. links.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.40 (Build 440).
+- Version: 2.4.40 (Build 440)
