@@ -1108,6 +1108,25 @@ document.addEventListener('DOMContentLoaded', () => {
             html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; }
         `;
         document.head.appendChild(style);
+
+        // Safe Area Fallback for Android (especially Android 15+ edge-to-edge when WebViews don't propagate insets)
+        if (window.Capacitor.getPlatform() === 'android') {
+            const testDiv = document.createElement('div');
+            testDiv.style.paddingTop = 'env(safe-area-inset-top, 0px)';
+            document.body.appendChild(testDiv);
+            const computedTop = window.getComputedStyle(testDiv).paddingTop;
+            document.body.removeChild(testDiv);
+
+            const hasNativeSafeArea = parseFloat(computedTop) > 0;
+            if (!hasNativeSafeArea) {
+                // If native safe areas resolve to 0, check if the WebView is taking the full screen height (edge-to-edge)
+                const isEdgeToEdge = (window.innerHeight / window.screen.height) > 0.93;
+                if (isEdgeToEdge) {
+                    document.documentElement.style.setProperty('--safe-area-top', '28px');
+                    document.documentElement.style.setProperty('--safe-area-bottom', '16px');
+                }
+            }
+        }
     }
 
     // Global Password Visibility Toggle

@@ -1851,3 +1851,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat Header Request Phone Tip: Added a premium, modern 2-line helper tip badge with an integrated vector SVG right chevron icon to guide users to request players' phone numbers.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.34 (Build 434).
 - Version: 2.4.34 (Build 434)
+
+2.4.35 (Build 435) - 2026-07-25
+- Android Edge-to-Edge Spacing Fallback: Implemented dynamic CSS variables and a runtime platform check in app.js to inject fallback status bar and navigation bar padding specifically on Android devices when native WebView safe-area insets resolve to zero.
+- Dynamic Mobile Navigation Height: Updated mobile tab navigation bar height to calculate dynamically as calc(70px + var(--safe-area-bottom)) to prevent elements from compressing under box-sizing: border-box.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.35 (Build 435).
+- Version: 2.4.35 (Build 435)
