@@ -611,7 +611,7 @@ var PushNotificationsController = {
 
     updateServerToken: async function (token) {
         if (typeof Auth !== 'undefined' && !Auth.isAuthenticated()) return;
-        const platform = window.Capacitor.getPlatform();
+        const platform = window.Capacitor?.getPlatform?.() || 'web';
         console.log('[PushNotifications] Updating server token...');
         await API.post('/profile/update_device_token', {
             token: token,
@@ -662,7 +662,7 @@ const InAppMessagesController = {
             if (action === 'navigate' && msg.page_route) {
                 Router.navigate(msg.page_route);
             } else if (action === 'external') {
-                const platform = window.Capacitor?.getPlatform() || 'web';
+                const platform = window.Capacitor?.getPlatform?.() || 'web';
                 let url = msg.android_url;
                 if (platform === 'ios') url = msg.ios_url || msg.android_url;
 
@@ -1025,7 +1025,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (StatusBar) {
         StatusBar.setBackgroundColor({ color: '#0D1117' }); // old: #11161E
         StatusBar.setStyle({ style: 'DARK' });
-        if (window.Capacitor.getPlatform() === 'android') {
+        if (window.Capacitor?.getPlatform?.() === 'android') {
             StatusBar.overlaysWebView({ overlay: false });
         }
     }
