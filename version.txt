@@ -1882,3 +1882,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android App Links Update: Added www.padeladd.com host explicitly into the AndroidManifest.xml intent filter to prevent deep link resolution failures for www. links.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.40 (Build 440).
 - Version: 2.4.40 (Build 440)
+
+2.4.41 (Build 441) - 2026-07-25
+- Android Domain Fingerprint Fix: Corrected the SHA-256 Google Play App Signing key fingerprint in assetlinks.json matching the production application signature to resolve the App Links verification failure.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.41 (Build 441).
+- Version: 2.4.41 (Build 441)
