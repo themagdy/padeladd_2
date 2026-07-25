@@ -1867,3 +1867,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Deep Linking Domain Verification: Added the Google Play App Signing Release SHA-256 fingerprint (71:F9:85:7B:0B:10:99:4D:88:EF:21:B3:CB:BA:D5:A3:0B:2E:87:3C:4F:1C:B9:7F:0B:A8:27:F0:ED:5C:6E:3E) to the assetlinks.json array, enabling automatic supported web address association for Play Store builds.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.37 (Build 437).
 - Version: 2.4.37 (Build 437)
+
+2.4.38 (Build 438) - 2026-07-25
+- Version Bump: Cleaned release build versions and bumped package definitions for Play Store Closed Testing distribution.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.38 (Build 438).
+- Version: 2.4.38 (Build 438)
