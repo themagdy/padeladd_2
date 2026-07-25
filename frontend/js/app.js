@@ -1025,9 +1025,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (StatusBar) {
         StatusBar.setBackgroundColor({ color: '#0D1117' }); // old: #11161E
         StatusBar.setStyle({ style: 'DARK' });
-        if (window.Capacitor?.getPlatform?.() === 'android') {
-            StatusBar.overlaysWebView({ overlay: false });
-        }
     }
 
     // Android Physical Back Button & App State Handler

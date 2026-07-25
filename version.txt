@@ -1902,3 +1902,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Capacitor Safety Guards: Implemented safe optional chaining on all window.Capacitor.getPlatform() calls in app.js, preventing JavaScript runtime crashes and guaranteeing that the native physical back button listener successfully registers and executes.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.44 (Build 444).
 - Version: 2.4.44 (Build 444)
+
+2.4.45 (Build 445) - 2026-07-25
+- Android Native Back Button Reversion: Completely removed the Android status bar overlaysWebView check added today to prevent startup crashes and restore yesterday's native back button registration structure without any try-catch overrides.
+- Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.45 (Build 445).
+- Version: 2.4.45 (Build 445)
