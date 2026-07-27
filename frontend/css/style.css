@@ -38,6 +38,7 @@
   --c-red: #F15A29;
   --c-gold: #F5C518;
   --c-pink: #D81B60;
+  --c-text-blue: #5B8BFF;
 
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
@@ -715,7 +716,7 @@ form {
 
 .badge-primary {
   background: rgba(27, 82, 206, 0.2);
-  color: #5B8BFF;
+  color: var(--c-text-blue);
 }
 
 .badge-orange {
@@ -1030,7 +1031,7 @@ form {
 
 .toast.info {
   border-color: var(--c-primary);
-  color: #5B8BFF;
+  color: var(--c-text-blue);
 }
 
 .toast.warning {
@@ -1520,7 +1521,7 @@ form {
 }
 
 .auth-link {
-  color: var(--c-primary);
+  color: var(--c-text-blue);
   font-weight: 700;
   cursor: pointer;
   transition: opacity var(--t-fast);
@@ -1839,7 +1840,7 @@ form {
 }
 
 .text-primary {
-  color: var(--c-primary);
+  color: var(--c-text-blue);
 }
 
 .w-full {
@@ -3536,7 +3537,7 @@ form {
 
 .autocomplete-dropdown li:hover {
   background: var(--c-bg-secondary);
-  color: var(--c-primary);
+  color: var(--c-text-blue);
 }
 
 /* -------------------------------------------------------
@@ -3743,7 +3744,7 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--c-primary);
+  color: var(--c-text-blue);
   flex-shrink: 0;
   font-size: 14px;
   font-weight: 800;
@@ -3753,7 +3754,7 @@ form {
 .empty-name-mini {
   font-size: 12px;
   font-weight: 700;
-  color: var(--c-primary);
+  color: var(--c-text-blue);
   opacity: 0.8;
   letter-spacing: 0.3px;
 }
@@ -3843,7 +3844,7 @@ form {
   display: inline-flex;
   align-items: center;
   background: rgba(27, 82, 206, 0.1);
-  color: var(--c-primary);
+  color: var(--c-text-blue);
   border: 1px solid rgba(27, 82, 206, 0.2);
   padding: 2px 8px;
   border-radius: 4px;
