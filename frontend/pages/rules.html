@@ -65,45 +65,34 @@
         </div>
 
         <!-- Point Type Cards -->
-        <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+        <div style="display:flex; flex-direction:column; gap:14px;">
           <!-- Ranking Points Item -->
-          <div style="background:rgba(255,255,255,0.02); padding:16px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:16px; align-items:center; transition:transform 0.2s ease;">
-            <div style="font-size:20px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(91, 139, 255, 0.08); border:1px solid rgba(91, 139, 255, 0.15); color:var(--c-text-blue); border-radius:50%; box-shadow:0 4px 12px rgba(91, 139, 255, 0.05); flex-shrink:0;">📈</div>
+          <div style="background:rgba(255,255,255,0.02); padding:16px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:16px; align-items:center;">
+            <div style="font-size:20px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(91, 139, 255, 0.08); border:1px solid rgba(91, 139, 255, 0.15); color:var(--c-text-blue); border-radius:50%; flex-shrink:0;">📈</div>
             <div style="flex:1;">
-              <div style="font-weight:800; color:#fff; font-size:14px; letter-spacing:-0.2px; margin-bottom:2px;">Ranking Points</div>
-              <p style="font-size:12px; color:var(--c-text-muted); line-height:1.5; margin:0; font-weight:500;">Earned rank from wins and opponent strength.</p>
+              <div style="font-weight:800; color:#fff; font-size:14px; margin-bottom:2px;">Ranking Points</div>
+              <p style="font-size:12px; color:var(--c-text-muted); line-height:1.4; margin:0; font-weight:500;">Your true skill rating. Rises when you win, drops when you lose.</p>
             </div>
           </div>
           
           <!-- Buffer Points Item -->
-          <div style="background:rgba(255,255,255,0.02); padding:16px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:16px; align-items:center; transition:transform 0.2s ease;">
-            <div style="font-size:20px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(255, 139, 0, 0.08); border:1px solid rgba(255, 139, 0, 0.15); color:var(--c-orange); border-radius:50%; box-shadow:0 4px 12px rgba(255, 139, 0, 0.05); flex-shrink:0;">⚡</div>
+          <div style="background:rgba(255,255,255,0.02); padding:16px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:16px; align-items:center;">
+            <div style="font-size:20px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(255, 139, 0, 0.08); border:1px solid rgba(255, 139, 0, 0.15); color:var(--c-orange); border-radius:50%; flex-shrink:0;">⚡</div>
             <div style="flex:1;">
-              <div style="font-weight:800; color:var(--c-orange); font-size:14px; letter-spacing:-0.2px; margin-bottom:2px;">Buffer Points</div>
-              <p style="font-size:12px; color:var(--c-text-muted); line-height:1.5; margin:0; font-weight:500;">Starting boost based on your selected level.</p>
+              <div style="font-weight:800; color:var(--c-orange); font-size:14px; margin-bottom:2px;">Buffer Points</div>
+              <p style="font-size:12px; color:var(--c-text-muted); line-height:1.4; margin:0; font-weight:500;">A temporary starting boost so new players can find matches instantly.</p>
+            </div>
+          </div>
+
+          <!-- Calibration Item -->
+          <div style="background:rgba(255,255,255,0.02); padding:16px 20px; border-radius:16px; border:1px solid rgba(255,255,255,0.04); display:flex; gap:16px; align-items:center;">
+            <div style="font-size:20px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; background:rgba(147, 112, 219, 0.08); border:1px solid rgba(147, 112, 219, 0.15); color:#B39DDB; border-radius:50%; flex-shrink:0;">🎯</div>
+            <div style="flex:1;">
+              <div style="font-weight:800; color:#B39DDB; font-size:14px; margin-bottom:2px;">20-Match Calibration</div>
+              <p style="font-size:12px; color:var(--c-text-muted); line-height:1.4; margin:0; font-weight:500;">Your buffer decays by 5% each match. After 20 matches, it becomes zero.</p>
             </div>
           </div>
         </div>
-
-        <!-- Buffer Rule Highlight -->
-        <div style="background:var(--c-bg-secondary); border-radius:16px; padding:20px;">
-          <div style="display:flex; gap:14px;">
-            <div style="width:40px; height:40px; background:var(--g-primary); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:20px;">🎯</div>
-            <div style="flex:1;">
-              <h4 style="font-size:15px; font-weight:800; color:#fff; margin-bottom:6px;">20-Match Calibration</h4>
-              <p style="font-size:12px; color:#ffffff; line-height:1.5; margin:0; margin-bottom:12px; opacity:1.0;">Every new profile starts with a temporary buffer to help you join matches instantly.</p>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <div style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#ffffff;">
-                  <span style="color:var(--c-text-blue); font-weight:900; margin-top:-2px;">•</span> 
-                  <span><strong>Gradual Decay:</strong> Decreases with every match played.</span>
-                </div>
-                <div style="display:flex; align-items:flex-start; gap:8px; font-size:12px; color:#ffffff;">
-                  <span style="color:var(--c-text-blue); font-weight:900; margin-top:-2px;">•</span> 
-                  <span><strong>Full Rank:</strong> Zero buffer after 20 matches.</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
         </div>
       </div>
