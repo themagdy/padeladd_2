@@ -1907,3 +1907,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Android Native Back Button Reversion: Completely removed the Android status bar overlaysWebView check added today to prevent startup crashes and restore yesterday's native back button registration structure without any try-catch overrides.
 - Unified Build Versions: Bumped build.gradle, Info.plist, and package.json to release version 2.4.45 (Build 445).
 - Version: 2.4.45 (Build 445)
+
+2.4.46 (Build 446) - 2026-07-28
+- Rules Page Restyling: Overhauled the Points & Eligibility card inside rules.html to a premium glassmorphic style with distinct border indicators and circular emoji background frames (ranking points in blue, buffer points in orange).
+- Eligibility Formula Optimization: Compacted the horizontal eligibility formula pill container layout, paddings, and font sizes to ensure single-line alignment without horizontal overflow or wrapping on standard 375px mobile screens.
+- Simulator Layout Upgrades: Moved the interactive Calibration Simulator out of nested card layouts to be a top-level section block sibling, allowing it to span the full width of the rules layout wrapper.
+- Simulator Design Refinement: Redesigned simulator cards, labels, progress bars, and outcome flow capsules (.sim-card, .flow-status, .flow-arrow) in style.css for a premium glassmorphic feel and optimized mobile spacing.
+- Rules Copy Simplification: Consolidated point type and calibration rules into a clear, concise 3-card vertical list. Specified the exact match limit ("first 5 matches") for the New Player 2.0x Double Points multiplier.
+- Arabic Translation Adjustments: Localized the "5 hours rule" Arabic descriptions across the rules section, match details alert banner, and terms of use agreement to read as "ماتش كامل العدد" (full match) instead of "ماتش كامل".
+- Version: 2.4.46 (Build 446)
