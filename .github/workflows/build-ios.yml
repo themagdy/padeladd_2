@@ -106,7 +106,7 @@ jobs:
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/cee47eac-c3a5-41d3-a8cd-ce9db6cd100e.mobileprovision
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/4ee18fce-e920-4f44-bd59-11d06d2b5efb.mobileprovision
 
       - name: Configure Xcode Project Signing
         working-directory: mobile_app/ios/App
@@ -120,7 +120,7 @@ jobs:
           python3 -c "
           with open('$PROJECT_FILE', 'r') as f:
               content = f.read()
-          replacement = 'CODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = \"QZ23FAU7R2\";\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";\n\t\t\t\tPROVISIONING_PROFILE = \"cee47eac-c3a5-41d3-a8cd-ce9db6cd100e\";'
+          replacement = 'CODE_SIGN_STYLE = Manual;\n\t\t\t\tDEVELOPMENT_TEAM = \"QZ23FAU7R2\";\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = \"4ee18fce-e920-4f44-bd59-11d06d2b5efb\";\n\t\t\t\tPROVISIONING_PROFILE = \"4ee18fce-e920-4f44-bd59-11d06d2b5efb\";'
           content = content.replace('CODE_SIGN_STYLE = Automatic;', replacement)
           content = content.replace('CODE_SIGN_IDENTITY = \"iPhone Developer\";', 'CODE_SIGN_IDENTITY = \"Apple Distribution\";')
           with open('$PROJECT_FILE', 'w') as f:
@@ -144,7 +144,7 @@ jobs:
             <key>provisioningProfiles</key>
             <dict>
               <key>com.padeladd.app</key>
-              <string>cee47eac-c3a5-41d3-a8cd-ce9db6cd100e</string>
+              <string>4ee18fce-e920-4f44-bd59-11d06d2b5efb</string>
             </dict>
           </dict>
           </plist>
