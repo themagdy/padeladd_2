@@ -105,65 +105,66 @@
             </div>
           </div>
 
-          <!-- Interactive Simulator Container -->
-          <div class="calibration-simulator state-idle" style="margin-top: 20px; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 16px; border: 1px solid rgba(255,255,255,0.03); overflow: hidden; position: relative;">
-            
-            <!-- Header and Status -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span style="font-size: 11px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; opacity: 1.0;">Calibration Simulator</span>
-              <button id="sim-btn-reset" class="sim-btn" style="padding: 4px 8px; font-size: 10px; opacity: 1.0; color: #ffffff;">🔄 Reset</button>
-            </div>
+        </div>
+      </div>
 
-            <!-- Centered Match Counter Capsule -->
-            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-              <div style="background: rgba(255, 149, 0, 0.06); border: 1px solid rgba(255, 149, 0, 0.2); border-radius: 20px; padding: 6px 18px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.05);">
-                <span id="sim-match-counter" style="font-size: 14px; font-weight: 900; color: var(--c-orange); text-transform: uppercase; letter-spacing: 0.5px;">Match: 0 / 20</span>
-              </div>
-            </div>
+      <!-- Interactive Simulator Container -->
+      <div class="calibration-simulator state-idle" style="margin-top: 20px; background:var(--g-card); border:1px solid var(--c-border); border-radius:var(--r-lg); padding:24px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow: hidden; position: relative;">
+        
+        <!-- Header and Status -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 11px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; opacity: 1.0;">Calibration Simulator</span>
+          <button id="sim-btn-reset" class="sim-btn" style="padding: 4px 8px; font-size: 10px; opacity: 1.0; color: #ffffff;">🔄 Reset</button>
+        </div>
 
-            <!-- The Visual Stage -->
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 90px; position: relative; padding: 0 4px; margin-bottom: 16px;">
-              
-              <!-- Left Card: Buffer -->
-              <div class="sim-card">
-                <span class="sim-card-label" style="color: var(--c-orange); text-align: center;">⚡ Buffer Points</span>
-                <div id="sim-val-buffer" class="sim-card-number" style="color: var(--c-orange);">100</div>
-                <div class="sim-progress-bg"><div id="sim-progress-buffer" class="sim-progress-fill buffer"></div></div>
-              </div>
-
-              <!-- Center Flow Arrow / Connector -->
-              <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; height: 50px;">
-                <div id="sim-transfer-arrow" class="flow-arrow" style="font-size: 20px; transition: all 0.3s ease; color:#ffffff;">➔</div>
-                <div id="sim-status-label" class="flow-status" style="font-size: 11px; font-weight: 800; color: var(--c-text-muted); text-align: center;">👇</div>
-              </div>
-
-              <!-- Right Card: Ranking -->
-              <div class="sim-card">
-                <span class="sim-card-label" style="color: var(--c-green); text-align: center;">🏆 Ranking Pts</span>
-                <div id="sim-val-rank" class="sim-card-number" style="color: var(--c-green);">0</div>
-                <div class="sim-progress-bg"><div id="sim-progress-rank" class="sim-progress-fill rank"></div></div>
-              </div>
-
-            </div>
-
-            <!-- Match Outcome Buttons -->
-            <div id="sim-controls" style="display: flex; gap: 8px;">
-              <button id="sim-btn-win" class="sim-btn-action win" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                🏆 WIN
-              </button>
-              <button id="sim-btn-loss" class="sim-btn-action loss" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                ❌ LOSE
-              </button>
-            </div>
-
-            <!-- Completion Banner -->
-            <div id="sim-completion-banner" style="display: none; background: rgba(0,206,0,0.08); border: 1px solid rgba(0,206,0,0.2); border-radius: 8px; padding: 12px; text-align: center; margin-top: 4px;">
-              <div style="font-size: 13px; font-weight: 800; color: var(--c-green); margin-bottom: 4px;">🎯 Calibration Complete!</div>
-              <div style="font-size: 11px; color: #ffffff; line-height: 1.4; opacity: 1.0;">All 20 calibration matches played. The buffer is empty. Your rank is 100% driven by Ranking Points!</div>
-            </div>
-
+        <!-- Centered Match Counter Capsule -->
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+          <div style="background: rgba(255, 149, 0, 0.06); border: 1px solid rgba(255, 149, 0, 0.2); border-radius: 20px; padding: 6px 18px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.05);">
+            <span id="sim-match-counter" style="font-size: 14px; font-weight: 900; color: var(--c-orange); text-transform: uppercase; letter-spacing: 0.5px;">Match: 0 / 20</span>
           </div>
         </div>
+
+        <!-- The Visual Stage -->
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 90px; position: relative; padding: 0 4px; margin-bottom: 16px;">
+          
+          <!-- Left Card: Buffer -->
+          <div class="sim-card">
+            <span class="sim-card-label" style="color: var(--c-orange); text-align: center;">⚡ Buffer Points</span>
+            <div id="sim-val-buffer" class="sim-card-number" style="color: var(--c-orange);">100</div>
+            <div class="sim-progress-bg"><div id="sim-progress-buffer" class="sim-progress-fill buffer"></div></div>
+          </div>
+
+          <!-- Center Flow Arrow / Connector -->
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; height: 50px;">
+            <div id="sim-transfer-arrow" class="flow-arrow" style="font-size: 20px; transition: all 0.3s ease; color:#ffffff;">➔</div>
+            <div id="sim-status-label" class="flow-status" style="font-size: 11px; font-weight: 800; color: var(--c-text-muted); text-align: center;">👇</div>
+          </div>
+
+          <!-- Right Card: Ranking -->
+          <div class="sim-card">
+            <span class="sim-card-label" style="color: var(--c-green); text-align: center;">🏆 Ranking Pts</span>
+            <div id="sim-val-rank" class="sim-card-number" style="color: var(--c-green);">0</div>
+            <div class="sim-progress-bg"><div id="sim-progress-rank" class="sim-progress-fill rank"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Match Outcome Buttons -->
+        <div id="sim-controls" style="display: flex; gap: 8px;">
+          <button id="sim-btn-win" class="sim-btn-action win" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🏆 WIN
+          </button>
+          <button id="sim-btn-loss" class="sim-btn-action loss" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            ❌ LOSE
+          </button>
+        </div>
+
+        <!-- Completion Banner -->
+        <div id="sim-completion-banner" style="display: none; background: rgba(0,206,0,0.08); border: 1px solid rgba(0,206,0,0.2); border-radius: 8px; padding: 12px; text-align: center; margin-top: 4px;">
+          <div style="font-size: 13px; font-weight: 800; color: var(--c-green); margin-bottom: 4px;">🎯 Calibration Complete!</div>
+          <div style="font-size: 11px; color: #ffffff; line-height: 1.4; opacity: 1.0;">All 20 calibration matches played. The buffer is empty. Your rank is 100% driven by Ranking Points!</div>
+        </div>
+
       </div>
     </section>
 
