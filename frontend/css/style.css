@@ -3632,46 +3632,54 @@ form {
 .status-badge-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
-  padding: 4px 18px;
+  justify-content: center;
+  padding: 5px 14px;
   border-radius: 100px;
-  font-size: 12px;
-  font-weight: 900;
+  font-size: 11px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  border-width: 1px;
-  border-style: solid;
-  min-width: 95px;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .status-badge-pill.status-open {
-  border-color: var(--c-green);
-  color: var(--c-green);
+  background: rgba(0, 206, 0, 0.1) !important;
+  border-color: rgba(0, 206, 0, 0.25) !important;
+  color: #00CE00 !important;
 }
 
 .status-badge-pill.status-on_hold {
-  border-color: var(--c-gold);
-  color: var(--c-gold);
+  background: rgba(245, 197, 24, 0.1) !important;
+  border-color: rgba(245, 197, 24, 0.25) !important;
+  color: #F5C518 !important;
 }
 
 .status-badge-pill.status-full {
-  border-color: var(--c-orange);
-  color: var(--c-orange);
+  background: rgba(255, 139, 0, 0.1) !important;
+  border-color: rgba(255, 139, 0, 0.25) !important;
+  color: #ff8b00 !important;
 }
 
 .status-badge-pill.status-completed {
-  border-color: var(--c-green);
-  color: var(--c-green);
+  background: rgba(0, 206, 0, 0.1) !important;
+  border-color: rgba(0, 206, 0, 0.25) !important;
+  color: #00CE00 !important;
 }
 
 .status-badge-pill.status-cancelled {
-  border-color: var(--c-red);
-  color: var(--c-red);
+  background: rgba(241, 90, 41, 0.1) !important;
+  border-color: rgba(241, 90, 41, 0.25) !important;
+  color: #F15A29 !important;
 }
 
 .status-badge-pill.status-incomplete {
-  border-color: var(--c-text-dim);
-  color: var(--c-text-dim);
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--c-text-dim) !important;
 }
 
 .match-code-badge {
