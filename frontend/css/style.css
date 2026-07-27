@@ -5707,39 +5707,45 @@ body {
 
 .sim-card {
   flex: 1;
-  min-width: 80px;
-  max-width: 110px;
+  min-width: 105px;
+  max-width: 130px;
   box-sizing: border-box;
   background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-  padding: 10px;
+  border-radius: 16px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
 }
 
 .sim-card-label {
   font-size: 9px;
   text-transform: uppercase;
   color: var(--c-text-muted);
-  font-weight: 700;
-  margin-bottom: 4px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+  text-align: center;
 }
 
 .sim-card-number {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 900;
   color: #fff;
   transition: all 0.5s ease;
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
 .sim-progress-bg {
   width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 2px;
-  margin-top: 8px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 100px;
+  margin-top: 10px;
   overflow: hidden;
 }
 
@@ -5761,20 +5767,28 @@ body {
 
 /* Particle / Energy Transfer Animation */
 .flow-arrow {
-  font-size: 18px;
+  font-size: 22px;
   color: var(--c-border);
-  transition: color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .flow-status {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 6px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  margin-top: 8px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
 }
 
 /* Dynamic Classes for States */
@@ -5783,8 +5797,10 @@ body {
 }
 
 .state-win .flow-status {
-  color: var(--c-green);
-  background: rgba(0, 206, 0, 0.1);
+  color: var(--c-green) !important;
+  background: rgba(0, 206, 0, 0.1) !important;
+  border-color: rgba(0, 206, 0, 0.25) !important;
+  box-shadow: 0 0 12px rgba(0, 206, 0, 0.15);
 }
 
 .state-loss .flow-arrow {
@@ -5792,8 +5808,10 @@ body {
 }
 
 .state-loss .flow-status {
-  color: var(--c-pink);
-  background: rgba(216, 27, 96, 0.1);
+  color: var(--c-pink) !important;
+  background: rgba(216, 27, 96, 0.1) !important;
+  border-color: rgba(216, 27, 96, 0.25) !important;
+  box-shadow: 0 0 12px rgba(216, 27, 96, 0.15);
 }
 
 /* GPU Rendering Offload & Scroll Optimization */
