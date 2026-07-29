@@ -1932,6 +1932,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Scoring Modal Scoreboard Layout: Redesigned the scoring input grid to place the Set labels ("SET 1", "SET 2", "SET 3") down the center column directly between the Team A and Team B inputs, removing the old "VS." badge and ensuring perfect vertical alignment.
 - Scoring Modal Mobile Scrollability: Made the score submission overlay scrollable on small screens by switching the overlay to `display: block; overflow-y: auto` at ≤480px, preventing modal content from being clipped below the fold.
 - Score Approval Notification: Fixed the score approval notification to include the approver's name ("Name approved the score for your match. Points have been updated."), consistent with submit and dispute notifications.
+- Completed Match Details Toggle: Added a "Show details" / "Hide details" toggle button in match details for completed matches with an approved score, collapsing the match metadata and details header by default to save space.
+- Action Buttons Layout: Repositioned the Match Chat, Location, and Share buttons block to render underneath the action area (after the match scores), and added a visual divider above the Location/Share grid with generous spacing (`margin: 32px 0 24px`).
+- Layout Order: Adjusted the DOM layout so that the Waiting List section renders above the Match Chat button container, and added a `margin-bottom: 20px` to keep them properly separated.
+- Waiting List Filter: Filtered the public waiting list to only show approved waitlisted entries, hiding pending partner requests until they are accepted.
+- Join Team Form Fix: Programmatically bound the `onsubmit` handler to `mv-join-team-form` to bypass DOMPurify event stripping and prevent page reloads when submitting a partner code.
+- Withdrawal Warning: Removed the Arabic translation block from the match details withdrawal warning banner, and centered the icon/text vertically for a clean single-line layout. Added an interactive click listener on this banner to show a dual-language toast explanation with rule details.
 - Version: 2.4.48 (Build 448)
 
 

@@ -3938,6 +3938,34 @@ const MatchesController = {
             const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
             const isNotEligible = player_eligible === false;
             withdrawalWarning.style.display = (isMatchPast || isNotEligible) ? 'none' : 'flex';
+
+            // Click warning to show details toast
+            withdrawalWarning.style.cursor = 'pointer';
+            withdrawalWarning.onclick = () => {
+                const toastMsg = `
+                    <div style="display: flex; flex-direction: column; gap: 6px; font-family: var(--font); text-align: left; width: 100%;">
+                        <div style="font-weight: 800; font-size: 13px; line-height: 1.4; color: #fff; letter-spacing: 0.1px;">No withdrawals from a full match within 5 hours</div>
+                        <div dir="rtl" style="font-weight: 700; font-size: 13px; line-height: 1.4; color: #ffb07c; font-family: 'Estedad', sans-serif; text-align: left; margin-top: 2px;">ممنوع الإنسحاب من ماتش كامل العدد خلال ٥ ساعات</div>
+                    </div>
+                `;
+                Toast.show(toastMsg, 'warning', 7000);
+
+                // Align the icon and close button to the top-start for a beautiful multi-line layout
+                const newlyCreatedToast = document.querySelector('#toast-container .toast:last-child');
+                if (newlyCreatedToast) {
+                    newlyCreatedToast.style.alignItems = 'flex-start';
+                    newlyCreatedToast.style.padding = '16px 18px';
+                    const iconEl = newlyCreatedToast.querySelector('.toast-icon');
+                    if (iconEl) {
+                        iconEl.style.marginTop = '1px';
+                        iconEl.style.fontSize = '16px';
+                    }
+                    const closeEl = newlyCreatedToast.querySelector('.toast-close');
+                    if (closeEl) {
+                        closeEl.style.marginTop = '2px';
+                    }
+                }
+            };
         }
 
         const statusBadgeContainer = document.getElementById('mv-status-badge');
@@ -4104,6 +4132,38 @@ const MatchesController = {
                 el.onclick = null;
             }
         });
+
+        // --- Match Header Toggle for Completed Matches ---
+        const headerSection = document.getElementById('mv-header-section');
+        const headerToggleWrap = document.getElementById('mv-header-toggle-wrap');
+        const isCompleted = match.status === 'completed';
+        const hasApprovedScore = (scores || []).some(s => s.status === 'approved');
+
+        if (headerSection && headerToggleWrap) {
+            if (isCompleted && hasApprovedScore) {
+                // Hide by default; restore previous preference if user toggled during this session
+                const wasExpanded = headerSection.dataset.expanded === 'true';
+                headerSection.style.display = wasExpanded ? 'block' : 'none';
+
+                headerToggleWrap.innerHTML = '';
+                const toggleBtn = document.createElement('button');
+                toggleBtn.id = 'mv-header-toggle-btn';
+                toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
+                toggleBtn.innerHTML = wasExpanded ? '▲ Hide details' : '▼ Show details';
+                toggleBtn.onclick = () => {
+                    const isHidden = headerSection.style.display === 'none';
+                    headerSection.style.display = isHidden ? 'block' : 'none';
+                    headerSection.dataset.expanded = isHidden ? 'true' : 'false';
+                    toggleBtn.innerHTML = isHidden ? '▲ Hide details' : '▼ Show details';
+                };
+                headerToggleWrap.appendChild(toggleBtn);
+            } else {
+                // Not a completed match with approved score — show normally, no toggle
+                headerSection.style.display = 'block';
+                headerSection.dataset.expanded = '';
+                headerToggleWrap.innerHTML = '';
+            }
+        }
 
         // --- Countdown Timer ---
         // Clear any existing countdown interval (from previous match view)
@@ -4575,7 +4635,8 @@ const MatchesController = {
 
                 // Sub-Actions Grid (Always visible)
                 chatBtnHtml += `
-                    <div style="margin-top: ${isAuthorized ? '14px' : '0'}; display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 32px 0 24px;"></div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                         ${match.venue_location_link ? `
                         <a href="${match.venue_location_link}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
                             <img src="assets/icons/location_3d.png" style="width:18px; height:18px; object-fit:contain;" alt="Location"> Location
@@ -4594,7 +4655,7 @@ const MatchesController = {
 
         const wlSection = document.getElementById('mv-waiting-section');
         const wlList = document.getElementById('mv-waiting-list');
-        const activeWl = (waiting_list || []).filter(w => ['pending', 'approved'].includes(w.request_status));
+        const activeWl = (waiting_list || []).filter(w => w.request_status === 'approved');
 
         const isWaitlisted = my_waitlist_entry || my_pending_request;
         const isMatchPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
@@ -4677,6 +4738,14 @@ const MatchesController = {
 
 
     initJoinForm: function () {
+        const form = document.getElementById('mv-join-team-form');
+        if (form) {
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                MatchesController.submitTeamRequest();
+            };
+        }
+
         const input = document.getElementById('mv-partner-code-input');
         const help = document.getElementById('mv-partner-help');
         // Badge references removed.

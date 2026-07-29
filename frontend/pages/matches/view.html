@@ -47,12 +47,15 @@
     <!-- Content (hidden until loaded) -->
     <div id="mv-content" style="display:none;">
 
-      <!-- Match header -->
-      <div style="margin-bottom:24px;">
+      <!-- Match header (collapsible for completed matches) -->
+      <div id="mv-header-section" style="margin-bottom:24px;">
         <div id="mv-status-badge" style="margin-bottom:10px;"></div>
         <h1 id="mv-title"></h1>
         <p id="mv-meta" style="color:var(--c-text-muted);"></p>
       </div>
+
+      <!-- Match header toggle (injected by JS for completed matches with approved score) -->
+      <div id="mv-header-toggle-wrap"></div>
 
       <!-- Slots Card -->
       <div style="background:var(--g-card); border-radius:var(--r-lg); padding:20px; margin-bottom:20px;">
@@ -115,9 +118,6 @@
         </div>
       </div>
 
-      <!-- Chat area (restricted to players) -->
-      <div id="mv-chat-area"></div>
-
       <!-- Withdrawal Warning -->
       <div class="mv-withdrawal-warning">
         <div class="mvw-icon">
@@ -130,7 +130,6 @@
         </div>
         <div class="mvw-content">
           <span class="mvw-en">No withdrawals within 5 hours</span>
-          <span class="mvw-ar" dir="rtl">ممنوع الانسحاب من ماتش كامل العدد آخر ٥ ساعات</span>
         </div>
       </div>
 
@@ -160,7 +159,7 @@
       </form>
 
       <!-- Waiting List -->
-      <div id="mv-waiting-section" style="display:none;">
+      <div id="mv-waiting-section" style="display:none; margin-bottom:20px;">
         <div style="background:var(--g-card); border-radius:var(--r-lg); padding:20px;">
           <div
             style="font-size:11px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase; color:var(--c-text-muted); margin-bottom:14px;">
@@ -168,6 +167,9 @@
           <div id="mv-waiting-list"></div>
         </div>
       </div>
+
+      <!-- Chat area (restricted to players) -->
+      <div id="mv-chat-area"></div>
 
       <!-- Policy Violation Area (for late withdrawals, etc.) -->
       <div id="mv-policy-area" style="margin-top:20px;"></div>
@@ -385,7 +387,7 @@
     padding: 14px 16px;
     margin-bottom: 20px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
   }
 
@@ -397,7 +399,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2px;
   }
 
   .mvw-icon svg {
