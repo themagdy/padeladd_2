@@ -1202,6 +1202,13 @@ const DashboardController = {
             UI.syncNav();
             StoriesController.initTray();
             DashboardController.initInviteButton();
+            // Restore announcements cache from localStorage if empty
+            if (!DashboardController._announcementsCache) {
+                try {
+                    const savedAnn = localStorage.getItem('dash_announcements_cache');
+                    if (savedAnn) DashboardController._announcementsCache = JSON.parse(savedAnn);
+                } catch (e) { console.error('Announcements cache restore failed', e); }
+            }
             DashboardController.loadAnnouncements();
         }
 
@@ -1261,13 +1268,21 @@ const DashboardController = {
 
         if (!container || !carousel) return;
 
+        // Helper to preload images in background
+        const preloadImages = (list) => {
+            list.forEach(a => {
+                const img = new Image();
+                img.src = `${CONFIG.ASSET_BASE}/${a.image_url}`;
+            });
+        };
+
         const renderList = (list) => {
             container.style.display = 'block';
 
-            // Render Carousel Cards
+            // Render Carousel Cards with skeleton class and onload handler
             carousel.innerHTML = list.map(a => `
-                <div class="announcement-card" onclick="Router.navigate('/announcement/${a.id}')">
-                    <img src="${CONFIG.ASSET_BASE}/${a.image_url}" class="announcement-card-img" alt="${a.title}">
+                <div class="announcement-card skeleton" onclick="Router.navigate('/announcement/${a.id}')">
+                    <img src="${CONFIG.ASSET_BASE}/${a.image_url}" class="announcement-card-img" alt="${a.title}" onload="this.classList.add('loaded'); this.parentElement.classList.remove('skeleton');">
                 </div>
             `).join('');
 
@@ -1309,11 +1324,14 @@ const DashboardController = {
 
         // If we have cached announcements, render them instantly
         if (DashboardController._announcementsCache) {
+            preloadImages(DashboardController._announcementsCache);
             renderList(DashboardController._announcementsCache);
             // Fetch in background silently to update the cache
             API.post('/announcements/list').then(res => {
                 if (res && res.success && res.data && res.data.announcements) {
                     DashboardController._announcementsCache = res.data.announcements;
+                    localStorage.setItem('dash_announcements_cache', JSON.stringify(res.data.announcements));
+                    preloadImages(res.data.announcements);
                 }
             }).catch(e => console.error('Silent announcements reload failed:', e));
             return;
@@ -1323,9 +1341,12 @@ const DashboardController = {
             const res = await API.post('/announcements/list');
             if (res && res.success && res.data && res.data.announcements && res.data.announcements.length > 0) {
                 DashboardController._announcementsCache = res.data.announcements;
+                localStorage.setItem('dash_announcements_cache', JSON.stringify(res.data.announcements));
+                preloadImages(DashboardController._announcementsCache);
                 renderList(DashboardController._announcementsCache);
             } else {
                 container.style.display = 'none';
+                localStorage.removeItem('dash_announcements_cache');
             }
         } catch (e) {
             console.error('Failed to load announcements:', e);
@@ -1890,6 +1911,14 @@ const ProfileViewController = {
                         <div style="background: linear-gradient(135deg, #8E2DE2, #4A00E0); color: #fff; padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 900; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">XCODE</div>
                         <span style="color:var(--c-orange); font-weight:800; font-family: 'Montserrat', monospace; letter-spacing: 1px; padding: 0 8px;">${profile.player_code}</span>
                     `);
+                    codeEl.onclick = () => {
+                        navigator.clipboard.writeText(profile.player_code).then(() => {
+                            Toast.show('Player code copied to clipboard!', 'success');
+                        }).catch(e => {
+                            console.error('Copy failed', e);
+                            Toast.show('Failed to copy player code');
+                        });
+                    };
                     codeEl.style.display = 'inline-flex';
                 } else {
                     codeEl.style.display = 'none';
@@ -2800,8 +2829,8 @@ const ProfileController = {
 const MatchesController = {
     _lastMode: 'play',
     _currentTab: 'play_upcoming',
-    _playFilterType: 'competition',
-    _playFilterGender: 'same_gender',
+    _playFilterType: 'all',
+    _playFilterGender: 'all',
     _lastRequestId: 0,
     _cache: {}, // Stores lists per tab/filters
     _viewCache: {}, // Stores match details by ID
@@ -3258,79 +3287,11 @@ const MatchesController = {
 
     updatePlayFiltersUI: async function () {
         const filterEl = document.getElementById('ml-play-filters');
-        if (!filterEl) return;
-
-        const isUpcomingPlay = MatchesController._currentTab === 'play_upcoming';
-        filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
-
-        if (isUpcomingPlay) {
-            // Sync active states for type buttons
-            filterEl.querySelectorAll('.ml-type-filter-btn').forEach(btn => {
-                const isActive = btn.dataset.val === MatchesController._playFilterType;
-                btn.classList.toggle('active', isActive);
-                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
-                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
-                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
-            });
-
-            // Sync active states for gender buttons
-            filterEl.querySelectorAll('.ml-gender-filter-btn').forEach(btn => {
-                const isActive = btn.dataset.val === MatchesController._playFilterGender;
-                btn.classList.toggle('active', isActive);
-                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
-                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
-                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
-            });
-
-            const btn = document.getElementById('ml-gender-restricted-filter-btn');
-            if (btn) {
-                const updateLabel = (p) => {
-                    if (!p || !p.gender) return;
-                    const isFemale = p.gender.toLowerCase() === 'female';
-                    btn.textContent = isFemale ? 'Women' : 'Men';
-                };
-
-                if (DashboardController._currentProfile) {
-                    updateLabel(DashboardController._currentProfile);
-                } else {
-                    API.post('/profile/get', {}).then(res => {
-                        if (res && res.success) updateLabel(res.data.profile);
-                    });
-                }
-            }
-        }
+        if (filterEl) filterEl.style.display = 'none';
     },
 
     setPlayFilter: function (type, val, btn) {
-        if (type === 'match_type') {
-            MatchesController._playFilterType = val;
-            sessionStorage.setItem('last_play_filter_type', val);
-        }
-        if (type === 'gender_type') {
-            MatchesController._playFilterGender = val;
-            sessionStorage.setItem('last_play_filter_gender', val);
-        }
-
-        // Update UI
-        const btns = btn.parentElement.querySelectorAll('button');
-        btns.forEach(b => {
-            b.classList.remove('active');
-            b.style.background = 'transparent';
-            b.style.color = 'var(--c-text-muted)';
-            b.style.boxShadow = 'none';
-        });
-
-        btn.classList.add('active');
-        btn.style.background = 'var(--c-primary)';
-        btn.style.color = '#fff';
-        btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-
-        // Reset pagination
-        MatchesController._offset = 0;
-        MatchesController._hasMore = true;
-        MatchesController._isLoading = false;
-
-        MatchesController.loadList();
+        // Obsolete
     },
 
     switchTab: async function (tab) {
@@ -3790,9 +3751,8 @@ const MatchesController = {
           <div class="match-title-row">
             <div style="min-width:0; flex:1;">
                <div>
-                  <h3 class="match-venue-name" style="padding-right: 80px; color: #fff; font-family: inherit; display: flex; flex-wrap: wrap; align-items: baseline;">
-                    <span style="font-weight: 800; margin-right: 8px;">${mainTitle}</span>
-                    ${subTitle ? `<span style="display: inline-flex; align-items: baseline; white-space: nowrap; font-weight: 600; opacity: 0.9;"><span style="margin-right: 8px; opacity: 0.3; font-weight: 300;">|</span>${subTitle}</span>` : ''}
+                  <h3 class="match-venue-name" style="padding-right: 80px; color: #fff; font-family: inherit; display: block;">
+                    <span style="font-weight: 800;">${mainTitle}</span>${subTitle ? `<span style="display: inline-block; white-space: nowrap; font-weight: 600; opacity: 0.9;"><span style="margin: 0 8px; opacity: 0.3; font-weight: 300;">|</span>${subTitle}</span>` : ''}
                   </h3>
                   <div class="badge-user-in-wrapper">${myBadge}</div>
                </div>
@@ -4022,14 +3982,27 @@ const MatchesController = {
 
             titleEl.innerHTML = `
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;">
-                    <span class="status-badge-pill" style="background:rgba(255,255,255,0.03); color:var(--c-text-muted); border:1px solid rgba(255,255,255,0.08) !important; justify-content:center; min-width:0; font-family:inherit;">${matchCode}</span>
+                    <span id="mv-match-code-copy" class="status-badge-pill" style="background:rgba(255,255,255,0.03); color:var(--c-text-muted); border:1px solid rgba(255,255,255,0.08) !important; justify-content:center; min-width:0; font-family:inherit; cursor:pointer;" title="Click to copy match code">${matchCode}</span>
                     <span class="status-badge-pill status-${statusClass}">${statusLabel}</span>
                     ${typeBadges}
                 </div>
                 <div id="mv-venue-name" style="font-size: 28px; font-weight: 800; line-height: 1.2; color: #fff;">
-                    ${mainTitle} ${subTitle ? `<span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff; opacity: 0.9;">${subTitle}</span>` : ''}
+                    ${mainTitle} ${subTitle ? `<span style="white-space: nowrap; display: inline-block;"><span style="margin: 0 8px; opacity: 0.2; font-weight: 300;">|</span><span style="font-size: 18px; font-weight: 600; color: #fff; opacity: 0.9;">${subTitle}</span></span>` : ''}
                 </div>
             `;
+
+            // Programmatic click binding to bypass DOMPurify event stripping
+            const copyCodePill = document.getElementById('mv-match-code-copy');
+            if (copyCodePill) {
+                copyCodePill.onclick = () => {
+                    navigator.clipboard.writeText(matchCode).then(() => {
+                        Toast.show('Match code copied to clipboard!', 'success');
+                    }).catch(e => {
+                        console.error('Copy failed', e);
+                        Toast.show('Failed to copy match code');
+                    });
+                };
+            }
         }
 
         const metaEl = document.getElementById('mv-meta');
@@ -6592,27 +6565,92 @@ const ScoringController = {
                     <button onclick="ScoringController.closeModal()" class="modal-close-btn">&times;</button>
                 </div>
                 
-                <div class="score-grid">
-                    <div class="score-team">
-                        <div class="score-team-name">Team A</div>
-                        <div id="team-a-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
-                        <div class="score-inputs" id="t1-inputs">
-                            ${this._renderSetInputs(1, 1)}
-                            ${this._renderSetInputs(2, 1)}
-                            ${this._renderSetInputs(3, 1)}
+                <div class="score-grid-container" style="width: 100%; margin-bottom: 24px;">
+                    <!-- Headers Row -->
+                    <div style="display: grid; grid-template-columns: 1fr 60px 1fr; gap: 12px; margin-bottom: 20px; align-items: flex-end;">
+                        <div style="text-align: left; min-width: 0;">
+                            <div class="score-team-name" style="text-align: left;">Team A</div>
+                            <div id="team-a-nicknames" style="font-size:11px; color:#fff; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break:break-word; margin-top:4px; min-height:30px; display:flex; align-items:center; justify-content:flex-start; text-align:left;"></div>
+                        </div>
+                        <div></div> <!-- spacer for center set column -->
+                        <div style="text-align: right; min-width: 0;">
+                            <div class="score-team-name" style="text-align: right;">Team B</div>
+                            <div id="team-b-nicknames" style="font-size:11px; color:#fff; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; word-break:break-word; margin-top:4px; min-height:30px; display:flex; align-items:center; justify-content:flex-end; text-align:right;"></div>
                         </div>
                     </div>
-                    <div class="match-vs-badge" data-no-sound style="width:27px; height:27px; margin-top:24px;" onclick="FX.ignite(this)">
-                        <div class="vs-fire-fx"></div>
-                        <img src="assets/vs.svg" style="width:27px; height:27px; opacity:0.8;" alt="VS">
+
+                    <!-- Set 1 Row -->
+                    <div class="score-row-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 4px;">
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(1, 1, -1)">-</div>
+                                    <span class="set-val" id="val-s1-t1">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(1, 1, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s1-t1"></div>
+                        </div>
+                        <span class="set-label" style="min-width: 50px; text-align: center; margin-bottom: 14px;">SET 1</span>
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(1, 2, -1)">-</div>
+                                    <span class="set-val" id="val-s1-t2">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(1, 2, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s1-t2"></div>
+                        </div>
                     </div>
-                    <div class="score-team">
-                        <div class="score-team-name">Team B</div>
-                        <div id="team-b-nicknames" style="font-size:11px; color:var(--c-text-muted); font-weight:600; margin-bottom:12px; margin-top:-8px; text-transform:uppercase; letter-spacing:0.5px;"></div>
-                        <div class="score-inputs" id="t2-inputs">
-                            ${this._renderSetInputs(1, 2)}
-                            ${this._renderSetInputs(2, 2)}
-                            ${this._renderSetInputs(3, 2)}
+
+                    <!-- Set 2 Row -->
+                    <div class="score-row-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 4px;">
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(2, 1, -1)">-</div>
+                                    <span class="set-val" id="val-s2-t1">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(2, 1, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s2-t1"></div>
+                        </div>
+                        <span class="set-label" style="min-width: 50px; text-align: center; margin-bottom: 14px;">SET 2</span>
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(2, 2, -1)">-</div>
+                                    <span class="set-val" id="val-s2-t2">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(2, 2, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s2-t2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Set 3 Row -->
+                    <div class="score-row-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin-bottom: 4px;">
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(3, 1, -1)">-</div>
+                                    <span class="set-val" id="val-s3-t1">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(3, 1, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s3-t1"></div>
+                        </div>
+                        <span class="set-label" style="min-width: 50px; text-align: center; margin-bottom: 14px;">SET 3</span>
+                        <div class="set-control-wrapper" style="display: flex; flex-direction: column; align-items: flex-end; width: 100%;">
+                            <div class="set-input-group" style="width: 100%; display: flex; justify-content: center; padding: 8px 12px;">
+                                <div class="set-control">
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(3, 2, -1)">-</div>
+                                    <span class="set-val" id="val-s3-t2">0</span>
+                                    <div class="btn-score-adj" onclick="ScoringController.adjustScore(3, 2, 1)">+</div>
+                                </div>
+                            </div>
+                            <div class="field-error" id="err-s3-t2"></div>
                         </div>
                     </div>
                 </div>

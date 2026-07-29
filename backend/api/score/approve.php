@@ -98,7 +98,7 @@ try {
     $me = $meStmt->fetch();
     $myName = getDisplayName($me);
 
-    $msg = "Score for your match has been approved! Points have been updated.";
+    $msg = "{$myName} approved the score for your match. Points have been updated.";
     notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg, $uid);
 
     // Phase 9: Update automated story

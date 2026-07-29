@@ -47,7 +47,7 @@ if ($mode === 'play_upcoming') {
 
     $where = "
         WHERE m.status IN ('open', 'full')
-          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
+          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
     ";
 
     $params = [];
@@ -121,7 +121,7 @@ if ($mode === 'play_upcoming') {
             SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved')
         )
         AND m.status IN ('open', 'full', 'on_hold')
-        AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 2 HOUR)
+        AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
     ";
 
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches m $whereMine");
@@ -179,7 +179,7 @@ if ($mode === 'play_upcoming') {
         AND (
             (m.status = 'cancelled') 
             OR 
-            (m.match_datetime <= DATE_SUB(NOW(), INTERVAL 2 HOUR))
+            (m.match_datetime <= DATE_SUB(NOW(), INTERVAL 4 HOUR))
         )
     ";
 

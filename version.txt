@@ -1916,3 +1916,22 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Rules Copy Simplification: Consolidated point type and calibration rules into a clear, concise 3-card vertical list. Specified the exact match limit ("first 5 matches") for the New Player 2.0x Double Points multiplier.
 - Arabic Translation Adjustments: Localized the "5 hours rule" Arabic descriptions across the rules section, match details alert banner, and terms of use agreement to read as "ماتش كامل العدد" (full match) instead of "ماتش كامل".
 - Version: 2.4.46 (Build 446)
+
+2.4.47 (Build 447) - 2026-07-29
+- Announcement Preloader: Added background prefetching helper `preloadImages` inside `loadAnnouncements` controller to load images into the browser cache.
+- Image Loading Fades: Set `opacity: 0` for `announcement-card-img` by default and transitioned to `opacity: 1` using `.loaded` class once the image finishes loading.
+- Carousel Shimmer State: Added `.skeleton` shimmer animation to `announcement-card` which is programmatically removed on image load to guarantee visual smoothness.
+- Layout Shift Prevention: Restored the announcements cache state from `localStorage` immediately upon initialization (`init()`), reserving display space and rendering cached cards to eliminate cumulative layout shift (CLS).
+- Version: 2.4.47 (Build 447)
+
+2.4.48 (Build 448) - 2026-07-30
+- Venue Wrapping & Spacing: Swapped flex-wrap styles for standard block/inline-block formatting in match cards. Removed template whitespace and duplicate margins to eliminate large spacing issues and keep venue subtitles wrapped cleanly.
+- Profile & Match Code Copy: Integrated click-to-copy capabilities for Player Xcode badges on profiles and Match Code badges in details. Enabled cursor pointer styling, native titles, and successful Toast notifications.
+- Matches Filter Removal: Deleted match list filter options (Friendly/Competition & All/Gender) from matches list page markup and controller methods, shifting the default fetch configurations to query all upcoming matches.
+- Back Button Score Modal Dismissal: Added support for closing the score submission overlay (#scoring-modal-overlay) programmatically when pressing the physical/native back button on mobile devices.
+- Scoring Modal Scoreboard Layout: Redesigned the scoring input grid to place the Set labels ("SET 1", "SET 2", "SET 3") down the center column directly between the Team A and Team B inputs, removing the old "VS." badge and ensuring perfect vertical alignment.
+- Scoring Modal Mobile Scrollability: Made the score submission overlay scrollable on small screens by switching the overlay to `display: block; overflow-y: auto` at ≤480px, preventing modal content from being clipped below the fold.
+- Score Approval Notification: Fixed the score approval notification to include the approver's name ("Name approved the score for your match. Points have been updated."), consistent with submit and dispute notifications.
+- Version: 2.4.48 (Build 448)
+
+

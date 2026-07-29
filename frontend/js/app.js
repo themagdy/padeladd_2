@@ -1067,7 +1067,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Priority 2: Close exclusive invites (coupon codes) if open
+            // Priority 2: Close match score submission modal if open
+            const scoringModal = document.getElementById('scoring-modal-overlay');
+            if (scoringModal && typeof ScoringController !== 'undefined') {
+                ScoringController.closeModal();
+                return;
+            }
+
+            // Priority 3: Close exclusive invites (coupon codes) if open
             if (typeof InviteModal !== 'undefined' && InviteModal._isOpen) {
                 InviteModal.close();
                 return;
