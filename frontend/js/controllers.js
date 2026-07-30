@@ -4141,25 +4141,60 @@ const MatchesController = {
 
         if (headerSection && headerToggleWrap) {
             if (isCompleted && hasApprovedScore) {
+                // Ensure transitions and overflow styles are initialized
+                headerSection.style.transition = 'max-height 0.25s ease-out, opacity 0.25s ease-out';
+                headerSection.style.overflow = 'hidden';
+
                 // Hide by default; restore previous preference if user toggled during this session
                 const wasExpanded = headerSection.dataset.expanded === 'true';
-                headerSection.style.display = wasExpanded ? 'block' : 'none';
+                if (wasExpanded) {
+                    headerSection.style.display = 'block';
+                    headerSection.style.maxHeight = 'none';
+                    headerSection.style.opacity = '1';
+                } else {
+                    headerSection.style.display = 'block';
+                    headerSection.style.maxHeight = '0px';
+                    headerSection.style.opacity = '0';
+                }
 
                 headerToggleWrap.innerHTML = '';
                 const toggleBtn = document.createElement('button');
                 toggleBtn.id = 'mv-header-toggle-btn';
                 toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
                 toggleBtn.innerHTML = wasExpanded ? '▲ Hide details' : '▼ Show details';
+
                 toggleBtn.onclick = () => {
-                    const isHidden = headerSection.style.display === 'none';
-                    headerSection.style.display = isHidden ? 'block' : 'none';
-                    headerSection.dataset.expanded = isHidden ? 'true' : 'false';
-                    toggleBtn.innerHTML = isHidden ? '▲ Hide details' : '▼ Show details';
+                    const isHidden = headerSection.style.maxHeight === '0px';
+                    if (isHidden) {
+                        headerSection.style.maxHeight = headerSection.scrollHeight + 'px';
+                        headerSection.style.opacity = '1';
+                        headerSection.dataset.expanded = 'true';
+                        toggleBtn.innerHTML = '▲ Hide details';
+                        // Reset to none after transition so resizing works properly
+                        const handler = function() {
+                            if (headerSection.style.maxHeight !== '0px') {
+                                headerSection.style.maxHeight = 'none';
+                            }
+                            headerSection.removeEventListener('transitionend', handler);
+                        };
+                        headerSection.addEventListener('transitionend', handler);
+                    } else {
+                        headerSection.style.maxHeight = headerSection.scrollHeight + 'px';
+                        headerSection.offsetHeight; // force reflow
+                        headerSection.style.maxHeight = '0px';
+                        headerSection.style.opacity = '0';
+                        headerSection.dataset.expanded = 'false';
+                        toggleBtn.innerHTML = '▼ Show details';
+                    }
                 };
                 headerToggleWrap.appendChild(toggleBtn);
             } else {
                 // Not a completed match with approved score — show normally, no toggle
                 headerSection.style.display = 'block';
+                headerSection.style.maxHeight = 'none';
+                headerSection.style.opacity = '1';
+                headerSection.style.overflow = '';
+                headerSection.style.transition = '';
                 headerSection.dataset.expanded = '';
                 headerToggleWrap.innerHTML = '';
             }

@@ -1959,6 +1959,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat Spacing Unified Fix: Removed device-specific mobile CSS overrides and unified the chat overlay header styling with the main top navigation class (`.chat-overlay-header`), utilizing standard layout variables (`var(--safe-area-top)`) and absolute height rules to ensure identical rendering and close-button availability on both Samsung and Honor mobile devices.
 - Chat Player Bar Call Badge: Replaced the verbose "Tap for Mobile No. >" text badge in the chat player avatar bar with a simple "Call" text link and orange chevron.
 - Immediate Phone Call Feature: Configured the match details endpoint to return player phone numbers. Enforces secure server-side scrubbing to mask female numbers for male viewers. In all allowed cases, clicking a player's avatar in the chat now immediately displays a "Call" button featuring their number (🤙🏼 emoji + light gray number) instead of requiring a manual request.
+- Completed Match Details Transition: Integrated smooth vanilla JS transitions (`max-height` and `opacity`) on the completed match details panel to animate the slideUp / slideDown effect when toggled.
 - Version: 2.4.53 (Build 453)
+
 
 
