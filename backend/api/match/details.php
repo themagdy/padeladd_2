@@ -63,7 +63,7 @@ if (!$m) {
 // Slot details — show rank_points (competition merit) not eligibility points
 $slotStmt = $pdo->prepare("
     SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
-           u.first_name, u.last_name,
+           u.first_name, u.last_name, u.mobile,
            up.player_code, up.profile_image, up.profile_image_thumb, up.nickname, up.gender,
            IF(m.status IN ('completed', 'cancelled'), COALESCE(mp.rank_points_at_join, ps.rank_points, 0), COALESCE(ps.rank_points, 0)) AS points,
            IF(m.status IN ('completed', 'cancelled'), COALESCE(mp.buffer_points_at_join, ps.current_buffer, 0), COALESCE(ps.current_buffer, 0)) AS current_buffer,
@@ -82,8 +82,8 @@ $slots = $slotStmt->fetchAll(PDO::FETCH_ASSOC);
 // Waiting list
 $wlStmt = $pdo->prepare("
     SELECT wl.id, wl.request_status, wl.created_at,
-           ur.first_name AS req_first, ur.last_name AS req_last, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile, upr.profile_image_thumb AS req_profile_thumb, upr.gender AS req_gender,
-           up2.first_name AS par_first, up2.last_name AS par_last, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile, upp.profile_image_thumb AS par_profile_thumb, upp.gender AS par_gender,
+           ur.first_name AS req_first, ur.last_name AS req_last, ur.mobile AS req_mobile, upr.player_code AS req_code, upr.nickname AS req_nickname, upr.playing_side AS req_side, upr.profile_image AS req_profile, upr.profile_image_thumb AS req_profile_thumb, upr.gender AS req_gender,
+           up2.first_name AS par_first, up2.last_name AS par_last, up2.mobile AS par_mobile, upp.player_code AS par_code, upp.nickname AS par_nickname, upp.playing_side AS par_side, upp.profile_image AS par_profile, upp.profile_image_thumb AS par_profile_thumb, upp.gender AS par_gender,
            wl.requester_id, wl.partner_id
     FROM waiting_list wl
     JOIN users ur  ON wl.requester_id = ur.id
@@ -95,6 +95,30 @@ $wlStmt = $pdo->prepare("
 ");
 $wlStmt->execute([$m['id']]);
 $waiting_list = $wlStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Restriction: male viewer cannot see female mobile number without request
+$isViewerMale = ($myGender === 'male');
+foreach ($slots as &$s) {
+    $isTargetFemale = ($s['gender'] === 'female');
+    if ($isViewerMale && $isTargetFemale && (int)$s['user_id'] !== $uid) {
+        $s['mobile'] = null;
+    }
+}
+unset($s);
+
+foreach ($waiting_list as &$w) {
+    $isReqFemale = ($w['req_gender'] === 'female');
+    if ($isViewerMale && $isReqFemale && (int)$w['requester_id'] !== $uid) {
+        $w['req_mobile'] = null;
+    }
+    if ($w['partner_id']) {
+        $isParFemale = ($w['par_gender'] === 'female');
+        if ($isViewerMale && $isParFemale && (int)$w['partner_id'] !== $uid) {
+            $w['par_mobile'] = null;
+        }
+    }
+}
+unset($w);
 
 // Is the current user already in the match?
 $mySlotData = null;

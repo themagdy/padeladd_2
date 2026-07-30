@@ -5376,8 +5376,8 @@ const ChatController = {
             // Only show people currently in the queue or pending approval
             if (!['pending', 'approved'].includes(w.request_status)) return;
 
-            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code, gender: w.req_gender });
-            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code, gender: w.par_gender });
+            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code, gender: w.req_gender, mobile: w.req_mobile });
+            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code, gender: w.par_gender, mobile: w.par_mobile });
         });
 
         const currentUserId = this._viewerId || 0;
@@ -5429,6 +5429,7 @@ const ChatController = {
                          data-fullname="${((p.first_name || '') + ' ' + (p.last_name || '')).trim()}"
                          data-code="${p.player_code || ''}"
                          data-gender="${p.gender || 'male'}"
+                         data-mobile="${p.mobile || ''}"
                          style="position:relative; z-index:5; cursor:pointer; flex-shrink:0; width:42px; height:42px; border-radius:50%;"
                          title="${displayName}">
                         ${UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
@@ -5447,14 +5448,11 @@ const ChatController = {
                 html += `<div style="width:1px; height:24px; background:rgba(255,255,255,0.1); margin:auto 4px; flex-shrink:0;"></div>`;
                 // Add the explicit Tip Badge with Arrow (Premium Modern Layout)
                 html += `
-                    <div style="display:flex; flex-direction:column; justify-content:center; padding:5px 12px; margin:auto 4px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.09); border-radius:12px; font-size:11px; font-weight:800; line-height:1.25; color:#cbd5e1; max-width:130px; flex-shrink:0; pointer-events:none; user-select:none;">
-                        <span style="color:#f1f5f9;">Tap for</span>
-                        <span style="color:#cbd5e1; font-weight:700; display:flex; align-items:center; gap:4px;">
-                            Mobile No. 
-                            <svg style="width:10px; height:10px; color:var(--c-orange); margin-top:1px;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </span>
+                    <div style="display:flex; align-items:center; justify-content:center; gap:6px; padding:6px 12px; margin:auto 4px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.09); border-radius:12px; height:32px; box-sizing:border-box; flex-shrink:0; pointer-events:none; user-select:none;">
+                        <span style="font-size:12px; font-weight:800; color:#fff; font-family:var(--font);">Call</span>
+                        <svg style="width:11px; height:11px; color:var(--c-orange);" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
                     </div>
                 `;
             }
@@ -5486,21 +5484,22 @@ const ChatController = {
         const cached = PhoneController._requests[userId];
         const isApproved = cached && cached.status === 'approved';
         const isPending = cached && cached.status === 'pending';
+        const mobile = el.dataset.mobile || (isApproved ? cached.phone : '');
 
         let btnContent = '';
-        if (isPending) {
+        if (mobile) {
+            btnContent = `
+                <div id="phone-btn-${userId}" 
+                     onclick="event.stopPropagation(); window.location.href='tel:${mobile.replace(/\s+/g, '')}'"
+                     style="cursor:pointer; padding:8px 16px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:#cbd5e1; border-radius:8px; font-size:14px; font-weight:700; white-space:nowrap; display:flex; align-items:center; gap:6px;">
+                     🤙🏼 ${mobile}
+                </div>`;
+        } else if (isPending) {
             btnContent = `
                 <div id="phone-btn-${userId}" 
                      onclick="ChatController.cancelPhone(${userId}, this)" 
                      style="cursor:pointer; padding:6px 14px; background:var(--c-primary); color:#fff; border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;">
                      Cancel request
-                </div>`;
-        } else if (isApproved && cached.phone) {
-            btnContent = `
-                <div id="phone-btn-${userId}" 
-                     onclick="event.stopPropagation(); window.location.href='tel:${cached.phone.replace(/\s+/g, '')}'"
-                     style="cursor:pointer; padding:6px 14px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:var(--c-orange); border-radius:8px; font-size:12px; font-weight:700; white-space:nowrap;">
-                     📞 ${cached.phone}
                 </div>`;
         } else {
             btnContent = `
