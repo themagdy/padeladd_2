@@ -4795,6 +4795,14 @@ body.is-mobile-app *::-webkit-scrollbar {
   background: transparent !important;
 }
 
+/* Chat Overlay Spacing & Header Fix for Mobile App WebView */
+body.is-mobile-app #mv-chat-overlay {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 56px) !important;
+}
+body.is-mobile-app #mv-chat-overlay > div:first-child {
+  display: none !important;
+}
+
 html,
 body {
   /* overflow-x: hidden removed to fix sticky headers */

@@ -1940,4 +1940,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Withdrawal Warning: Removed the Arabic translation block from the match details withdrawal warning banner, and centered the icon/text vertically for a clean single-line layout. Added an interactive click listener on this banner to show a dual-language toast explanation with rule details.
 - Version: 2.4.48 (Build 448)
 
+2.4.49 (Build 449) - 2026-07-30
+- Chat Mobile Spacing Fix: Adjusted the full-screen chat overlay layout for mobile apps (`body.is-mobile-app`), hiding the duplicate web header and pushing the chat window contents down to align perfectly below the native top-bar.
+- Version: 2.4.49 (Build 449)
+
 
