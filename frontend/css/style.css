@@ -3670,6 +3670,16 @@ form {
   transition: all 0.2s ease;
 }
 
+/* Hide match statuses only */
+.status-badge-pill.status-open,
+.status-badge-pill.status-on_hold,
+.status-badge-pill.status-full,
+.status-badge-pill.status-completed,
+.status-badge-pill.status-cancelled,
+.status-badge-pill.status-incomplete {
+  display: none !important;
+}
+
 .status-badge-pill.status-open {
   background: rgba(0, 206, 0, 0.1) !important;
   border-color: rgba(0, 206, 0, 0.25) !important;
@@ -6032,13 +6042,18 @@ body {
 /* Responsive adjustments for scoring modal on mobile - spacing only */
 @media (max-width: 480px) {
   #scoring-modal-overlay.loading-overlay {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    /* Allow scroll content to start from top on overflow */
     overflow-y: auto !important;
     padding: 24px 12px !important;
   }
 
   .scoring-modal {
-    margin: 0 auto !important;
+    margin: auto 0 !important;
+    /* Center vertically using auto margins, while keeping standard width flow */
     padding: 20px 14px 28px !important;
     box-sizing: border-box;
     width: 100%;
@@ -6046,7 +6061,8 @@ body {
   }
 
   .score-grid {
-    grid-template-columns: 1fr auto 1fr !important; /* Keep original 3-column side-by-side layout */
+    grid-template-columns: 1fr auto 1fr !important;
+    /* Keep original 3-column side-by-side layout */
     gap: 8px !important;
     margin-bottom: 24px !important;
     width: 100%;
@@ -6057,7 +6073,8 @@ body {
     min-width: 0;
   }
 
-  #team-a-nicknames, #team-b-nicknames {
+  #team-a-nicknames,
+  #team-b-nicknames {
     text-align: center;
     word-break: break-word;
     width: 100%;
@@ -6068,10 +6085,12 @@ body {
   }
 
   .set-input-group {
-    padding: 8px 6px !important; /* Slightly reduced left/right padding (from 12px) */
+    padding: 8px 6px !important;
+    /* Slightly reduced left/right padding (from 12px) */
   }
 
   .set-control {
-    gap: 8px !important; /* Slightly reduced gap (from 12px) */
+    gap: 8px !important;
+    /* Slightly reduced gap (from 12px) */
   }
 }

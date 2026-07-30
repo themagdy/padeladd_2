@@ -100,7 +100,8 @@
         </div>
 
         <!-- Countdown Timer (shown when match is within 10h and all 4 slots filled) -->
-        <div id="mv-countdown-wrap" style="display:none; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
+        <div id="mv-countdown-wrap"
+          style="display:none; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.05);">
           <div id="mv-countdown-banner" class="mv-countdown-banner">
             <span class="mv-countdown-icon">⏳</span>
             <span class="mv-countdown-label">Match starts in</span>
@@ -371,13 +372,27 @@
   }
 
   @keyframes countdownPulse {
-    0%, 100% { border-color: rgba(247, 148, 29, 0.22); }
-    50%       { border-color: rgba(247, 148, 29, 0.50); }
+
+    0%,
+    100% {
+      border-color: rgba(247, 148, 29, 0.22);
+    }
+
+    50% {
+      border-color: rgba(247, 148, 29, 0.50);
+    }
   }
 
   @keyframes tickBounce {
-    0%, 100% { transform: scale(1); }
-    50%       { transform: scale(1.15); }
+
+    0%,
+    100% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.15);
+    }
   }
 
   /* Withdrawal Warning Styles */

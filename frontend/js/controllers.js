@@ -3687,7 +3687,7 @@ const MatchesController = {
 
         if (m.gender_type === 'same_gender') {
             const isFemale = (m.creator_gender || 'male') === 'female';
-            const genderStr = isFemale ? 'Women Only' : 'Men Only';
+            const genderStr = isFemale ? 'Women' : 'Men';
             const genderIcon = isFemale ? '👩' : '👨';
             const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
             const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
@@ -3996,7 +3996,7 @@ const MatchesController = {
 
                 if (match.gender_type === 'same_gender') {
                     const isFemale = (match.creator_gender || 'male') === 'female';
-                    const genderStr = isFemale ? 'Women Only' : 'Men Only';
+                    const genderStr = isFemale ? 'Women' : 'Men';
                     const genderIcon = isFemale ? '👩' : '👨';
                     const genderColor = isFemale ? 'var(--c-pink)' : '#5B8BFF';
                     const genderBorder = isFemale ? 'rgba(216,27,96,0.2)' : 'rgba(27,82,206,0.2)';
@@ -4171,7 +4171,7 @@ const MatchesController = {
                         headerSection.dataset.expanded = 'true';
                         toggleBtn.innerHTML = '▲ Hide details';
                         // Reset to none after transition so resizing works properly
-                        const handler = function() {
+                        const handler = function () {
                             if (headerSection.style.maxHeight !== '0px') {
                                 headerSection.style.maxHeight = 'none';
                             }
@@ -4486,11 +4486,14 @@ const MatchesController = {
                     // Secondary match submission (Multi-score support)
                     if (user_in_match && (scores || []).length === 1) {
                         scoringHtml += `
-                            <div style="margin-top:40px; padding-top:32px; text-align:center;">
-                                <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; opacity:0.6;">Played another match?</div>
-                                <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="width:100%; height:54px; border-radius:12px;">
+                            <div style="margin-top:32px; padding-top:24px; text-align:center; border-top:1px dashed rgba(255,255,255,0.08);">
+                                <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.6;">Played another match?</div>
+                                <a href="javascript:void(0)" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)" style="display:inline-flex; align-items:center; gap:6px; color:var(--c-text-blue); font-size:13px; font-weight:800; text-decoration:none; cursor:pointer;">
                                     Submit Score #2
-                                </button>
+                                    <svg style="width:12px; height:12px; color:var(--c-text-blue);" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
                             </div>
                         `;
                     }
@@ -4659,10 +4662,10 @@ const MatchesController = {
 
                 if (isAuthorized) {
                     chatBtnHtml += `
-                        <!-- Premium Chat Button -->
-                        <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(145deg, #232d40, #161d29); color:#fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: transform 0.2s, box-shadow 0.2s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                        <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
+                        <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
                             <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
-                            <span style="background: linear-gradient(to bottom, #fff, #cbd5e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
+                            <span style="background: linear-gradient(to right, #ffffff, #a5c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                             ${badgeHtml}
                         </button>
                     `;
