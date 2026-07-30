@@ -4795,15 +4795,15 @@ body.is-mobile-app *::-webkit-scrollbar {
   background: transparent !important;
 }
 
-/* Chat Overlay Header Fix for Mobile App WebView */
-body.is-mobile-app #mv-chat-overlay {
-  padding-top: calc(env(safe-area-inset-top, 0px) + 56px) !important;
-}
-body.is-mobile-app #mv-chat-overlay > div:first-child {
-  display: none !important;
-}
-body.is-mobile-app #chat-messages-inner {
-  padding-top: 12px !important;
+/* Chat Overlay Header styling matching main top-bar layout */
+.chat-overlay-header {
+  width: 100%;
+  height: calc(74px + var(--safe-area-top));
+  background: var(--c-bg-card);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: var(--safe-area-top) 20px 0 20px;
 }
 
 html,
