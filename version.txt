@@ -1980,3 +1980,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Team Points Label: Removed the word "Total" from the team points display under Team 1 and Team 2 headers in match details.
 - Team 1 Color: Changed Team 1 header text from orange to white to visually match Team 2, creating a unified consistent look.
 - Version: 2.4.55 (Build 455)
+
+2.4.56 (Build 456) - 2026-07-30
+- Matches Listing Compact Layout: Compacted cards with reduced padding, margins, and slightly smaller font sizes.
+- Mini Avatars: Resized player avatars in match list mini-slots from 32px/28px to 24px.
+- Metadata Reorder (Details): Changed the order on the details page to Date, Time, Duration, Court.
+- Court Title styling: Set Court label font-weight to 500 (lighter) and added court ball emoji 🎾.
+- Dimmed Court Emoji: Wrapped the court ball emoji in a dimmed opacity wrapper (0.6) on both the match listing cards and details page.
+- Version: 2.4.56 (Build 456)

@@ -3579,9 +3579,9 @@ form {
 /* --- Match UI Components --- */
 
 .match-card-modern {
-  padding: 24px;
+  padding: 16px 20px;
   background: var(--g-card);
-  border-radius: 20px;
+  border-radius: 16px;
   margin-bottom: 16px;
   position: relative;
   overflow: hidden;
@@ -3597,7 +3597,7 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .mv-slot .slot-name {
@@ -3607,8 +3607,8 @@ form {
 }
 
 .match-venue-name {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 700;
   color: #fff;
   margin: 0;
   white-space: nowrap;
@@ -3624,16 +3624,16 @@ form {
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .court-label-white {
   color: #fff;
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .match-meta-row {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .match-meta-sep {
@@ -3742,26 +3742,26 @@ form {
 .player-mini-slot {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
 .player-avatar-mini {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--c-bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 800;
   color: var(--c-text-muted);
   flex-shrink: 0;
 }
 
 .player-name-mini {
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
@@ -3770,8 +3770,8 @@ form {
 }
 
 .empty-avatar-mini {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 1.5px dashed var(--c-primary);
   display: flex;
@@ -3779,13 +3779,13 @@ form {
   justify-content: center;
   color: var(--c-text-blue);
   flex-shrink: 0;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 800;
   background: rgba(27, 82, 206, 0.05);
 }
 
 .empty-name-mini {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--c-text-blue);
   opacity: 0.8;
@@ -3894,7 +3894,7 @@ form {
   }
 
   .match-title-row>div:first-child {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   .match-title-row>div:last-child {
@@ -3903,12 +3903,12 @@ form {
     justify-content: space-between;
     align-items: center;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 12px;
+    padding-top: 8px;
   }
 
   .match-venue-name {
     white-space: normal !important;
-    font-size: 16px !important;
+    font-size: 14.5px !important;
     line-height: 1.4 !important;
   }
 

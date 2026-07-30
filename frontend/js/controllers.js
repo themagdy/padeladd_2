@@ -3608,7 +3608,7 @@ const MatchesController = {
             const displayName = rawName.length > limit ? rawName.substring(0, limit - 2) + '..' : rawName;
             return `
             <div class="player-mini-slot">
-              <div class="player-avatar-mini" style="width:32px; height:32px; border-radius:50%; overflow:hidden;">
+              <div class="player-avatar-mini" style="width:24px; height:24px; border-radius:50%; overflow:hidden;">
                 ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
               </div>
               <div class="player-name-mini" title="${rawName}">
@@ -3757,9 +3757,9 @@ const MatchesController = {
                   <div class="badge-user-in-wrapper">${myBadge}</div>
                </div>
                <div class="match-meta-row">
-                  ${m.court_name ? `<span class="court-label-white">Court: ${m.court_name}</span>` : ''}
                   <span>🗓 ${dateStr}</span>
                   <span>⏰ ${timeStr}</span>
+                  ${m.court_name ? `<span class="court-label-white"><span style="opacity:0.6;">🎾</span> Court: ${m.court_name}</span>` : ''}
                </div>
                ${typeBadges ? `<div style="margin-top:8px;">${typeBadges}</div>` : ''}
             </div>
@@ -3767,15 +3767,15 @@ const MatchesController = {
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
             </div>
           </div>
-          <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:16px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; margin-top:20px; border:1px solid rgba(255,255,255,0.03);">
+          <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:8px; margin-top:14px; border:1px solid rgba(255,255,255,0.03);">
              <div>
-                <div style="font-size:10px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 1</div>
+                <div style="font-size:10px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; opacity:0.8;">Team 1</div>
                 ${MatchesController.renderMiniSlot(m, 1, 1)}
                 ${MatchesController.renderMiniSlot(m, 1, 2)}
              </div>
-             <div style="width:1px; height:40px; background:rgba(255,255,255,0.05);"></div>
+             <div style="width:1px; height:32px; background:rgba(255,255,255,0.05);"></div>
              <div>
-                <div style="font-size:10px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.8;">Team 2</div>
+                <div style="font-size:10px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; opacity:0.8;">Team 2</div>
                 ${MatchesController.renderMiniSlot(m, 2, 1)}
                 ${MatchesController.renderMiniSlot(m, 2, 2)}
              </div>
@@ -4042,12 +4042,11 @@ const MatchesController = {
 
             metaEl.innerHTML = `
                 <div style="display:flex; align-items:center; flex-wrap:wrap; gap:12px;">
-                    ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
-                    ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
-                    <span class="match-meta-sep">|</span>
                     <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
                         <span>🗓</span> ${dateStr} <span style="opacity:0.3; margin:0 2px;">•</span> ${timeStr}
                     </div>
+                    ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
+                    ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px; font-weight:500;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
