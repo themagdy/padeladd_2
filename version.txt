@@ -1956,14 +1956,20 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Capacitor Android Detection Fix: Removed the protocol check (`capacitor:`) around loading `capacitor.js` inside `index.html` to load it unconditionally. This guarantees that `window.Capacitor` initializes and injects the `is-mobile-app` class on Android devices as well, activating all mobile CSS overrides.
 - Version: 2.4.52 (Build 452)
 
+2.4.53 (Build 453) - 2026-07-30
 - Chat Spacing Unified Fix: Removed device-specific mobile CSS overrides and unified the chat overlay header styling with the main top navigation class (`.chat-overlay-header`), utilizing standard layout variables (`var(--safe-area-top)`) and absolute height rules to ensure identical rendering and close-button availability on both Samsung and Honor mobile devices.
 - Chat Player Bar Call Badge: Replaced the verbose "Tap for Mobile No. >" text badge in the chat player avatar bar with a simple "Call" text link and orange chevron.
 - Immediate Phone Call Feature: Configured the match details endpoint to return player phone numbers. Enforces secure server-side scrubbing to mask female numbers for male viewers. In all allowed cases, clicking a player's avatar in the chat now immediately displays a "Call" button featuring their number (🤙🏼 emoji + light gray number) instead of requiring a manual request.
+- Version: 2.4.53 (Build 453)
+
+2.4.54 (Build 454) - 2026-07-30
 - Completed Match Details Transition: Integrated smooth vanilla JS transitions (`max-height` and `opacity`) on the completed match details panel to animate the slideUp / slideDown effect when toggled.
 - Score Submission Popup Centering: Changed mobile layout constraints from `display: block` to `display: flex` with vertical flex alignment and auto margins (`margin: auto 0`) to guarantee the popup is perfectly vertically centered on top of the match details screen on all mobile sizes.
 - Secondary Score Submission Link: Replaced the large primary blue button for submitting the second match score with a clean, low-profile text link featuring a light blue color (`var(--c-text-blue)`) and a chevron arrow next to a dashed border line.
-- Version: 2.4.53 (Build 453)
-
+- Glassmorphism Match Chat Button: Restyled the "Match Chat" access button to feature a sleek linear-gradient glassmorphism styling (`backdrop-filter: blur(16px)` with border gradients, top specular light reflections, bottom blue light bleed, and gradient white-to-blue text).
+- Match Status Tag Global Hide: Set the match status badge pills (`.status-open`, `.status-full`, etc.) to `display: none !important` with code comments to hide them globally while keeping the category and match code tags visible.
+- Match Gender Tags Text Unified: Shortened the gender restriction tags from "Men Only" / "Women Only" to "Men" / "Women" on the match card lists and the match details page header for a cleaner UI flow.
+- Version: 2.4.54 (Build 454)
 
 
 
