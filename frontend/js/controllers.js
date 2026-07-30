@@ -3730,7 +3730,7 @@ const MatchesController = {
             `;
 
             return `
-                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border-radius:var(--r-lg); padding:14px 0; margin-bottom:12px; transition:var(--t-fast);">
+                <div onclick="Router.navigate('/matches/${m.match_code}')" class="dash-match-card" style="cursor:pointer; background:var(--c-bg-card); border-radius:var(--r-lg); padding:14px 0; margin-bottom:28px; transition:var(--t-fast);">
                     ${dashHeader}
                     ${scoreHtml}
                     <div style="padding: 0 20px; margin-top: 10px;">${myBadge}</div>
@@ -4074,9 +4074,9 @@ const MatchesController = {
         const team2Sum = getTeamSum(2);
 
         const t1p = document.getElementById('mv-team1-points');
-        if (t1p) t1p.innerHTML = safeHTML((team1Sum !== null) ? `${team1Sum} pts total` : 'EMPTY');
+        if (t1p) t1p.innerHTML = safeHTML((team1Sum !== null) ? `${team1Sum} pts` : 'EMPTY');
         const t2p = document.getElementById('mv-team2-points');
-        if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts total` : 'EMPTY');
+        if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts` : 'EMPTY');
 
         // Eligibility Range
         const rangeEl = document.getElementById('mv-eligibility-range');
@@ -4116,7 +4116,6 @@ const MatchesController = {
                         <div class="slot-row-top">
                             <div class="slot-name" title="${rawName}">${displayName}</div>
                             <div class="slot-side-wrapper" style="display:flex; align-items:center; gap:6px;">
-                                ${isMe ? '<span style="font-size:14px;">🫵</span>' : ''}
                                 ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
                             </div>
                         </div>
@@ -4357,7 +4356,7 @@ const MatchesController = {
 
                             if (s.status === 'approved') {
                                 scoringHtml += `
-                                    <div class="approved-score-wrapper" style="margin-bottom:24px;">
+                                    <div class="approved-score-wrapper" style="margin-bottom:${idx === 1 ? '60px' : '24px'};">
                                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:0 20px;">
                                             <div style="font-size:15px; color:var(--c-text); font-weight:800; display:flex; align-items:center; gap:6px;">
                                                 🏆 ${(scores || []).length > 1 ? `${getOrdinal(idx + 1)} Match Score` : 'Match Score'}
@@ -4663,7 +4662,7 @@ const MatchesController = {
                 if (isAuthorized) {
                     chatBtnHtml += `
                         <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
-                        <button onclick="ChatController.open(${match.id})" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                        <button type="button" onclick="ChatController.open(${match.id}); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
                             <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
                             <span style="background: linear-gradient(to right, #ffffff, #a5c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                             ${badgeHtml}
@@ -5347,16 +5346,16 @@ const ChatController = {
         this._isShowing = true;
         this._lastSenderId = 0;
         this._lastMsgEl = null;
-
+        this._savedScrollTop = window.scrollY || document.documentElement.scrollTop;
 
         const overlay = document.getElementById('mv-chat-overlay');
         if (overlay) {
             overlay.style.display = 'flex';
 
-            // Hardened scroll lock for all platforms
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-            document.body.style.height = '100dvh';
+            // Fixed position scroll lock to prevent layout scroll jump
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${this._savedScrollTop}px`;
+            document.body.style.width = '100%';
 
             // Immediate UX cleanup: hide badge since we are now "reading"
             const badge = document.querySelector('.chat-unread-badge');
@@ -5653,9 +5652,12 @@ const ChatController = {
 
         if (overlay) {
             overlay.style.display = 'none';
-            document.documentElement.style.overflow = '';
-            document.body.style.overflow = '';
-            document.body.style.height = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            if (typeof this._savedScrollTop !== 'undefined') {
+                window.scrollTo(0, this._savedScrollTop);
+            }
         }
         this.stop();
 

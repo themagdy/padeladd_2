@@ -750,32 +750,25 @@ const ScoreUI = {
             const p2 = teamPlayers[1] || { name: '—' };
 
             const isFriendly = match.match_type === 'friendly';
-            const winnerBg = isFriendly ? 'rgba(27, 82, 206, 0.05)' : 'rgba(247,148,29,0.06)';
-            const winnerBorder = isFriendly ? 'rgba(27, 82, 206, 0.15)' : 'rgba(247,148,29,0.1)';
             const accentColor = isFriendly ? '#5A91FF' : 'var(--c-orange)';
 
             return `
-                <div class="msc-team-row ${isWinner ? 'winner' : ''}" style="display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border-radius:10px; margin-bottom:4px; background:${isWinner ? winnerBg : 'rgba(255,255,255,0.02)'}; border:1px solid ${isWinner ? winnerBorder : 'transparent'};">
-                    <div style="display:flex; align-items:center; gap:8px; overflow:hidden; flex:1; margin-right:8px;">
-                        ${isWinner ? `<span style="color:${accentColor}; font-size:10px; flex-shrink:0;">▶</span>` : '<span style="width:10px; flex-shrink:0;"></span>'}
-                        <div style="display:flex; align-items:center; gap:4px; overflow:hidden;">
-                            <div style="display:flex; align-items:center; gap:4px; min-width:0;">
-                                <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p1.name}</span>
-                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p1.code}</span>
-                            </div>
-                            <span style="color:var(--c-text-dim); font-size:10px;">/</span>
-                            <div style="display:flex; align-items:center; gap:4px; min-width:0;">
-                                <span style="font-size:13px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p2.name}</span>
-                                <span style="font-size:10px; background:rgba(255,255,255,0.1); padding:1px 4px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; flex-shrink:0; font-family:monospace;">${p2.code}</span>
-                            </div>
-                        </div>
+                <div class="msc-premium-row" style="opacity:${isWinner ? '1' : '0.85'}; background:${isWinner ? (isFriendly ? 'rgba(90,145,255,0.06)' : 'rgba(247,148,29,0.06)') : 'transparent'};">
+                    <div class="msc-premium-players" style="font-weight:${isWinner ? '700' : '400'}; color:${isWinner ? '#fff' : 'rgba(255,255,255,0.8)'};">
+                        <span class="msc-premium-player-name">${p1.name}</span>
+                        <span style="opacity:0.25; margin:0 4px;">/</span>
+                        <span class="msc-premium-player-name">${p2.name}</span>
                     </div>
-                    <div style="display:flex; gap:10px; flex-shrink:0; margin-left:10px;">
-                        ${sets.map(s => `
-                            <span style="font-size:15px; font-weight:800; color:${s.winner === (teamPlayers === team1 ? 1 : 2) ? accentColor : '#fff'}; width:14px; text-align:center;">
-                                ${(teamPlayers === team1) ? s.s1 : s.s2}
-                            </span>
-                        `).join('')}
+                    <div class="msc-premium-scores">
+                        ${sets.map(s => {
+                            const isSetWinner = s.winner === (teamPlayers === team1 ? 1 : 2);
+                            const val = (teamPlayers === team1) ? s.s1 : s.s2;
+                            return `
+                                <span class="msc-premium-score-val" style="color:${isSetWinner ? accentColor : 'rgba(255,255,255,0.35)'};">
+                                    ${val}
+                                </span>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
@@ -787,27 +780,23 @@ const ScoreUI = {
             : '';
 
         const isFriendly = match.match_type === 'friendly';
-        const typeBadge = isFriendly
-            ? `<span style="font-size:9px; background:rgba(27, 82, 206, 0.1); color:#5A91FF; padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🤝 Friendly</span>`
-            : `<span style="font-size:9px; background:rgba(247,148,29,0.15); color:var(--c-orange); padding:2px 6px; border-radius:4px; font-weight:800; text-transform:uppercase; font-family:var(--f-mono);">🏆 Competition</span>`;
+        const typeBadgeColor = isFriendly ? '#5A91FF' : 'var(--c-orange)';
 
         const headerHtml = showHeader ? `
-            <div class="msc-header" style="padding:0 24px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; width:100%; box-sizing:border-box;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="msc-venue">${headerVenue}</span>
-                    <span style="opacity:0.2;">•</span>
-                    <span class="msc-date" style="font-size:11px; color:var(--c-text-muted); font-weight:700;">${headerDate}</span>
-                </div>
-                <div>${typeBadge}</div>
+            <div class="msc-premium-header">
+                <span class="msc-premium-venue-date">${headerVenue} • ${headerDate}</span>
+                <span class="msc-premium-type-badge" style="color:${typeBadgeColor};">
+                    ${isFriendly ? '🤝 Friendly' : '🏆 Competition'}
+                </span>
             </div>
         ` : '';
 
-        const cardBorderColor = isFriendly ? 'rgba(27, 82, 206, 0.6)' : 'rgba(255, 139, 0, 0.45)';
+        const cardBorderColor = isFriendly ? '#5A91FF' : 'var(--c-orange)';
 
         return `
-            <div class="msc-card ${showHeader ? 'with-header' : ''}" style="width:100%; position:relative; overflow:hidden; border-left:2px solid ${cardBorderColor};">
+            <div class="msc-premium-card">
                 ${headerHtml}
-                <div class="msc-body" style="padding: 0 ${showHeader ? '24px' : '20px'};">
+                <div class="msc-premium-body">
                     ${renderTeamRow(team1, t1Winner)}
                     ${renderTeamRow(team2, !t1Winner)}
                 </div>

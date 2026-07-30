@@ -1969,10 +1969,14 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Glassmorphism Match Chat Button: Restyled the "Match Chat" access button to feature a sleek linear-gradient glassmorphism styling (`backdrop-filter: blur(16px)` with border gradients, top specular light reflections, bottom blue light bleed, and gradient white-to-blue text).
 - Match Status Tag Global Hide: Set the match status badge pills (`.status-open`, `.status-full`, etc.) to `display: none !important` with code comments to hide them globally while keeping the category and match code tags visible.
 - Match Gender Tags Text Unified: Shortened the gender restriction tags from "Men Only" / "Women Only" to "Men" / "Women" on the match card lists and the match details page header for a cleaner UI flow.
-- Match Details Score Numbers Scaling: Scaled and highlighted set scores inside the match details view to be larger (18px) and clearer while retaining original compact styling on the dashboard match cards.
 - Version: 2.4.54 (Build 454)
 
 
-
-
-
+2.4.55 (Build 455) - 2026-07-30
+- Match Chat Scroll Fix: Fixed scroll flicker/jump when opening Match Chat. Now saves scroll position on open and restores it precisely on close using position:fixed body lock.
+- Match Chat Button: Added type="button" to prevent any default form submission behavior on the chat launch button.
+- Match Chat Overlay: Delayed the body scroll lock by 300ms to let the slide-up animation complete before freezing the background, eliminating any visible scroll jump.
+- "You" Emoji Removed: Removed the pointing hand emoji (🫵) from the current user's slot card in match details.
+- Team Points Label: Removed the word "Total" from the team points display under Team 1 and Team 2 headers in match details.
+- Team 1 Color: Changed Team 1 header text from orange to white to visually match Team 2, creating a unified consistent look.
+- Version: 2.4.55 (Build 455)
