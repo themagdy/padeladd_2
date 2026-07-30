@@ -1988,3 +1988,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Court Title styling: Set Court label font-weight to 500 (lighter) and added court ball emoji 🎾.
 - Dimmed Court Emoji: Wrapped the court ball emoji in a dimmed opacity wrapper (0.6) on both the match listing cards and details page.
 - Version: 2.4.56 (Build 456)
+
+2.4.57 (Build 457) - 2026-07-30
+- Matches Status Badge Corner Align: Absolutely positioned .mc-right-col (status pill) at the top-right corner (top: 12px; right: 12px) for a tighter, cleaner alignment.
+- Matches User-in Badge Align (Mobile): Moved mobile badge-user-in-wrapper to top: 12px; right: 12px; matching desktop alignment.
+- My Matches Sub-Filters Removed: Removed the sub-filter bar (All matches, Joined, Waiting, On hold) from My Matches upcoming view and cleaned up the redundant DOM injection and filter-checking JS code.
+- Version: 2.4.57 (Build 457)
+

@@ -3495,100 +3495,21 @@ const MatchesController = {
             return;
         }
 
-        // Inject Filter Bar if in mine_upcoming
-        if (MatchesController._currentTab === 'mine_upcoming') {
-            const counts = {
-                all: matches.length,
-                joined: matches.filter(m => m.user_in_match).length,
-                waiting: matches.filter(m => m.user_is_waiting).length,
-                on_hold: matches.filter(m => m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester)).length
-            };
+        MatchesController._currentFilter = 'all';
 
-            const activeCats = ['joined', 'waiting', 'on_hold'].filter(k => counts[k] > 0);
-
-            let filterBar = '';
-            if (activeCats.length >= 2) {
-                filterBar = `
-                <div class="status-filter-bar">
-                    <button onclick="MatchesController.setFilter('all')" class="status-filter-btn ${MatchesController._currentFilter === 'all' ? 'active' : ''}">All matches (${counts.all})</button>
-                    ${counts.joined > 0 ? `<button onclick="MatchesController.setFilter('joined')" class="status-filter-btn ${MatchesController._currentFilter === 'joined' ? 'active' : ''}">Joined (${counts.joined})</button>` : ''}
-                    ${counts.waiting > 0 ? `<button onclick="MatchesController.setFilter('waiting')" class="status-filter-btn ${MatchesController._currentFilter === 'waiting' ? 'active' : ''}">Waiting (${counts.waiting})</button>` : ''}
-                    ${counts.on_hold > 0 ? `<button onclick="MatchesController.setFilter('on_hold')" class="status-filter-btn ${MatchesController._currentFilter === 'on_hold' ? 'active' : ''}">On hold (${counts.on_hold})</button>` : ''}
-                </div>`;
+        let html = '';
+        matches.forEach(m => {
+            const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+            if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
+                m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
             } else {
-                MatchesController._currentFilter = 'all';
+                html += MatchesController.renderMatchCard(m);
             }
-
-            // Surgical DOM update for Filter Bar & Container
-            let resultsContainer = document.getElementById('ml-filtered-results');
-            if (!resultsContainer) {
-                list.innerHTML = filterBar + '<div id="ml-filtered-results"></div>';
-                resultsContainer = document.getElementById('ml-filtered-results');
-            } else {
-                // Update filter bar ONLY if it changed
-                const existingBar = list.querySelector('.status-filter-bar');
-                const barHtml = filterBar.trim();
-                if (existingBar) {
-                    if (existingBar.outerHTML.trim() !== barHtml) {
-                        if (barHtml === '') existingBar.remove();
-                        else existingBar.outerHTML = barHtml;
-                    }
-                } else if (barHtml !== '') {
-                    list.insertAdjacentHTML('afterbegin', barHtml);
-                }
-            }
-
-            // Filter logic
-            if (MatchesController._currentFilter !== 'all') {
-                matches = matches.filter(m => {
-                    if (MatchesController._currentFilter === 'joined') return m.user_in_match;
-                    if (MatchesController._currentFilter === 'waiting') return m.user_is_waiting;
-                    if (MatchesController._currentFilter === 'on_hold') {
-                        return m.user_is_invited || (m.status === 'on_hold' && m.user_is_requester);
-                    }
-                    return true;
-                });
-            }
-
-            if (resultsContainer) {
-                if (matches.length === 0) {
-                    const emptyResultsHtml = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">🔍</div><h3>No matches in this category</h3><p>Try a different filter or browse all.</p></div>`;
-                    if (resultsContainer._lastHtml !== emptyResultsHtml) {
-                        resultsContainer.innerHTML = safeHTML(emptyResultsHtml);
-                        resultsContainer._lastHtml = emptyResultsHtml;
-                    }
-                } else {
-                    let html = '';
-                    matches.forEach(m => {
-                        const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
-                        if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
-                            m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
-                        } else {
-                            html += MatchesController.renderMatchCard(m);
-                        }
-                    });
-                    const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
-                    if (resultsContainer._lastHtml !== finalHtml) {
-                        resultsContainer.innerHTML = safeHTML(finalHtml);
-                        resultsContainer._lastHtml = finalHtml;
-                    }
-                }
-            }
-        } else {
-            let html = '';
-            matches.forEach(m => {
-                const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
-                if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
-                    m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
-                } else {
-                    html += MatchesController.renderMatchCard(m);
-                }
-            });
-            const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
-            if (list._lastHtml !== finalHtml) {
-                list.innerHTML = safeHTML(finalHtml);
-                list._lastHtml = finalHtml;
-            }
+        });
+        const finalHtml = html + (MatchesController._hasMore ? `<div class="pagination-loader"><div class="pagination-spinner"></div></div>` : '');
+        if (list._lastHtml !== finalHtml) {
+            list.innerHTML = safeHTML(finalHtml);
+            list._lastHtml = finalHtml;
         }
     },
 
