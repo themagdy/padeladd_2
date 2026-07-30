@@ -1944,4 +1944,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat Mobile Spacing Fix: Adjusted the full-screen chat overlay layout for mobile apps (`body.is-mobile-app`), hiding the duplicate web header and pushing the chat window contents down to align perfectly below the native top-bar.
 - Version: 2.4.49 (Build 449)
 
-
+2.4.50 (Build 450) - 2026-07-30
+- Chat Mobile Gap Fix: Removed erroneous `padding-top` override on the chat overlay and reduced `#chat-messages-inner` top padding from 60px to 12px on mobile app builds to eliminate the blank space between the player avatar bar and the first message.
+- Version: 2.4.50 (Build 450)
