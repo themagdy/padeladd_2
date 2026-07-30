@@ -1951,3 +1951,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.51 (Build 451) - 2026-07-30
 - Chat Mobile Layout Fix: Restored `padding-top: calc(env(safe-area-inset-top) + 56px)` on the chat overlay to push the avatar bar below the native header bar (which had disappeared when the padding was removed), while keeping the reduced 12px top padding on `#chat-messages-inner` to eliminate the blank gap above messages.
 - Version: 2.4.51 (Build 451)
+
+2.4.52 (Build 452) - 2026-07-30
+- Capacitor Android Detection Fix: Removed the protocol check (`capacitor:`) around loading `capacitor.js` inside `index.html` to load it unconditionally. This guarantees that `window.Capacitor` initializes and injects the `is-mobile-app` class on Android devices as well, activating all mobile CSS overrides.
+- Version: 2.4.52 (Build 452)
+

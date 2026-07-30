@@ -135,14 +135,8 @@
         </div>
     </div>
 
-    <!-- Capacitor Core (Only load on native) -->
-    <script>
-        if (window.location.protocol === 'capacitor:') {
-            var script = document.createElement('script');
-            script.src = 'capacitor.js';
-            document.head.appendChild(script);
-        }
-    </script>
+    <!-- Capacitor Core -->
+    <script src="capacitor.js"></script>
     <!-- DOMPurify: XSS sanitization for innerHTML -->
     <script src="frontend/js/purify.min.js"></script>
     <script>
