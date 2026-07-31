@@ -2014,6 +2014,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Story Event Bubbling Fixes: Stopped event propagation for pointer, mouse and touchstart/end triggers inside the viewers bar to prevent story player close/swipe actions on list click.
 - Match Type SQL SELECT Fixes: Added match_type column joins in stories endpoint lists (list.php and user.php) to fix the 'competition' badge defaulting to 'friendly' on client side.
 - Upcoming Story Compact Design: Redesigned upcoming match previews to render both players in a single row along with overlapping team avatars, showing player codes vertically under nicknames to save space.
+- Seen List Dialog Polish: Changed header title format to 'Seen by X' and updated icon emoji to 👓.
 - Version: 2.4.60 (Build 460)
 
 

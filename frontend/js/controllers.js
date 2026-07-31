@@ -799,9 +799,9 @@ const StoriesController = {
         html += '</div>';
 
         ConfirmModal.show({
-            title: `Seen by (${list.length})`,
+            title: `Seen by ${list.length}`,
             message: html,
-            icon: '👁️',
+            icon: '👓',
             showCancel: false,
             confirmText: 'Close',
             type: 'info',
