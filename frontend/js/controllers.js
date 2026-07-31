@@ -7088,10 +7088,10 @@ const RankingController = {
         const currentOffset = this._offset;
 
         // Fetch paginated ranking list
-        const res = await API.post('/ranking/list', { 
-            gender: expectedTab, 
-            limit: this._limit, 
-            offset: currentOffset 
+        const res = await API.post('/ranking/list', {
+            gender: expectedTab,
+            limit: this._limit,
+            offset: currentOffset
         });
 
         // Prevent race condition if user switched tabs during the fetch
@@ -7129,7 +7129,7 @@ const RankingController = {
         if (newItems.length < this._limit) {
             this._hasMore = false;
         }
-        
+
         this._isLoading = false;
     },
 
@@ -7140,7 +7140,7 @@ const RankingController = {
 
     handleScroll: function () {
         if (!document.getElementById('ranking-full-list')) return;
-        
+
         const scrollHeight = document.documentElement.scrollHeight;
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const clientHeight = window.innerHeight;
@@ -7387,28 +7387,39 @@ const RankingController = {
             // Apply Highlight for Current User
             const isMe = currentUserId && parseInt(r.user_id) === parseInt(currentUserId);
             if (isMe) {
-                row.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%)';
-                row.style.border = '1px solid rgba(14, 165, 233, 0.25)';
-                row.style.borderRadius = '14px';
+                row.classList.add('gold-glass-shimmer');
+                row.style.background = 'linear-gradient(135deg, rgba(255, 223, 128, 0.22) 0%, rgba(240, 208, 120, 0.06) 50%, rgba(218, 165, 32, 0.02) 100%)';
+                row.style.border = '1px solid rgba(255, 223, 128, 0.22)';
+                row.style.borderRadius = '16px';
                 row.style.marginBottom = '6px';
-                row.style.boxShadow = '0 6px 20px rgba(14, 165, 233, 0.08)';
-                row.onmouseover = function () { 
-                    this.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0.05) 100%)'; 
-                    this.style.borderColor = 'rgba(14, 165, 233, 0.4)';
-                    this.style.boxShadow = '0 8px 24px rgba(14, 165, 233, 0.12)';
+                row.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 12px rgba(255, 223, 128, 0.05)';
+                row.style.backdropFilter = 'blur(10px)';
+                row.style.webkitBackdropFilter = 'blur(10px)';
+                row.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+                row.onmouseover = function () {
+                    this.style.background = 'linear-gradient(135deg, rgba(255, 223, 128, 0.3) 0%, rgba(240, 208, 120, 0.1) 50%, rgba(218, 165, 32, 0.04) 100%)';
+                    this.style.borderColor = 'rgba(255, 223, 128, 0.35)';
+                    this.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 0 16px rgba(255, 223, 128, 0.08)';
+                    this.style.transform = 'translateY(-1px)';
                 };
-                row.onmouseout = function () { 
-                    this.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%)'; 
-                    this.style.borderColor = 'rgba(14, 165, 233, 0.25)';
-                    this.style.boxShadow = '0 6px 20px rgba(14, 165, 233, 0.08)';
+                row.onmouseout = function () {
+                    this.style.background = 'linear-gradient(135deg, rgba(255, 223, 128, 0.22) 0%, rgba(240, 208, 120, 0.06) 50%, rgba(218, 165, 32, 0.02) 100%)';
+                    this.style.borderColor = 'rgba(255, 223, 128, 0.22)';
+                    this.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 12px rgba(255, 223, 128, 0.05)';
+                    this.style.transform = 'none';
                 };
             } else {
+                row.classList.remove('gold-glass-shimmer');
                 row.style.background = 'transparent';
                 row.style.border = 'none';
                 row.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
                 row.style.borderRadius = '0';
                 row.style.marginBottom = '0';
                 row.style.boxShadow = 'none';
+                row.style.backdropFilter = 'none';
+                row.style.webkitBackdropFilter = 'none';
+                row.style.transform = 'none';
+                row.style.transition = 'all 0.2s';
                 row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
                 row.onmouseout = function () { this.style.background = 'transparent'; };
             }

@@ -2007,3 +2007,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Gold Border Avatar Ring: Pinned user avatar is wrapped in a clean, flat 2px solid gold border ring (#f5a623).
 - Version: 2.4.58 (Build 458)
 
+2.4.59 (Build 459) - 2026-07-31
+- Champagne Gold Highlight theme: Replaced blue user row accents with champagne gold gradients and borders.
+- Glass Shine Load Animation: Added a slower, soft, simplified light shine sweep reflection that runs across the glass highlight card on page load.
+- Version: 2.4.59 (Build 459)
+

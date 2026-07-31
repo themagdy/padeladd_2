@@ -6085,6 +6085,7 @@ body {
   cursor: pointer !important;
   overflow: visible !important;
 }
+
 .gold-ring::after {
   content: '';
   position: absolute;
@@ -6095,4 +6096,36 @@ body {
   border-radius: 50%;
   border: 2px solid #f5a623;
   pointer-events: none;
+}
+
+/* Glass Shine Load Animation */
+@keyframes glassShine {
+  0% {
+    left: -150%;
+  }
+
+  100% {
+    left: 250%;
+  }
+}
+
+.gold-glass-shimmer {
+  position: relative;
+  overflow: hidden !important;
+}
+
+.gold-glass-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  animation: glassShine 4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  pointer-events: none;
+  z-index: 5;
 }
