@@ -761,14 +761,14 @@ const ScoreUI = {
                     </div>
                     <div class="msc-premium-scores">
                         ${sets.map(s => {
-                            const isSetWinner = s.winner === (teamPlayers === team1 ? 1 : 2);
-                            const val = (teamPlayers === team1) ? s.s1 : s.s2;
-                            return `
+                const isSetWinner = s.winner === (teamPlayers === team1 ? 1 : 2);
+                const val = (teamPlayers === team1) ? s.s1 : s.s2;
+                return `
                                 <span class="msc-premium-score-val" style="color:${isSetWinner ? accentColor : 'rgba(255,255,255,0.35)'};">
                                     ${val}
                                 </span>
                             `;
-                        }).join('')}
+            }).join('')}
                     </div>
                 </div>
             `;

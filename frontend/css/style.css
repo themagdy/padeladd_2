@@ -3628,8 +3628,8 @@ form {
 }
 
 .court-label-white {
-  color: #fff;
-  font-weight: 500;
+  color: var(--c-text-muted);
+  font-weight: 600;
 }
 
 .match-meta-row {
@@ -3743,7 +3743,7 @@ form {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 9px;
 }
 
 .player-avatar-mini {
@@ -4427,16 +4427,20 @@ form {
   .msc-premium-header {
     margin-bottom: 8px;
   }
+
   .msc-premium-players {
     font-size: 13px;
   }
+
   .msc-premium-player-code {
     font-size: 8px;
   }
+
   .msc-premium-score-val {
     font-size: 14px;
     width: 14px;
   }
+
   .approved-score-wrapper .msc-premium-score-val,
   .pending-score-container .msc-premium-score-val,
   .disputed-score-container .msc-premium-score-val {
@@ -6061,4 +6065,34 @@ body {
     gap: 8px !important;
     /* Slightly reduced gap (from 12px) */
   }
+}
+
+/* Unified Modal/Popup Scroll Safety */
+.modal,
+.scoring-modal,
+#gcm-card,
+#invite-modal-card,
+#level-selection-modal>div,
+#crop-modal-overlay>div {
+  max-height: calc(100dvh - 64px) !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Gold Ring Utility for Pinned User Avatar */
+.gold-ring {
+  position: relative;
+  cursor: pointer !important;
+  overflow: visible !important;
+}
+.gold-ring::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 50%;
+  border: 2px solid #f5a623;
+  pointer-events: none;
 }

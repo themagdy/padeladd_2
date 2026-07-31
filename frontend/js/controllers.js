@@ -3524,18 +3524,15 @@ const MatchesController = {
             const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || '?';
             const profileUrl = `/p/${s.player_code}`;
             const rawName = s.nickname || s.first_name;
-            const isMob = window.innerWidth < 600;
-            const limit = isMob ? 7 : 13;
-            const displayName = rawName.length > limit ? rawName.substring(0, limit - 2) + '..' : rawName;
             return `
-            <div class="player-mini-slot">
-              <div class="player-avatar-mini" style="width:24px; height:24px; border-radius:50%; overflow:hidden;">
+            <div class="player-mini-slot" style="display:flex; align-items:center; gap:6px; min-width:0; width:100%;">
+              <div class="player-avatar-mini" style="width:24px; height:24px; border-radius:50%; overflow:hidden; flex-shrink:0;">
                 ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
               </div>
-              <div class="player-name-mini" title="${rawName}">
-                   ${displayName}
-                   ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}">${s.playing_side[0].toUpperCase()}</span>` : ''}
-              </div>
+              <span class="player-name-mini" title="${rawName}" style="flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12.5px; font-weight:600; color:#fff; text-align:left;">
+                   ${rawName}
+              </span>
+              ${s.playing_side ? `<span class="side-indicator-mini ${s.playing_side}" style="flex-shrink:0; margin-left:2px;">${s.playing_side[0].toUpperCase()}</span>` : ''}
             </div>`;
         }
         return `
@@ -3688,7 +3685,7 @@ const MatchesController = {
                <div class="status-badge-pill status-${(m.status === 'open' && isPast) ? 'incomplete' : m.status}">${statusLabel}</div>
             </div>
           </div>
-          <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:8px; margin-top:14px; border:1px solid rgba(255,255,255,0.03);">
+          <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:12px 14px; display:grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items:center; gap:8px; margin-top:14px; border:1px solid rgba(255,255,255,0.03);">
              <div>
                 <div style="font-size:10px; font-weight:800; color:var(--c-orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; opacity:0.8;">Team 1</div>
                 ${MatchesController.renderMiniSlot(m, 1, 1)}
@@ -3967,7 +3964,7 @@ const MatchesController = {
                         <span>🗓</span> ${dateStr} <span style="opacity:0.3; margin:0 2px;">•</span> ${timeStr}
                     </div>
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
-                    ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px; font-weight:500;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
+                    ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px; font-weight:600;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                 </div>
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
@@ -7004,6 +7001,10 @@ const RankingController = {
     _currentTab: 'male',
     _fullList: [],
     _cache: {}, // Stores ranking data per gender
+    _limit: 50,
+    _offset: 0,
+    _hasMore: true,
+    _isLoading: false,
 
     init: async function () {
         UI.syncNav();
@@ -7028,6 +7029,15 @@ const RankingController = {
             fBtn.classList.toggle('active', this._currentTab === 'female');
         }
 
+        // Reset pagination
+        this._offset = 0;
+        this._hasMore = true;
+        this._isLoading = false;
+        this._fullList = [];
+
+        window.removeEventListener('scroll', RankingController.handleScroll);
+        window.addEventListener('scroll', RankingController.handleScroll);
+
         this.loadData();
     },
 
@@ -7043,53 +7053,101 @@ const RankingController = {
             fBtn.classList.toggle('active', gender === 'female');
         }
 
+        // Reset pagination
+        this._offset = 0;
+        this._hasMore = true;
+        this._isLoading = false;
+        this._fullList = [];
+
         this.loadData();
     },
 
     loadData: async function (isSilent = false) {
+        if (this._isLoading) return;
+
         const listEl = document.getElementById('ranking-full-list');
         if (!listEl) return;
 
         const cacheKey = this._currentTab;
         const hasCache = this._cache[cacheKey];
 
-        // Only show skeletons if we have no cache
-        if (!isSilent && !hasCache) {
+        // Only show skeletons if we have no cache and loading first page
+        if (!isSilent && !hasCache && this._offset === 0) {
             listEl.innerHTML = RankingUI.renderSkeleton(10);
         }
 
         // If we have cache, render it immediately
-        if (!isSilent && hasCache) {
+        if (!isSilent && hasCache && this._offset === 0) {
             this._fullList = hasCache;
             this.render(hasCache);
         }
 
+        this._isLoading = true;
+
         const expectedTab = this._currentTab;
-        // Fetch larger list for the full page (limit 100)
-        const res = await API.post('/ranking/list', { gender: expectedTab, limit: 100 });
+        const currentOffset = this._offset;
+
+        // Fetch paginated ranking list
+        const res = await API.post('/ranking/list', { 
+            gender: expectedTab, 
+            limit: this._limit, 
+            offset: currentOffset 
+        });
 
         // Prevent race condition if user switched tabs during the fetch
         if (this._currentTab !== expectedTab) {
+            this._isLoading = false;
             return;
         }
 
         if (!res || !res.success) {
-            if (!isSilent && !hasCache) {
+            this._isLoading = false;
+            if (!isSilent && !hasCache && currentOffset === 0) {
                 listEl.innerHTML = '<div style="padding:80px; text-align:center; color:var(--c-text-muted);">Failed to load ranking. Please try again.</div>';
             }
             return;
         }
 
-        // Compare with cache to prevent redundant render
-        const responseJson = JSON.stringify(res.data.ranking);
-        if (this._cache[cacheKey + '_json'] === responseJson) {
-            return;
+        const newItems = res.data.ranking || [];
+
+        if (currentOffset === 0) {
+            this._fullList = newItems;
+            this._cache[cacheKey] = newItems;
+        } else {
+            // Append and merge new entries to prevent duplicate items by player_code
+            const existingCodes = new Set(this._fullList.map(r => r.player_code));
+            newItems.forEach(item => {
+                if (!existingCodes.has(item.player_code)) {
+                    this._fullList.push(item);
+                }
+            });
         }
 
-        this._cache[cacheKey] = res.data.ranking;
-        this._cache[cacheKey + '_json'] = responseJson;
-        this._fullList = res.data.ranking;
         this.render(this._fullList);
+
+        this._offset += newItems.length;
+        if (newItems.length < this._limit) {
+            this._hasMore = false;
+        }
+        
+        this._isLoading = false;
+    },
+
+    loadMore: function () {
+        if (this._isLoading || !this._hasMore) return;
+        this.loadData(true);
+    },
+
+    handleScroll: function () {
+        if (!document.getElementById('ranking-full-list')) return;
+        
+        const scrollHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const clientHeight = window.innerHeight;
+
+        if (scrollTop + clientHeight >= scrollHeight - 300) {
+            RankingController.loadMore();
+        }
     },
 
     handleSearch: function (query) {
@@ -7136,6 +7194,16 @@ const RankingController = {
         if (list.length === 0) {
             listEl.innerHTML = '<div style="padding:100px 20px; text-align:center; color:var(--c-text-muted);"><div style="font-size:40px; margin-bottom:16px;">🔍</div>No players found.</div>';
             return;
+        }
+
+        // Pin the current user (if present) to the very top of the list
+        const currentUserId = typeof Auth !== 'undefined' ? Auth.getUserId() : null;
+        if (currentUserId) {
+            const myIndex = list.findIndex(r => parseInt(r.user_id) === parseInt(currentUserId));
+            if (myIndex > -1) {
+                const me = list.splice(myIndex, 1)[0];
+                list.unshift(me);
+            }
         }
 
         // 1. Remove initial/default static skeletons or error messages from the listEl first
@@ -7224,7 +7292,6 @@ const RankingController = {
                 if (totalWrap) totalWrap.innerHTML = safeHTML(renderTotalWrapHtml(r.points, r.points_this_week));
 
                 // Move DOM element to current position to respect new sorting order without rebuilding it
-                listEl.appendChild(row);
             } else {
                 // ROW DOES NOT EXIST: Create it brand new
                 row = document.createElement('div');
@@ -7245,9 +7312,11 @@ const RankingController = {
                 const infoWrap = document.createElement('div');
                 infoWrap.style.cssText = 'display:flex; align-items:center; gap:12px; min-width:0; position:relative;';
 
+                const isPlayerMe = currentUserId && parseInt(r.user_id) === parseInt(currentUserId);
                 const hasStory = !!r.has_active_story;
                 const extraAttr = hasStory ? `onclick="event.stopPropagation(); StoriesController.playUserStories(${r.user_id})"` : '';
-                const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
+                const ringClass = isPlayerMe ? 'gold-ring' : (hasStory ? 'story-ring' : '');
+                const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:40px; height:40px; border-radius:50%; flex-shrink:0; border:2px solid var(--c-border);`, initials, ringClass, extraAttr);
 
                 const avatarDiv = document.createElement('div');
                 avatarDiv.innerHTML = safeHTML(avatarHtml);
@@ -7313,9 +7382,38 @@ const RankingController = {
                 row.appendChild(rate);
                 row.appendChild(diff);
                 row.appendChild(totalWrap);
-
-                listEl.appendChild(row);
             }
+
+            // Apply Highlight for Current User
+            const isMe = currentUserId && parseInt(r.user_id) === parseInt(currentUserId);
+            if (isMe) {
+                row.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%)';
+                row.style.border = '1px solid rgba(14, 165, 233, 0.25)';
+                row.style.borderRadius = '14px';
+                row.style.marginBottom = '6px';
+                row.style.boxShadow = '0 6px 20px rgba(14, 165, 233, 0.08)';
+                row.onmouseover = function () { 
+                    this.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0.05) 100%)'; 
+                    this.style.borderColor = 'rgba(14, 165, 233, 0.4)';
+                    this.style.boxShadow = '0 8px 24px rgba(14, 165, 233, 0.12)';
+                };
+                row.onmouseout = function () { 
+                    this.style.background = 'linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0.03) 100%)'; 
+                    this.style.borderColor = 'rgba(14, 165, 233, 0.25)';
+                    this.style.boxShadow = '0 6px 20px rgba(14, 165, 233, 0.08)';
+                };
+            } else {
+                row.style.background = 'transparent';
+                row.style.border = 'none';
+                row.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+                row.style.borderRadius = '0';
+                row.style.marginBottom = '0';
+                row.style.boxShadow = 'none';
+                row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
+                row.onmouseout = function () { this.style.background = 'transparent'; };
+            }
+
+            listEl.appendChild(row);
         });
     }
 

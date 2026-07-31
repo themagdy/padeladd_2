@@ -10,7 +10,8 @@ $pdo = getDB();
 $user = getAuthenticatedUser($pdo);
 
 $gender = $data['gender'] ?? 'male';
-$limit  = intval($data['limit'] ?? 10);
+$limit  = intval($data['limit'] ?? 50);
+$offset = intval($data['offset'] ?? 0);
 
 $stmt = $pdo->prepare("
     SELECT 
@@ -39,21 +40,24 @@ $stmt = $pdo->prepare("
     FROM player_stats ps
     JOIN users u ON ps.user_id = u.id
     JOIN user_profiles up ON ps.user_id = up.user_id
-    WHERE up.gender = ? AND u.status = 'active'
+    WHERE up.gender = :gender AND u.status = 'active'
     ORDER BY (ps.matches_played > 0) DESC, ps.rank_points DESC, ps.matches_played DESC, u.first_name ASC
-    LIMIT ?
+    LIMIT :limit OFFSET :offset
 ");
 
-$stmt->execute([$gender, $limit]);
+$stmt->bindValue(':gender', $gender, PDO::PARAM_STR);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
 $ranking = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Formatting for frontend
-$currentRank    = 1;
+$currentRank    = $offset + 1;
 $previousPoints = null;
 
 foreach ($ranking as $index => &$row) {
     if ($previousPoints !== null && $row['rank_points'] < $previousPoints) {
-        $currentRank = $index + 1;
+        $currentRank = $offset + $index + 1;
     }
     $row['rank']        = $currentRank;
     $previousPoints     = $row['rank_points'];
