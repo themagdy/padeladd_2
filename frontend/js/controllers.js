@@ -142,6 +142,8 @@ const StoriesController = {
     _currentIndex: 0,
     _isShowing: false,
     _isPaused: false,
+    _pressStartTime: 0,
+    _isHolding: false,
     _progressInterval: null,
     _progressValue: 0,
     _STORY_DURATION: 5000,
@@ -425,7 +427,40 @@ const StoriesController = {
 
         const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
         const initials = ((headerPlayer?.first_name?.[0] || '') + (headerPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
-        const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id;
+        const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id;        const isMine = parseInt(story.is_mine) === 1;
+        const viewers = story.viewers || [];
+        let viewersHtml = '';
+        if (isMine && viewers.length > 0) {
+            const limit = 4;
+            const displayViewers = viewers.slice(0, limit);
+            const extra = viewers.length - displayViewers.length;
+
+            const avatarsListHtml = displayViewers.map((u, index) => {
+                const initials = ((u.first_name?.[0] || '') + (u.last_name?.[0] || '')).toUpperCase() || '?';
+                return `
+                    <div style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 2px solid var(--c-bg-card); margin-left: ${index > 0 ? '-10px' : '0'}px; z-index: ${10 - index}; flex-shrink: 0; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);">
+                        ${UI.getAvatarHtml(u.profile_image_thumb || u.profile_image, 'width:100%; height:100%; object-fit:cover;', 'width:100%; height:100%; font-size:9px; font-weight:700;', initials)}
+                    </div>
+                `;
+            }).join('');
+
+            viewersHtml = `
+                <div class="story-viewers-bar" 
+                     onclick="event.stopPropagation(); StoriesController.showViewers();" 
+                     onmousedown="event.stopPropagation()" 
+                     onmouseup="event.stopPropagation()" 
+                     ontouchstart="event.stopPropagation()" 
+                     ontouchend="event.stopPropagation()" 
+                     style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: background 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                    <div style="display: flex; align-items: center;">
+                        ${avatarsListHtml}
+                    </div>
+                    <span style="font-size: 13px; font-weight: 600; color: #fff; font-family: 'Montserrat', sans-serif; letter-spacing: 0.3px;">
+                        ${viewers.length} player${viewers.length > 1 ? 's' : ''} saw this
+                    </span>
+                </div>
+            `;
+        }
 
         overlay.innerHTML = safeHTML(`
             <div class="story-header">
@@ -451,13 +486,20 @@ const StoriesController = {
                 </div>
             </div>
             
-            <div class="story-content-area" onclick="StoriesController.handleTap(event)">
+            <div class="story-content-area" 
+                 onmousedown="StoriesController.handlePressStart(event)" 
+                 onmouseup="StoriesController.handlePressEnd(event)" 
+                 onmouseleave="StoriesController.handlePressEnd(event)"
+                 ontouchstart="StoriesController.handlePressStart(event)" 
+                 ontouchend="StoriesController.handlePressEnd(event)"
+                 ontouchcancel="StoriesController.handlePressEnd(event)">
                 <div class="story-card ${story.type}">
                     <div class="story-match-type-badge">${story.match_type === 'competition' ? '🏆 COMPETITION' : '🤝 FRIENDLY'}</div>
                     
                     ${isScore ? this.renderScoreStory(story) : this.renderUpcomingStory(story)}
-
-                    <div class="story-footer-actions">
+ 
+                    <div class="story-footer-actions" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 22px;">
+                        ${viewersHtml ? viewersHtml : ''}
                         <button class="btn btn-primary" style="width:100%; height:54px; border-radius:16px; font-weight:800; font-family:'Outfit'; box-shadow:0 10px 25px rgba(27, 82, 206, 0.4);" onclick="Router.navigate('/matches/${story.match_code}'); StoriesController.closePlayer();">VIEW MATCH DETAILS</button>
                     </div>
                 </div>
@@ -470,41 +512,50 @@ const StoriesController = {
         const team1 = players.filter(p => parseInt(p.team_no) === 1);
         const team2 = players.filter(p => parseInt(p.team_no) === 2);
 
-        const renderPlayerRow = (p) => {
-            if (!p) return `
-                <div class="story-player-row empty" style="display:flex; align-items:center; gap:12px; width:100%; opacity:0.4;">
-                    <div class="story-team-avatar-mini" style="width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px dashed rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.2); font-size:18px;">+</div>
-                    <div class="story-player-info" style="flex:1;">
-                        <span class="story-player-name" style="font-size:16px; font-weight:400; font-style:italic; color:rgba(255,255,255,0.3);">Open Slot</span>
-                    </div>
-                </div>
-            `;
+        const renderTeamCardUpcoming = (teamPlayers) => {
+            const p1 = teamPlayers[0];
+            const p2 = teamPlayers[1];
 
-            const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || '?';
-            const xcode = p.player_code || p.player_xcode || p.id;
-            const level = p.level || '';
+            const p1Initials = p1 ? ((p1.first_name?.[0] || '') + (p1.last_name?.[0] || '')).toUpperCase() || '?' : '';
+            const p2Initials = p2 ? ((p2.first_name?.[0] || '') + (p2.last_name?.[0] || '')).toUpperCase() || '?' : '';
+
+            const p1Code = p1 ? (p1.player_code || p1.player_xcode || p1.id) : '';
+            const p2Code = p2 ? (p2.player_code || p2.player_xcode || p2.id) : '';
 
             return `
-                <div class="story-player-row" style="display:flex; align-items:center; gap:12px; width:100%;">
-                    <div class="story-team-avatar-mini" style="width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.1); flex-shrink:0;">
-                        ${UI.getAvatarHtml(p.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', initials)}
-                    </div>
-                    <div class="story-player-info" style="flex:1; display:flex; flex-direction:column; gap:2px;">
-                        <span class="story-player-name" style="font-size:16px; font-weight:700; color:#fff; font-family:'Montserrat';">${p.nickname || p.first_name}</span>
-                    </div>
-                    <div class="story-player-identity" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
-                        <span class="story-xcode-tag" style="background:rgba(247,148,29,0.1); border:1px solid rgba(247,148,29,0.3); color:var(--c-orange); font-size:10px; font-weight:900; padding:2px 8px; border-radius:6px; letter-spacing:0.5px; font-family:'Outfit';">${xcode}</span>
+                <div class="story-team-card upcoming" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                        <!-- Overlapping Avatars on the Left -->
+                        <div class="story-team-avatars" style="display: flex; flex-shrink: 0; align-items: center;">
+                            <div class="story-team-avatar-mini" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid var(--c-bg-card); background: var(--c-bg-card); position: relative; z-index: 2;">
+                                ${p1 ? UI.getAvatarHtml(p1.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', p1Initials) : '<div class="avatar-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:16px;">+</div>'}
+                            </div>
+                            <div class="story-team-avatar-mini" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid var(--c-bg-card); background: var(--c-bg-card); position: relative; z-index: 1; margin-left: -15px;">
+                                ${p2 ? UI.getAvatarHtml(p2.profile_image_thumb, 'width:100%;height:100%;object-fit:cover;', 'width:100%;height:100%;', p2Initials) : '<div class="avatar-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:16px;">+</div>'}
+                            </div>
+                        </div>
+
+                        <!-- Names and Player Codes Stacked -->
+                        <div style="display: flex; flex: 1; align-items: center; justify-content: space-around; gap: 8px; min-width: 0;">
+                            <!-- Player 1 Column -->
+                            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; min-width: 0;">
+                                <span style="font-size: 14px; font-weight: 700; color: #fff; font-family: 'Montserrat', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${p1 ? (p1.nickname || p1.first_name) : '<span style="font-style:italic; opacity:0.4;">Open Slot</span>'}</span>
+                                ${p1 ? `<span style="font-size: 10px; font-weight: 800; color: var(--c-orange); font-family: 'Outfit'; margin-top: 2px;">${p1Code}</span>` : ''}
+                            </div>
+
+                            <!-- Spacer slash -->
+                            <div style="font-size: 10px; color: rgba(255,255,255,0.15); font-weight: 800; font-family: 'Outfit'; flex-shrink: 0;">/</div>
+
+                            <!-- Player 2 Column -->
+                            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; min-width: 0;">
+                                <span style="font-size: 14px; font-weight: 700; color: #fff; font-family: 'Montserrat', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">${p2 ? (p2.nickname || p2.first_name) : '<span style="font-style:italic; opacity:0.4;">Open Slot</span>'}</span>
+                                ${p2 ? `<span style="font-size: 10px; font-weight: 800; color: var(--c-orange); font-family: 'Outfit'; margin-top: 2px;">${p2Code}</span>` : ''}
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         };
-
-        const renderTeamCardUpcoming = (teamPlayers) => `
-            <div class="story-team-card upcoming" style="padding: 20px; display:flex; flex-direction:column; gap:16px; min-height:100px; background:rgba(255,255,255,0.03); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.06); border-radius:24px;">
-                ${renderPlayerRow(teamPlayers[0])}
-                ${renderPlayerRow(teamPlayers[1])}
-            </div>
-        `;
 
         const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
 
@@ -672,19 +723,102 @@ const StoriesController = {
         }, interval);
     },
 
-    handleTap: function (e) {
-        // Don't navigate if clicking a button or link
+    handlePressStart: function (e) {
         if (e.target.closest('button') || e.target.closest('a')) return;
 
-        const x = e.clientX;
+        this._pressStartTime = Date.now();
+        this._isHolding = true;
+
+        if (this._progressInterval) {
+            clearInterval(this._progressInterval);
+            this._progressInterval = null;
+        }
+    },
+
+    handlePressEnd: function (e) {
+        if (!this._isHolding) return;
+        this._isHolding = false;
+
+        const duration = Date.now() - this._pressStartTime;
+
+        if (!this._isPaused) {
+            this.resumeProgress();
+        }
+
+        if (duration < 250) {
+            this.handleTap(e);
+        }
+    },
+
+    handleTap: function (e) {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+
+        let x = e.clientX;
+        if (x === undefined && e.changedTouches && e.changedTouches.length > 0) {
+            x = e.changedTouches[0].clientX;
+        }
+        if (x === undefined && e.touches && e.touches.length > 0) {
+            x = e.touches[0].clientX;
+        }
+        if (x === undefined) return;
+
         const w = window.innerWidth;
 
-        // 50/50 split for more intuitive navigation on both mobile and desktop
         if (x < w / 2) {
             this.prev();
         } else {
             this.next();
         }
+    },
+
+    showViewers: function () {
+        const story = this._currentFeed[this._currentIndex];
+        if (!story || !story.viewers || story.viewers.length === 0) return;
+
+        // Pause playback while modal is open
+        if (!this._isPaused) {
+            this.togglePause();
+        }
+
+        const list = story.viewers;
+        const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
+        let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
+        
+        list.forEach(u => {
+            let initials = '?';
+            const name = u.nickname || (u.first_name + ' ' + u.last_name).trim();
+            if (u.first_name && u.last_name) {
+                initials = (u.first_name.charAt(0) + u.last_name.charAt(0)).toUpperCase();
+            } else {
+                initials = name.substring(0, 2).toUpperCase();
+            }
+            const avatarHtml = UI.getAvatarHtml(u.profile_image_thumb || u.profile_image, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:40px; height:40px; border-radius:50%; flex-shrink:0; font-size:14px; font-weight:700; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; padding-top:2px;', initials);
+
+            html += `<div onclick="ConfirmModal.close(); StoriesController.closePlayer(); Router.navigate('/profile/view/${u.player_code}')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:12px; cursor:pointer; background:rgba(255,255,255,0.02); margin-bottom:6px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='rgba(255,255,255,0.02)'">${avatarHtml}<div style="flex:1; min-width:0; text-align:left;"><div style="font-weight:700; font-size:13px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div><div style="font-size:10px; font-weight:600; color:var(--c-orange); font-family:monospace; margin-top:1px;">${u.player_code}</div></div></div>`;
+        });
+        html += '</div>';
+
+        ConfirmModal.show({
+            title: `Seen by (${list.length})`,
+            message: html,
+            icon: '👁️',
+            showCancel: false,
+            confirmText: 'Close',
+            type: 'info',
+            headerLayout: 'row'
+        }).then(() => {
+            // Replay the same story from the start when the popup is closed
+            this._isPaused = false;
+            const icon = document.getElementById('story-pause-icon');
+            if (icon) icon.innerHTML = this._icons.pause;
+
+            this._progressValue = 0;
+            const bars = document.querySelectorAll('.story-progress-fill');
+            const bar = bars[this._currentIndex];
+            if (bar) bar.style.width = '0%';
+
+            this.resumeProgress();
+        });
     },
 
     next: function () {
@@ -6255,7 +6389,7 @@ const NotificationsController = {
                 partner_denied: '✗', partner_blocked: '🚫', match_cancelled: '❌',
                 player_withdrawn: '🚪', phone_requested: '📞', phone_approved: '📱', phone_denied: '🚫',
                 new_message: '💬', score_submitted: '📊', score_confirmed: '🏆', score_disputed: '⚠️',
-                score_approved: '🏆'
+                score_approved: '🏆', score_reminder: '⏰'
             };
 
             // Phase 6: Grouping (Aggregation) for new_message by match
@@ -6463,6 +6597,7 @@ const NotificationsController = {
             case 'score_submitted':
             case 'score_approved':
             case 'score_disputed':
+            case 'score_reminder':
                 Router.navigate(navPath);
                 break;
 

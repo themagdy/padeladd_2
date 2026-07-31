@@ -19,6 +19,7 @@ $sql = "
         v.name AS venue_name, 
         m.match_code, 
         m.match_datetime,
+        m.match_type,
         (SELECT 1 FROM story_seen ss WHERE ss.story_id = s.id AND ss.user_id = :myId) AS is_seen
     FROM stories s
     LEFT JOIN venues v ON s.venue_id = v.id
@@ -54,6 +55,24 @@ foreach ($stories as $s) {
     $s['score_data'] = $s['score_data_json'] ? json_decode($s['score_data_json'], true) : null;
     unset($s['score_data_json']);
     
+    // If it's my story, fetch the viewers
+    if ($targetId === $myId) {
+        $viewersStmt = $pdo->prepare("
+            SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level
+            FROM story_seen ss
+            JOIN users u ON ss.user_id = u.id
+            LEFT JOIN user_profiles up ON u.id = up.user_id
+            WHERE ss.story_id = ? AND u.status = 'active'
+            ORDER BY ss.seen_at DESC
+        ");
+        $viewersStmt->execute([(int)$s['id']]);
+        $s['viewers'] = $viewersStmt->fetchAll(PDO::FETCH_ASSOC);
+        $s['is_mine'] = 1;
+    } else {
+        $s['viewers'] = [];
+        $s['is_mine'] = 0;
+    }
+
     $result[] = $s;
 }
 

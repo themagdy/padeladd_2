@@ -2007,8 +2007,13 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Gold Border Avatar Ring: Pinned user avatar is wrapped in a clean, flat 2px solid gold border ring (#f5a623).
 - Version: 2.4.58 (Build 458)
 
-2.4.59 (Build 459) - 2026-07-31
-- Champagne Gold Highlight theme: Replaced blue user row accents with champagne gold gradients and borders.
-- Glass Shine Load Animation: Added a slower, soft, simplified light shine sweep reflection that runs across the glass highlight card on page load.
-- Version: 2.4.59 (Build 459)
+2.4.60 (Build 460) - 2026-07-31
+- Story Seen List & Avatars: Added horizontal viewers count pill above action details button inside player stories, displaying X player avatars stacked/overlapping with total views text.
+- Viewers List Modal: Click action on viewers bar triggers a custom dialog overlay displaying all players list with their profile photos, linked back to user profiles.
+- Automatic Resume Playback: Pauses story playback while viewers modal overlay is open, and automatically resets the current active progress state to 0% and replays it from start upon closing.
+- Story Event Bubbling Fixes: Stopped event propagation for pointer, mouse and touchstart/end triggers inside the viewers bar to prevent story player close/swipe actions on list click.
+- Match Type SQL SELECT Fixes: Added match_type column joins in stories endpoint lists (list.php and user.php) to fix the 'competition' badge defaulting to 'friendly' on client side.
+- Upcoming Story Compact Design: Redesigned upcoming match previews to render both players in a single row along with overlapping team avatars, showing player codes vertically under nicknames to save space.
+- Version: 2.4.60 (Build 460)
+
 

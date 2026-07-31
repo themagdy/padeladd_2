@@ -16,6 +16,7 @@ $sql = "
         v.name AS venue_name, 
         m.match_code, 
         m.match_datetime,
+        m.match_type,
         (SELECT 1 FROM story_seen ss WHERE ss.story_id = s.id AND ss.user_id = :uid1) AS is_seen,
         GROUP_CONCAT(DISTINCT f.following_id) AS followed_player_ids,
         (CASE WHEN EXISTS(SELECT 1 FROM match_players mp2 WHERE mp2.match_id = s.match_id AND mp2.user_id = :uidSelf) THEN 1 ELSE 0 END) as is_mine
@@ -60,6 +61,22 @@ foreach ($stories as $s) {
     $s['score_data'] = $s['score_data_json'] ? json_decode($s['score_data_json'], true) : null;
     unset($s['score_data_json']);
     
+    // If it's my story, fetch the viewers
+    if ((int)$s['is_mine'] === 1) {
+        $viewersStmt = $pdo->prepare("
+            SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level
+            FROM story_seen ss
+            JOIN users u ON ss.user_id = u.id
+            LEFT JOIN user_profiles up ON u.id = up.user_id
+            WHERE ss.story_id = ? AND u.status = 'active'
+            ORDER BY ss.seen_at DESC
+        ");
+        $viewersStmt->execute([(int)$s['id']]);
+        $s['viewers'] = $viewersStmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $s['viewers'] = [];
+    }
+
     $result[] = $s;
 }
 
