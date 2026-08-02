@@ -212,7 +212,7 @@ const Router = {
             }
         },
         '/terms': { template: 'frontend/pages/terms.html', init: () => AuthController.initTerms() },
-        '/privacy': { template: 'frontend/pages/privacy.html', init: () => {} }
+        '/privacy': { template: 'frontend/pages/privacy.html', init: () => { } }
     },
 
     navDepth: 0,
@@ -284,6 +284,11 @@ const Router = {
         // Auto-prefix with BASE_PATH if needed
         if (finalPath.startsWith('/') && !finalPath.startsWith(CONFIG.BASE_PATH)) {
             finalPath = CONFIG.BASE_PATH + (finalPath === '/' ? '' : finalPath);
+        }
+
+        let currentPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+        if (currentPath.startsWith('/profile/view') || currentPath.startsWith('/p/')) {
+            sessionStorage.setItem('profile_scroll_pos', window.scrollY);
         }
 
         if (addToHistory) {

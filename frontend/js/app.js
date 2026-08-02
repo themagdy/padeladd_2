@@ -121,7 +121,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, required = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputType = 'textarea', required = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
             this._undismissable = undismissable;
@@ -146,13 +146,18 @@ var ConfirmModal = {
             const icon = customIcon !== null && customIcon !== undefined ? customIcon : (isWarning ? '⚡' : '');
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
-            const inputHtml = showInput ? `
-                <textarea id="gcm-input" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid var(--c-border); background:rgba(255,255,255,0.05); color:var(--c-text); border-radius:12px; padding:12px; font-size:14px; margin-bottom:4px; resize:none; font-family:var(--font); outline:none;" rows="6"></textarea>
-                <div style="display:flex; justify-content:space-between; margin-bottom:24px; padding:0 4px;">
-                    <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
-                    <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
-                </div>
+            let inputHtml = showInput ? `
+                <${inputType === 'textarea' ? 'textarea' : 'input'} id="gcm-input" type="${inputType}" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; margin-bottom:${inputType === 'password' ? '18px' : '4px'}; resize:none; font-family:var(--font); outline:none;" ${inputType === 'textarea' ? 'rows="6"' : ''}></${inputType === 'textarea' ? 'textarea' : 'input'}>
             ` : '';
+            
+            if (showInput) {
+                inputHtml += `
+                    <div style="display:${inputType === 'password' ? 'none' : 'flex'}; justify-content:space-between; margin-bottom:24px; padding:0 4px;">
+                        <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
+                        <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
+                    </div>
+                `;
+            }
 
             const thirdBtnHtml = thirdText ? `
                 <button id="gcm-third" class="btn" style="background:${thirdColor}; color:white; border:none; padding:16px;">${thirdText}</button>
@@ -223,7 +228,8 @@ var ConfirmModal = {
                     if (required && val === '') {
                         const inp = this._modal.querySelector('#gcm-input');
                         inp.style.borderColor = 'var(--c-red)';
-                        Toast.show('Please enter a message.', 'error');
+                        const errorMsg = inputType === 'password' ? 'Please enter your password.' : 'Please enter a message.';
+                        Toast.show(errorMsg, 'error');
                         return;
                     }
                     this.close(val);
@@ -236,7 +242,7 @@ var ConfirmModal = {
                 const inp = this._modal.querySelector('#gcm-input');
                 const count = this._modal.querySelector('#gcm-counter');
                 inp.oninput = () => {
-                    count.innerText = `${inp.value.length}/${inputMaxLength}`;
+                    if (count) count.innerText = `${inp.value.length}/${inputMaxLength}`;
                     inp.style.borderColor = 'var(--c-border)';
                 };
                 // Auto-focus with slight delay for transition

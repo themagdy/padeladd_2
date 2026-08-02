@@ -2017,7 +2017,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Seen List Dialog Polish: Changed header title format to 'Seen by X' and updated icon emoji to 👓.
 - Version: 2.4.60 (Build 460)
 
-[NEXT] - 2026-08-02
+2.4.62 (Build 462) - 2026-08-02
 - Win/Loss stats display: Moved the win/loss breakdown (W/L) from the Matches card to under the Win Rate card on both the Dashboard and Player Profile view pages.
 - Win/Loss styling: Color-coded wins in green (#4ebd79) and losses in red (#e57373) with a brighter separator (/ at 0.85 opacity) and a cleaner, lighter font-weight (500).
 - Date display unification: Created formatMatchDateOnly helper to unify date rendering in match listing cards and details view, enforcing the 'Mon, 25 April' pattern (with year only if different) and using "Today" only if it's the calendar day of the match and current time is past 4:00 AM.
@@ -2033,3 +2033,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Gender filter label: Gender filter button now defaults to "Men" immediately on render instead of a "Gender" placeholder, and is dynamically updated to "Women" for female users.
 - Women filter pink color: Restored the original pink (var(--c-pink)) background on the same-gender filter button for female users, both on initial sync and on click.
 - Pink color accessibility: Darkened the global --c-pink from #D81B60 to #AD1457 to achieve WCAG AA white-text contrast (~5.2:1) while preserving the pink identity across all usages.
+- Admin Player Search: Added nickname search compatibility to the moderator panel player filters, trimmed inputs to handle accidental spaces, and bumped index.html version parameter to v=1.9 to refresh cached assets.
+- Female Profile Age: Hid the age detail pill on female player profiles using inline CSS (`display: none !important`) without altering DOM structure.
+- Stories Mobile Touch Pause: Added mobile touch-hold pause capabilities by preventing browser text selection, callout magnification windows, and context menus, and correctly handling touchstart preventDefault on active holds.
+- Account Deletion Security: Require user password confirmation directly within the deletion warning modal. The backend verifies the password hash via `password_verify` before executing deletion queries. The input is styled with pure white text, custom spacing, hidden length counters, and context-aware validation alerts.
+- Profile Scroll Restoration: Implemented sessionStorage scroll position saving in Router.navigate when departing player profile pages. Saved coordinates are restored inside ProfileViewController.loadMatches once matches render, keeping users at their last scrolled score.
+- Self-Seen Story Exclude: Filtered out the logged-in user from their own story "Seen by" viewer lists and avatar displays by bypassing mark_seen triggers on the frontend (if the story is_mine) and verifying on the backend (mark_seen.php checks match player confirmation) to guarantee own story views are never saved.
+- Stories Mouse & Touch Pause: Extended press-and-hold pause logic to prevent default browser behaviors (such as text selection, dragging, and magnification magnifier overlays) on both touchstart (mobile) and mousedown (desktop) triggers.
+- Version: 2.4.62 (Build 462)

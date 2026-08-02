@@ -240,12 +240,13 @@ window.AdminControllers = {
         filterPlayers() {
             const queryInput = document.getElementById('player-search');
             const statusSelect = document.getElementById('player-status-filter');
-            const q = queryInput ? queryInput.value.toLowerCase() : '';
+            const q = queryInput ? queryInput.value.toLowerCase().trim() : '';
             const status = statusSelect ? statusSelect.value : 'all';
 
             const filtered = this.allPlayers.filter(p => {
                 const matchesSearch = !q ||
                     (p.full_name && p.full_name.toLowerCase().includes(q)) ||
+                    (p.nickname && p.nickname.toLowerCase().includes(q)) ||
                     (p.phone && p.phone.includes(q)) ||
                     (p.email && p.email.toLowerCase().includes(q)) ||
                     (p.player_code && p.player_code.toLowerCase().includes(q));
@@ -2791,10 +2792,10 @@ window.AdminControllers = {
                 <tr>
                     <td>
                         <div style="width:80px; height:45px; border-radius:6px; overflow:hidden; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center;">
-                            ${a.image_url 
-                                ? `<img src="../${a.image_url}" style="width:100%; height:100%; object-fit:cover;">` 
-                                : '<span style="font-size:16px;">🖼️</span>'
-                            }
+                            ${a.image_url
+                    ? `<img src="../${a.image_url}" style="width:100%; height:100%; object-fit:cover;">`
+                    : '<span style="font-size:16px;">🖼️</span>'
+                }
                         </div>
                     </td>
                     <td>
@@ -2804,10 +2805,10 @@ window.AdminControllers = {
                         ${a.created_at ? new Date(a.created_at).toLocaleString() : 'N/A'}
                     </td>
                     <td>
-                        ${a.is_visible == 1 
-                            ? '<span class="status-tag active">Active</span>' 
-                            : '<span class="status-tag suspended">Hidden</span>'
-                        }
+                        ${a.is_visible == 1
+                    ? '<span class="status-tag active">Active</span>'
+                    : '<span class="status-tag suspended">Hidden</span>'
+                }
                     </td>
                     <td style="text-align:right;">
                         <div style="display:flex; justify-content:flex-end; gap:8px;">
@@ -2841,7 +2842,7 @@ window.AdminControllers = {
             editor.innerHTML = '';
             htmlTextarea.value = '';
             imagePreview.innerHTML = '<span style="font-size:24px; color:var(--c-text-muted);">🖼️</span>';
-            
+
             // Set mode to RTE
             this.editorMode = 'rte';
             editor.style.display = 'block';
@@ -2913,18 +2914,18 @@ window.AdminControllers = {
             }
             const selection = window.getSelection();
             let selectedText = selection.toString().trim();
-            
+
             const url = prompt("Enter URL (e.g. https://google.com):");
             if (!url) return;
-            
+
             let formattedUrl = url.trim();
             if (!/^https?:\/\//i.test(formattedUrl)) {
                 formattedUrl = 'https://' + formattedUrl;
             }
-            
+
             const editor = document.getElementById('announcement-body-editor');
             if (editor) editor.focus();
-            
+
             if (!selectedText) {
                 const text = prompt("Enter link text:", "Link");
                 if (!text) return;
@@ -2952,15 +2953,15 @@ window.AdminControllers = {
             }
             const text = prompt("Enter button label:", "Click Here");
             if (!text) return;
-            
+
             const url = prompt("Enter URL (e.g. https://google.com):");
             if (!url) return;
-            
+
             let formattedUrl = url.trim();
             if (!/^https?:\/\//i.test(formattedUrl)) {
                 formattedUrl = 'https://' + formattedUrl;
             }
-            
+
             const editor = document.getElementById('announcement-body-editor');
             if (editor) editor.focus();
             const html = `<a href="${formattedUrl}" target="_blank" class="announcement-btn">${text}</a>&nbsp;`;
@@ -2974,7 +2975,7 @@ window.AdminControllers = {
             }
             const editor = document.getElementById('announcement-body-editor');
             if (editor) editor.focus();
-            
+
             document.execCommand('removeFormat', false, null);
             document.execCommand('formatBlock', false, 'p');
         },
@@ -3009,7 +3010,7 @@ window.AdminControllers = {
             const formData = new FormData();
             formData.append('title', title);
             formData.append('body', bodyContent);
-            
+
             if (fileInput.files.length > 0) {
                 formData.append('image', fileInput.files[0]);
             } else if (!editId) {
@@ -3023,8 +3024,8 @@ window.AdminControllers = {
             }
 
             try {
-                const url = isUpdate 
-                    ? '../backend/api/admin/announcements/update.php' 
+                const url = isUpdate
+                    ? '../backend/api/admin/announcements/update.php'
                     : '../backend/api/admin/announcements/create.php';
 
                 const res = await _admFetch(url, {

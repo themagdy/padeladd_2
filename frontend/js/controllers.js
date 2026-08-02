@@ -747,6 +747,11 @@ const StoriesController = {
     handlePressStart: function (e) {
         if (e.target.closest('button') || e.target.closest('a')) return;
 
+        // Prevent context menus, magnification glasses, dragging, and text selection on hold
+        if (e.type === 'touchstart' || e.type === 'mousedown') {
+            e.preventDefault();
+        }
+
         this._pressStartTime = Date.now();
         this._isHolding = true;
 
@@ -881,14 +886,18 @@ const StoriesController = {
     },
 
     markSeen: async function (storyId) {
-        // Update local state immediately
         const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
-        if (story && !story.is_seen) {
+        if (!story) return;
+
+        // Do not record own stories in the seen list
+        if (parseInt(story.is_mine) === 1) return;
+
+        if (!story.is_seen) {
             story.is_seen = 1;
             // Re-render tray in background so it's updated when user closes story
             this.renderTray();
+            await API.post('/stories/mark_seen', { story_id: storyId });
         }
-        await API.post('/stories/mark_seen', { story_id: storyId });
     }
 };
 
@@ -2124,8 +2133,9 @@ const ProfileViewController = {
                     `);
                 }
                 if (profile?.age) {
+                    const isFemale = (profile?.gender || '').toLowerCase() === 'female';
                     items.push(`
-                        <div style="${metaStyle}">
+                        <div style="${metaStyle} ${isFemale ? 'display: none !important;' : ''}">
                             <div style="${iconCircle}">🎂</div>
                             <span style="${labelStyle}">Age ${profile.age}</span>
                         </div>
@@ -2276,6 +2286,15 @@ const ProfileViewController = {
         if (listEl._lastHtml !== finalHtml) {
             listEl.innerHTML = safeHTML(finalHtml);
             listEl._lastHtml = finalHtml;
+        }
+
+        // Restore scroll position for profile views after dynamic scores render
+        const savedScroll = sessionStorage.getItem('profile_scroll_pos');
+        if (savedScroll !== null) {
+            sessionStorage.removeItem('profile_scroll_pos');
+            requestAnimationFrame(() => {
+                window.scrollTo(0, parseInt(savedScroll));
+            });
         }
     },
 
@@ -2444,17 +2463,22 @@ const ProfileViewController = {
 const ProfileController = {
 
     confirmDeleteAccount: async function () {
-        const confirmed = await ConfirmModal.show({
+        const password = await ConfirmModal.show({
             title: 'Delete Account?',
-            message: 'Are you sure you want to delete your account?\nThis will permanently delete your profile details, ranking points, and deactivate your access. You will be logged out immediately.',
+            message: '<span style="color:#fff;"><b>Are you sure you want to delete your account?</b>\n\nThis will permanently delete:</span>\n• Your profile details and photos\n• Your points, matches, and stats\n\n⚠️ <i>You will be logged out immediately and this cannot be undone.</i>',
             confirmText: 'Yes, Delete Account',
             cancelText: 'Cancel',
-            type: 'warning'
+            type: 'warning',
+            showInput: true,
+            inputType: 'password',
+            required: true,
+            inputPlaceholder: 'Enter your password...',
+            inputMaxLength: 100
         });
 
-        if (!confirmed) return;
+        if (!password) return;
 
-        const res = await API.post('/profile/delete', {});
+        const res = await API.post('/profile/delete', { password: password });
         if (res && res.success) {
             Toast.show('Account successfully deleted.', 'success');
             Auth.clearAll();

@@ -10,6 +10,23 @@ $uid = (int)$user['id'];
 // Get current session token
 $token = getBearerToken();
 
+// Read input body
+$data = json_decode(file_get_contents('php://input'), true);
+$password = trim($data['password'] ?? '');
+
+if (empty($password)) {
+    jsonResponse(false, 'Password is required to delete account.');
+}
+
+// Fetch stored password hash
+$stmtVerify = $pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
+$stmtVerify->execute([$uid]);
+$dbUser = $stmtVerify->fetch(PDO::FETCH_ASSOC);
+
+if (!$dbUser || !password_verify($password, $dbUser['password_hash'])) {
+    jsonResponse(false, 'Incorrect password. Account deletion aborted.');
+}
+
 try {
     $pdo->beginTransaction();
 
