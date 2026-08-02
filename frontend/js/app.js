@@ -270,20 +270,14 @@ var ConfirmModal = {
             }
 
 
-            // Disable scroll (Hardened for mobile)
+            // Lock body scroll to prevent page scroll behind modal (keep overlay scrollable)
             const scrollY = window.scrollY || document.documentElement.scrollTop;
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
-            document.body.style.touchAction = 'none';
             document.body.style.position = 'fixed';
             document.body.style.top = `-${scrollY}px`;
             document.body.style.width = '100%';
-
-            // Prevent touchmove events from bubbling up, except inside scrollable elements
-            this._modal.ontouchmove = (e) => {
-                if (e.target.closest('.custom-scroll')) return;
-                e.preventDefault();
-            };
+            // NOTE: Do NOT set touchAction:none or block touchmove on overlay — that kills modal scrolling
 
             // Set state
             this._isOpen = true;
@@ -355,7 +349,7 @@ var InviteModal = {
             this._modal.style.cssText = `
                 position:fixed; top:0; left:0; width:100%; height:100%;
                 background:rgba(0,0,0,0.8);
-                display:flex; align-items:flex-start; justify-content:center;
+                display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
                 z-index:100000; opacity:0; pointer-events:none;
                 transition:opacity 0.25s ease; padding:32px 16px;
                 overflow-y:auto;
@@ -429,14 +423,14 @@ var InviteModal = {
             if (e.target === this._modal) this.close();
         };
 
-        // Disable scroll
+        // Lock body scroll to prevent page scroll behind modal (keep overlay scrollable)
         const scrollY = window.scrollY || document.documentElement.scrollTop;
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
-        document.body.style.touchAction = 'none';
         document.body.style.position = 'fixed';
         document.body.style.top = `-${scrollY}px`;
         document.body.style.width = '100%';
+        // NOTE: Do NOT set touchAction:none — that kills modal scrolling
 
         this._isOpen = true;
 

@@ -735,7 +735,7 @@ const StoriesController = {
         const step = 100 / (duration / interval);
 
         this._progressInterval = setInterval(() => {
-            if (this._isPaused) return;
+            if (this._isPaused || this._isHolding) return;
             this._progressValue += step;
             bar.style.width = Math.min(this._progressValue, 100) + '%';
             if (this._progressValue >= 100) {
@@ -754,11 +754,7 @@ const StoriesController = {
 
         this._pressStartTime = Date.now();
         this._isHolding = true;
-
-        if (this._progressInterval) {
-            clearInterval(this._progressInterval);
-            this._progressInterval = null;
-        }
+        // Do NOT clear the interval — let the tick's _isHolding check freeze progress naturally
     },
 
     handlePressEnd: function (e) {
@@ -767,7 +763,9 @@ const StoriesController = {
 
         const duration = Date.now() - this._pressStartTime;
 
-        if (!this._isPaused) {
+        // Interval is still running — just unfreezing it via _isHolding = false is enough.
+        // Only call resumeProgress if the interval was somehow lost.
+        if (!this._progressInterval && !this._isPaused) {
             this.resumeProgress();
         }
 
