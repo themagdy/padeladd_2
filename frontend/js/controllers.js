@@ -507,13 +507,10 @@ const StoriesController = {
                 </div>
             </div>
             
-            <div class="story-content-area" 
-                 onmousedown="StoriesController.handlePressStart(event)" 
-                 onmouseup="StoriesController.handlePressEnd(event)" 
-                 onmouseleave="StoriesController.handlePressEnd(event)"
-                 ontouchstart="StoriesController.handlePressStart(event)" 
-                 ontouchend="StoriesController.handlePressEnd(event)"
-                 ontouchcancel="StoriesController.handlePressEnd(event)">
+            <div class="story-content-area"
+                 onmousedown="StoriesController.handlePressStart(event)"
+                 onmouseup="StoriesController.handlePressEnd(event)"
+                 onmouseleave="StoriesController.handlePressEnd(event)">
                 <div class="story-card ${story.type}">
                     <div class="story-match-type-badge">${story.match_type === 'competition' ? '🏆 COMPETITION' : '🤝 FRIENDLY'}</div>
                     
@@ -526,6 +523,15 @@ const StoriesController = {
                 </div>
             </div>
         `);
+
+        // Attach touch handlers programmatically with passive:false so e.preventDefault() works
+        // on Android WebView (inline ontouchstart handlers are passive and ignore preventDefault)
+        const contentArea = overlay.querySelector('.story-content-area');
+        if (contentArea) {
+            contentArea.addEventListener('touchstart', (e) => StoriesController.handlePressStart(e), { passive: false });
+            contentArea.addEventListener('touchend', (e) => StoriesController.handlePressEnd(e), { passive: false });
+            contentArea.addEventListener('touchcancel', (e) => StoriesController.handlePressEnd(e), { passive: false });
+        }
     },
 
     renderUpcomingStory: function (story) {
