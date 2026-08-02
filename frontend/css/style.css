@@ -1061,9 +1061,10 @@ form {
   backdrop-filter: blur(4px);
   z-index: 500;
   display: none;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
   padding: var(--space-md);
+  overflow-y: auto;
 }
 
 .modal-overlay.open {
@@ -1082,9 +1083,10 @@ form {
 }
 
 .modal {
+  margin: auto 0;
   background: var(--c-bg-card);
   border: 1px solid var(--c-border);
-  border-radius: var(--r-xl) var(--r-xl) var(--r-lg) var(--r-lg);
+  border-radius: var(--r-xl);
   width: 100%;
   max-width: 480px;
   padding: var(--space-lg);
@@ -4917,12 +4919,12 @@ body {
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
-  width: 60px;
+  width: 70px;
 }
 
 .story-avatar-ring {
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   padding: 2px;
   background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
