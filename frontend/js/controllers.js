@@ -2288,10 +2288,15 @@ const ProfileViewController = {
             listEl._lastHtml = finalHtml;
         }
 
-        // Restore scroll position for profile views after dynamic scores render
+        // Restore scroll position for profile views after dynamic scores render (only if popstate/back navigation)
         const savedScroll = sessionStorage.getItem('profile_scroll_pos');
-        if (savedScroll !== null) {
-            sessionStorage.removeItem('profile_scroll_pos');
+        const isBackNav = sessionStorage.getItem('is_back_navigation') === 'true';
+        
+        // Always clean up flags so they don't leak into subsequent forward navigations
+        sessionStorage.removeItem('profile_scroll_pos');
+        sessionStorage.removeItem('is_back_navigation');
+
+        if (savedScroll !== null && isBackNav) {
             requestAnimationFrame(() => {
                 window.scrollTo(0, parseInt(savedScroll));
             });

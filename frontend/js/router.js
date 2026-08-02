@@ -257,6 +257,7 @@ const Router = {
             if (e.state && typeof e.state.depth !== 'undefined') {
                 this.navDepth = e.state.depth;
             }
+            sessionStorage.setItem('is_back_navigation', 'true');
             this.handleRoute();
         });
 
