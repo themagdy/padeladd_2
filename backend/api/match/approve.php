@@ -79,10 +79,20 @@ try {
         $creatorRow = $creatorStmt->fetch(PDO::FETCH_ASSOC);
         $creator_side = $creatorRow ? $creatorRow['playing_side'] : 'flexible';
 
-        $partner_side = null;
-        if ($creator_side === 'right') $partner_side = 'left';
-        if ($creator_side === 'left') $partner_side = 'right';
-        if ($creator_side === 'flexible') $partner_side = 'flexible';
+        // Fetch partner's preferred playing side from user_profiles
+        $partnerProfileStmt = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
+        $partnerProfileStmt->execute([$partner_id]);
+        $partner_profile_side = $partnerProfileStmt->fetchColumn() ?: 'flexible';
+
+        $partner_side = 'flexible';
+        if ($creator_side === 'right') {
+            $partner_side = ($partner_profile_side === 'right') ? 'flexible' : 'left';
+        } elseif ($creator_side === 'left') {
+            $partner_side = ($partner_profile_side === 'left') ? 'flexible' : 'right';
+        } else {
+            // Creator is flexible -> no conflict, partner uses their preferred profile side
+            $partner_side = $partner_profile_side;
+        }
 
         $parRP = (int)($ptsMap[$partner_id]['rank_points'] ?? 0);
         $parBP = (int)($ptsMap[$partner_id]['current_buffer'] ?? 100);
