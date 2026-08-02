@@ -31,7 +31,7 @@ try {
         WHERE mp.status = 'confirmed'
           AND mp.reminder_sent = 0
           AND m.status IN ('open', 'full')
-          AND m.match_datetime BETWEEN NOW() + INTERVAL 115 MINUTE AND NOW() + INTERVAL 135 MINUTE
+          AND m.match_datetime BETWEEN NOW() + INTERVAL 1 HOUR AND NOW() + INTERVAL 3 HOUR
     ";
 
     $stmt = $pdo->query($sql);

@@ -2025,3 +2025,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Partner side assignment resolution: Implemented playing side conflict resolution when a partner joins a match, respecting preferred positions if there is no conflict, and defaulting to flexible during position conflicts.
 - Eligibility range display: Hidden the eligibility range rating requirements from the match details page for all past/completed matches.
 - Modal scroll safety redesign: Enforced vertical scrollability and viewport clipping prevention on ConfirmModal, InviteModal, onboarding modals, and all standard overlay sheets.
+- Men badge color fix: Match listing cards now use light blue (#5B8BFF) for the Men same-gender badge, consistent with the match details view (was using the dark primary blue).
+- Match listing card date color: Date-only portion (e.g. "Today", "Mon, 4 Aug") in match listing cards is now rendered in white with semi-bold weight, visually separated from the muted time text.
+- Match venue name spacing: Added 7px bottom margin to the venue name in match listing cards for breathing room above the date/meta row.
+- Play > Upcoming filter tabs restored: Restored the original Competition/Friendly and All/Men(Women) segmented filter toggles above the match list on Play > Upcoming. Filters persist across sessions via sessionStorage, reset the cache on change, and are hidden on all Mine page tabs.
+- Play filter defaults corrected: Default filter state aligned to Competition + Same Gender, matching the active HTML button states and the original v2.4.46 behaviour.
+- Gender filter label: Gender filter button now defaults to "Men" immediately on render instead of a "Gender" placeholder, and is dynamically updated to "Women" for female users.
+- Women filter pink color: Restored the original pink (var(--c-pink)) background on the same-gender filter button for female users, both on initial sync and on click.
+- Pink color accessibility: Darkened the global --c-pink from #D81B60 to #AD1457 to achieve WCAG AA white-text contrast (~5.2:1) while preserving the pink identity across all usages.

@@ -2,30 +2,54 @@
   <div style="width:100%; max-width:800px; margin:0 auto; padding:45px 20px 30px;">
 
     <!-- Header + CTA -->
-    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:15px; flex-wrap:wrap; gap:12px;">
+    <div
+      style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:15px; flex-wrap:wrap; gap:12px;">
       <div style="flex: 1 0 100%;">
-        <h1 id="ml-header-title" style="font-family: 'Montserrat', sans-serif; font-size:32px; font-weight:900; margin:0; line-height:0.9; text-transform:uppercase; letter-spacing:-0.5px; background: linear-gradient(180deg, #FFFFFF 20%, #8B9BB4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">&nbsp;</h1>
-        <p id="ml-header-sub" style="font-family: 'Montserrat', sans-serif; color:#8B9BB4; font-size:11px; font-weight:700; margin:10px 0 10px; text-transform:uppercase; letter-spacing:1px; opacity:0.8;">&nbsp;</p>
+        <h1 id="ml-header-title"
+          style="font-family: 'Montserrat', sans-serif; font-size:32px; font-weight:900; margin:0; line-height:0.9; text-transform:uppercase; letter-spacing:-0.5px; background: linear-gradient(180deg, #FFFFFF 20%, #8B9BB4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
+          &nbsp;</h1>
+        <p id="ml-header-sub"
+          style="font-family: 'Montserrat', sans-serif; color:#8B9BB4; font-size:11px; font-weight:700; margin:10px 0 10px; text-transform:uppercase; letter-spacing:1px; opacity:0.8;">
+          &nbsp;</p>
       </div>
       <div id="ml-header-actions" style="display:flex; gap:10px;">
-        <button id="ml-rules-btn" onclick="Router.navigate('/rules')" class="btn btn-secondary" style="width:auto; padding:12px 20px; font-size:14px; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%); border:none; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+        <button id="ml-rules-btn" onclick="Router.navigate('/rules')" class="btn btn-secondary"
+          style="width:auto; padding:12px 20px; font-size:14px; display:flex; align-items:center; gap:8px; background:linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%); border:none; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
           📜 Rules
         </button>
-        <button id="ml-create-btn" onclick="Router.navigate('/matches/create')" class="btn btn-primary" style="width:auto; padding:12px 24px; font-size:14px; display:flex; align-items:center; gap:8px;">
+        <button id="ml-create-btn" onclick="Router.navigate('/matches/create')" class="btn btn-primary"
+          style="width:auto; padding:12px 24px; font-size:14px; display:flex; align-items:center; gap:8px;">
           🎾 Create Match
         </button>
       </div>
     </div>
 
     <!-- Tabs Container -->
-    <div id="ml-tabs-container" style="display:flex; gap:0; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
+    <div id="ml-tabs-container"
+      style="display:flex; gap:0; border-bottom:1px solid var(--c-border); margin-bottom:24px;">
     </div>
-    
 
+    <!-- Play Filters (Visible only in Play > Upcoming) -->
+    <div id="ml-play-filters" style="display:none; margin-bottom:24px; animation:fadeIn 0.3s ease-out;">
+      <div style="display:flex; gap:20px; align-items:center; justify-content:center;">
+        <!-- Match Type Toggle -->
+        <div style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
+          <button type="button" class="ml-type-filter-btn" data-val="friendly" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
+          <button type="button" class="ml-type-filter-btn active" data-val="competition" style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
+        </div>
+
+        <!-- Gender Toggle -->
+        <div style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
+          <button type="button" class="ml-gender-filter-btn" data-val="all" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'all', this)">All</button>
+          <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active" data-val="same_gender" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Men</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Loading skeletons -->
     <div id="ml-skeleton">
-      <div style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
+      <div
+        style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <div style="display:flex; gap:8px;">
             <div class="skeleton" style="width:100px; height:12px; border-radius:4px;"></div>
@@ -39,7 +63,7 @@
             <div class="skeleton" style="height:40px; border-radius:12px;"></div>
           </div>
           <div style="display:flex; justify-content:center; opacity:0.1;">
-             <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
+            <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
           </div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <div class="skeleton" style="height:40px; border-radius:12px;"></div>
@@ -47,7 +71,8 @@
           </div>
         </div>
       </div>
-      <div style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden; opacity:0.6;">
+      <div
+        style="margin-bottom:12px; padding:20px; background:rgba(255,255,255,0.02); border-radius:var(--r-lg); border:1px solid rgba(255,255,255,0.05); overflow:hidden; opacity:0.6;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <div style="display:flex; gap:8px;">
             <div class="skeleton" style="width:120px; height:12px; border-radius:4px;"></div>
@@ -59,7 +84,7 @@
             <div class="skeleton" style="height:40px; border-radius:12px;"></div>
           </div>
           <div style="display:flex; justify-content:center; opacity:0.1;">
-             <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
+            <div style="width:24px; height:24px; background:var(--c-border); border-radius:50%;"></div>
           </div>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <div class="skeleton" style="height:40px; border-radius:12px;"></div>

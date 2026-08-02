@@ -2975,8 +2975,8 @@ const ProfileController = {
 const MatchesController = {
     _lastMode: 'play',
     _currentTab: 'play_upcoming',
-    _playFilterType: 'all',
-    _playFilterGender: 'all',
+    _playFilterType: 'competition',
+    _playFilterGender: 'same_gender',
     _lastRequestId: 0,
     _cache: {}, // Stores lists per tab/filters
     _viewCache: {}, // Stores match details by ID
@@ -3433,11 +3433,85 @@ const MatchesController = {
 
     updatePlayFiltersUI: async function () {
         const filterEl = document.getElementById('ml-play-filters');
-        if (filterEl) filterEl.style.display = 'none';
+        if (!filterEl) return;
+
+        const isUpcomingPlay = MatchesController._currentTab === 'play_upcoming';
+        filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
+
+        if (isUpcomingPlay) {
+            // Sync active states for type buttons
+            filterEl.querySelectorAll('.ml-type-filter-btn').forEach(btn => {
+                const isActive = btn.dataset.val === MatchesController._playFilterType;
+                btn.classList.toggle('active', isActive);
+                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
+                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
+                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
+            });
+
+            // Sync active states for gender buttons
+            filterEl.querySelectorAll('.ml-gender-filter-btn').forEach(btn => {
+                const isActive = btn.dataset.val === MatchesController._playFilterGender;
+                btn.classList.toggle('active', isActive);
+                btn.style.background = isActive ? 'var(--c-primary)' : 'transparent';
+                btn.style.color = isActive ? '#fff' : 'var(--c-text-muted)';
+                btn.style.boxShadow = isActive ? '0 2px 4px rgba(0,0,0,0.2)' : 'none';
+            });
+
+            const btn = document.getElementById('ml-gender-restricted-filter-btn');
+            if (btn) {
+                const updateLabel = (p) => {
+                    if (!p || !p.gender) return;
+                    const isFemale = p.gender.toLowerCase() === 'female';
+                    btn.textContent = isFemale ? 'Women' : 'Men';
+                    // Apply pink when Women is the active filter
+                    if (isFemale && btn.classList.contains('active')) {
+                        btn.style.background = 'var(--c-pink)';
+                    }
+                };
+
+                if (DashboardController._currentProfile) {
+                    updateLabel(DashboardController._currentProfile);
+                } else {
+                    API.post('/profile/get', {}).then(res => {
+                        if (res && res.success) updateLabel(res.data.profile);
+                    });
+                }
+            }
+        }
     },
 
     setPlayFilter: function (type, val, btn) {
-        // Obsolete
+        if (type === 'match_type') {
+            MatchesController._playFilterType = val;
+            sessionStorage.setItem('last_play_filter_type', val);
+        }
+        if (type === 'gender_type') {
+            MatchesController._playFilterGender = val;
+            sessionStorage.setItem('last_play_filter_gender', val);
+        }
+
+        // Update UI
+        const btns = btn.parentElement.querySelectorAll('button');
+        btns.forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'transparent';
+            b.style.color = 'var(--c-text-muted)';
+            b.style.boxShadow = 'none';
+        });
+
+        btn.classList.add('active');
+        // Use pink for Women same-gender button
+        const activeBg = btn.textContent.includes('Women') ? 'var(--c-pink)' : 'var(--c-primary)';
+        btn.style.background = activeBg;
+        btn.style.color = '#fff';
+        btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+
+        // Reset pagination
+        MatchesController._offset = 0;
+        MatchesController._hasMore = true;
+        MatchesController._isLoading = false;
+
+        MatchesController.loadList();
     },
 
     switchTab: async function (tab) {
@@ -3753,7 +3827,7 @@ const MatchesController = {
             const isFemale = (m.creator_gender || 'male') === 'female';
             const genderStr = isFemale ? 'Women' : 'Men';
             const genderIcon = isFemale ? '👩' : '👨';
-            const genderColor = isFemale ? 'var(--c-pink)' : 'var(--c-primary)';
+            const genderColor = isFemale ? 'var(--c-pink)' : '#5B8BFF';
             const genderBg = isFemale ? 'rgba(216, 27, 96, 0.1)' : 'rgba(27,82,206,0.1)';
             typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:${genderBg}; color:${genderColor}; padding:2px 6px; border-radius:4px; margin-right:4px;">${genderIcon} ${genderStr}</span>`;
         } else if (m.gender_type === 'mixed' || m.gender_type === 'open') {
@@ -3811,7 +3885,7 @@ const MatchesController = {
                   <div class="badge-user-in-wrapper">${myBadge}</div>
                </div>
                <div class="match-meta-row">
-                  <span>🗓 ${dateStr}</span>
+                  <span>🗓 <span style="color:#fff; font-weight:600;">${dateStr}</span></span>
                   <span>⏰ ${timeStr}</span>
                   ${m.court_name ? `<span class="court-label-white"><span style="opacity:0.6;">🎾</span> Court: ${m.court_name}</span>` : ''}
                </div>

@@ -20,8 +20,7 @@ if (empty($task)) {
 // Map task names to script files
 $scripts = [
     'auto_confirm' => 'cronjobs/auto_confirm_scores.php',
-    'match_reminders' => 'cronjobs/match_reminders.php',
-    'fix_stats'    => 'fix_missing_stats.php'
+    'match_reminders' => 'cronjobs/match_reminders.php'
 ];
 
 if (!isset($scripts[$task])) {
