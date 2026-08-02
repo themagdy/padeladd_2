@@ -751,7 +751,7 @@ const StoriesController = {
     },
 
     handlePressStart: function (e) {
-        if (e.target.closest('button') || e.target.closest('a')) return;
+        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.story-viewers-bar')) return;
 
         // Prevent context menus, magnification glasses, dragging, and text selection on hold
         if (e.type === 'touchstart' || e.type === 'mousedown') {
