@@ -4125,9 +4125,14 @@ const MatchesController = {
         // Eligibility Range
         const rangeEl = document.getElementById('mv-eligibility-range');
         const rangeValEl = document.getElementById('mv-range-val');
-        if (rangeEl && rangeValEl && match.eligible_min !== undefined) {
-            rangeEl.style.display = 'flex';
-            rangeValEl.textContent = `${match.eligible_min} — ${match.eligible_max} pts`;
+        if (rangeEl) {
+            const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
+            if (isMatchPast) {
+                rangeEl.style.display = 'none';
+            } else if (rangeValEl && match.eligible_min !== undefined) {
+                rangeEl.style.display = 'flex';
+                rangeValEl.textContent = `${match.eligible_min} — ${match.eligible_max} pts`;
+            }
         }
 
         // Render slot elements

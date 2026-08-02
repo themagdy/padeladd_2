@@ -2023,3 +2023,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Date display unification: Created formatMatchDateOnly helper to unify date rendering in match listing cards and details view, enforcing the 'Mon, 25 April' pattern (with year only if different) and using "Today" only if it's the calendar day of the match and current time is past 4:00 AM.
 - Upcoming match visibility logic: Enforced that open/upcoming matches are hidden from non-confirmed players (including the waitlist) immediately when the match start time has come, while remaining visible to confirmed players for up to 4 hours.
 - Partner side assignment resolution: Implemented playing side conflict resolution when a partner joins a match, respecting preferred positions if there is no conflict, and defaulting to flexible during position conflicts.
+- Eligibility range display: Hidden the eligibility range rating requirements from the match details page for all past/completed matches.
