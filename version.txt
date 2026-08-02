@@ -2024,3 +2024,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Upcoming match visibility logic: Enforced that open/upcoming matches are hidden from non-confirmed players (including the waitlist) immediately when the match start time has come, while remaining visible to confirmed players for up to 4 hours.
 - Partner side assignment resolution: Implemented playing side conflict resolution when a partner joins a match, respecting preferred positions if there is no conflict, and defaulting to flexible during position conflicts.
 - Eligibility range display: Hidden the eligibility range rating requirements from the match details page for all past/completed matches.
+- Modal scroll safety redesign: Enforced vertical scrollability and viewport clipping prevention on ConfirmModal, InviteModal, onboarding modals, and all standard overlay sheets.
