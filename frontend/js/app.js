@@ -16,35 +16,47 @@ var SoundManager = {
     _ctx: null,
     _buffers: {},
     _unlocked: false,
+    _initialized: false,
 
     init: function () {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const list = {
-            tap: 'assets/sounds/tap.mp3',
-            success: 'assets/sounds/success.mp3',
-            notify: 'assets/sounds/notify.mp3'
-        };
-        this._ctx = new AudioContext();
-        for (const [id, path] of Object.entries(list)) {
-            fetch(path)
-                .then(res => res.arrayBuffer())
-                .then(arrayBuffer => this._ctx.decodeAudioData(arrayBuffer))
-                .then(buffer => { this._buffers[id] = buffer; })
-                .catch(err => console.warn('[SoundManager] Load failed:', path, err));
-        }
+        if (this._initialized) return;
+        this._initialized = true;
+
         const unlock = () => {
-            if (this._unlocked || !this._ctx) return;
-            if (this._ctx.state === 'suspended') this._ctx.resume();
-            const source = this._ctx.createBufferSource();
-            source.buffer = this._ctx.createBuffer(1, 1, 22050);
-            source.connect(this._ctx.destination);
-            source.start(0);
+            if (this._unlocked) return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+                this._ctx = new AudioContext();
+                const list = {
+                    tap: 'assets/sounds/tap.mp3',
+                    success: 'assets/sounds/success.mp3',
+                    notify: 'assets/sounds/notify.mp3'
+                };
+                for (const [id, path] of Object.entries(list)) {
+                    fetch(path)
+                        .then(res => res.arrayBuffer())
+                        .then(arrayBuffer => this._ctx.decodeAudioData(arrayBuffer))
+                        .then(buffer => { this._buffers[id] = buffer; })
+                        .catch(err => console.warn('[SoundManager] Load failed:', path, err));
+                }
+                if (this._ctx.state === 'suspended') this._ctx.resume();
+                const source = this._ctx.createBufferSource();
+                source.buffer = this._ctx.createBuffer(1, 1, 22050);
+                source.connect(this._ctx.destination);
+                source.start(0);
+            }
             this._unlocked = true;
+
+            // Remove unlock listeners
+            ['touchstart', 'click', 'mousedown'].forEach(ev =>
+                document.removeEventListener(ev, unlock)
+            );
         };
+
         ['touchstart', 'click', 'mousedown'].forEach(e =>
-            document.addEventListener(e, unlock, { once: true, passive: true })
+            document.addEventListener(e, unlock, { passive: true })
         );
+
         document.addEventListener('click', (e) => {
             const el = e.target.closest('button, a, .nav-item, [onclick], .clickable');
             if (el && !el.hasAttribute('data-no-sound')) {
@@ -134,7 +146,7 @@ var ConfirmModal = {
                 this._modal.style.cssText = `
                     position:fixed; top:0; left:0; width:100%; height:100%;
                     background:rgba(0,0,0,0.8);
-                    display:flex; align-items:flex-start; justify-content:center;
+                    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
                     z-index:100000; opacity:0; pointer-events:none;
                     transition:opacity 0.25s ease; padding:32px 16px;
                     overflow-y:auto;
@@ -200,7 +212,7 @@ var ConfirmModal = {
             const cardBorderRadius = isRowLayout ? '24px' : '32px';
 
             this._modal.innerHTML = safeHTML(`
-                <div id="gcm-card" style="margin: auto 0; background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:${cardBorderRadius}; padding:${cardPadding}; width:100%; max-width:${cardMaxWidth}; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                <div id="gcm-card" style="margin: auto 0; flex-shrink: 0; background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:${cardBorderRadius}; padding:${cardPadding}; width:100%; max-width:${cardMaxWidth}; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
                     
                     ${headerHtml}
                     
