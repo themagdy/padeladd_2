@@ -2039,6 +2039,22 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Account Deletion Security: Require user password confirmation directly within the deletion warning modal. The backend verifies the password hash via `password_verify` before executing deletion queries. The input is styled with pure white text, custom spacing, hidden length counters, and context-aware validation alerts.
 - Profile Scroll Restoration: Implemented sessionStorage scroll position saving in Router.navigate when departing player profile pages. Saved coordinates are restored inside ProfileViewController.loadMatches once matches render, keeping users at their last scrolled score. The restoration is guarded to only apply during popstate back navigation events (flagged via sessionStorage) and cleaned up immediately, ensuring new forward profile visits always land at the top.
 - Self-Seen Story Exclude: Filtered out the logged-in user from their own story "Seen by" viewer lists and avatar displays by bypassing mark_seen triggers on the frontend (if the story is_mine) and verifying on the backend (mark_seen.php checks match player confirmation) to guarantee own story views are never saved.
-- Stories Mouse & Touch Pause: Extended press-and-hold pause logic to prevent default browser behaviors (such as text selection, dragging, and magnification magnifier overlays) on both touchstart (mobile) and mousedown (desktop) triggers.
-- Startup Background Audio Preservation: Deferred the creation of AudioContext and sound files fetch inside SoundManager to the first user touch/tap interaction, ensuring that launching the app does not intercept or pause active background music (such as Spotify or YouTube playback).
+- Version: 2.4.62 (Build 462)
+
+2.4.67 (Build 467) - 2026-08-02
+- Story Hold-to-Pause Fix: Fixed progress bar not freezing on press-and-hold — the setInterval tick now checks the _isHolding flag directly instead of clearing and recreating the interval, so the bar genuinely freezes while held and resumes on release.
+- Modal Scroll Fix: Removed body touchAction:none and the ontouchmove e.preventDefault() blocker from ConfirmModal and InviteModal overlays, which were blocking all scroll gestures inside the modal. Fixed InviteModal flex layout to column/flex-start to match ConfirmModal.
+- Startup Background Audio Preservation: Deferred AudioContext creation inside SoundManager to the first user touch/tap, preventing the app from requesting audio focus on startup and pausing background media (Spotify, YouTube, etc.).
+- Version: 2.4.67 (Build 467)
+
+2.4.68 (Build 468) - 2026-08-02
+- Story Hold-to-Pause (Android): Replaced inline ontouchstart/touchend/touchcancel attribute handlers on .story-content-area with programmatic addEventListener({ passive: false }) calls, because inline handlers on Android WebView are treated as passive and silently ignore e.preventDefault().
+- Version: 2.4.68 (Build 468)
+
+2.4.69 (Build 469) - 2026-08-02
+- Background Audio Fix (Root Cause): Removed the unused @capacitor-community/native-audio Capacitor plugin. Although never called from JavaScript, its native Java code auto-registered on every app startup and initialized Android AudioTrack infrastructure, immediately stealing exclusive audio focus from background media apps (Spotify, YouTube). Removing it eliminates the startup audio interruption.
+- Version: 2.4.69 (Build 469)
+
+2.4.70 (Build 470) - 2026-08-02
+- Story Viewers Bar Tap (Android): Added .story-viewers-bar to the handlePressStart guard check so that tapping the viewers/avatars area skips e.preventDefault() on touchstart, restoring the click event that was being suppressed on Android WebView.
 - Version: 2.4.70 (Build 470)
