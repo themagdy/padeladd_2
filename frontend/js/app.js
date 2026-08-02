@@ -134,9 +134,10 @@ var ConfirmModal = {
                 this._modal.style.cssText = `
                     position:fixed; top:0; left:0; width:100%; height:100%;
                     background:rgba(0,0,0,0.8);
-                    display:flex; align-items:center; justify-content:center;
+                    display:flex; align-items:flex-start; justify-content:center;
                     z-index:100000; opacity:0; pointer-events:none;
-                    transition:opacity 0.25s ease; padding:32px;
+                    transition:opacity 0.25s ease; padding:32px 16px;
+                    overflow-y:auto;
                 `;
                 document.body.appendChild(this._modal);
             }
@@ -194,7 +195,7 @@ var ConfirmModal = {
             const cardBorderRadius = isRowLayout ? '24px' : '32px';
 
             this._modal.innerHTML = safeHTML(`
-                <div id="gcm-card" style="background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:${cardBorderRadius}; padding:${cardPadding}; width:100%; max-width:${cardMaxWidth}; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
+                <div id="gcm-card" style="margin: auto 0; background:rgba(23, 23, 28, 0.98); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.1); border-radius:${cardBorderRadius}; padding:${cardPadding}; width:100%; max-width:${cardMaxWidth}; text-align:center; position:relative; transform:scale(0.85); opacity:0; transition:all 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
                     
                     ${headerHtml}
                     
