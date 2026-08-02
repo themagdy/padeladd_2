@@ -1631,6 +1631,7 @@ const DashboardController = {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
 
+            const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
             const dayStr = UI.formatMatchDateOnly(m.scheduled_at);
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
 
