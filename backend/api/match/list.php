@@ -47,7 +47,7 @@ if ($mode === 'play_upcoming') {
 
     $where = "
         WHERE m.status IN ('open', 'full')
-          AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
+          AND m.match_datetime > NOW()
     ";
 
     $params = [];
@@ -115,13 +115,14 @@ if ($mode === 'play_upcoming') {
     $stmt->execute();
 } elseif ($mode === 'mine_upcoming') {
     $whereMine = "
-        WHERE m.id IN (
-            SELECT match_id FROM match_players WHERE user_id = :uid1
-            UNION
-            SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved')
-        )
-        AND m.status IN ('open', 'full', 'on_hold')
-        AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR)
+        WHERE m.status IN ('open', 'full', 'on_hold')
+          AND (
+            (m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1) 
+             AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR))
+            OR
+            (m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved'))
+             AND m.match_datetime > NOW())
+          )
     ";
 
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM matches m $whereMine");

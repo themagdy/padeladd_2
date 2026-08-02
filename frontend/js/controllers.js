@@ -94,6 +94,27 @@ const UI = {
             return `<div class="avatar-placeholder ${className}" style="${wrapperStyle}" ${extraAttr}>${initials}</div>`;
         }
     },
+    formatMatchDateOnly: function (dateVal) {
+        if (!dateVal) return '';
+        try {
+            const dt = new Date(dateVal.replace(' ', 'T'));
+            const now = new Date();
+            const isTodayCalendar = dt.toDateString() === now.toDateString();
+            if (isTodayCalendar && now.getHours() >= 4) {
+                return 'Today';
+            }
+            const shortWeekday = dt.toLocaleDateString('en-US', { weekday: 'short' });
+            const dayNum = dt.getDate();
+            const fullMonth = dt.toLocaleDateString('en-US', { month: 'long' });
+            let formatted = `${shortWeekday}, ${dayNum} ${fullMonth}`;
+            if (dt.getFullYear() !== now.getFullYear()) {
+                formatted += ` ${dt.getFullYear()}`;
+            }
+            return formatted;
+        } catch (e) {
+            return dateVal;
+        }
+    },
     formatDate: function (dateStr, includeTime = false) {
         if (!dateStr) return '';
         try {
@@ -312,7 +333,7 @@ const StoriesController = {
                     <div class="story-avatar-ring">
                         ${UI.getAvatarHtml(item.player?.profile_image_thumb || item.player?.profile_image, 'width:100%;height:100%;border-radius:50%;object-fit:cover;', 'width:100%;height:100%;border-radius:50%;font-size:18px;', initials)}
                     </div>
-                    <span class="story-label text-truncate" style="max-width: 65px;">${item.isMine ? 'Your Story' : (item.player.nickname || item.player.first_name)}</span>
+                    <span class="story-label text-truncate" style="max-width: 75px;">${item.isMine ? 'Your Story' : (item.player.nickname || item.player.first_name)}</span>
                 </div>
             `;
 
@@ -427,7 +448,7 @@ const StoriesController = {
 
         const venueName = story.official_venue_name || story.venue_name || 'Padel Court';
         const initials = ((headerPlayer?.first_name?.[0] || '') + (headerPlayer?.last_name?.[0] || '')).toUpperCase() || '?';
-        const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id;        const isMine = parseInt(story.is_mine) === 1;
+        const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id; const isMine = parseInt(story.is_mine) === 1;
         const viewers = story.viewers || [];
         let viewersHtml = '';
         if (isMine && viewers.length > 0) {
@@ -783,7 +804,7 @@ const StoriesController = {
         const list = story.viewers;
         const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
         let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
-        
+
         list.forEach(u => {
             let initials = '?';
             const name = u.nickname || (u.first_name + ' ' + u.last_name).trim();
@@ -1610,18 +1631,7 @@ const DashboardController = {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
 
-            const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
-            const now = new Date();
-            const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
-
-            let dayStr;
-            if (dateObj.toDateString() === now.toDateString()) {
-                dayStr = 'Today';
-            } else if (diffDays < 7) {
-                dayStr = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-            } else {
-                dayStr = dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-            }
+            const dayStr = UI.formatMatchDateOnly(m.scheduled_at);
             const timeStr = dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).replace(':00', '');
 
             let matchTypeBadge = '';
@@ -1647,8 +1657,9 @@ const DashboardController = {
         }
 
         const userTeam = m.user_team;
-        const dateStr = m.scheduled_at
-            ? new Date(m.scheduled_at.replace(' ', 'T')).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' })
+        const dateObj = m.scheduled_at ? new Date(m.scheduled_at.replace(' ', 'T')) : null;
+        const dateStr = dateObj
+            ? `${UI.formatMatchDateOnly(m.scheduled_at)} · ${dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
             : 'TBD';
 
         const renderTeamRow = (players) => {
@@ -3682,7 +3693,7 @@ const MatchesController = {
 
         const dateVal = m.match_datetime || m.scheduled_at;
         const dt = new Date(dateVal ? dateVal.replace(' ', 'T') : null);
-        const dateStr = dt.toLocaleDateString('en-EG', { weekday: 'short', month: 'short', day: 'numeric' });
+        const dateStr = UI.formatMatchDateOnly(dateVal);
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
         const isPast = dt < new Date();
@@ -3755,17 +3766,7 @@ const MatchesController = {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
             const scoreHtml = ScoreUI.renderMatchScore(m, approvedScore, allPlayers, false);
 
-            const now = new Date();
-            const diffDays = Math.floor((now - dt) / (1000 * 60 * 60 * 24));
-
-            let dayStr;
-            if (dt.toDateString() === now.toDateString()) {
-                dayStr = 'Today';
-            } else if (diffDays < 7) {
-                dayStr = dt.toLocaleDateString('en-US', { weekday: 'long' });
-            } else {
-                dayStr = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-            }
+            const dayStr = UI.formatMatchDateOnly(dateVal);
 
             let matchTypeBadge = '';
             if (m.match_type === 'competition') {
@@ -3970,16 +3971,8 @@ const MatchesController = {
         let isPast = false;
         let isAuthorized = false;
 
-        const dt = new Date(match.match_datetime);
-        const now = new Date();
-        const sameCalendarDay = dt.toDateString() === now.toDateString();
-        // Also treat as "Today" if the match is after midnight (next calendar day) but before 6 AM
-        const nextDayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
-        const nextDay6AM = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 6, 0, 0);
-        const isCurrentTimePM = now.getHours() >= 12;
-        const isAfterMidnight = isCurrentTimePM && (dt >= nextDayMidnight && dt < nextDay6AM);
-        const isToday = sameCalendarDay || isAfterMidnight;
-        const dateStr = isToday ? 'Today' : dt.toLocaleDateString('en-EG', { weekday: 'long', month: 'long', day: 'numeric' });
+        const dt = new Date(match.match_datetime.replace(' ', 'T'));
+        const dateStr = UI.formatMatchDateOnly(match.match_datetime);
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
 
@@ -6598,6 +6591,7 @@ const NotificationsController = {
             case 'score_approved':
             case 'score_disputed':
             case 'score_reminder':
+            case 'match_reminder':
                 Router.navigate(navPath);
                 break;
 
