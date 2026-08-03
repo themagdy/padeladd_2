@@ -6562,16 +6562,30 @@ const NotificationsController = {
                 }
                 if (!initials) initials = 'P';
 
-                const avatarHtml = `
-                    <div style="position:relative; flex-shrink:0;">
-                        <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
-                            ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
+                let avatarHtml = '';
+                if (parseInt(n.sender_id) === 1000000) {
+                    avatarHtml = `
+                        <div style="position:relative; flex-shrink:0;">
+                            <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden; background:#1e293b; display:flex; align-items:center; justify-content:center; padding:4px;">
+                                <img src="assets/logo_ico.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%;">
+                            </div>
+                            <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
+                                ${emoji}
+                            </div>
                         </div>
-                        <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
-                            ${emoji}
+                    `;
+                } else {
+                    avatarHtml = `
+                        <div style="position:relative; flex-shrink:0;">
+                            <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
+                                ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
+                            </div>
+                            <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
+                                ${emoji}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
 
                 return `
                     ${avatarHtml}
