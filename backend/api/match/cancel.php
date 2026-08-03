@@ -25,15 +25,33 @@ if ($wl_id > 0 && $match_id === 0) {
         jsonResponse(false, 'Pending request not found or you are not the requester.', null, 404);
     }
 
-    $pdo->prepare("UPDATE waiting_list SET request_status = 'cancelled' WHERE id = ?")
-        ->execute([$wl_id]);
+    try {
+        $pdo->beginTransaction();
 
-    // Phase 6: Dismiss the team_invite notification for the partner if it exists
-    if ($wl['partner_id']) {
-        deleteNotification($pdo, (int)$wl['partner_id'], 'team_invite', (int)$wl['match_id']);
+        $pdo->prepare("UPDATE waiting_list SET request_status = 'cancelled' WHERE id = ?")
+            ->execute([$wl_id]);
+
+        // Publish the match if it was on_hold
+        $mStmt = $pdo->prepare("SELECT id, status, creator_id FROM matches WHERE id = ? FOR UPDATE");
+        $mStmt->execute([(int)$wl['match_id']]);
+        $match = $mStmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($match && $match['status'] === 'on_hold') {
+            $pdo->prepare("UPDATE matches SET status = 'open', created_with_partner = 0 WHERE id = ?")
+                ->execute([$match['id']]);
+        }
+
+        // Phase 6: Dismiss the team_invite notification for the partner if it exists
+        if ($wl['partner_id']) {
+            deleteNotification($pdo, (int)$wl['partner_id'], 'team_invite', (int)$wl['match_id']);
+        }
+
+        $pdo->commit();
+        jsonResponse(true, 'Request cancelled successfully.', null);
+    } catch (Exception $e) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        jsonResponse(false, 'Failed to cancel invitation request: ' . $e->getMessage(), null, 500);
     }
-
-    jsonResponse(true, 'Request cancelled successfully.', null);
 }
 
 // ── CASE 2: Full match cancellation by creator ────────────────────────────

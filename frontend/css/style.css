@@ -3860,6 +3860,21 @@ form {
   white-space: nowrap;
 }
 
+.badge-on-hold {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(220, 100, 30, 0.12);
+  color: #e06b20;
+  border: 1px solid rgba(220, 100, 30, 0.25);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .badge-waiting {
   display: inline-flex;
   align-items: center;

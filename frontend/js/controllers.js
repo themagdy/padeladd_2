@@ -3838,7 +3838,9 @@ const MatchesController = {
         const statusLabel = label;
 
         let myBadge = '';
-        if (m.user_in_match) {
+        if (m.user_in_match && m.user_is_requester) {
+            myBadge = `<span class="badge-on-hold">On Hold</span>`;
+        } else if (m.user_in_match) {
             myBadge = `<span class="badge-user-in">You're in</span>`;
         } else if (m.user_is_requester) {
             myBadge = `<span class="badge-pending">Pending</span>`;

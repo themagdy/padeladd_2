@@ -2080,3 +2080,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Dashboard Announcements Rendering: Integrated DOM list updates inside the background silent refresh success handler in loadAnnouncements, forcing the carousel to immediately draw newly uploaded images on launch instead of displaying stale caches or infinite shimmer skeletons.
 - Unified Build Versions: Bumped build.gradle, package.json, Info.plist, and version.txt to release version 2.4.74 (Build 474).
 - Version: 2.4.74 (Build 474)
+
+2.4.74 (Build 474) - 2026-08-03 [patch]
+- Match Card On Hold Badge: When a match creator invites a partner whose response is still pending, the match card now shows "On Hold" instead of "You're in", reflecting that the match is waiting on the invitee's accept/reject. Added .badge-on-hold CSS style (burnt-orange) and updated badge priority logic in controllers.js to detect the combined user_in_match + user_is_requester state.
+
