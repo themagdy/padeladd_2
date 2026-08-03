@@ -511,9 +511,7 @@ const StoriesController = {
             </div>
             
             <div class="story-content-area"
-                 onmousedown="StoriesController.handlePressStart(event)"
-                 onmouseup="StoriesController.handlePressEnd(event)"
-                 onmouseleave="StoriesController.handlePressEnd(event)">
+                 onclick="StoriesController.handleTap(event)">
                 <div class="story-card ${story.type}">
                     <div class="story-match-type-badge">${story.match_type === 'competition' ? '🏆 COMPETITION' : '🤝 FRIENDLY'}</div>
                     
@@ -527,14 +525,7 @@ const StoriesController = {
             </div>
         `);
 
-        // Attach touch handlers programmatically with passive:false so e.preventDefault() works
-        // on Android WebView (inline ontouchstart handlers are passive and ignore preventDefault)
-        const contentArea = overlay.querySelector('.story-content-area');
-        if (contentArea) {
-            contentArea.addEventListener('touchstart', (e) => StoriesController.handlePressStart(e), { passive: false });
-            contentArea.addEventListener('touchend', (e) => StoriesController.handlePressEnd(e), { passive: false });
-            contentArea.addEventListener('touchcancel', (e) => StoriesController.handlePressEnd(e), { passive: false });
-        }
+
     },
 
     renderUpcomingStory: function (story) {
@@ -744,7 +735,7 @@ const StoriesController = {
         const step = 100 / (duration / interval);
 
         this._progressInterval = setInterval(() => {
-            if (this._isPaused || this._isHolding) return;
+            if (this._isPaused) return;
             this._progressValue += step;
             bar.style.width = Math.min(this._progressValue, 100) + '%';
             if (this._progressValue >= 100) {
@@ -753,35 +744,7 @@ const StoriesController = {
         }, interval);
     },
 
-    handlePressStart: function (e) {
-        if (e.target.closest('button') || e.target.closest('a') || e.target.closest('.story-viewers-bar')) return;
 
-        // Prevent context menus, magnification glasses, dragging, and text selection on hold
-        if (e.type === 'touchstart' || e.type === 'mousedown') {
-            e.preventDefault();
-        }
-
-        this._pressStartTime = Date.now();
-        this._isHolding = true;
-        // Do NOT clear the interval — let the tick's _isHolding check freeze progress naturally
-    },
-
-    handlePressEnd: function (e) {
-        if (!this._isHolding) return;
-        this._isHolding = false;
-
-        const duration = Date.now() - this._pressStartTime;
-
-        // Interval is still running — just unfreezing it via _isHolding = false is enough.
-        // Only call resumeProgress if the interval was somehow lost.
-        if (!this._progressInterval && !this._isPaused) {
-            this.resumeProgress();
-        }
-
-        if (duration < 250) {
-            this.handleTap(e);
-        }
-    },
 
     handleTap: function (e) {
         if (e.target.closest('button') || e.target.closest('a')) return;

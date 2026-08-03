@@ -2084,3 +2084,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.74 (Build 474) - 2026-08-03 [patch]
 - Match Card On Hold Badge: When a match creator invites a partner whose response is still pending, the match card now shows "On Hold" instead of "You're in", reflecting that the match is waiting on the invitee's accept/reject. Added .badge-on-hold CSS style (burnt-orange) and updated badge priority logic in controllers.js to detect the combined user_in_match + user_is_requester state.
 
+2.4.74 (Build 474) - 2026-08-03 [patch]
+- Chat Presence Window Tightened: Reduced the chat_presence online detection window in send.php from 8s to 6s (5s poll interval + 1s buffer). If the presence-clear call fails on app kill or network drop, the stale record now expires within one poll cycle instead of blocking notifications for up to 8 seconds.
+
