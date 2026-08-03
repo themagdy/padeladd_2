@@ -1508,6 +1508,7 @@ const DashboardController = {
                     DashboardController._announcementsCache = res.data.announcements;
                     localStorage.setItem('dash_announcements_cache', JSON.stringify(res.data.announcements));
                     preloadImages(res.data.announcements);
+                    renderList(res.data.announcements);
                 }
             }).catch(e => console.error('Silent announcements reload failed:', e));
             return;
