@@ -52,7 +52,7 @@ try {
         $body = "Don't forget! You have a match at {$venue}{$court} starting at {$matchTime}. See you there!";
 
         // Send Notification (This triggers both DB entry and FCM Push)
-        createNotification($pdo, (int)$r['user_id'], 'match_reminder', (int)$r['match_id'], $body);
+        createNotification($pdo, (int)$r['user_id'], 'match_reminder', (int)$r['match_id'], $body, ADMIN_SYSTEM_USER_ID);
 
         // Mark as sent to prevent double notification
         $update = $pdo->prepare("UPDATE match_players SET reminder_sent = 1 WHERE id = ?");

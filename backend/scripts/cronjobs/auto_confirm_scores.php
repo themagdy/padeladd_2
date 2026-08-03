@@ -87,7 +87,7 @@ foreach ($toApprove as $score) {
         // Notify all participants
         notifyMatchParticipants($pdo, $match_id, 'score_approved', 
             "Score for your match was auto-confirmed after 24 hours. Points have been updated.", 
-            null);
+            ADMIN_SYSTEM_USER_ID);
 
         echo date('[Y-m-d H:i:s]') . " Auto-confirmed score #{$score_id} for match #{$match_id}.\n";
 
