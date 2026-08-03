@@ -2092,7 +2092,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat Presence Window Tightened: Reduced chat_presence online detection window in send.php from 8s to 6s.
 - Match Card On Hold Badge: Match card now shows "On Hold" when creator has a pending partner invite.
 - App Encryption Setting (iOS): Added ITSAppUsesNonExemptEncryption set to false in Info.plist to skip App Store Connect encryption review questions on submission.
+- Admin Chat Logo Avatar: Modified the chat message bubble renderer to display the local brand icon (logo_ico.png) for Admin user avatars (sender code ADMIN).
 - Unified Build Versions: Bumped build.gradle, package.json, Info.plist, and version.txt to release version 2.4.75 (Build 475).
 - Version: 2.4.75 (Build 475)
+
 
 
