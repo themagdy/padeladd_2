@@ -22,6 +22,8 @@
 	<string>475</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>Padeladd requires camera access to allow you to take and upload a profile picture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
