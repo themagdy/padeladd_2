@@ -50,14 +50,14 @@ try {
         calculateRankingUpdates($pdo, $match_id, $score_id);
 
         $msg = "A moderator has reviewed and approved the disputed score for your match. Points have been updated.";
-        notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg);
+        notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg, ADMIN_SYSTEM_USER_ID);
     } else {
         // REJECT: Delete the score record so it can be re-submitted
         $delScore = $pdo->prepare("DELETE FROM scores WHERE id = ?");
         $delScore->execute([$score_id]);
 
         $msg = "A moderator has rejected the disputed score for your match. Please re-submit the correct score.";
-        notifyMatchParticipants($pdo, $match_id, 'score_disputed', $msg);
+        notifyMatchParticipants($pdo, $match_id, 'score_disputed', $msg, ADMIN_SYSTEM_USER_ID);
     }
 
     // Always delete the dispute record once resolved
