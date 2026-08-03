@@ -354,6 +354,13 @@ const StoriesController = {
     playPlayerByIndex: function (trayIdx) {
         if (!this._trayItems || !this._trayItems[trayIdx]) return;
 
+        const group = this._trayItems[trayIdx];
+        if (group.isMine) {
+            const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
+            this.playUserStories(currentUserId);
+            return;
+        }
+
         // Construct the playback feed following the tray sequence
         const fullFeed = [];
         const seenStoryIds = new Set(); // Keep track of already added stories to prevent duplicates in playback
@@ -886,7 +893,7 @@ const StoriesController = {
     },
 
     markSeen: async function (storyId) {
-        const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
+        const story = this._currentFeed.find(s => parseInt(s.id) === parseInt(storyId));
         if (!story) return;
 
         // Do not record views when watching your own story bubble
@@ -895,7 +902,11 @@ const StoriesController = {
 
         if (!story.is_seen) {
             story.is_seen = 1;
-            // Re-render tray in background so it's updated when user closes story
+            
+            // Sync with active stories list if present to update dashboard tray instantly
+            const activeStory = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
+            if (activeStory) activeStory.is_seen = 1;
+
             this.renderTray();
             await API.post('/stories/mark_seen', { story_id: storyId });
         }

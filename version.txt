@@ -2069,3 +2069,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Story Seen List & Views Tracking Overhaul: Restructured seen database registrations (mark_seen.php) and list retrievals (list.php) to track point-of-view sessions individually for all match players, while ensuring they do not see themselves in their own story view lists.
 - Unified Build Versions: Bumped build.gradle, package.json, Info.plist, and version.txt to release version 2.4.72 (Build 472).
 - Version: 2.4.72 (Build 472)
+
+2.4.73 (Build 473) - 2026-08-03
+- Real-time Viewers List Fetching: Refactored playPlayerByIndex in controllers.js to route current user story taps to playUserStories, bypassing local memory caches and forcing direct API calls to ensure the "Seen by" views list loads up-to-date database results instantly across all app pages.
+- Unified Build Versions: Bumped build.gradle, package.json, Info.plist, and version.txt to release version 2.4.73 (Build 473).
+- Version: 2.4.73 (Build 473)
