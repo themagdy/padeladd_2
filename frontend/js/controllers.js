@@ -889,8 +889,9 @@ const StoriesController = {
         const story = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
         if (!story) return;
 
-        // Do not record own stories in the seen list
-        if (parseInt(story.is_mine) === 1) return;
+        // Do not record views when watching your own story bubble
+        const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
+        if (story._overlayPlayer && parseInt(story._overlayPlayer.id) === currentUserId) return;
 
         if (!story.is_seen) {
             story.is_seen = 1;

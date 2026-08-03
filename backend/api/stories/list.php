@@ -68,10 +68,10 @@ foreach ($stories as $s) {
             FROM story_seen ss
             JOIN users u ON ss.user_id = u.id
             LEFT JOIN user_profiles up ON u.id = up.user_id
-            WHERE ss.story_id = ? AND u.status = 'active'
+            WHERE ss.story_id = ? AND ss.user_id != ? AND u.status = 'active'
             ORDER BY ss.seen_at DESC
         ");
-        $viewersStmt->execute([(int)$s['id']]);
+        $viewersStmt->execute([(int)$s['id'], $uid]);
         $s['viewers'] = $viewersStmt->fetchAll(PDO::FETCH_ASSOC);
     } else {
         $s['viewers'] = [];
