@@ -2058,3 +2058,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.70 (Build 470) - 2026-08-02
 - Story Viewers Bar Tap (Android): Added .story-viewers-bar to the handlePressStart guard check so that tapping the viewers/avatars area skips e.preventDefault() on touchstart, restoring the click event that was being suppressed on Android WebView.
 - Version: 2.4.70 (Build 470)
+
+2.4.71 (Build 471) - 2026-08-03
+- Dashboard Story Seen Ring Fix: Implicitly check if stories are 'is_mine' inside the seen calculation, automatically resolving persistent rings around own story bubbles on the dashboard.
+- Story Viewers Bar Tap (Android/iOS): Cleaned up native stopPropagation events on the story viewers overlay to guarantee tap actions fire cleanly in mobile WebViews.
+- Unified Build Versions: Bumped build.gradle, package.json, and version.txt to release version 2.4.71 (Build 471).
+- Version: 2.4.71 (Build 471)

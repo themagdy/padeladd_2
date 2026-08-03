@@ -161,7 +161,7 @@ var ConfirmModal = {
             let inputHtml = showInput ? `
                 <${inputType === 'textarea' ? 'textarea' : 'input'} id="gcm-input" type="${inputType}" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; margin-bottom:${inputType === 'password' ? '18px' : '4px'}; resize:none; font-family:var(--font); outline:none;" ${inputType === 'textarea' ? 'rows="6"' : ''}></${inputType === 'textarea' ? 'textarea' : 'input'}>
             ` : '';
-            
+
             if (showInput) {
                 inputHtml += `
                     <div style="display:${inputType === 'password' ? 'none' : 'flex'}; justify-content:space-between; margin-bottom:24px; padding:0 4px;">

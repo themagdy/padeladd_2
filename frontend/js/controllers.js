@@ -303,7 +303,7 @@ const StoriesController = {
         // 2. Build tray items with seen status and sort priority
         const trayItems = Object.values(playerGroups).map(group => {
             // A player bubble is "seen" only if ALL its stories are seen
-            const isSeen = group.stories.every(s => !!s.is_seen);
+            const isSeen = group.stories.every(s => !!s.is_seen || parseInt(s.is_mine) === 1);
             // Latest story date for sorting
             const latestDate = Math.max(...group.stories.map(s => new Date(s.match_datetime).getTime()));
 
@@ -468,11 +468,7 @@ const StoriesController = {
             viewersHtml = `
                 <div class="story-viewers-bar" 
                      onclick="event.stopPropagation(); StoriesController.showViewers();" 
-                     onmousedown="event.stopPropagation()" 
-                     onmouseup="event.stopPropagation()" 
-                     ontouchstart="event.stopPropagation()" 
-                     ontouchend="event.stopPropagation()" 
-                     style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: background 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+                     style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; transition: background 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.15); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
                     <div style="display: flex; align-items: center;">
                         ${avatarsListHtml}
                     </div>
@@ -2295,7 +2291,7 @@ const ProfileViewController = {
         // Restore scroll position for profile views after dynamic scores render (only if popstate/back navigation)
         const savedScroll = sessionStorage.getItem('profile_scroll_pos');
         const isBackNav = sessionStorage.getItem('is_back_navigation') === 'true';
-        
+
         // Always clean up flags so they don't leak into subsequent forward navigations
         sessionStorage.removeItem('profile_scroll_pos');
         sessionStorage.removeItem('is_back_navigation');
@@ -3409,7 +3405,12 @@ const MatchesController = {
         if (headerTitleEl) {
             if (mode === 'play') {
                 headerTitleEl.textContent = 'Play';
-                headerSubEl.textContent = 'Join matches nearby, Solo or Squad!';
+
+                headerSubEl.textContent = 'Join Solo or Squad!';
+                const dot = document.createElement('span');
+                dot.style.cssText = 'display:inline-block; width:5px; height:5px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981; margin-right:8px; vertical-align:middle;';
+                headerSubEl.insertBefore(dot, headerSubEl.firstChild);
+
                 if (tabsContainer) {
                     tabsContainer.innerHTML = `
                       <button id="ml-tab-play_upcoming" onclick="MatchesController.switchTab('play_upcoming')"
@@ -3420,11 +3421,15 @@ const MatchesController = {
                         style="flex:1; background:none; border:none; color:${MatchesController._currentTab === 'play_past' ? 'var(--c-text)' : 'var(--c-text-muted)'}; font-family:var(--font); font-size:15px; font-weight:700; padding:14px 0; border-bottom:2.5px solid ${MatchesController._currentTab === 'play_past' ? 'var(--c-primary)' : 'transparent'}; cursor:pointer; transition:all 0.15s;">
                         🏆 Scores
                       </button>
-                    `;
+                      `;
                 }
             } else {
                 headerTitleEl.textContent = 'My Matches';
-                headerSubEl.textContent = 'Your upcoming matches and history';
+
+                headerSubEl.textContent = 'Your upcoming and history';
+                const dot = document.createElement('span');
+                dot.style.cssText = 'display:inline-block; width:5px; height:5px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981; margin-right:8px; vertical-align:middle;';
+                headerSubEl.insertBefore(dot, headerSubEl.firstChild);
 
                 const isUpcoming = MatchesController._currentTab === 'mine_upcoming';
                 const isPast = MatchesController._currentTab === 'mine_past';

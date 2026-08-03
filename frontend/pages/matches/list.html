@@ -4,13 +4,20 @@
     <!-- Header + CTA -->
     <div
       style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:15px; flex-wrap:wrap; gap:12px;">
-      <div style="flex: 1 0 100%;">
-        <h1 id="ml-header-title"
-          style="font-family: 'Montserrat', sans-serif; font-size:32px; font-weight:900; margin:0; line-height:0.9; text-transform:uppercase; letter-spacing:-0.5px; background: linear-gradient(180deg, #FFFFFF 20%, #8B9BB4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
-          &nbsp;</h1>
+      <div
+        style="flex: 1 0 100%; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; position: relative;">
+        <!-- Flex container to align title and line side-by-side (middle-aligned) -->
+        <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
+          <h1 id="ml-header-title"
+            style="font-family: 'Montserrat', sans-serif; font-size:35px; font-weight:800; margin:0; line-height:1.0; text-transform:uppercase; letter-spacing:-1.5px; background: linear-gradient(180deg, #FFFFFF 15%, #94A3B8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.35)); white-space: nowrap;">
+            &nbsp;</h1>
+          <div style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.02) 100%);"></div>
+        </div>
         <p id="ml-header-sub"
-          style="font-family: 'Montserrat', sans-serif; color:#8B9BB4; font-size:11px; font-weight:700; margin:10px 0 10px; text-transform:uppercase; letter-spacing:1px; opacity:0.8;">
-          &nbsp;</p>
+          style="font-family: 'Montserrat', sans-serif; color:#94A3B8; font-size:10px; font-weight:700; margin:0; text-transform:uppercase; letter-spacing:2px; display: flex; align-items: center; gap: 8px;">
+          <span
+            style="display:inline-block; width:5px; height:5px; border-radius:50%; background:#10B981; box-shadow:0 0 8px #10B981;"></span>&nbsp;
+        </p>
       </div>
       <div id="ml-header-actions" style="display:flex; gap:10px;">
         <button id="ml-rules-btn" onclick="Router.navigate('/rules')" class="btn btn-secondary"
@@ -33,15 +40,26 @@
     <div id="ml-play-filters" style="display:none; margin-bottom:24px; animation:fadeIn 0.3s ease-out;">
       <div style="display:flex; gap:20px; align-items:center; justify-content:center;">
         <!-- Match Type Toggle -->
-        <div style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
-          <button type="button" class="ml-type-filter-btn" data-val="friendly" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
-          <button type="button" class="ml-type-filter-btn active" data-val="competition" style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
+        <div
+          style="flex:1.2; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
+          <button type="button" class="ml-type-filter-btn" data-val="friendly"
+            style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;"
+            onclick="MatchesController.setPlayFilter('match_type', 'friendly', this)">Friendly</button>
+          <button type="button" class="ml-type-filter-btn active" data-val="competition"
+            style="flex:1.2; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;"
+            onclick="MatchesController.setPlayFilter('match_type', 'competition', this)">Competition</button>
         </div>
 
         <!-- Gender Toggle -->
-        <div style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
-          <button type="button" class="ml-gender-filter-btn" data-val="all" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'all', this)">All</button>
-          <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active" data-val="same_gender" style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;" onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Men</button>
+        <div
+          style="flex:1; display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
+          <button type="button" class="ml-gender-filter-btn" data-val="all"
+            style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:11px; transition:all 0.2s;"
+            onclick="MatchesController.setPlayFilter('gender_type', 'all', this)">All</button>
+          <button type="button" id="ml-gender-restricted-filter-btn" class="ml-gender-filter-btn active"
+            data-val="same_gender"
+            style="flex:1; padding:10px 2px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:11px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;"
+            onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Men</button>
         </div>
       </div>
     </div>
