@@ -5982,7 +5982,12 @@ const ChatController = {
                         const avatarEl = document.createElement('div');
                         avatarEl.className = 'chat-group-avatar';
                         avatarEl.style.cssText = 'width:38px; height:38px; border-radius:50%; background:var(--g-primary); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; overflow:hidden;';
-                        if (thumb) {
+                        if (code === 'ADMIN') {
+                            const img = document.createElement('img');
+                            img.src = 'assets/logo_ico.png';
+                            img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:50%;padding:4px;background:#1e293b;';
+                            avatarEl.appendChild(img);
+                        } else if (thumb) {
                             const img = document.createElement('img');
                             img.src = `${CONFIG.ASSET_BASE}/${thumb}`;
                             img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
