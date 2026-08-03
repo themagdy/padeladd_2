@@ -2087,3 +2087,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.74 (Build 474) - 2026-08-03 [patch]
 - Chat Presence Window Tightened: Reduced the chat_presence online detection window in send.php from 8s to 6s (5s poll interval + 1s buffer). If the presence-clear call fails on app kill or network drop, the stale record now expires within one poll cycle instead of blocking notifications for up to 8 seconds.
 
+2.4.75 (Build 475) - 2026-08-03
+- Story Hold-to-Pause Removed: Removed the touch-and-hold pause functionality from the story player. The touchstart e.preventDefault() call was suppressing the native click event chain on mobile WebViews, causing taps to advance to the next story to close the viewer instead. Navigation now uses a simple onclick handler, restoring reliable tap-to-advance and tap-to-go-back on all native devices.
+- Chat Presence Window Tightened: Reduced chat_presence online detection window in send.php from 8s to 6s.
+- Match Card On Hold Badge: Match card now shows "On Hold" when creator has a pending partner invite.
+- Unified Build Versions: Bumped build.gradle, package.json, Info.plist, and version.txt to release version 2.4.75 (Build 475).
+- Version: 2.4.75 (Build 475)
+
