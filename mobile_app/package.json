@@ -4,14 +4,15 @@
   "description": "Padeladd Mobile App",
   "main": "index.js",
   "scripts": {
-    "build": "mkdir -p www && cp -v ../index.html www/ && cp -rv ../assets www/ && cp -rv ../frontend www/ && node scripts/prep-web.js",
+    "build": "mkdir -p www && cp -v ../index.html www/ && cp -rv ../assets www/ && cp -rv ../frontend www/ && node scripts/prep-web.js && node scripts/minify-js.js",
     "cap:sync": "cap sync",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^5.0.0"
+    "@capacitor/cli": "^5.0.0",
+    "esbuild": "^0.28.1"
   },
   "dependencies": {
     "@capacitor/android": "^5.0.0",
@@ -20,6 +21,7 @@
     "@capacitor/haptics": "^5.0.8",
     "@capacitor/ios": "^5.7.8",
     "@capacitor/push-notifications": "^5.1.2",
-    "@capacitor/status-bar": "^5.0.8"
+    "@capacitor/status-bar": "^5.0.8",
+    "capacitor-secure-storage-plugin": "^0.13.0"
   }
 }

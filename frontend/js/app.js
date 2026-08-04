@@ -1007,21 +1007,24 @@ const StatsUI = {
 document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the SPA router once DOM is ready
-    Router.init();
+    Auth.init().then(() => {
+        Router.init();
 
-    // Phase 6: Initialize notifications engine
-    NotificationsController.init();
+        // Phase 6: Initialize notifications engine
+        NotificationsController.init();
 
-    // Initialize sound engine
-    SoundManager.init();
+        // Initialize sound engine
+        SoundManager.init();
 
-    if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
-        PushNotificationsController.init();
-        InAppMessagesController.init();
-        if (typeof UI !== 'undefined' && UI.syncNav) {
-            UI.syncNav();
+        if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
+            PushNotificationsController.init();
+            InAppMessagesController.init();
+            if (typeof UI !== 'undefined' && UI.syncNav) {
+                UI.syncNav();
+            }
         }
-    }
+    });
+
 
     // Mobile Status Bar Fix
     const StatusBar = window.Capacitor?.Plugins?.StatusBar;

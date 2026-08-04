@@ -269,7 +269,7 @@ const StoriesController = {
         }
 
         tray.style.display = 'flex';
-        const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
+        const currentUserId = DashboardController._currentUser?.id || Auth.getUserId();
 
         // 1. Group stories by player (Unique Avatars)
         const playerGroups = {}; // playerId -> { player: obj, stories: [], isMine: bool }
@@ -356,7 +356,7 @@ const StoriesController = {
 
         const group = this._trayItems[trayIdx];
         if (group.isMine) {
-            const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
+            const currentUserId = DashboardController._currentUser?.id || Auth.getUserId();
             this.playUserStories(currentUserId);
             return;
         }
@@ -777,7 +777,7 @@ const StoriesController = {
         }
 
         const list = story.viewers;
-        const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
+        const myId = Auth.getUserId();
         let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
 
         list.forEach(u => {
@@ -860,7 +860,7 @@ const StoriesController = {
         if (!story) return;
 
         // Do not record views when watching your own story bubble
-        const currentUserId = DashboardController._currentUser?.id || parseInt(localStorage.getItem('auth_user_id'));
+        const currentUserId = DashboardController._currentUser?.id || Auth.getUserId();
         if (story._overlayPlayer && parseInt(story._overlayPlayer.id) === currentUserId) return;
 
         if (!story.is_seen) {
@@ -915,7 +915,7 @@ const AuthController = {
             const res = await API.post('/login', payload);
             if (res && res.success) {
                 Auth.setToken(res.data.token);
-                if (res.data.user_id) localStorage.setItem('auth_user_id', res.data.user_id);
+                if (res.data.user_id) Auth.setUserId(res.data.user_id);
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile);
 
@@ -1500,7 +1500,7 @@ const DashboardController = {
         DashboardController._currentProfile = profile;
 
         if (user && user.id) {
-            localStorage.setItem('auth_user_id', user.id);
+            Auth.setUserId(user.id);
         }
 
         // Default ranking tab to user's gender or saved preference
@@ -2379,7 +2379,7 @@ const ProfileViewController = {
             return;
         }
 
-        const myId = parseInt(localStorage.getItem('auth_user_id')) || 0;
+        const myId = Auth.getUserId();
         let html = '<div style="max-height:50vh; overflow-y:auto; text-align:left; padding-right:5px; margin-top:10px;" class="custom-scroll">';
         list.forEach(u => {
             let initials = '?';

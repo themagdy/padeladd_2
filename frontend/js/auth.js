@@ -1,12 +1,70 @@
 const Auth = {
+    _tokenCache: null,
+    _hasProfileCache: null,
+    _hasLevelCache: null,
+    _authUserIdCache: null,
+    _initialized: false,
+
+    init: function() {
+        if (this._initialized) return Promise.resolve();
+
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
+            return Promise.all([
+                SecureStorage.get({ key: 'auth_token' }).then(res => res.value).catch(() => null),
+                SecureStorage.get({ key: 'has_profile' }).then(res => res.value).catch(() => null),
+                SecureStorage.get({ key: 'has_level' }).then(res => res.value).catch(() => null),
+                SecureStorage.get({ key: 'auth_user_id' }).then(res => res.value).catch(() => null)
+            ]).then(([token, hasProfile, hasLevel, authUserId]) => {
+                this._tokenCache = token || null;
+                this._hasProfileCache = hasProfile || null;
+                this._hasLevelCache = hasLevel || null;
+                this._authUserIdCache = authUserId || null;
+                this._initialized = true;
+            }).catch(err => {
+                console.error('[Auth] SecureStorage init failed, falling back to localStorage:', err);
+                this._loadFromLocalStorage();
+            });
+        } else {
+            this._loadFromLocalStorage();
+            return Promise.resolve();
+        }
+    },
+
+    _loadFromLocalStorage: function() {
+        this._tokenCache = localStorage.getItem('auth_token');
+        this._hasProfileCache = localStorage.getItem('has_profile');
+        this._hasLevelCache = localStorage.getItem('has_level');
+        this._authUserIdCache = localStorage.getItem('auth_user_id');
+        this._initialized = true;
+    },
+
     getToken: function() {
-        return localStorage.getItem('auth_token');
+        if (!this._initialized) {
+            return localStorage.getItem('auth_token');
+        }
+        return this._tokenCache;
     },
     setToken: function(token) {
-        localStorage.setItem('auth_token', token);
+        this._tokenCache = token;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.set({ key: 'auth_token', value: token }).catch(err => {
+                console.error('[Auth] SecureStorage setToken failed:', err);
+            });
+        } else {
+            localStorage.setItem('auth_token', token);
+        }
     },
     clearToken: function() {
-        localStorage.removeItem('auth_token');
+        this._tokenCache = null;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.remove({ key: 'auth_token' }).catch(() => {});
+        } else {
+            localStorage.removeItem('auth_token');
+        }
     },
     isAuthenticated: function() {
         return !!this.getToken();
@@ -17,24 +75,71 @@ const Auth = {
         };
     },
     hasProfile: function() {
-        return localStorage.getItem('has_profile') === 'true';
+        if (!this._initialized) {
+            return localStorage.getItem('has_profile') === 'true';
+        }
+        return this._hasProfileCache === 'true';
     },
     setHasProfile: function(val) {
-        localStorage.setItem('has_profile', val ? 'true' : 'false');
+        const valStr = val ? 'true' : 'false';
+        this._hasProfileCache = valStr;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.set({ key: 'has_profile', value: valStr }).catch(() => {});
+        } else {
+            localStorage.setItem('has_profile', valStr);
+        }
     },
     hasLevel: function() {
-        return localStorage.getItem('has_level') === 'true';
+        if (!this._initialized) {
+            return localStorage.getItem('has_level') === 'true';
+        }
+        return this._hasLevelCache === 'true';
     },
     setHasLevel: function(val) {
-        localStorage.setItem('has_level', val ? 'true' : 'false');
+        const valStr = val ? 'true' : 'false';
+        this._hasLevelCache = valStr;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.set({ key: 'has_level', value: valStr }).catch(() => {});
+        } else {
+            localStorage.setItem('has_level', valStr);
+        }
     },
     getUserId: function() {
-        return parseInt(localStorage.getItem('auth_user_id')) || 0;
+        if (!this._initialized) {
+            return parseInt(localStorage.getItem('auth_user_id')) || 0;
+        }
+        return parseInt(this._authUserIdCache) || 0;
+    },
+    setUserId: function(id) {
+        const idStr = String(id);
+        this._authUserIdCache = idStr;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.set({ key: 'auth_user_id', value: idStr }).catch(() => {});
+        } else {
+            localStorage.setItem('auth_user_id', idStr);
+        }
     },
     clearAll: function() {
-        this.clearToken();
-        localStorage.removeItem('has_profile');
-        localStorage.removeItem('has_level');
-        localStorage.removeItem('auth_user_id');
+        this._tokenCache = null;
+        this._hasProfileCache = null;
+        this._hasLevelCache = null;
+        this._authUserIdCache = null;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
+            SecureStorage.remove({ key: 'auth_token' }).catch(() => {});
+            SecureStorage.remove({ key: 'has_profile' }).catch(() => {});
+            SecureStorage.remove({ key: 'has_level' }).catch(() => {});
+            SecureStorage.remove({ key: 'auth_user_id' }).catch(() => {});
+        } else {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('has_profile');
+            localStorage.removeItem('has_level');
+            localStorage.removeItem('auth_user_id');
+        }
     }
 };
+
