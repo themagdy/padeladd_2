@@ -865,7 +865,7 @@ const StoriesController = {
 
         if (!story.is_seen) {
             story.is_seen = 1;
-            
+
             // Sync with active stories list if present to update dashboard tray instantly
             const activeStory = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
             if (activeStory) activeStory.is_seen = 1;
@@ -4527,26 +4527,48 @@ const MatchesController = {
                                 else if (autoDiffHrs === 1) autoTimeStr = 'in 1 hour';
                                 else autoTimeStr = `in ${autoDiffHrs} hours`;
 
-                                // Determine teams based on composition switch if available
-                                let currentTeamNo = user_in_match ? parseInt(user_in_match.team_no) : null;
-                                let subTeamNo = null;
+                                // Determine if current user can approve/dispute
+                                const hasApproved = (s.approvals || []).includes(myUserId);
+                                const approvalsCount = (s.approvals || []).length;
+                                const canApprove = user_in_match && !isSubmitter;
 
-                                if (s.composition_json) {
-                                    try {
-                                        const comp = JSON.parse(s.composition_json);
-                                        const myEntry = comp.find(cx => parseInt(cx.user_id) === myUserId);
-                                        const subEntry = comp.find(cx => parseInt(cx.user_id) === parseInt(s.submitted_by_user_id));
-                                        if (myEntry) currentTeamNo = parseInt(myEntry.team_no);
-                                        if (subEntry) subTeamNo = parseInt(subEntry.team_no);
-                                    } catch (e) { }
+                                const submitterId = parseInt(s.submitted_by_user_id);
+                                const approvalsList = s.approvals || [];
+                                
+                                const pendingPlayers = slots
+                                    .filter(sl => sl.status === 'confirmed')
+                                    .filter(sl => {
+                                        const pId = parseInt(sl.user_id);
+                                        return pId !== submitterId && !approvalsList.includes(pId);
+                                    })
+                                    .map(sl => sl.nickname || sl.first_name);
+
+                                let verificationHtml = '';
+                                if (pendingPlayers.length > 0) {
+                                    verificationHtml = `
+                                        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:16px; padding:16px; margin:20px 20px 0; text-align:left; display:flex; flex-direction:column; gap:12px;">
+                                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                                <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:4px;">
+                                                    <span style="font-size:12px; opacity:0.8;">⏳</span> Pending Verification
+                                                </span>
+                                            </div>
+                                            <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                                ${pendingPlayers.map(name => `
+                                                    <div style="display:inline-flex; align-items:center; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:6px; padding:2px 8px; font-size:11px; color:#fff; font-weight:600;">
+                                                        <span>${name}</span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                } else {
+                                    verificationHtml = `
+                                        <div style="background:rgba(76,175,80,0.05); border:1px solid rgba(76,175,80,0.15); border-radius:16px; padding:14px 16px; margin:20px 20px 0; text-align:left; display:flex; align-items:center; gap:8px;">
+                                            <span style="font-size:16px;">✅</span>
+                                            <span style="font-size:12px; color:var(--c-green); font-weight:700;">All players verified. Score finalized.</span>
+                                        </div>
+                                    `;
                                 }
-
-                                if (!subTeamNo) {
-                                    const submitterSlot = slots.find(sx => parseInt(sx.user_id) === parseInt(s.submitted_by_user_id));
-                                    if (submitterSlot) subTeamNo = parseInt(submitterSlot.team_no);
-                                }
-
-                                const amOpponent = user_in_match && currentTeamNo && subTeamNo && currentTeamNo !== subTeamNo;
 
                                 scoringHtml += `
                                     <div class="pending-score-container" style="position:relative; margin-bottom:32px;">
@@ -4557,31 +4579,33 @@ const MatchesController = {
                                             <div class="status-tag pending" style="background:rgba(247,148,29,0.1); color:var(--c-orange); padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase;">Pending</div>
                                         </div>
                                         
-                                        <div style="padding:0 20px; margin-bottom:16px; font-size:11px; color:var(--c-text-muted); display:flex; align-items:center; gap:8px;">
-                                            <span style="opacity:0.8;">Submitted by <strong>${isSubmitter ? 'you' : submitterName}</strong></span>
-                                            <span style="width:3px; height:3px; background:currentColor; border-radius:50%; opacity:0.2;"></span>
-                                            <span style="opacity:0.8;">Auto-approval <strong style="color:var(--c-orange);">${autoTimeStr}</strong></span>
+                                        <div style="padding:0 20px; margin-bottom:16px; font-size:11px; color:var(--c-text-muted); display:flex; justify-content:space-between; width:100%;">
+                                            <div style="text-align:left; display:flex; flex-direction:column; gap:2px;">
+                                                <span style="opacity:0.8;">Submitted by:</span>
+                                                <strong style="color:#fff;">${isSubmitter ? 'you' : submitterName}</strong>
+                                            </div>
+                                            <div style="text-align:right; display:flex; flex-direction:column; gap:2px;">
+                                                <span style="opacity:0.8;">Auto-approval:</span>
+                                                <strong style="color:var(--c-orange);">${autoTimeStr}</strong>
+                                            </div>
                                         </div>
 
                                         ${ScoreUI.renderMatchScore(match, s, slots, false)}
                                         
-                                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; margin-top:20px; width:100%;">
-                                            ${!isSubmitter ? `
-                                                <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">
-                                                    ${amOpponent ? 'Please verify the result' : 'Waiting for opponents to verify...'}
-                                                </p>
-                                            ` : `
-                                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px; width:100%;">
-                                                    <p style="font-size:11px; color:var(--c-orange); margin:0; font-weight:700;">Waiting for opponents to verify...</p>
-                                                    <button class="btn btn-secondary btn-sm" onclick="ScoringController.deleteScore(${s.id})" style="height:36px; padding:0 16px; font-weight:700; font-size:12px; background:rgba(255,255,255,0.05); color:var(--c-text); border:1px solid rgba(255,255,255,0.1);">Cancel Submission</button>
+                                        ${verificationHtml}
+                                        
+                                        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; margin-top:16px; width:100%;">
+                                            ${isSubmitter ? `
+                                                <div style="display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; padding:0 20px;">
+                                                    <button class="btn btn-secondary btn-sm" onclick="ScoringController.deleteScore(${s.id})" style="width:100%; height:40px; font-weight:700; font-size:12px; background:rgba(255,255,255,0.05); color:var(--c-text); border:1px solid rgba(255,255,255,0.1);">Cancel Submission</button>
                                                 </div>
-                                            `}
+                                            ` : ''}
                                         </div>
                                         
-                                        ${amOpponent ? `
+                                        ${(canApprove && !hasApproved) ? `
                                             <div class="approval-actions" style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                                                <button class="btn btn-success" onclick="ScoringController.approveScore(${s.id})" style="height:44px; font-weight:700;">Approve Result</button>
-                                                <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${s.id})" style="height:44px; font-weight:700;">Dispute Result</button>
+                                                <button class="btn btn-success" onclick="ScoringController.approveScore(${s.id})" style="height:44px; font-weight:700;">Approve</button>
+                                                <button class="btn btn-secondary" onclick="ScoringController.disputeScore(${s.id})" style="height:44px; font-weight:700;">Dispute</button>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -7155,39 +7179,38 @@ const ScoringController = {
 
     approveScore: async function (scoreId) {
         const confirmed = await ConfirmModal.show({
-            title: 'Approve Result',
-            message: 'Are you sure you want to approve this score? This will finalize the match and update everyone\'s points.',
-            confirmText: 'Approve Result'
+            title: 'Verify Score',
+            message: 'Are you sure you want to verify this score? It requires verification from the other 3 players to finalize.',
+            confirmText: 'Verify'
         });
         if (!confirmed) return;
 
         const res = await API.post('/score/approve', { score_id: scoreId });
         if (res && res.success) {
-            Toast.show('Score approved! Points updated.', 'success');
-            SoundManager.play('success');
+            if (res.data && res.data.finalized) {
+                Toast.show('Score finalized! Points updated.', 'success');
+                SoundManager.play('success');
+            } else {
+                Toast.show(res.message || 'Verification recorded!', 'success');
+            }
             MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);
             UI.syncNav();
         } else {
-            Toast.show(res ? res.message : 'Approval failed', 'error');
+            Toast.show(res ? res.message : 'Verification failed', 'error');
         }
     },
 
     disputeScore: async function (scoreId) {
-        const reason = await ConfirmModal.show({
-            title: 'What is wrong with the score?',
-            message: '<b>Common reasons:</b>\n• Wrong score entered\n• I was in a different team',
-            showInput: true,
-            required: true,
-            inputPlaceholder: 'Wrong score / I was in a different team...',
-            inputMaxLength: 250,
-            tipText: 'State the correct score clearly.',
-            confirmText: 'Send Dispute',
+        const confirmed = await ConfirmModal.show({
+            title: 'Dispute Score',
+            message: 'Are you sure you want to dispute this match score? It will be sent to the admin team for review.',
+            confirmText: 'Dispute',
             type: 'warning'
         });
 
-        if (!reason) return;
+        if (!confirmed) return;
 
-        const res = await API.post('/score/dispute', { score_id: scoreId, reason });
+        const res = await API.post('/score/dispute', { score_id: scoreId, reason: 'Disputed by opponent' });
         if (res && res.success) {
             Toast.show('Dispute recorded. Our team will review it.', 'warning');
             MatchesController.loadDetails({ match_id: MatchesController._currentMatchId }, true);

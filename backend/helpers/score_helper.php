@@ -37,6 +37,15 @@ if (!function_exists('mapScoreComposition')) {
             $score['composition_json'] = null;
         }
         
+        // Fetch list of approver user IDs
+        $score['approvals'] = [];
+        if (isset($score['id'])) {
+            $pdo = getDB();
+            $stmt = $pdo->prepare("SELECT user_id FROM score_approvals WHERE score_id = ?");
+            $stmt->execute([$score['id']]);
+            $score['approvals'] = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        }
+        
         return $score;
     }
 }

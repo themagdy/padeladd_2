@@ -2103,4 +2103,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Obfuscation & Minification: Added automated build script (minify-js.js) in mobile_app scripts utilizing esbuild to minify all JavaScript assets inside the www/ folder before packing.
 - Content Security Policy (CSP): Hardened index.html with a strict Content Security Policy meta tag to limit scripts, styles, connections, and font origins, preventing XSS and exfiltration attempts.
 - Clean Auth Scoping: Refactored controllers.js to completely route auth_user_id references through secure Auth helper methods, removing direct localStorage dependencies.
-
+2.4.75 (Build 475) - 2026-08-05 [patch]
+- Score Verification Logic Overhaul: Implemented 3-player approval verification for pending match scores. Adjusted approve.php to require 3 confirmations before finalization and points recalculation.
+- 12-Hour Reminders Cron Update: Modified auto_confirm_scores.php to fetch all confirmed match players and send reminders to all 3 pending players (instead of just opponents) while skipping those who already approved.
+- Dispute Submission Upgrades: Removed opponent-only restriction in dispute.php allowing the submitter's partner to file a dispute, and resolved the popup text input requirement.
+- Match Control Admin Upgrades: Added submitted scores and pending verification lists directly to the admin Match Control panel, displaying custom compositions (for team swaps) and individual player progress.
+- Score Style Polish: Refined the visual appearance of score numbers on the match details screen with bigger sizes (24px / 20px mobile) and a cleaner semi-bold weight (600).
+- Deep Linking: Fixed score_reminder and score_approved_partial notification urls to point to match permalinks.

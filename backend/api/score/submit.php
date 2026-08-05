@@ -103,7 +103,7 @@ try {
     $lockStmt = $pdo->prepare("SELECT id FROM matches WHERE id = ? FOR UPDATE");
     $lockStmt->execute([$match_id]);
 
-    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM scores WHERE match_id = ?");
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM scores WHERE match_id = ? AND status != 'disputed'");
     $countStmt->execute([$match_id]);
     if ((int)$countStmt->fetchColumn() >= 2) {
         $pdo->rollBack();

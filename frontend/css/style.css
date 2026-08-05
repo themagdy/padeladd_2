@@ -4432,8 +4432,9 @@ form {
 .approved-score-wrapper .msc-premium-score-val,
 .pending-score-container .msc-premium-score-val,
 .disputed-score-container .msc-premium-score-val {
-  font-size: 20px;
-  width: 22px;
+  font-size: 24px;
+  width: 24px;
+  font-weight: 600;
 }
 
 .dash-match-card {
@@ -4461,8 +4462,9 @@ form {
   .approved-score-wrapper .msc-premium-score-val,
   .pending-score-container .msc-premium-score-val,
   .disputed-score-container .msc-premium-score-val {
-    font-size: 18px;
+    font-size: 20px;
     width: 20px;
+    font-weight: 600;
   }
 }
 

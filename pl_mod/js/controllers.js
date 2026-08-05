@@ -800,7 +800,7 @@ window.AdminControllers = {
                         <tr>
                             <td>${r.reporter_name || 'System'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
                             <td>
-                                <div style="font-weight:800; color:var(--c-primary); margin-bottom:4px;">${r.match_code || '---'}</div>
+                                <div style="font-weight:800; color:var(--c-primary); margin-bottom:4px;">${r.match_code || '---'} <span style="color:var(--c-text-muted); font-size:11px; font-weight:normal;">(ID: ${r.match_id || '---'})</span></div>
                                 <div style="font-size:12px; font-weight:700; color:#fff;">
                                     ${r.t1_set1}-${r.t2_set1} | ${r.t1_set2}-${r.t2_set2} ${r.t1_set3 ? '| ' + r.t1_set3 + '-' + r.t2_set3 : ''}
                                 </div>
@@ -2560,6 +2560,96 @@ window.AdminControllers = {
 
             // Populate roster
             this.renderRoster(details.players || []);
+
+            // Populate scores
+            this.renderScores(details.scores || [], details.players || []);
+        },
+
+        renderScores(scores, players) {
+            const container = document.getElementById('ctrl-scores-container');
+            const section = document.getElementById('ctrl-scores-section');
+            if (!container || !section) return;
+
+            if (!scores || scores.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'block';
+            container.innerHTML = scores.map(s => {
+                const submitterName = s.nickname || s.first_name || 'Player';
+                const statusColor = s.status === 'approved' ? 'var(--c-green)' : (s.status === 'disputed' ? 'var(--c-red)' : 'var(--c-orange)');
+                const approvalsList = s.approvals || [];
+                const approvalsCount = approvalsList.length;
+
+                // Format sets
+                const sets = [];
+                for (let i = 1; i <= 3; i++) {
+                    const s1 = s[`t1_set${i}`];
+                    const s2 = s[`t2_set${i}`];
+                    if (s1 !== null && s2 !== null) {
+                        sets.push(`${s1}-${s2}`);
+                    }
+                }
+                const scoreText = sets.join(' | ');
+
+                // Parse composition to show who was on each team
+                let t1Names = [], t2Names = [];
+                let customComp = null;
+                if (s.composition_json) {
+                    try {
+                        customComp = typeof s.composition_json === 'string'
+                            ? JSON.parse(s.composition_json)
+                            : s.composition_json;
+                    } catch (e) {}
+                }
+
+                if (customComp && customComp.length > 0) {
+                    customComp.forEach(c => {
+                        const p = players.find(x => parseInt(x.user_id) === parseInt(c.user_id));
+                        const name = p ? (p.nickname || p.first_name) : 'Player';
+                        if (c.team_no == 1) t1Names.push(name);
+                        else if (c.team_no == 2) t2Names.push(name);
+                    });
+                } else {
+                    players.forEach(p => {
+                        const name = p.nickname || p.first_name;
+                        if (p.team_no == 1) t1Names.push(name);
+                        else if (p.team_no == 2) t2Names.push(name);
+                    });
+                }
+                const teamsHtml = `<div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:8px;">${t1Names.join(' / ')} <span style="opacity:0.4; margin:0 4px;">vs</span> ${t2Names.join(' / ')}</div>`;
+
+                let pendingHtml = '';
+                if (s.status === 'pending') {
+                    const submitterId = parseInt(s.submitted_by_user_id);
+                    const pendingNames = players
+                        .filter(p => {
+                            const pId = parseInt(p.user_id);
+                            return pId !== submitterId && !approvalsList.includes(pId);
+                        })
+                        .map(p => p.nickname || p.first_name)
+                        .join(', ');
+                    if (pendingNames) {
+                        pendingHtml = `<div style="font-size:11px; color:var(--c-text-muted); margin-top:4px;">Pending: <strong style="color:var(--c-orange);">${pendingNames}</strong></div>`;
+                    }
+                }
+
+                return `
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:16px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="font-size:15px; font-weight:800; color:#fff;">${scoreText}</span>
+                            <span class="status-tag ${s.status}" style="font-size:9px; padding:2px 8px; background:rgba(255,255,255,0.03); color:${statusColor}; text-transform:uppercase;">${s.status}</span>
+                        </div>
+                        ${teamsHtml}
+                        <div style="font-size:11px; color:var(--c-text-muted);">
+                            Submitted by: <strong>${submitterName}</strong>
+                            ${s.status === 'pending' ? ` • <strong>${approvalsCount}/3 approved</strong>` : ''}
+                        </div>
+                        ${pendingHtml}
+                    </div>
+                `;
+            }).join('');
         },
 
         renderRoster(players) {

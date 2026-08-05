@@ -47,6 +47,8 @@ function getNotificationUrl(PDO $pdo, string $type, ?int $id): string {
         case 'score_submitted':
         case 'score_disputed':
         case 'score_approved':
+        case 'score_approved_partial':
+        case 'score_reminder':
         case 'availability_alert':
         case 'late_withdrawal':
         case 'match_on_hold':

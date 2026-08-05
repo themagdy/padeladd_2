@@ -9,13 +9,12 @@ $uid = $user['id'];
 
 $score_id = (int)($data['score_id'] ?? 0);
 $reason = trim($data['reason'] ?? '');
+if (empty($reason)) {
+    $reason = 'Disputed by opponent';
+}
 
 if ($score_id <= 0) {
     jsonResponse(false, 'Score ID is required.', null, 422);
-}
-
-if (empty($reason)) {
-    jsonResponse(false, 'Dispute reason is required.', null, 422);
 }
 
 // 1. Fetch score and match
@@ -33,47 +32,17 @@ if ($score['status'] !== 'pending') {
 
 $match_id = (int)$score['match_id'];
 
-// 2. Validate that the disputer is an opponent
-$subTeamNo = null;
-$disTeamNo = null;
+// 2. Validate that the disputer is in the match and is not the submitter
+$playersStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND status = 'confirmed'");
+$playersStmt->execute([$match_id]);
+$matchPlayers = $playersStmt->fetchAll(PDO::FETCH_COLUMN);
 
-if ($score['t1_p1_user_id'] !== null) {
-    $submitterId = (int)$score['submitted_by_user_id'];
-    
-    if ($submitterId === (int)$score['t1_p1_user_id'] || $submitterId === (int)$score['t1_p2_user_id']) {
-        $subTeamNo = 1;
-    } elseif ($submitterId === (int)$score['t2_p1_user_id'] || $submitterId === (int)$score['t2_p2_user_id']) {
-        $subTeamNo = 2;
-    }
-    
-    if ($uid === (int)$score['t1_p1_user_id'] || $uid === (int)$score['t1_p2_user_id']) {
-        $disTeamNo = 1;
-    } elseif ($uid === (int)$score['t2_p1_user_id'] || $uid === (int)$score['t2_p2_user_id']) {
-        $disTeamNo = 2;
-    }
-}
-
-// Fallback to original slots if composition not found or partial
-if ($subTeamNo === null || $disTeamNo === null) {
-    $playerStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
-    
-    if ($subTeamNo === null) {
-        $playerStmt->execute([$match_id, $score['submitted_by_user_id']]);
-        $subTeamNo = $playerStmt->fetchColumn();
-    }
-    
-    if ($disTeamNo === null) {
-        $playerStmt->execute([$match_id, $uid]);
-        $disTeamNo = $playerStmt->fetchColumn();
-    }
-}
-
-if (!$disTeamNo) {
+if (!in_array($uid, $matchPlayers)) {
     jsonResponse(false, 'Only match participants can dispute scores.', null, 403);
 }
 
-if ($disTeamNo == $subTeamNo) {
-    jsonResponse(false, 'Only opponents can dispute the submitted score.', null, 403);
+if ($uid === (int)$score['submitted_by_user_id']) {
+    jsonResponse(false, 'You cannot dispute a score you submitted yourself.', null, 400);
 }
 
 // 3. Update status and record dispute

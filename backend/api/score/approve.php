@@ -35,82 +35,76 @@ if ($score['status'] !== 'pending') {
 
 $match_id = (int)$score['match_id'];
 
-// 2. Validate that the approver is on the opponent team of the submitter
-$subTeamNo = null;
-$appTeamNo = null;
+// 2. Validate that the approver is in the match and is not the submitter
+$playersStmt = $pdo->prepare("SELECT user_id FROM match_players WHERE match_id = ? AND status = 'confirmed'");
+$playersStmt->execute([$match_id]);
+$matchPlayers = $playersStmt->fetchAll(PDO::FETCH_COLUMN);
 
-if ($score['t1_p1_user_id'] !== null) {
-    $submitterId = (int)$score['submitted_by_user_id'];
-    
-    if ($submitterId === (int)$score['t1_p1_user_id'] || $submitterId === (int)$score['t1_p2_user_id']) {
-        $subTeamNo = 1;
-    } elseif ($submitterId === (int)$score['t2_p1_user_id'] || $submitterId === (int)$score['t2_p2_user_id']) {
-        $subTeamNo = 2;
-    }
-    
-    if ($uid === (int)$score['t1_p1_user_id'] || $uid === (int)$score['t1_p2_user_id']) {
-        $appTeamNo = 1;
-    } elseif ($uid === (int)$score['t2_p1_user_id'] || $uid === (int)$score['t2_p2_user_id']) {
-        $appTeamNo = 2;
-    }
-}
-
-// Fallback to original slots if composition not found or partial
-if ($subTeamNo === null || $appTeamNo === null) {
-    $playerStmt = $pdo->prepare("SELECT team_no FROM match_players WHERE match_id = ? AND user_id = ?");
-    
-    if ($subTeamNo === null) {
-        $playerStmt->execute([$match_id, $score['submitted_by_user_id']]);
-        $subTeamNo = $playerStmt->fetchColumn();
-    }
-    
-    if ($appTeamNo === null) {
-        $playerStmt->execute([$match_id, $uid]);
-        $appTeamNo = $playerStmt->fetchColumn();
-    }
-}
-
-if (!$appTeamNo) {
+if (!in_array($uid, $matchPlayers)) {
     jsonResponse(false, 'Only match participants can approve scores.', null, 403);
 }
 
-if ($appTeamNo == $subTeamNo) {
-    jsonResponse(false, 'Only opponents can approve the submitted score.', null, 403);
+if ($uid === (int)$score['submitted_by_user_id']) {
+    jsonResponse(false, 'You cannot approve a score you submitted yourself.', null, 400);
 }
 
-// 3. Approve and Update Ranking
+// 3. Approve and check total approval count
 $pdo->beginTransaction();
 try {
-    // Update score status
-    $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = ? WHERE id = ?");
-    $upd->execute([$uid, $score_id]);
+    // Record this player's approval (ignore if duplicate)
+    $insApproval = $pdo->prepare("INSERT IGNORE INTO score_approvals (score_id, user_id) VALUES (?, ?)");
+    $insApproval->execute([$score_id, $uid]);
 
-    // We no longer delete other pending scores to support multiple match entries per Match ID
+    // Count how many unique players have approved this score
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM score_approvals WHERE score_id = ?");
+    $countStmt->execute([$score_id]);
+    $approvalsCount = (int)$countStmt->fetchColumn();
 
-    // TRIGGER RANKING UPDATE
-    $updatedPlayers = calculateRankingUpdates($pdo, $match_id, $score_id);
+    $isFinalized = false;
+    $updatedPlayers = null;
+
+    if ($approvalsCount >= 3) {
+        // Finalize score status to approved
+        $upd = $pdo->prepare("UPDATE scores SET status = 'approved', approved_by_user_id = ? WHERE id = ?");
+        $upd->execute([$uid, $score_id]);
+
+        // TRIGGER RANKING UPDATE
+        $updatedPlayers = calculateRankingUpdates($pdo, $match_id, $score_id);
+        $isFinalized = true;
+    }
 
     $pdo->commit();
 
-    // 4. Notifications
+    // Notify others
     $meStmt = $pdo->prepare("SELECT u.first_name, u.last_name, up.nickname FROM users u LEFT JOIN user_profiles up ON u.id = up.user_id WHERE u.id = ?");
     $meStmt->execute([$uid]);
     $me = $meStmt->fetch();
     $myName = getDisplayName($me);
 
-    $msg = "{$myName} approved the score for your match. Points have been updated.";
-    notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg, $uid);
+    if ($isFinalized) {
+        $msg = "Score for your match has been verified and finalized. Points have been updated.";
+        notifyMatchParticipants($pdo, $match_id, 'score_approved', $msg, $uid);
 
-    // Phase 9: Update automated story
-    require_once __DIR__ . '/../../helpers/story_helper.php';
-    StoryHelper::createScoreStory($pdo, $match_id);
+        // Update automated story
+        require_once __DIR__ . '/../../helpers/story_helper.php';
+        StoryHelper::createScoreStory($pdo, $match_id);
 
-    jsonResponse(true, 'Score approved. Ranking updated.', [
-        'players' => $updatedPlayers
-    ]);
+        jsonResponse(true, 'Score finalized. Rankings updated.', [
+            'finalized' => true,
+            'approvals_count' => $approvalsCount,
+            'players' => $updatedPlayers
+        ]);
+    } else {
+        jsonResponse(true, "Approval recorded. ({$approvalsCount}/3 approvals)", [
+            'finalized' => false,
+            'approvals_count' => $approvalsCount
+        ]);
+    }
 
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     error_log("Score Approval Error: " . $e->getMessage());
     jsonResponse(false, 'Failed to approve score: ' . $e->getMessage(), null, 500);
 }

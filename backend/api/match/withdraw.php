@@ -132,11 +132,13 @@ try {
         $partner = $partnerStmt->fetch(PDO::FETCH_ASSOC);
         if ($partner) {
             $displacedPartnerId = (int)$partner['user_id'];
-            $affectedUsers[]    = $displacedPartnerId;
+            // Partner is NOT auto-withdrawn. We update their join_type to 'solo' so they remain in the match.
+            $pdo->prepare("UPDATE match_players SET join_type = 'solo' WHERE match_id = ? AND user_id = ?")
+                ->execute([$match_id, $displacedPartnerId]);
         }
     }
 
-    // Remove slots
+    // Remove slots (only for the withdrawing user)
     $placeholders = implode(',', array_fill(0, count($affectedUsers), '?'));
     $pdo->prepare("DELETE FROM match_players WHERE match_id = ? AND user_id IN ($placeholders)")
         ->execute(array_merge([$match_id], $affectedUsers));
@@ -161,7 +163,7 @@ try {
     }
 
     // ── Audit log ───────────────────────────────────────────────────────
-    $eventType = $isTeamJoin ? 'team_withdrawn' : 'player_withdrawn';
+    $eventType = 'player_withdrawn';
 
     $eventData = json_encode([
         'hours_until_match' => round($hoursUntil, 2),
@@ -189,14 +191,12 @@ try {
 
     // Phase 6: Notify remaining match participants that someone withdrew
     $withdrawerName = getDisplayName($user);
-    $notifMsg = $isTeamJoin 
-        ? "{$withdrawerName} and their partner withdrew from the match" 
-        : "{$withdrawerName} withdrew from the match";
+    $notifMsg = "{$withdrawerName} withdrew from the match";
     notifyMatchParticipants($pdo, $match_id, 'player_withdrawn', $notifMsg, $uid);
 
-    // Phase 6: Notify the partner who was displaced by this withdrawal (if any)
+    // Phase 6: Notify the partner who is now solo in the match
     if ($displacedPartnerId > 0) {
-        createNotification($pdo, $displacedPartnerId, 'player_withdrawn', $match_id, "{$withdrawerName} withdrew, so you've been removed from the match too", $uid);
+        createNotification($pdo, $displacedPartnerId, 'player_withdrawn', $match_id, "{$withdrawerName} withdrew from your team. You remain in the match as a solo player.", $uid);
     }
 
     // Phase 6: Notify waitlist about new availability
@@ -219,9 +219,7 @@ try {
         notifyWaitlistAvailability($pdo, $match_id, 'team', $uid);
     }
 
-    $message = $isTeamJoin
-        ? 'You and your partner have been removed from the match.'
-        : 'You have been removed from the match.';
+    $message = 'You have been removed from the match.';
 
     if ($isLate) {
         $message .= ' Note: This is a late withdrawal (within ' . POLICY_VIOLATION_HOURS . ' hours of the match).';
@@ -232,7 +230,7 @@ try {
     StoryHelper::updateMatchStory($pdo, $match_id);
 
     jsonResponse(true, $message, [
-        'is_team'    => $isTeamJoin,
+        'is_team'    => false,
         'is_late'    => $isLate,
         'affected'   => $affectedUsers,
     ]);

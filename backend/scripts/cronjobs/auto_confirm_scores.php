@@ -37,18 +37,23 @@ foreach ($toRemind as $score) {
     $match_id = (int)$score['match_id'];
     $submitter_id = (int)$score['submitted_by_user_id'];
 
-    $t1 = [(int)$score['t1_p1_user_id'], (int)$score['t1_p2_user_id']];
-    $t2 = [(int)$score['t2_p1_user_id'], (int)$score['t2_p2_user_id']];
+    // Gather all 4 match players
+    $players = [
+        (int)$score['t1_p1_user_id'],
+        (int)$score['t1_p2_user_id'],
+        (int)$score['t2_p1_user_id'],
+        (int)$score['t2_p2_user_id']
+    ];
 
-    if (in_array($submitter_id, $t1, true)) {
-        $opponents = $t2;
-    } else {
-        $opponents = $t1;
-    }
+    // Get who already approved this score
+    $approversStmt = $pdo->prepare("SELECT user_id FROM score_approvals WHERE score_id = ?");
+    $approversStmt->execute([$score['id']]);
+    $alreadyApproved = $approversStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    foreach ($opponents as $opp_id) {
-        if ($opp_id > 0) {
-            createNotification($pdo, $opp_id, 'score_reminder', $match_id, 
+    foreach ($players as $player_id) {
+        // Skip submitter and players who have already approved
+        if ($player_id > 0 && $player_id !== $submitter_id && !in_array($player_id, $alreadyApproved)) {
+            createNotification($pdo, $player_id, 'score_reminder', $match_id, 
                 "Reminder: A score is waiting for your approval. It will be auto-confirmed in 12 hours.", 
                 $submitter_id);
         }
