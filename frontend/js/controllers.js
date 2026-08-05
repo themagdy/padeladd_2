@@ -4222,7 +4222,7 @@ const MatchesController = {
                 rangeEl.style.display = 'none';
             } else if (rangeValEl && match.eligible_min !== undefined) {
                 rangeEl.style.display = 'flex';
-                rangeValEl.textContent = `${match.eligible_min} — ${match.eligible_max} pts`;
+                rangeValEl.innerHTML = `${match.eligible_min} <span style="opacity:0.5; font-size:11px; margin:0 4px; font-weight:700; text-transform:uppercase;">to</span> ${match.eligible_max} <span style="opacity:0.6; font-size:11px; font-weight:700; margin-left:2px;">pts</span>`;
             }
         }
 
