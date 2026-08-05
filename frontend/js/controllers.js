@@ -4463,6 +4463,8 @@ const MatchesController = {
                 const diffHrs = (matchTimeDate - now) / (1000 * 60 * 60);
                 const isPastMatch = diffHrs <= 0;
                 const isLiveMatch = !isPastMatch && match.status !== 'completed';
+                const elapsedHrs = (now - matchTimeDate) / (1000 * 60 * 60);
+                const isExpired = elapsedHrs > 48;
 
                 // Reset action area visibility and clear form during poll
                 MatchesController.hideInvitePartner();
@@ -4637,17 +4639,28 @@ const MatchesController = {
                         });
                     } else if (user_in_match) {
                         // No scores yet
-                        scoringHtml = `
-                            <div class="results-banner">
-                                <div class="results-title" style="margin-bottom:12px;">Match Ended</div>
-                                <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Match Result</button>
-                                <p style="font-size:11px; color:var(--c-text-dim); text-align:center; margin-top:12px;">Record the score to update your rankings.</p>
-                            </div>
-                        `;
+                        if (isExpired) {
+                            scoringHtml = `
+                                <div class="results-banner">
+                                    <div class="results-title" style="margin-bottom:12px;">Match Ended</div>
+                                    <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:12px; font-size:12px; color:var(--c-text-muted); text-align:center;">
+                                        ⌛ Score submission period expired (48h limit).
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            scoringHtml = `
+                                <div class="results-banner">
+                                    <div class="results-title" style="margin-bottom:12px;">Match Ended</div>
+                                    <button class="btn btn-primary" onclick="ScoringController.initScoreSubmission(MatchesController._currentMatchData)">Submit Match Result</button>
+                                    <p style="font-size:11px; color:var(--c-text-dim); text-align:center; margin-top:12px;">Record the score to update your rankings.</p>
+                                </div>
+                            `;
+                        }
                     }
 
                     // Secondary match submission (Multi-score support)
-                    if (user_in_match && (scores || []).length === 1) {
+                    if (user_in_match && (scores || []).length === 1 && !isExpired) {
                         scoringHtml += `
                             <div style="margin-top:32px; padding-top:24px; text-align:center; border-top:1px dashed rgba(255,255,255,0.08);">
                                 <div style="font-size:11px; font-weight:900; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; opacity:0.6;">Played another match?</div>
@@ -4663,7 +4676,7 @@ const MatchesController = {
 
 
 
-                    actionArea.innerHTML = safeHTML(`<div style="margin-top:40px;">${scoringHtml}</div>`);
+                    actionArea.innerHTML = safeHTML(`<div style="margin-top:40px; margin-bottom:50px;">${scoringHtml}</div>`);
                     MatchesController._currentMatchData = match; // Store for controller use
 
                 } else if (pending_for_me) {

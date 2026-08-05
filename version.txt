@@ -2110,3 +2110,5 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Control Admin Upgrades: Added submitted scores and pending verification lists directly to the admin Match Control panel, displaying custom compositions (for team swaps) and individual player progress.
 - Score Style Polish: Refined the visual appearance of score numbers on the match details screen with bigger sizes (24px / 20px mobile) and a cleaner semi-bold weight (600).
 - Deep Linking: Fixed score_reminder and score_approved_partial notification urls to point to match permalinks.
+- Score Expiration Validation (48h Limit): Blocked users from submitting scores if the match scheduled start time was more than 48 hours ago (implemented validation check in submit.php and hid buttons on frontend detail pages).
+- Match Details Spacing Polish: Increased bottom margin space to 50px between match score list cards and the Match Chat button for improved layouts.

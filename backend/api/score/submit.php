@@ -87,6 +87,11 @@ if (strtotime($match['match_datetime']) > time()) {
     jsonResponse(false, 'Cannot submit score before match time.', null, 400);
 }
 
+// Cannot submit score 48 hours after match time
+if (strtotime($match['match_datetime']) < time() - (48 * 3600)) {
+    jsonResponse(false, 'Score submission expired. Scores must be submitted within 48 hours after the match.', null, 400);
+}
+
 // 2. Check if user is a participant
 $playerStmt = $pdo->prepare("SELECT * FROM match_players WHERE match_id = ? AND user_id = ?");
 $playerStmt->execute([$match_id, $uid]);
