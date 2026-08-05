@@ -2112,3 +2112,5 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Deep Linking: Fixed score_reminder and score_approved_partial notification urls to point to match permalinks.
 - Score Expiration Validation (48h Limit): Blocked users from submitting scores if the match scheduled start time was more than 48 hours ago (implemented validation check in submit.php and hid buttons on frontend detail pages).
 - Match Details Spacing Polish: Increased bottom margin space to 50px between match score list cards and the Match Chat button for improved layouts.
+- Admin DateTime Formatting: Integrated flatpickr date/time picker into the admin Match Control panel, displaying dates in a cleaner layout with short month names (e.g. 05 Aug 2026, 09:00 PM) while submitting standard formats to the database.
+- Database Maintenance: Cleaned local databases, removing historical matches, scores, chat, and notification records, and resetting all player stats back to skill level defaults (0 matches, 20 calibration left).

@@ -2553,10 +2553,23 @@ window.AdminControllers = {
 
             // Populate form
             document.getElementById('ctrl-court').value = m.court_name || '';
-            document.getElementById('ctrl-datetime').value = m.match_datetime.replace(' ', 'T').substring(0, 16);
             document.getElementById('ctrl-venue').value = m.venue_id || '';
             const venueObj = this.allVenues.find(v => v.id === m.venue_id);
             document.getElementById('ctrl-venue-search').value = venueObj ? venueObj.name : (m.venue_name || '');
+
+            // Destroy existing flatpickr instance if any
+            if (this._flatpickr) {
+                try { this._flatpickr.destroy(); } catch (e) {}
+            }
+
+            // Initialize flatpickr with custom formatting
+            this._flatpickr = flatpickr("#ctrl-datetime", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i:S",
+                altInput: true,
+                altFormat: "d M Y, h:i K",
+                defaultDate: m.match_datetime
+            });
 
             // Populate roster
             this.renderRoster(details.players || []);
