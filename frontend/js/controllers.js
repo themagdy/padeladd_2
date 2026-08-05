@@ -3852,6 +3852,10 @@ const MatchesController = {
 
         const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
 
+        if (!isCompletedTab && m.eligible_min !== undefined && m.eligible_max !== undefined) {
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#7da7ff; padding:2px 6px; border-radius:4px; margin-right:4px;">🎯 ${m.eligible_min} to ${m.eligible_max}</span>`;
+        }
+
         // If completed and has ANY score, use the EXACT Dashboard template (ONLY for Completed tabs)
         if (m.status === 'completed' && approvedScore && isCompletedTab) {
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
