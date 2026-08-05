@@ -2114,3 +2114,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Details Spacing Polish: Increased bottom margin space to 50px between match score list cards and the Match Chat button for improved layouts.
 - Admin DateTime Formatting: Integrated flatpickr date/time picker into the admin Match Control panel, displaying dates in a cleaner layout with short month names (e.g. 05 Aug 2026, 09:00 PM) while submitting standard formats to the database.
 - Database Maintenance: Cleaned local databases, removing historical matches, scores, chat, and notification records, and resetting all player stats back to skill level defaults (0 matches, 20 calibration left).
+- Eligibility Range UI Polish: Redesigned the eligibility range block inside the match details page into a premium pill-shaped badge utilizing brand-blue gradient accents, rendering the values with a larger size (14.5px) and cleaner medium-light weight (500).
