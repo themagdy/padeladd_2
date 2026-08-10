@@ -126,7 +126,7 @@ foreach ($allScores as $s) {
 
 // Bulk fetch players
 $pStmt = $pdo->prepare("
-    SELECT mp.match_id, mp.team_no, mp.slot_no, mp.user_id, u.first_name, u.last_name, up.nickname, up.player_code
+    SELECT mp.match_id, mp.team_no, mp.slot_no, mp.user_id, mp.point_change, u.first_name, u.last_name, up.nickname, up.player_code
     FROM match_players mp
     JOIN users u ON mp.user_id = u.id
     LEFT JOIN user_profiles up ON mp.user_id = up.user_id
@@ -170,7 +170,8 @@ foreach ($matches as $m) {
             'last_name'  => $p['last_name'],
             'player_code' => $p['player_code'],
             'team_no' => $p['team_no'],
-            'slot_no' => $p['slot_no']
+            'slot_no' => $p['slot_no'],
+            'point_change' => isset($p['point_change']) ? (int)$p['point_change'] : null
         ];
         if ($p['team_no'] == 1) $teamA[] = $pData;
         else $teamB[] = $pData;

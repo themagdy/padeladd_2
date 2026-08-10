@@ -1659,11 +1659,11 @@ const DashboardController = {
         listEl._lastHtml = html;
     },
 
-    renderMatchCard: function (m, userId, specificScore = null) {
+    renderMatchCard: function (m, userId, specificScore = null, highlightUserId = null) {
         if (m.status === 'completed' && (specificScore || (m.scores && m.scores.length > 0))) {
             const scoreToRender = specificScore || m.scores[0];
             const allPlayers = [...(m.team_a || []), ...(m.team_b || [])];
-            const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false);
+            const scoreHtml = ScoreUI.renderMatchScore(m, scoreToRender, allPlayers, false, highlightUserId);
 
             const dateObj = new Date(m.scheduled_at.replace(' ', 'T'));
             const dayStr = UI.formatMatchDateOnly(m.scheduled_at);
@@ -2290,13 +2290,14 @@ const ProfileViewController = {
             finalHtml = `<div class='empty-state' style='padding:60px 0;'><div class='empty-icon'>🎾</div><h3>No match results yet</h3><p>${emptySub}</p></div>`;
         } else {
             let html = '';
+            const highlightId = ProfileViewController._targetUserId;
             for (const m of historyMatches) {
                 if (m.scores && m.scores.length > 0) {
                     for (const s of m.scores) {
-                        html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId, s);
+                        html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId, s, highlightId);
                     }
                 } else {
-                    html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId);
+                    html += DashboardController.renderMatchCard(m, ProfileViewController._targetUserId, null, highlightId);
                 }
             }
             finalHtml = html;

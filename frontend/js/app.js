@@ -698,7 +698,7 @@ const ScoreUI = {
      * @param {Array} players - Optional explicit player list
      * @param {Boolean} showHeader - Whether to show the Venue/Date header
      */
-    renderMatchScore: function (match, approvedScore = null, players = null, showHeader = true) {
+    renderMatchScore: function (match, approvedScore = null, players = null, showHeader = true, highlightUserId = null) {
         if (!approvedScore && match.scores) {
             approvedScore = match.scores.find(s => s.status === 'approved');
         }
@@ -741,7 +741,9 @@ const ScoreUI = {
                 const pData = {
                     name: p.nickname || p.name || (original ? (original.nickname || original.name || (original.first_name + ' ' + original.last_name)) : '—'),
                     code: p.player_code || p.code || (original ? (original.player_code || original.code) : ''),
-                    team_no: parseInt(p.team_no)
+                    team_no: parseInt(p.team_no),
+                    user_id: parseInt(p.user_id),
+                    point_change: original?.point_change ?? null
                 };
                 if (pData.team_no === 1) team1.push(pData);
                 else if (pData.team_no === 2) team2.push(pData);
@@ -752,7 +754,9 @@ const ScoreUI = {
                 const pData = {
                     name: p.nickname || p.name || (p.first_name + ' ' + p.last_name) || '—',
                     code: p.player_code || p.code || '',
-                    team_no: parseInt(p.team_no)
+                    team_no: parseInt(p.team_no),
+                    user_id: parseInt(p.user_id || p.id),
+                    point_change: p.point_change ?? null
                 };
                 if (pData.team_no === 1) team1.push(pData);
                 else if (pData.team_no === 2) team2.push(pData);
@@ -766,12 +770,25 @@ const ScoreUI = {
             const isFriendly = match.match_type === 'friendly';
             const accentColor = isFriendly ? '#5A91FF' : 'var(--c-orange)';
 
+            const renderPlayerName = (p) => {
+                let badge = '';
+                if (highlightUserId && parseInt(p.user_id) === parseInt(highlightUserId) && p.point_change !== null && p.point_change !== undefined) {
+                    const pts = p.point_change;
+                    if (pts > 0) {
+                        badge = `<span style="font-size:10px; font-weight:700; color:#4ebd79; background:rgba(78,189,121,0.12); padding:1px 5px; border-radius:4px; margin-left:4px; white-space:nowrap;">+${pts}</span>`;
+                    } else if (pts < 0) {
+                        badge = `<span style="font-size:10px; font-weight:700; color:#e57373; background:rgba(229,115,115,0.12); padding:1px 5px; border-radius:4px; margin-left:4px; white-space:nowrap;">${pts}</span>`;
+                    }
+                }
+                return `<span class="msc-premium-player-name">${p.name}</span>${badge}`;
+            };
+
             return `
                 <div class="msc-premium-row" style="opacity:${isWinner ? '1' : '0.85'}; background:${isWinner ? (isFriendly ? 'rgba(90,145,255,0.06)' : 'rgba(247,148,29,0.06)') : 'transparent'};">
                     <div class="msc-premium-players" style="font-weight:${isWinner ? '700' : '400'}; color:${isWinner ? '#fff' : 'rgba(255,255,255,0.8)'};">
-                        <span class="msc-premium-player-name">${p1.name}</span>
+                        ${renderPlayerName(p1)}
                         <span style="opacity:0.25; margin:0 4px;">/</span>
-                        <span class="msc-premium-player-name">${p2.name}</span>
+                        ${renderPlayerName(p2)}
                     </div>
                     <div class="msc-premium-scores">
                         ${sets.map(s => {
