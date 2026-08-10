@@ -334,7 +334,7 @@
   #prof-level-badge {
     opacity: 0;
     transform: translate(-50%, 20px) scale(0.7) !important;
-    animation: levelBadgeSlideUp 1.5s cubic-bezier(0.25, 1, 0.50, 1) 0.6s forwards;
+    animation: levelBadgeSlideUp 1.5s cubic-bezier(0.25, 1, 0.50, 1) 0s forwards;
     position: absolute;
     overflow: visible;
     /* changed from hidden to allow box-shadow & border glow to pop */
@@ -350,7 +350,7 @@
     filter: blur(2px);
     opacity: 0;
     z-index: -1;
-    animation: fireGlowEntrance 1.5s ease-out 0.6s forwards;
+    animation: fireGlowRotate 0.4s linear infinite, fireGlowFade 1.5s ease-out 0s forwards;
   }
 
   @keyframes levelBadgeSlideUp {
@@ -367,25 +367,27 @@
     }
   }
 
-  @keyframes fireGlowEntrance {
+  @keyframes fireGlowRotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fireGlowFade {
     0% {
       opacity: 0;
-      transform: rotate(0deg) scale(0.8);
     }
-
-    20% {
+    15% {
       opacity: 1;
     }
-
     80% {
-      opacity: 0.8;
-      transform: rotate(360deg) scale(1.1);
+      opacity: 1;
     }
-
     100% {
       opacity: 0;
-      /* completely fades out at end of entrance */
-      transform: rotate(480deg) scale(1);
     }
   }
 
