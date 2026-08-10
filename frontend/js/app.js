@@ -773,11 +773,13 @@ const ScoreUI = {
             const renderPlayerName = (p) => {
                 let badge = '';
                 if (highlightUserId && parseInt(p.user_id) === parseInt(highlightUserId) && p.point_change !== null && p.point_change !== undefined) {
-                    const pts = p.point_change;
-                    if (pts > 0) {
-                        badge = `<span style="font-size:10px; font-weight:700; color:#4ebd79; background:rgba(78,189,121,0.12); padding:1px 5px; border-radius:4px; margin-left:4px; white-space:nowrap;">+${pts}</span>`;
-                    } else if (pts < 0) {
-                        badge = `<span style="font-size:10px; font-weight:700; color:#e57373; background:rgba(229,115,115,0.12); padding:1px 5px; border-radius:4px; margin-left:4px; white-space:nowrap;">${pts}</span>`;
+                    const pts = parseInt(p.point_change);
+                    if (pts !== 0 && !isNaN(pts)) {
+                        const bg = pts > 0 ? '#064e3b' : '#450a0a';
+                        const color = pts > 0 ? '#4ade80' : '#f87171';
+                        const border = pts > 0 ? '1px solid rgba(74,222,128,0.4)' : '1px solid rgba(248,113,113,0.4)';
+                        const arrow = pts > 0 ? '↑' : '↓';
+                        badge = `<span style="font-size:10px; font-weight:700; letter-spacing:0.3px; background:${bg}; color:${color}; padding:0 6px; border-radius:10px; border:${border}; box-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; display:inline-flex; align-items:center; height:18px; line-height:1; margin-left:5px; vertical-align:middle;"><span style="font-size:11px; margin-right:2px; font-weight:800;">${arrow}</span>${Math.abs(pts)}</span>`;
                     }
                 }
                 return `<span class="msc-premium-player-name">${p.name}</span>${badge}`;
