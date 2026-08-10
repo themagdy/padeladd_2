@@ -328,27 +328,25 @@
     font-size: 36px;
   }
 
-  /* Level Badge Entrance Animation with Minimal Fire Glow */
+  /* Level Badge Entrance Animation with Simplified Fire Glow */
   #prof-level-badge {
     opacity: 0;
     transform: translate(-50%, 20px) scale(0.7) !important;
-    animation: levelBadgeSlideUp 0.8s cubic-bezier(0.25, 1, 0.50, 1) 0.6s forwards;
+    animation: levelBadgeSlideUp 0.8s cubic-bezier(0.25, 1, 0.50, 1) 0s forwards;
     position: absolute;
-    overflow: visible;
-    /* changed from hidden to allow box-shadow & border glow to pop */
+    overflow: visible; /* allows box-shadow & border glow to pop */
   }
 
-  /* Minimal Fire/Heat Flow overlay behind the badge during entrance */
+  /* Simplified Fire/Heat Glow overlay behind the badge during entrance */
   #prof-level-badge::before {
     content: '';
     position: absolute;
     inset: -3px;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent, #ff5e00, #ffb300, #ff5e00, transparent);
-    filter: blur(2px);
+    background: radial-gradient(circle, #ff5e00, #ffb300, transparent 70%);
     opacity: 0;
     z-index: -1;
-    animation: fireGlowRotate 0.4s linear infinite, fireGlowFade 0.8s ease-out 0.6s forwards;
+    animation: fireGlowFade 0.8s ease-out 0s forwards;
   }
 
   @keyframes levelBadgeSlideUp {
@@ -357,7 +355,6 @@
       transform: translate(-50%, 20px) scale(0.7);
       box-shadow: 0 0 0 0px rgba(255, 94, 0, 0);
     }
-
     100% {
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
@@ -365,31 +362,18 @@
     }
   }
 
-  @keyframes fireGlowRotate {
-    0% {
-      transform: rotate(0deg);
-    }
-
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
   @keyframes fireGlowFade {
     0% {
       opacity: 0;
+      transform: scale(0.8);
     }
-
     30% {
       opacity: 1;
+      transform: scale(1.2);
     }
-
-    70% {
-      opacity: 1;
-    }
-
     100% {
       opacity: 0;
+      transform: scale(1.4);
     }
   }
 
