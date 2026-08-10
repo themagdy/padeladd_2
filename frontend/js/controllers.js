@@ -5002,7 +5002,7 @@ const MatchesController = {
     },
 
     share: function (id, code) {
-        const url = (CONFIG.LIVE_URL || window.location.origin) + '/matches/' + code;
+        const url = (CONFIG.LIVE_URL || window.location.origin) + '/share/' + code;
         const isNativeApp = document.body.classList.contains('is-mobile-app');
 
         if (isNativeApp && navigator.share) {
