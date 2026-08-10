@@ -2131,3 +2131,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 
 2.4.78 (Build 478) - 2026-08-10 [patch]
 - Admin Edit Player: Added Mobile Number field to the edit player popup. Admins can now view and update a user's mobile number directly from the Players admin panel. Saves to the users.mobile column in the database.
+
+2.4.79 (Build 479) - 2026-08-10 [patch]
+- Match Social Share (OG): Added /share/MATCH-CODE PHP endpoint that renders dynamic Open Graph meta tags for WhatsApp/social previews. Upcoming matches show "Join my PadelAdd Match", completed matches show "Watch PadelAdd Match M-XXX". Description shows match type, venue, and date/time. Real users are immediately redirected to the app deep link. Crawlers get the preview HTML.

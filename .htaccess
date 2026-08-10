@@ -14,11 +14,16 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-XSS-Protection "1; mode=block"
 
+    # Route /share/MATCH-CODE to the social share PHP page
+    RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php [QSA,L]
+
     # Handle SPA routing - relative to wherever .htaccess is placed
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     # Exclude the backend/api directory from frontend routing (wildcard match)
     RewriteCond %{REQUEST_URI} !/backend/api/
+    # Exclude the share directory from SPA routing
+    RewriteCond %{REQUEST_URI} !/share/
     # Exclude well-known domain association metadata directories
     RewriteCond %{REQUEST_URI} !/\.well-known/
     RewriteRule ^ index.html [QSA,L]
