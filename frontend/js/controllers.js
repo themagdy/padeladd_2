@@ -1364,9 +1364,10 @@ const DashboardController = {
         }
 
         // Use Promise.all for initial data
-        const [res, matchRes] = await Promise.all([
+        const [res, matchRes, upcomingRes] = await Promise.all([
             API.post('/profile/get', { app_build_ref: CONFIG.APP_BUILD_REF }),
-            API.post('/matches/recent', { limit: 10 })
+            API.post('/matches/recent', { limit: 10 }),
+            API.post('/match/list', { mode: 'mine_upcoming', limit: 20 })
         ]);
 
         if (!res || !res.success) {
@@ -1392,7 +1393,8 @@ const DashboardController = {
             DashboardController._cache.matches_json = matchesJson;
         }
 
-        DashboardController.applyData(res.data, matchRes?.success ? matchRes.data.matches : [], isSilent);
+        const upcomingMatches = upcomingRes?.success ? (upcomingRes.data.matches || []) : [];
+        DashboardController.applyData(res.data, matchRes?.success ? matchRes.data.matches : [], isSilent, upcomingMatches);
 
         // Start polling if this is the first load
         if (!isSilent && typeof PollManager !== 'undefined') {
@@ -1494,7 +1496,7 @@ const DashboardController = {
         }
     },
 
-    applyData: function (profileData, matchData, isSilent = false) {
+    applyData: function (profileData, matchData, isSilent = false, upcomingMatches = []) {
         const { user, profile, stats } = profileData;
         DashboardController._currentUser = user;
         DashboardController._currentProfile = profile;
@@ -1542,6 +1544,53 @@ const DashboardController = {
         if (subEl && !isSilent && !subEl.textContent.trim()) {
             const msg = DashboardController._messages[Math.floor(Math.random() * DashboardController._messages.length)];
             subEl.textContent = msg;
+        }
+
+        // Dynamic MY MATCHES subtitle based on upcoming matches
+        const upcomingSubEl = document.getElementById('dash-upcoming-subtitle');
+        if (upcomingSubEl && upcomingMatches.length >= 0) {
+            const now = new Date();
+            const todayStr = now.toISOString().slice(0, 10);
+
+            // Filter matches with datetime in the future (or within the 4hr grace window still considered active)
+            const futureMatches = upcomingMatches.filter(m => {
+                const dt = new Date(m.match_datetime);
+                return dt > now;
+            });
+
+            const todayMatches = futureMatches.filter(m => {
+                const dt = new Date(m.match_datetime);
+                return dt.toISOString().slice(0, 10) === todayStr;
+            });
+
+            let subtitle = 'View your schedule';
+
+            if (todayMatches.length > 0) {
+                // Sort ascending and take the nearest
+                todayMatches.sort((a, b) => new Date(a.match_datetime) - new Date(b.match_datetime));
+                const nearest = new Date(todayMatches[0].match_datetime);
+                const diffMs = nearest - now;
+                const totalMins = Math.floor(diffMs / 60000);
+                const hrs = Math.floor(totalMins / 60);
+                const mins = totalMins % 60;
+                if (hrs > 0 && mins > 0) {
+                    subtitle = `Your next match is in ${hrs} hr${hrs > 1 ? 's' : ''} ${mins} min${mins !== 1 ? 's' : ''}`;
+                } else if (hrs > 0) {
+                    subtitle = `Your next match is in ${hrs} hr${hrs > 1 ? 's' : ''}`;
+                } else {
+                    subtitle = `Your next match is in ${mins} min${mins !== 1 ? 's' : ''}`;
+                }
+            } else if (futureMatches.length === 1) {
+                const dt = new Date(futureMatches[0].match_datetime);
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const dayName = days[dt.getDay()];
+                const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+                subtitle = `You have a match ${dayName} at ${timeStr}`;
+            } else if (futureMatches.length > 1) {
+                subtitle = `You have ${futureMatches.length} upcoming matches`;
+            }
+
+            upcomingSubEl.textContent = subtitle;
         }
     },
 
