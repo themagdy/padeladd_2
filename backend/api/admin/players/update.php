@@ -57,6 +57,15 @@ try {
                 ->execute([$userId]);
         }
 
+        require_once __DIR__ . '/../../../helpers/ranking_helper.php';
+
+        // Get old points and buffer for logging
+        $oldStatsQuery = $pdo->prepare("SELECT rank_points, current_buffer FROM player_stats WHERE user_id = ?");
+        $oldStatsQuery->execute([$userId]);
+        $oldStats = $oldStatsQuery->fetch(PDO::FETCH_ASSOC);
+        $points_before = $oldStats ? (int)($oldStats['rank_points'] ?? 0) : 0;
+        $buffer_before = $oldStats ? (int)($oldStats['current_buffer'] ?? 0) : 0;
+
         // 3. Update Player Stats (Points, Buffer)
         // Use INSERT INTO ... ON DUPLICATE KEY UPDATE in case player_stats row doesn't exist yet
         $stmtStats = $pdo->prepare("
@@ -68,6 +77,11 @@ try {
                 buffer_matches_left = VALUES(buffer_matches_left)
         ");
         $stmtStats->execute([$userId, $points, $buffer, $matchesLeft]);
+
+        // Log points change if there is a difference in points or buffer
+        if ($points !== $points_before || (int)$buffer !== $buffer_before) {
+            logPlayerPointsChange($pdo, (int)$userId, null, $points_before, $points, $points - $points_before, (int)$buffer, 'admin_override');
+        }
 
         $pdo->commit();
         jsonResponse(true, 'Player updated successfully.');

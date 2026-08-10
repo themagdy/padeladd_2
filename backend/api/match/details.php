@@ -62,7 +62,7 @@ if (!$m) {
 
 // Slot details — show rank_points (competition merit) not eligibility points
 $slotStmt = $pdo->prepare("
-    SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side,
+    SELECT mp.team_no, mp.slot_no, mp.join_type, mp.status, mp.user_id, mp.playing_side, mp.point_change,
            u.first_name, u.last_name, u.mobile,
            up.player_code, up.profile_image, up.profile_image_thumb, up.nickname, up.gender,
            IF(m.status IN ('completed', 'cancelled'), COALESCE(mp.rank_points_at_join, ps.rank_points, 0), COALESCE(ps.rank_points, 0)) AS points,

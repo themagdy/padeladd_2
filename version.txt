@@ -2116,3 +2116,8 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Database Maintenance: Cleaned local databases, removing historical matches, scores, chat, and notification records, and resetting all player stats back to skill level defaults (0 matches, 20 calibration left).
 - Eligibility Range UI Polish: Redesigned the eligibility range block inside the match details page into a premium pill-shaped badge utilizing brand-blue gradient accents, rendering the values with a uniform micro-size (11px), cleaner weight (700), and formatted text separator (to).
 - Upcoming Match Cards Eligibility Badge: Added an inline eligibility rating tag (e.g. 🎯 250 to 550) beside the competition and gender status pills inside upcoming Play and Mine match list cards.
+
+2.4.75 (Build 475) - 2026-08-10 [patch]
+- Scoring Engine Upgrades: Updated scoring points loss logic in ranking_helper.php to store combined losses (core rating points lost + buffer decay points lost) in match_players.point_change, ensuring red loss badges correctly display the total points lost for all matches (e.g. showing ↓ 13 or ↓ 28 for players capped at 0 core ranking points).
+- Moderator Panel History Logs: Added buffer delta calculation and display next to the buffer balance inside the moderator points log table in controllers.js.
+- UI Layout Optimization: Extracted the Creator Name & "Report a problem" row out of the collapsible match header wrap in view.html and controllers.js, ensuring it remains visible at all times.

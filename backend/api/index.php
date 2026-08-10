@@ -254,6 +254,9 @@ try {
         case 'profile/follow':
             require __DIR__ . '/profile/follow.php';
             break;
+        case 'points/history':
+            require __DIR__ . '/points/history.php';
+            break;
         case 'stories/list':
             require __DIR__ . '/stories/list.php';
             break;

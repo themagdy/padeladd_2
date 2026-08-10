@@ -209,7 +209,7 @@ window.AdminControllers = {
                     <td>
                         <div class="player-info-cell contact-info">
                             <span>📱 ${p.phone || 'N/A'}</span>
-                            <span>✉️ ${p.email || 'N/A'}</span>
+                            <span>${p.email || 'N/A'}</span>
                         </div>
                     </td>
                     <td style="text-transform:capitalize; font-size:13px; color:var(--c-text-muted);">${p.gender || '---'}</td>
@@ -225,6 +225,7 @@ window.AdminControllers = {
                     </td>
                     <td style="text-align:right;">
                         <div style="display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
+                            <button onclick="AdminControllers.players.openLogModal(${p.id})" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:#3b82f6; border:1px solid rgba(27, 82, 206, 0.2); padding:8px 16px; font-weight:700;">Log</button>
                             <button onclick="AdminControllers.players.openModal(${p.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 16px; font-weight:700;">Edit</button>
                             <button onclick="AdminControllers.players.toggleSuspension(${p.id}, '${p.account_status || 'active'}')" class="btn-badge" style="background:rgba(234,179,8,0.1); color:#EAB308; border:1px solid rgba(234,179,8,0.2); padding:8px 14px; font-weight:700;">
                                 ${p.account_status === 'suspended' ? '✓ Unsuspend' : '⛔ Suspend'}
@@ -303,6 +304,132 @@ window.AdminControllers = {
         },
         closeModal() {
             document.getElementById('edit-player-modal').style.display = 'none';
+        },
+        async openLogModal(userId) {
+            const p = this.allPlayers.find(x => x.id == userId);
+            if (!p) return;
+            
+            document.getElementById('log-modal-title').innerText = `Points Log - ${p.full_name || 'Player'}`;
+            const tbody = document.getElementById('points-log-list');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--c-text-muted);">Loading logs...</td></tr>';
+            
+            document.getElementById('points-log-modal').style.display = 'flex';
+            
+            try {
+                const res = await _admFetch(`../backend/api/points/history`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await res.json();
+                if (data.success && data.data && data.data.history) {
+                    const history = data.data.history;
+                    if (history.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--c-text-muted);">No history logs found.</td></tr>';
+                        return;
+                    }
+
+                    // Date Formatter: 1 Jul or 1 Jul 2026
+                    const formatLogDate = (dateStr) => {
+                        if (!dateStr) return '---';
+                        const d = new Date(dateStr);
+                        const day = d.getDate();
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        const month = months[d.getMonth()];
+                        const currentYear = new Date().getFullYear();
+                        if (d.getFullYear() === currentYear) {
+                            return `${day} ${month}`;
+                        } else {
+                            return `${day} ${month} ${d.getFullYear()}`;
+                        }
+                    };
+
+                    tbody.innerHTML = history.map((h, idx) => {
+                        let reasonLabel = h.reason;
+                        let reasonStyle = 'background:rgba(255,255,255,0.05); color:#fff; font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;';
+                        if (h.reason === 'initial_setup') {
+                            reasonLabel = 'Initial Setup';
+                        } else if (h.reason === 'admin_override') {
+                            reasonLabel = 'Admin Edit';
+                        } else if (h.reason === 'match_completion') {
+                            reasonLabel = 'Match';
+                            if (h.match && h.match.score) {
+                                const s = h.match.score;
+                                const isT1 = (userId == s.t1_p1 || userId == s.t1_p2);
+                                let t1Sets = 0, t2Sets = 0;
+                                if (s.t1_set1 > s.t2_set1) t1Sets++; else if (s.t1_set1 < s.t2_set1) t2Sets++;
+                                if (s.t1_set2 > s.t2_set2) t1Sets++; else if (s.t1_set2 < s.t2_set2) t2Sets++;
+                                if (s.t1_set3 > s.t2_set3) t1Sets++; else if (s.t1_set3 < s.t2_set3) t2Sets++;
+                                
+                                const isWin = isT1 ? (t1Sets > t2Sets) : (t2Sets > t1Sets);
+                                reasonLabel = isWin ? 'Win' : 'Loss';
+                                reasonStyle = isWin 
+                                    ? 'background:rgba(34, 197, 94, 0.15); color:#22c55e; border:1px solid rgba(34, 197, 94, 0.3); font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;' 
+                                    : 'background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.3); font-size:11px; padding:2px 6px; border-radius:4px; font-weight:700;';
+                            }
+                        }
+
+                        const changeColor = h.change_amount > 0 ? 'var(--c-green)' : (h.change_amount < 0 ? 'var(--c-red)' : 'var(--c-text-muted)');
+                        const changeSign = h.change_amount > 0 ? `+${h.change_amount}` : h.change_amount;
+                        
+                        let typeBadge = '---';
+                        if (h.match && h.match.type) {
+                            const isComp = h.match.type === 'competition' || h.match.type === 'competitive';
+                            const color = isComp ? '#f97316' : '#3b82f6';
+                            const title = isComp ? 'Competition' : 'Friendly';
+                            typeBadge = `<span style="display:inline-block; width:12px; height:12px; border:2.5px solid ${color}; border-radius:50%; vertical-align:middle; cursor:help;" title="${title}"></span>`;
+                        }
+
+                        let scoreText = '---';
+                        if (h.match && h.match.score) {
+                            const s = h.match.score;
+                            const isT1 = (userId == s.t1_p1 || userId == s.t1_p2);
+                            const set1 = isT1 ? `${s.t1_set1}-${s.t2_set1}` : `${s.t2_set1}-${s.t1_set1}`;
+                            const set2 = isT1 ? `${s.t1_set2}-${s.t2_set2}` : `${s.t2_set2}-${s.t1_set2}`;
+                            let sets = [set1, set2];
+                            if (s.t1_set3 > 0 || s.t2_set3 > 0) {
+                                const set3 = isT1 ? `${s.t1_set3}-${s.t2_set3}` : `${s.t2_set3}-${s.t1_set3}`;
+                                sets.push(set3);
+                            }
+                            scoreText = `<span style="font-family:monospace; font-weight:700; color:#fff; display:block; line-height:1.3;">${sets.join('<br>')}</span>`;
+                        }
+
+                        // Calculate buffer delta change compared to the chronologically prior log entry (which is next in the DESC sorted array)
+                        const prevLog = history[idx + 1];
+                        let bufferChangeHtml = '';
+                        if (prevLog) {
+                            const diff = h.buffer_points - prevLog.buffer_points;
+                            if (diff < 0) {
+                                bufferChangeHtml = `<span style="font-size:11px; color:#ef4444; font-weight:700; margin-left:5px;">(${diff})</span>`;
+                            } else if (diff > 0) {
+                                bufferChangeHtml = `<span style="font-size:11px; color:#22c55e; font-weight:700; margin-left:5px;">(+${diff})</span>`;
+                            }
+                        }
+
+                        return `
+                            <tr>
+                                <td><span class="status-tag" style="${reasonStyle}">${reasonLabel}</span></td>
+                                <td>${h.points_before}</td>
+                                <td>${h.points_after}</td>
+                                <td style="color:${changeColor}; font-weight:700;">${changeSign}</td>
+                                <td style="color:var(--c-orange); font-weight:700; white-space:nowrap;">${h.buffer_points || 0}${bufferChangeHtml}</td>
+                                <td>${typeBadge}</td>
+                                <td>${scoreText}</td>
+                                <td>${h.match ? `<span style="font-family:monospace; color:var(--c-primary); font-weight:800; white-space:nowrap;">${h.match.code || '---'}</span>` : '---'}</td>
+                                <td style="font-size:12px; color:var(--c-text-muted); white-space:nowrap;">${formatLogDate(h.created_at)}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--c-red);">${data.message || 'Failed to load logs.'}</td></tr>`;
+                }
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--c-red);">Error loading logs.</td></tr>';
+            }
+        },
+        closeLogModal() {
+            document.getElementById('points-log-modal').style.display = 'none';
         },
         async handleUpdate(e) {
             e.preventDefault();

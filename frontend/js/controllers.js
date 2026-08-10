@@ -4188,7 +4188,13 @@ const MatchesController = {
                     ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px; font-weight:600;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                 </div>
-                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; margin-top:4px; width:100%;">
+            `;
+        }
+
+        const disputeEl = document.getElementById('mv-creator-dispute-row');
+        if (disputeEl) {
+            disputeEl.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; width:100%;">
                     <div style="display:flex; align-items:center; gap:6px; opacity:0.8;">
                         <span>👤</span> by <span style="color:var(--c-text-blue); font-weight:700; margin-left:2px;">${match.creator_nickname || match.creator_name}</span>
                         ${match.creator_code ? `<span style="font-size:10px; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:var(--c-text-muted); text-transform:uppercase; font-family:monospace; margin-left:4px;">${match.creator_code}</span>` : ''}
@@ -4252,9 +4258,23 @@ const MatchesController = {
                 const limit = isMob ? 10 : 13;
                 const displayName = (rawName.length > limit) ? rawName.substring(0, limit - 2) + '..' : rawName;
 
+                let pointChangeBadgeHtml = '';
+                if (match.status === 'completed' && s.point_change !== null && s.point_change !== undefined) {
+                    const val = parseInt(s.point_change);
+                    if (val !== 0 && !isNaN(val)) {
+                        const bg = val > 0 ? '#064e3b' : '#450a0a';
+                        const color = val > 0 ? '#4ade80' : '#f87171';
+                        const border = val > 0 ? '1px solid rgba(74, 222, 128, 0.4)' : '1px solid rgba(248, 113, 113, 0.4)';
+                        const arrow = val > 0 ? '↑' : '↓';
+                        const text = `<span style="font-size:14px; margin-right:3px; font-weight:800; display:inline-block; vertical-align:middle; margin-top:-2px;">${arrow}</span>${Math.abs(val)}`;
+                        pointChangeBadgeHtml = `<span style="position:absolute; bottom:-5px; right:-5px; font-size:11px; font-weight:700; letter-spacing:0.3px; background:${bg}; color:${color}; padding:0 8px; border-radius:11px; border:${border}; box-shadow:0 3px 8px rgba(0,0,0,0.45); white-space:nowrap; z-index:2; display:inline-flex; align-items:center; justify-content:center; height:22px; line-height:1;">${text}</span>`;
+                    }
+                }
+
                 el.innerHTML = safeHTML(`
-                    <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:hidden;">
+                    <div class="slot-avatar" style="width:48px; height:48px; border-radius:50%; overflow:visible; position:relative;">
                         ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
+                        ${pointChangeBadgeHtml}
                     </div>
                     <div class="slot-info">
                         <div class="slot-row-top">

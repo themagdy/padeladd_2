@@ -378,12 +378,15 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
                 ? (($p['streak'] >= 0) ? $p['streak'] + 1 : 1)
                 : (($p['streak'] <= 0) ? $p['streak'] - 1 : -1);
         }
+                $points_before = (int)($p['rank_points'] ?? 0);
+        $points_after = max(0, $points_before + (int)$p['total_rank_change']);
+        $actual_change = $points_after - $points_before;
 
         $pdo->prepare("
             UPDATE player_stats
             SET current_buffer    = ?,
                 buffer_matches_left = ?,
-                rank_points       = GREATEST(0, rank_points + ?),
+                rank_points       = ?,
                 matches_played    = ?,
                 matches_won       = ?,
                 matches_lost      = ?,
@@ -395,7 +398,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
         ")->execute([
                     $p['new_current_buffer'],
                     $p['new_buffer_matches_left'],
-                    $p['total_rank_change'], // rank_points += delta + buffer bonus
+                    $points_after,
                     $new_matches,
                     $new_wins,
                     $new_losses,
@@ -405,9 +408,16 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
                     $p['user_id'],
                 ]);
 
-        // Phase 7: Store the point change in match_players for rolling 7-day stats (Additive to handle multi-score sessions)
+        logPlayerPointsChange($pdo, $p['user_id'], $match_id, $points_before, $points_after, $actual_change, (int)$p['new_current_buffer'], 'match_completion', $score_id);
+
+        // Store the combined point change in match_players for visual app badges and weekly stats
+        // Wins show the core rating points gained (which includes buffer conversion).
+        // Losses show the combined core ranking points loss + buffer decay points loss.
+        $buffer_loss = (int)$p['current_buffer'] - (int)$p['new_current_buffer'];
+        $reported_change = $p['won'] ? $actual_change : ($actual_change - $buffer_loss);
+
         $pdo->prepare("UPDATE match_players SET point_change = IFNULL(point_change, 0) + ? WHERE match_id = ? AND user_id = ?")
-            ->execute([$p['total_rank_change'], $match_id, $p['user_id']]);
+            ->execute([$reported_change, $match_id, $p['user_id']]);
 
         // Track highest ranking
         $newRank = getLiveRank($pdo, $p['user_id']);
@@ -422,3 +432,20 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
 
     return $players;
 }
+
+/**
+ * Log point changes in player_points_log table.
+ */
+function logPlayerPointsChange(PDO $pdo, int $userId, ?int $matchId, int $pointsBefore, int $pointsAfter, int $changeAmount, int $bufferPoints, string $reason, ?int $scoreId = null): bool
+{
+    $validReasons = ['initial_setup', 'match_completion', 'admin_override'];
+    if (!in_array($reason, $validReasons)) {
+        return false;
+    }
+    $stmt = $pdo->prepare("
+        INSERT INTO player_points_log (user_id, match_id, score_id, points_before, points_after, change_amount, buffer_points, reason)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    return $stmt->execute([$userId, $matchId, $scoreId, $pointsBefore, $pointsAfter, $changeAmount, $bufferPoints, $reason]);
+}
+
