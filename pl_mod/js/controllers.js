@@ -268,6 +268,7 @@ window.AdminControllers = {
             document.getElementById('edit-first-name').value = p.first_name || '';
             document.getElementById('edit-last-name').value = p.last_name || '';
             document.getElementById('edit-email').value = p.email || '';
+            document.getElementById('edit-phone').value = p.phone || '';
             document.getElementById('edit-nickname').value = p.nickname || '';
             document.getElementById('edit-gender').value = p.gender || 'male';
 
@@ -440,6 +441,7 @@ window.AdminControllers = {
                 first_name: document.getElementById('edit-first-name').value,
                 last_name: document.getElementById('edit-last-name').value,
                 email: document.getElementById('edit-email').value,
+                phone: document.getElementById('edit-phone').value,
                 nickname: document.getElementById('edit-nickname').value,
                 gender: document.getElementById('edit-gender').value,
                 rank_points: document.getElementById('edit-rank-points').value,

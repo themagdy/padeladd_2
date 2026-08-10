@@ -25,6 +25,7 @@ try {
         $firstName = $input['first_name'] ?? '';
         $lastName = $input['last_name'] ?? '';
         $email = $input['email'] ?? '';
+        $phone = trim($input['phone'] ?? '');
         $points = (int)($input['rank_points'] ?? 0);
         $buffer = (int)($input['current_buffer'] ?? 0);
         $matchesLeft = (int)($input['buffer_matches_left'] ?? 0);
@@ -34,13 +35,13 @@ try {
 
         $pdo->beginTransaction();
 
-        // 1. Update Users (Name, Email, Status)
+        // 1. Update Users (Name, Email, Phone, Status)
         $stmtUser = $pdo->prepare("
             UPDATE users 
-            SET first_name = ?, last_name = ?, email = ?, status = ? 
+            SET first_name = ?, last_name = ?, email = ?, phone = ?, status = ? 
             WHERE id = ?
         ");
-        $stmtUser->execute([$firstName, $lastName, $email, $status, $userId]);
+        $stmtUser->execute([$firstName, $lastName, $email, $phone ?: null, $status, $userId]);
 
         // 2. Update User Profiles (Nickname, Gender)
         $stmtProfile = $pdo->prepare("
