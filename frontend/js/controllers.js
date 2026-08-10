@@ -7653,7 +7653,10 @@ const RankingController = {
                 row.className = 'rank-grid-full';
                 row.setAttribute('data-player-code', r.player_code);
                 row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
-                row.onclick = () => Router.navigate('/profile/view/' + r.player_code);
+                row.onclick = () => {
+                    sessionStorage.setItem('ranking_scroll_pos', window.scrollY);
+                    Router.navigate('/profile/view/' + r.player_code);
+                };
                 row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
                 row.onmouseout = function () { this.style.background = 'transparent'; };
 
@@ -7781,6 +7784,14 @@ const RankingController = {
 
             listEl.appendChild(row);
         });
+
+        const savedScroll = sessionStorage.getItem('ranking_scroll_pos');
+        if (savedScroll !== null) {
+            setTimeout(() => {
+                window.scrollTo(0, parseInt(savedScroll));
+                sessionStorage.removeItem('ranking_scroll_pos');
+            }, 100);
+        }
     }
 
 };
