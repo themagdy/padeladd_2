@@ -4356,7 +4356,7 @@ const MatchesController = {
         if (headerSection && headerToggleWrap) {
             if (isCompleted && hasApprovedScore) {
                 // Ensure transitions and overflow styles are initialized
-                headerSection.style.transition = 'max-height 0.25s ease-out, opacity 0.25s ease-out, margin-bottom 0.25s ease-out';
+                headerSection.style.transition = 'max-height 0.25s ease-out, opacity 0.25s ease-out';
                 headerSection.style.overflow = 'hidden';
 
                 // Hide by default; restore previous preference if user toggled during this session
@@ -4365,18 +4365,16 @@ const MatchesController = {
                     headerSection.style.display = 'block';
                     headerSection.style.maxHeight = 'none';
                     headerSection.style.opacity = '1';
-                    headerSection.style.marginBottom = '20px';
                 } else {
                     headerSection.style.display = 'block';
                     headerSection.style.maxHeight = '0px';
                     headerSection.style.opacity = '0';
-                    headerSection.style.marginBottom = '0px';
                 }
 
                 headerToggleWrap.innerHTML = '';
                 const toggleBtn = document.createElement('button');
                 toggleBtn.id = 'mv-header-toggle-btn';
-                toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-top:-20px; margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
+                toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-top:-10px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
                 toggleBtn.innerHTML = wasExpanded ? '▲ Hide details' : '▼ Show details';
 
                 toggleBtn.onclick = () => {
@@ -4384,7 +4382,6 @@ const MatchesController = {
                     if (isHidden) {
                         headerSection.style.maxHeight = headerSection.scrollHeight + 'px';
                         headerSection.style.opacity = '1';
-                        headerSection.style.marginBottom = '20px';
                         headerSection.dataset.expanded = 'true';
                         toggleBtn.innerHTML = '▲ Hide details';
                         // Reset to none after transition so resizing works properly
@@ -4400,7 +4397,6 @@ const MatchesController = {
                         headerSection.offsetHeight; // force reflow
                         headerSection.style.maxHeight = '0px';
                         headerSection.style.opacity = '0';
-                        headerSection.style.marginBottom = '0px';
                         headerSection.dataset.expanded = 'false';
                         toggleBtn.innerHTML = '▼ Show details';
                     }
