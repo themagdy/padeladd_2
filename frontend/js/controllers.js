@@ -1574,20 +1574,20 @@ const DashboardController = {
                 const hrs = Math.floor(totalMins / 60);
                 const mins = totalMins % 60;
                 if (hrs > 0 && mins > 0) {
-                    subtitle = `Your next match is in ${hrs} hr${hrs > 1 ? 's' : ''} ${mins} min${mins !== 1 ? 's' : ''}`;
+                    subtitle = `Next match: ${hrs}h ${mins}m`;
                 } else if (hrs > 0) {
-                    subtitle = `Your next match is in ${hrs} hr${hrs > 1 ? 's' : ''}`;
+                    subtitle = `Next match: ${hrs}h`;
                 } else {
-                    subtitle = `Your next match is in ${mins} min${mins !== 1 ? 's' : ''}`;
+                    subtitle = `Next match: ${mins}m`;
                 }
             } else if (futureMatches.length === 1) {
                 const dt = new Date(futureMatches[0].match_datetime);
                 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 const dayName = days[dt.getDay()];
                 const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                subtitle = `You have a match ${dayName} at ${timeStr}`;
+                subtitle = `Match on ${dayName}, ${timeStr}`;
             } else if (futureMatches.length > 1) {
-                subtitle = `You have ${futureMatches.length} upcoming matches`;
+                subtitle = `${futureMatches.length} upcoming matches`;
             }
 
             upcomingSubEl.textContent = subtitle;
