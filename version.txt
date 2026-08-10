@@ -2128,3 +2128,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 
 2.4.77 (Build 477) - 2026-08-10 [patch]
 - Player Profile Pts Badge: Added a points change badge (↑ / ↓) next to the profiled player's name in each match score card on their profile page. Badge uses the same dark pill style as the match details screen (dark green/red background, colored arrow, border). Sourced from match_players.point_change via the matches/user.php endpoint.
+
+2.4.78 (Build 478) - 2026-08-10 [patch]
+- Admin Edit Player: Added Mobile Number field to the edit player popup. Admins can now view and update a user's mobile number directly from the Players admin panel. Saves to the users.mobile column in the database.
