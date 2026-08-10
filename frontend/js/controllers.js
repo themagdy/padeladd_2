@@ -3297,10 +3297,10 @@ const MatchesController = {
         let activeShadow = '0 2px 4px rgba(0,0,0,0.2)';
 
         if (btn.dataset.val === 'competition') {
-            activeBg = 'linear-gradient(135deg, rgba(197, 160, 89, 0.25) 0%, rgba(139, 101, 8, 0.15) 100%)';
-            activeColor = '#ffdf9e';
-            activeBorder = '1px solid rgba(197, 160, 89, 0.6)';
-            activeShadow = '0 4px 15px rgba(139, 101, 8, 0.2)';
+            activeBg = 'linear-gradient(135deg, #d4af37 0%, #855d0a 100%)';
+            activeColor = '#fff';
+            activeBorder = '1px solid #ffe875';
+            activeShadow = '0 4px 15px rgba(212, 175, 55, 0.25)';
         } else if (btn.textContent.includes('Women Only')) {
             activeBg = 'var(--c-pink)';
         }
