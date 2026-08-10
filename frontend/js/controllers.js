@@ -3287,13 +3287,28 @@ const MatchesController = {
             b.classList.remove('active');
             b.style.background = 'transparent';
             b.style.color = 'var(--c-text-muted)';
+            b.style.border = '1px solid transparent';
+            b.style.boxShadow = 'none';
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        if (btn.dataset.val === 'competition') activeBg = 'linear-gradient(135deg, #c5a059 0%, #9c7a3c 100%)';
-        else if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
+        let activeColor = '#fff';
+        let activeBorder = '1px solid transparent';
+        let activeShadow = '0 2px 4px rgba(0,0,0,0.2)';
+
+        if (btn.dataset.val === 'competition') {
+            activeBg = 'linear-gradient(135deg, rgba(197, 160, 89, 0.25) 0%, rgba(139, 101, 8, 0.15) 100%)';
+            activeColor = '#ffdf9e';
+            activeBorder = '1px solid rgba(197, 160, 89, 0.6)';
+            activeShadow = '0 4px 15px rgba(139, 101, 8, 0.2)';
+        } else if (btn.textContent.includes('Women Only')) {
+            activeBg = 'var(--c-pink)';
+        }
+
         btn.style.background = activeBg;
-        btn.style.color = '#fff';
+        btn.style.color = activeColor;
+        btn.style.border = activeBorder;
+        btn.style.boxShadow = activeShadow;
     },
 
     showMatchTypeInfo: function () {
