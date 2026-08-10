@@ -332,7 +332,7 @@
   #prof-level-badge {
     opacity: 0;
     transform: translate(-50%, 20px) scale(0.7) !important;
-    animation: levelBadgeSlideUp 1.5s cubic-bezier(0.25, 1, 0.50, 1) 0.6s forwards;
+    animation: levelBadgeSlideUp 0.8s cubic-bezier(0.25, 1, 0.50, 1) 0.6s forwards;
     position: absolute;
     overflow: visible;
     /* changed from hidden to allow box-shadow & border glow to pop */
@@ -348,7 +348,7 @@
     filter: blur(2px);
     opacity: 0;
     z-index: -1;
-    animation: fireGlowRotate 0.4s linear infinite, fireGlowFade 1.5s ease-out 0.6s forwards;
+    animation: fireGlowRotate 0.4s linear infinite, fireGlowFade 0.8s ease-out 0.6s forwards;
   }
 
   @keyframes levelBadgeSlideUp {
@@ -380,11 +380,11 @@
       opacity: 0;
     }
 
-    15% {
+    30% {
       opacity: 1;
     }
 
-    80% {
+    70% {
       opacity: 1;
     }
 
