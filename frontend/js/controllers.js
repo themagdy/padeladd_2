@@ -3290,7 +3290,8 @@ const MatchesController = {
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
+        if (btn.dataset.val === 'competition') activeBg = 'linear-gradient(135deg, #c5a059 0%, #9c7a3c 100%)';
+        else if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
         btn.style.background = activeBg;
         btn.style.color = '#fff';
     },
