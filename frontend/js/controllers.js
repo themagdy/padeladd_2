@@ -4374,7 +4374,7 @@ const MatchesController = {
                 headerToggleWrap.innerHTML = '';
                 const toggleBtn = document.createElement('button');
                 toggleBtn.id = 'mv-header-toggle-btn';
-                toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-top:-10px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
+                toggleBtn.style.cssText = 'width:100%; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:10px 16px; color:var(--c-text-muted); font-size:12px; font-weight:700; cursor:pointer; text-align:center; margin-top:-20px; margin-bottom:16px; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;';
                 toggleBtn.innerHTML = wasExpanded ? '▲ Hide details' : '▼ Show details';
 
                 toggleBtn.onclick = () => {
