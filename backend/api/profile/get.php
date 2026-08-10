@@ -129,6 +129,19 @@ $followingStmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id =
 $followingStmt->execute([$viewingId]);
 $followingCount = (int)$followingStmt->fetchColumn();
 
+// Fetch dynamic matches played (competition + friendly)
+$totalPlayed = 0;
+if ($stats) {
+    $countStmt = $pdo->prepare("
+        SELECT COUNT(DISTINCT mp.match_id)
+        FROM match_players mp
+        JOIN matches m ON mp.match_id = m.id
+        WHERE mp.user_id = ? AND m.status = 'completed'
+    ");
+    $countStmt->execute([$viewingId]);
+    $totalPlayed = (int)$countStmt->fetchColumn();
+}
+
 jsonResponse(true, 'Profile loaded.', [
     'user' => [
         'id'         => $u['id'],
@@ -155,7 +168,7 @@ jsonResponse(true, 'Profile loaded.', [
     'stats' => $stats ? [
         'points'           => (int)($stats['rank_points'] ?? 0),  // competition points for display
         'eligibility_pts'  => (int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0),     // total points (buffer + earned) for eligibility
-        'matches_played'   => (int)$stats['matches_played'],
+        'matches_played'   => $totalPlayed,
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
         'ranking'          => $currentRanking,

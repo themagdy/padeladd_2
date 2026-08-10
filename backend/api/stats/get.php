@@ -27,10 +27,22 @@ if ($stats) {
     $pointsThisWeek = (int)$rollingStmt->fetchColumn();
 }
 
+$totalPlayed = 0;
+if ($stats) {
+    $countStmt = $pdo->prepare("
+        SELECT COUNT(DISTINCT mp.match_id)
+        FROM match_players mp
+        JOIN matches m ON mp.match_id = m.id
+        WHERE mp.user_id = ? AND m.status = 'completed'
+    ");
+    $countStmt->execute([$user['id']]);
+    $totalPlayed = (int)$countStmt->fetchColumn();
+}
+
 jsonResponse(true, 'Stats loaded.', [
     'points'           => $stats ? (int)($stats['rank_points'] ?? 0) : 0, // competition points (display/ranking)
     'eligibility_pts'  => $stats ? ((int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0)) : 100,           // total points for eligibility logic
-    'matches_played'   => $stats ? (int)$stats['matches_played'] : 0,
+    'matches_played'   => $totalPlayed,
     'matches_won'      => $stats ? (int)$stats['matches_won'] : 0,
     'matches_lost'     => $stats ? (int)$stats['matches_lost'] : 0,
     'ranking'          => $stats ? $stats['ranking'] : null,
