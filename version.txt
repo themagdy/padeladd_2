@@ -2125,3 +2125,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 2.4.76 (Build 476) - 2026-08-10 [patch]
 - Competition Match Type Button: Restyled the active Competition toggle button on the Create Match screen with a premium dark gold gradient fill (linear-gradient(135deg, #a17012 0%, #543908 100%)) and a 🏆 trophy icon for a distinctive premium look.
 - Dashboard MY MATCHES Subtitle: Replaced the static "View your schedule" subtitle with a dynamic contextual label based on the user's upcoming matches — "Next match: 4h 45m" when a match is today, "Match on Monday, 5:00 PM" for a single future match, "3 upcoming matches" for multiple future matches, and the original fallback when none exist.
+
+2.4.77 (Build 477) - 2026-08-10 [patch]
+- Player Profile Pts Badge: Added a points change badge (↑ / ↓) next to the profiled player's name in each match score card on their profile page. Badge uses the same dark pill style as the match details screen (dark green/red background, colored arrow, border). Sourced from match_players.point_change via the matches/user.php endpoint.
