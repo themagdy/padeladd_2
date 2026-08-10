@@ -2184,7 +2184,6 @@ const ProfileViewController = {
                 const buf = stats.current_buffer ?? 0;
                 const calculatedLevel = ((pts + buf) / 100).toFixed(1);
                 levelBadge.textContent = calculatedLevel;
-                levelBadge.style.display = 'flex';
             }
 
             // Stats cards
