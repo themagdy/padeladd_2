@@ -4356,7 +4356,7 @@ const MatchesController = {
         if (headerSection && headerToggleWrap) {
             if (isCompleted && hasApprovedScore) {
                 // Ensure transitions and overflow styles are initialized
-                headerSection.style.transition = 'max-height 0.25s ease-out, opacity 0.25s ease-out';
+                headerSection.style.transition = 'max-height 0.25s ease-out, opacity 0.25s ease-out, margin-bottom 0.25s ease-out';
                 headerSection.style.overflow = 'hidden';
 
                 // Hide by default; restore previous preference if user toggled during this session
@@ -4365,10 +4365,12 @@ const MatchesController = {
                     headerSection.style.display = 'block';
                     headerSection.style.maxHeight = 'none';
                     headerSection.style.opacity = '1';
+                    headerSection.style.marginBottom = '20px';
                 } else {
                     headerSection.style.display = 'block';
                     headerSection.style.maxHeight = '0px';
                     headerSection.style.opacity = '0';
+                    headerSection.style.marginBottom = '0px';
                 }
 
                 headerToggleWrap.innerHTML = '';
@@ -4382,6 +4384,7 @@ const MatchesController = {
                     if (isHidden) {
                         headerSection.style.maxHeight = headerSection.scrollHeight + 'px';
                         headerSection.style.opacity = '1';
+                        headerSection.style.marginBottom = '20px';
                         headerSection.dataset.expanded = 'true';
                         toggleBtn.innerHTML = '▲ Hide details';
                         // Reset to none after transition so resizing works properly
@@ -4397,6 +4400,7 @@ const MatchesController = {
                         headerSection.offsetHeight; // force reflow
                         headerSection.style.maxHeight = '0px';
                         headerSection.style.opacity = '0';
+                        headerSection.style.marginBottom = '0px';
                         headerSection.dataset.expanded = 'false';
                         toggleBtn.innerHTML = '▼ Show details';
                     }
