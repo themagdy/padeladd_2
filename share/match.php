@@ -13,8 +13,8 @@ require_once __DIR__ . '/../backend/core/config.php';
 $matchCode = strtoupper(trim($_GET['code'] ?? ''));
 
 // Defaults
-$ogTitle       = 'PadelAdd – Play Padel';
-$ogDescription = 'Join the padel community. Book, play, and track your matches.';
+$ogTitle       = 'Padeladd – Compete. Climb. Dominate.';
+$ogDescription = 'Join the padel community. Play, rank, and track your matches.';
 $ogImage       = 'https://padeladd.com/assets/padeladd_share_thumb.jpg';
 $appDeepLink   = 'https://padeladd.com';
 $canonicalUrl  = 'https://padeladd.com';
@@ -59,8 +59,8 @@ if (!empty($matchCode)) {
 
             // Title
             $ogTitle = $isCompleted
-                ? "Watch PadelAdd Match {$code}"
-                : "Join my PadelAdd Match";
+                ? "Watch Padeladd Match {$code}"
+                : "Join my Padeladd Match";
 
             // Description: type • venue • date/time
             $ogDescription = "{$matchType} • {$venue} • {$dateStr}";
@@ -100,7 +100,7 @@ if (!$isCrawler) {
     <meta property="og:image"        content="<?= htmlspecialchars($ogImage) ?>">
     <meta property="og:image:width"  content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:site_name"    content="PadelAdd">
+    <meta property="og:site_name"    content="Padeladd">
 
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image">
