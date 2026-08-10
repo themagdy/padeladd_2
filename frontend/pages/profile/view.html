@@ -20,7 +20,7 @@
             <div id="prof-ring" class="story-ring-overlay" style="display:none;"></div>
             <!-- Level Badge -->
             <div id="prof-level-badge"
-              style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg, rgba(80,80,90,0.95) 0%, rgba(45,45,55,0.92) 50%, rgba(20,20,28,0.90) 100%); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:#fff; font-weight:900; font-family:'Outfit', 'Montserrat', sans-serif; font-size:16px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:0.75px solid rgba(255,255,255,0.18); box-shadow:0 0 0 3px var(--c-bg, #0b0e11), 0 6px 16px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.12); text-shadow:0 1px 2px rgba(0,0,0,0.5); z-index:110; letter-spacing:-0.5px; padding:0; line-height:1;">
+              style="position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg, rgba(80,80,90,0.95) 0%, rgba(45,45,55,0.92) 50%, rgba(20,20,28,0.90) 100%); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); color:#fff; font-weight:900; font-family:'Outfit', 'Montserrat', sans-serif; font-size:16px; width:36px; height:36px; border-radius:50%; display:none; align-items:center; justify-content:center; border:0.75px solid rgba(255,255,255,0.18); box-shadow:0 0 0 3px var(--c-bg, #0b0e11), 0 6px 16px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.12); text-shadow:0 1px 2px rgba(0,0,0,0.5); z-index:110; letter-spacing:-0.5px; padding:0; line-height:1;">
               —</div>
 
           </div>
@@ -330,6 +330,63 @@
     font-size: 36px;
   }
 
+  /* Level Badge Entrance Animation with Minimal Fire Glow */
+  #prof-level-badge {
+    opacity: 0;
+    transform: translate(-50%, 35px) scale(0.7) !important;
+    animation: levelBadgeSlideUp 1.5s cubic-bezier(0.25, 1, 0.50, 1) 0.6s forwards;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  /* Minimal Fire/Heat Flow overlay inside the badge during entrance */
+  #prof-level-badge::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, #ff5e00, #ffb300, #ff5e00, transparent);
+    filter: blur(2px);
+    opacity: 0;
+    z-index: -1;
+    animation: fireGlowEntrance 1.5s ease-out 0.6s forwards;
+  }
+
+  @keyframes levelBadgeSlideUp {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, 35px) scale(0.7);
+      box-shadow: 0 0 0 0px rgba(255, 94, 0, 0);
+    }
+    40% {
+      opacity: 0.8;
+      box-shadow: 0 0 15px 4px rgba(255, 94, 0, 0.4);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+      box-shadow: 0 0 0 3px var(--c-bg, #0b0e11), 0 6px 16px rgba(0,0,0,0.65);
+    }
+  }
+
+  @keyframes fireGlowEntrance {
+    0% {
+      opacity: 0;
+      transform: rotate(0deg) scale(0.8);
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 0.8;
+      transform: rotate(360deg) scale(1.1);
+    }
+    100% {
+      opacity: 0.2;
+      transform: rotate(480deg) scale(1);
+    }
+  }
+
   /* Avatar Rich Animation */
   .v-avatar {
     position: relative;
@@ -413,24 +470,6 @@
     100% {
       opacity: 0;
       transform: scale(1.5);
-    }
-  }
-
-  /* Level Badge Entrance Animation */
-  #prof-level-badge {
-    opacity: 0;
-    transform: translate(-50%, 20px) scale(0.6) !important;
-    animation: levelBadgeAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s forwards;
-  }
-
-  @keyframes levelBadgeAppear {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, 20px) scale(0.6);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(-50%, 0) scale(1);
     }
   }
 
