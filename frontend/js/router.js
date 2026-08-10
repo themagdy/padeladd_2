@@ -456,7 +456,10 @@ const Router = {
                         el.textContent = CONFIG.APP_BUILD_REF;
                     });
                 }
-                window.scrollTo(0, 0);
+                // Skip scrolling to top if we have a saved ranking scroll position to restore
+                if (!sessionStorage.getItem('ranking_scroll_pos') || path !== '/ranking') {
+                    window.scrollTo(0, 0);
+                }
 
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {
