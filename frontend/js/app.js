@@ -779,7 +779,7 @@ const ScoreUI = {
                         const color = pts > 0 ? '#4ade80' : '#f87171';
                         const border = pts > 0 ? '1px solid rgba(74,222,128,0.4)' : '1px solid rgba(248,113,113,0.4)';
                         const arrow = pts > 0 ? '↑' : '↓';
-                        badge = `<span style="font-size:10px; font-weight:700; letter-spacing:0.3px; background:${bg}; color:${color}; padding:0 6px; border-radius:10px; border:${border}; box-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; display:inline-flex; align-items:center; height:18px; line-height:1; margin-left:5px; vertical-align:middle;"><span style="font-size:11px; margin-right:2px; font-weight:800;">${arrow}</span>${Math.abs(pts)}</span>`;
+                        badge = `<span style="font-size:10px; font-weight:700; letter-spacing:0.3px; background:${bg}; color:${color}; padding:0 6px; border-radius:10px; border:${border}; box-shadow:0 2px 6px rgba(0,0,0,0.4); white-space:nowrap; display:inline-flex; align-items:center; height:18px; line-height:1; margin-left:3px; vertical-align:middle;"><span style="font-size:11px; margin-right:2px; font-weight:800;">${arrow}</span>${Math.abs(pts)}</span>`;
                     }
                 }
                 return `<span class="msc-premium-player-name">${p.name}</span>${badge}`;
