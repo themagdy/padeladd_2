@@ -2183,12 +2183,7 @@ const ProfileViewController = {
                 const pts = stats.points ?? 0;
                 const buf = stats.current_buffer ?? 0;
                 const calculatedLevel = ((pts + buf) / 100).toFixed(1);
-                const spanEl = levelBadge.querySelector('span');
-                if (spanEl) {
-                    spanEl.textContent = calculatedLevel;
-                } else {
-                    levelBadge.textContent = calculatedLevel;
-                }
+                levelBadge.textContent = calculatedLevel;
                 levelBadge.style.display = 'flex';
             }
 
