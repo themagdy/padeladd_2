@@ -8,22 +8,8 @@
 
 require_once __DIR__ . '/../backend/core/db.php';
 
-// Extract match code from URL path: /share/M-334
-$pathParts = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-// Last non-empty segment is the match code
-$matchCode = '';
-foreach (array_reverse($pathParts) as $part) {
-    $part = strtok($part, '?'); // strip query string
-    if (!empty($part) && $part !== 'share') {
-        $matchCode = strtoupper(trim($part));
-        break;
-    }
-}
-
-// If accessed as /share/match.php?code=M-334 fallback
-if (empty($matchCode) && isset($_GET['code'])) {
-    $matchCode = strtoupper(trim($_GET['code']));
-}
+// Match code is passed as ?code=M-XXX by the .htaccess rewrite rule
+$matchCode = strtoupper(trim($_GET['code'] ?? ''));
 
 // Defaults
 $ogTitle       = 'PadelAdd – Play Padel';

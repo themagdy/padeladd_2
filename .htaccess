@@ -15,7 +15,7 @@
     Header set X-XSS-Protection "1; mode=block"
 
     # Route /share/MATCH-CODE to the social share PHP page
-    RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php [QSA,L]
+    RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php?code=$1 [QSA,L]
 
     # Handle SPA routing - relative to wherever .htaccess is placed
     RewriteCond %{REQUEST_FILENAME} !-f
