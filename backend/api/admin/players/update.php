@@ -35,10 +35,10 @@ try {
 
         $pdo->beginTransaction();
 
-        // 1. Update Users (Name, Email, Phone, Status)
+        // 1. Update Users (Name, Email, Mobile, Status)
         $stmtUser = $pdo->prepare("
             UPDATE users 
-            SET first_name = ?, last_name = ?, email = ?, phone = ?, status = ? 
+            SET first_name = ?, last_name = ?, email = ?, mobile = ?, status = ? 
             WHERE id = ?
         ");
         $stmtUser->execute([$firstName, $lastName, $email, $phone ?: null, $status, $userId]);
