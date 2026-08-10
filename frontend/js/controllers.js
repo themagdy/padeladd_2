@@ -4236,7 +4236,7 @@ const MatchesController = {
                     <div style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
                         <span>🗓</span> ${dateStr} <span style="opacity:0.3; margin:0 2px;">•</span> ${timeStr}
                     </div>
-                    ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${match.duration_minutes} min</div>` : ''}
+                    ${match.duration_minutes ? `<div style="display:flex; align-items:center; gap:6px;"><span>⏱</span> ${(match.duration_minutes / 60).toFixed(1).replace('.0', '')} hrs</div>` : ''}
                     ${match.court_name ? `<div style="display:flex; align-items:center; gap:6px; font-weight:600;"><span style="opacity:0.6;">🎾</span> Court: ${match.court_name}</div>` : ''}
                 </div>
             `;
