@@ -3287,28 +3287,13 @@ const MatchesController = {
             b.classList.remove('active');
             b.style.background = 'transparent';
             b.style.color = 'var(--c-text-muted)';
-            b.style.border = '1px solid transparent';
-            b.style.boxShadow = 'none';
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        let activeColor = '#fff';
-        let activeBorder = '1px solid transparent';
-        let activeShadow = '0 2px 4px rgba(0,0,0,0.2)';
-
-        if (btn.dataset.val === 'competition') {
-            activeBg = 'linear-gradient(135deg, #996515 0%, #5d3e09 100%)';
-            activeColor = '#fff';
-            activeBorder = '1px solid #b8860b';
-            activeShadow = '0 4px 15px rgba(93, 62, 9, 0.25)';
-        } else if (btn.textContent.includes('Women Only')) {
-            activeBg = 'var(--c-pink)';
-        }
-
+        if (btn.dataset.val === 'competition') activeBg = 'linear-gradient(135deg, #996515 0%, #5d3e09 100%)';
+        else if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
         btn.style.background = activeBg;
-        btn.style.color = activeColor;
-        btn.style.border = activeBorder;
-        btn.style.boxShadow = activeShadow;
+        btn.style.color = '#fff';
     },
 
     showMatchTypeInfo: function () {
@@ -4576,7 +4561,7 @@ const MatchesController = {
 
                                 const submitterId = parseInt(s.submitted_by_user_id);
                                 const approvalsList = s.approvals || [];
-                                
+
                                 const pendingPlayers = slots
                                     .filter(sl => sl.status === 'confirmed')
                                     .filter(sl => {
