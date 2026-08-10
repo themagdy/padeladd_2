@@ -2145,3 +2145,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Navigation Label: Renamed "Ranking" labels to "Rank".
 - Mobile spacing slot adjustments.
 - Match Social Share: WhatsApp/social previews OG tags with automatic deep-links.
+- Ranking List Scroll Restoration: Implemented click-based scroll position saving and automated restoration using a clean sessionStorage pattern when navigating back from player profile views.

@@ -7787,10 +7787,10 @@ const RankingController = {
 
         const savedScroll = sessionStorage.getItem('ranking_scroll_pos');
         if (savedScroll !== null) {
-            requestAnimationFrame(() => {
+            setTimeout(() => {
                 window.scrollTo(0, parseInt(savedScroll));
                 sessionStorage.removeItem('ranking_scroll_pos');
-            });
+            }, 100);
         }
     }
 
