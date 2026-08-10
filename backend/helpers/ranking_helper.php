@@ -81,9 +81,9 @@ function getNewPlayerFactor(PDO $pdo, int $user_id): float
     $stmt->execute([$user_id]);
     $count = (int) $stmt->fetchColumn();
 
-    if ($count <= 5)
+    if ($count <= 10)
         return 2.0;
-    if ($count <= 15)
+    if ($count <= 20)
         return 1.2;
     return 1.0;
 }
