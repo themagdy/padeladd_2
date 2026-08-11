@@ -149,9 +149,15 @@ foreach ($matches as $m) {
     $status = $m['status'];
     if (in_array($m['status'], ['open', 'full', 'on_hold'])) {
         $matchTime = strtotime($m['match_datetime']);
-        $cutoff    = time() - (4 * 3600); // 4 hours ago
-        if ($matchTime > $cutoff) {
-            $status = 'upcoming';
+        if ($m['status'] === 'open') {
+            if ($matchTime > time()) {
+                $status = 'upcoming';
+            }
+        } else {
+            $cutoff = time() - (4 * 3600); // 4 hours ago
+            if ($matchTime > $cutoff) {
+                $status = 'upcoming';
+            }
         }
     }
 
