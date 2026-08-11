@@ -6319,14 +6319,21 @@ const ChatController = {
             return lastSeenTime >= (msgTime - 5000);
         });
 
-        if (seenPlayers.length === 0) return;
+        if (seenPlayers.length === 0) {
+            lastGroup.style.marginBottom = '16px';
+            return;
+        }
+
+        // Apply a larger margin bottom to the last group to accommodate the seen row without pushing other items
+        lastGroup.style.marginBottom = '46px';
+        col.style.position = 'relative';
 
         // Render seen container
         const seenContainer = document.createElement('div');
         seenContainer.className = 'chat-seen-by-container';
         
         const isMeSender = senderId === (this._viewerId || 0);
-        seenContainer.style.cssText = `display:flex; align-items:center; gap:6px; font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; margin-bottom: 2px;` + (isMeSender ? 'align-self:flex-end; justify-content:flex-end;' : 'align-self:flex-start; justify-content:flex-start;');
+        seenContainer.style.cssText = `position:absolute; bottom:-30px; display:flex; align-items:center; gap:6px; font-size:11px; color:rgba(255,255,255,0.4); white-space:nowrap;` + (isMeSender ? 'right:0;' : 'left:0;');
 
         let avatarsHtml = '';
         seenPlayers.forEach(p => {
@@ -6334,12 +6341,12 @@ const ChatController = {
             const thumb = p.profile_image_thumb || p.profile_image;
             
             const avatarImg = thumb 
-                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:16px; height:16px; border-radius:50%; object-fit:cover; border:1px solid var(--c-bg); margin-left:-4px;" title="${p.nickname || p.first_name || 'Player'}">`
-                : `<div style="width:16px; height:16px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:8px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1px solid var(--c-bg); margin-left:-4px;" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; border:1.5px solid var(--c-bg); margin-left:-6px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">`
+                : `<div style="width:22px; height:22px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--c-bg); margin-left:-6px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
             avatarsHtml += avatarImg;
         });
 
-        seenContainer.innerHTML = `<span style="font-size:10px; color:rgba(255,255,255,0.35);">Seen by</span> <div style="display:flex; align-items:center; padding-left:4px;">${avatarsHtml}</div>`;
+        seenContainer.innerHTML = `<span style="font-size:11px; color:rgba(255,255,255,0.35); font-weight:500;">Seen by</span> <div style="display:flex; align-items:center; padding-left:6px; margin-right:4px;">${avatarsHtml}</div>`;
         col.appendChild(seenContainer);
     },
 
