@@ -3904,7 +3904,7 @@ const MatchesController = {
         const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
 
         if (!isCompletedTab && m.eligible_min !== undefined && m.eligible_max !== undefined) {
-            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#7da7ff; padding:2px 6px; border-radius:4px; margin-right:4px;"><span style="display:inline-block; width:6px; height:6px; background:#2ecc71; border-radius:50%; margin-right:5px; vertical-align:middle; margin-top:-2px;"></span>${m.eligible_min} to ${m.eligible_max}</span>`;
+            typeBadges += `<span style="display:inline-block; font-size:10px; font-weight:700; background:rgba(27, 82, 206, 0.15); color:#7da7ff; padding:2px 6px; border-radius:4px; margin-right:4px;"><span style="display:inline-block; width:6px; height:6px; background:#2ecc71; border-radius:50%; margin-right:5px; vertical-align:middle; margin-top:-2px;"></span>${m.eligible_min} to ${m.eligible_max} pts</span>`;
         }
 
         // If completed and has ANY score, use the EXACT Dashboard template (ONLY for Completed tabs)
