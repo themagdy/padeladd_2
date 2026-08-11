@@ -4100,6 +4100,7 @@ const MatchesController = {
         MatchesController._currentMatchSlots = slots;
         MatchesController._currentMatchWaitlist = waiting_list;
         MatchesController._currentUserSide = res.data.user_playing_side;
+        MatchesController._myWaitlistEntry = my_waitlist_entry;
 
 
         // Collect all IDs currently in the match or waiting list
@@ -5557,19 +5558,60 @@ const MatchesController = {
     },
 
     jumpIn: async function (waitlist_id, match_id, btn) {
-        let oldText = btn.innerText;
-        btn.disabled = true;
-        btn.innerText = '…';
+        const isSolo = this._myWaitlistEntry && !this._myWaitlistEntry.partner_id;
+        const emptySlotsCount = document.querySelectorAll('.mv-slot.slot-empty').length;
 
-        const res = await API.post('/match/jump-in', { waitlist_id, match_id });
+        if (isSolo && emptySlotsCount > 1) {
+            btn.disabled = true;
+            btn.innerText = 'Select a spot ↑';
+
+            const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
+            emptySlots.forEach(el => {
+                el.innerText = 'Jump here';
+                el.style.cursor = 'pointer';
+                el.classList.add('pulse-selection');
+
+                const parts = el.id.split('-');
+                const team = parseInt(parts[1].replace('team', ''));
+                const slot = parseInt(parts[2].replace('slot', ''));
+
+                el.onclick = () => {
+                    if (MatchesController._soloSelectionTimeout) {
+                        clearTimeout(MatchesController._soloSelectionTimeout);
+                        MatchesController._soloSelectionTimeout = null;
+                    }
+                    MatchesController.performJumpIn(waitlist_id, match_id, el, team, slot);
+                };
+            });
+
+            if (this._soloSelectionTimeout) clearTimeout(this._soloSelectionTimeout);
+            this._soloSelectionTimeout = setTimeout(() => {
+                this.cancelSelectionMode();
+            }, 3000);
+            return;
+        }
+
+        this.performJumpIn(waitlist_id, match_id, btn);
+    },
+
+    performJumpIn: async function (waitlist_id, match_id, btn, team_no = null, slot_no = null) {
+        if (btn) {
+            btn.disabled = true;
+            if (btn.classList.contains('mv-slot')) {
+                btn.innerText = '...';
+            } else {
+                btn.innerText = '…';
+            }
+        }
+
+        const res = await API.post('/match/jump-in', { waitlist_id, match_id, team_no, slot_no });
         if (res && res.success) {
             Toast.show('You joined the match! ⚡', 'success');
-            // Refresh view
             await MatchesController.loadDetails({ match_id: match_id }, true);
         } else {
             Toast.show(res ? res.message : 'Could not jump in', 'error');
-            btn.disabled = false;
-            btn.innerText = oldText;
+            MatchesController.cancelSelectionMode();
+            await MatchesController.loadDetails({ match_id: match_id }, true);
         }
     }
 };
