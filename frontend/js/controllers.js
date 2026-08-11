@@ -2522,7 +2522,7 @@ const ProfileController = {
     reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({
             title: 'Report player conduct',
-            message: 'Please choose the category that best describes your report.',
+            message: '',
             showInput: true,
             inputType: 'radio',
             inputMaxLength: 300,
@@ -7329,7 +7329,7 @@ const ScoringController = {
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
             title: targetUserId ? 'Report player conduct' : 'Report an issue',
-            message: 'Please choose the category that best describes your report.',
+            message: '',
             showInput: true,
             inputType: 'radio',
             inputMaxLength: 300,

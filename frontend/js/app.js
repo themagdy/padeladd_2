@@ -183,7 +183,11 @@ var ConfirmModal = {
                             ${optionsHtml}
                         </div>
                         <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:16px; width:100%;">
-                            <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none;" rows="3"></textarea>
+                            <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none; margin-bottom:4px;" rows="3"></textarea>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; padding:0 4px;">
+                                <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
+                                <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
+                            </div>
                         </div>
                     `;
                 } else {
@@ -193,7 +197,7 @@ var ConfirmModal = {
                 }
             }
 
-            if (showInput) {
+            if (showInput && inputType !== 'radio') {
                 inputHtml += `
                     <div style="display:${inputType === 'password' ? 'none' : 'flex'}; justify-content:space-between; margin-bottom:24px; padding:0 4px;">
                         <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
