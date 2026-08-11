@@ -1313,9 +1313,16 @@ const AuthController = {
 // -------------------------------------------------------
 const DashboardController = {
     _announcementsCache: null,
+    _announcementsInterval: null,
     _allMatches: [],
     _currentMatchTab: 'completed',
     _currentRankTab: 'male',
+    stop: function () {
+        if (this._announcementsInterval) {
+            clearInterval(this._announcementsInterval);
+            this._announcementsInterval = null;
+        }
+    },
     _currentUser: null,
     _currentProfile: null,
     _cache: {}, // Stores user profile and recent matches
@@ -1433,6 +1440,8 @@ const DashboardController = {
                     <span class="indicator ${idx === 0 ? 'active' : ''}" onclick="const c = document.getElementById('announcements-carousel'); c.scrollTo({ left: c.children[${idx}].offsetLeft, behavior: 'smooth' })"></span>
                 `).join('');
 
+                let currentIndex = 0;
+
                 // Update indicator active class on scroll
                 carousel.onscroll = () => {
                     const width = carousel.offsetWidth;
@@ -1453,12 +1462,34 @@ const DashboardController = {
                     indicators.forEach((ind, idx) => {
                         if (idx === activeIndex) {
                             ind.classList.add('active');
+                            currentIndex = activeIndex; // Sync auto-loop with manual scrolling position
                         } else {
                             ind.classList.remove('active');
                         }
                     });
                 };
+
+                // Clear any existing carousel loop before starting a new one
+                if (DashboardController._announcementsInterval) {
+                    clearInterval(DashboardController._announcementsInterval);
+                }
+
+                // Autoplay every 4 seconds
+                DashboardController._announcementsInterval = setInterval(() => {
+                    const c = document.getElementById('announcements-carousel');
+                    if (!c || c.children.length === 0) {
+                        clearInterval(DashboardController._announcementsInterval);
+                        DashboardController._announcementsInterval = null;
+                        return;
+                    }
+                    currentIndex = (currentIndex + 1) % list.length;
+                    c.scrollTo({ left: c.children[currentIndex].offsetLeft, behavior: 'smooth' });
+                }, 4000);
             } else {
+                if (DashboardController._announcementsInterval) {
+                    clearInterval(DashboardController._announcementsInterval);
+                    DashboardController._announcementsInterval = null;
+                }
                 indicatorsContainer.innerHTML = '';
             }
         };
