@@ -2146,3 +2146,12 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Mobile spacing slot adjustments.
 - Match Social Share: WhatsApp/social previews OG tags with automatic deep-links.
 - Ranking List Scroll Restoration: Implemented click-based scroll position saving and automated restoration using a clean sessionStorage pattern when navigating back from player profile views.
+
+2.4.82 (Build 482) - 2026-08-11 [patch]
+- Match Reporting: Implemented match player selection dropdown inside the match details report issue modal. Toggles dynamically underneath selected category option. None of the radio options are pre-selected on open.
+- Admin Panel: Added target reported player column inside Match Reports listing. Fetches target nickname and code via list API query joins.
+- Admin Panel: Added "Details" modal popup to view complete details of any report.
+- Admin Panel: Added permanent delete report action with a dedicated delete API.
+- UI Polish: Set toast notification container z-index to 999999 so notification alerts render on top of popups/modals.
+- UI Polish: Changed report modal header to a compact single-row layout and reduced nested margins to eliminate empty space.
+
