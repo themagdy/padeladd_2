@@ -4487,7 +4487,7 @@ const MatchesController = {
                                     <div style="font-size:16px;">⚠️</div>
                                     <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Withdrawal)</div>
                                 </div>
-                                <div style="font-size:14px; line-height:1.4; color:var(--c-text);">
+                                <div style="font-size:12px; line-height:1.4; color:var(--c-text);">
                                     ${clickableUser}${codeTag} left the match within the 5-hour.
                                     ${lwReason ? `<div style="margin-top:8px; padding-left:12px; border-left:2px solid rgba(255,59,48,0.2); font-style:italic; color:var(--c-text-muted); font-size:13px;">"${lwReason}"</div>` : ''}
                                 </div>
@@ -4503,7 +4503,7 @@ const MatchesController = {
                                     <div style="font-size:16px;">🚫</div>
                                     <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Cancellation)</div>
                                 </div>
-                                <div style="font-size:14px; line-height:1.4; color:var(--c-text);">
+                                <div style="font-size:12px; line-height:1.4; color:var(--c-text);">
                                     This match was cancelled within the 5-hour by the creator.
                                 </div>
                                 <div style="margin-top:12px; padding-top:10px; font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Player may receive a violation/ban.</div>
