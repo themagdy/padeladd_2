@@ -3234,7 +3234,7 @@ const MatchesController = {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
                             partnerInput.value = q; // Standardize value to just the code
-                            partnerHelp.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`); partnerHelp.style.color = "var(--c-primary)";
+                            partnerHelp.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`); partnerHelp.style.color = "var(--c-text-blue)";
                         } else {
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
@@ -5085,7 +5085,7 @@ const MatchesController = {
 
                         input.value = q;
                         help.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`);
-                        help.style.color = "var(--c-primary)";
+                        help.style.color = "var(--c-text-blue)";
                     } else {
                         help.textContent = (res && res.message) ? res.message : "Player not found";
                         help.style.color = "var(--c-danger)";
