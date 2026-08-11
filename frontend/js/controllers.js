@@ -7332,11 +7332,11 @@ const ScoringController = {
         // If targetUserId is not already provided (meaning reported from Match Details page),
         // let the user select which player they want to report.
         if (!targetUserId && typeof MatchesController !== 'undefined' && MatchesController._currentMatchSlots) {
-            const currentUserId = Auth.getUserId();
+            const currentUserId = typeof Auth !== 'undefined' ? Auth.getUserId() : null;
             const otherPlayers = MatchesController._currentMatchSlots
-                .filter(s => s.status === 'confirmed' && parseInt(s.user_id) !== parseInt(currentUserId))
+                .filter(s => s && s.user_id && parseInt(s.user_id) !== parseInt(currentUserId))
                 .map(s => ({
-                    id: s.user_id,
+                    id: parseInt(s.user_id),
                     name: s.nickname || s.name || (s.first_name + ' ' + s.last_name)
                 }));
             if (otherPlayers.length > 0) {
