@@ -161,7 +161,7 @@ var ConfirmModal = {
             let inputHtml = '';
             if (showInput) {
                 if (inputType === 'radio') {
-                    let playerOptions = '';
+                    let playerOptions = '<option value="" disabled selected hidden>Select Player</option>';
                     if (playersList && Array.isArray(playersList)) {
                         playersList.forEach(p => {
                             playerOptions += `<option value="${p.id}">${p.name}</option>`;
@@ -306,6 +306,13 @@ var ConfirmModal = {
                             }
                             resolvedValue = 'Other: ' + details;
                         } else {
+                            if (playersList && Array.isArray(playersList)) {
+                                const sel = this._modal.querySelector('#gcm-player-select');
+                                if (!sel || sel.value === '') {
+                                    Toast.show('Please select a player.', 'error');
+                                    return;
+                                }
+                            }
                             resolvedValue = selectedVal;
                         }
                     } else {
