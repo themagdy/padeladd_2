@@ -188,7 +188,7 @@ var ConfirmModal = {
                             ${playersList && Array.isArray(playersList) ? `
                             <div id="gcm-radio-player-wrap" style="display:none; margin-bottom:16px; width:100%; padding-left:28px; box-sizing:border-box;">
                                 <label style="color:rgba(255,255,255,0.6); display:block; text-align:left; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:6px; font-family:var(--font);">Select Player</label>
-                                <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98); color:#fff; border-radius:12px; padding:12px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
+                                <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98) url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B9BB4' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E&quot;) no-repeat right 16px center; appearance:none; -webkit-appearance:none; color:#fff; border-radius:12px; padding:14px 44px 14px 16px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
                                     ${playerOptions}
                                 </select>
                             </div>
