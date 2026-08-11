@@ -96,7 +96,7 @@ try {
         jsonResponse(false, 'Creators cannot leave their own match. Please cancel the match instead.', null, 403);
     }
 
-    // ── 6-hour enforcement (Removed hard block, now only used for audit) ──
+    // ── 5-hour enforcement (Removed hard block, now only used for audit) ──
     $matchTime  = strtotime($match['match_datetime']);
     $now        = time();
     $hoursUntil = ($matchTime - $now) / 3600;

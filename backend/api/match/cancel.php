@@ -96,7 +96,7 @@ try {
     $affectedUsers = array_column($playersStmt->fetchAll(PDO::FETCH_ASSOC), 'user_id');
     $playerCount   = count($affectedUsers);
 
-    // ── 6-hour enforcement ──────────────────────────────────────────────
+    // ── 5-hour enforcement ──────────────────────────────────────────────
     $matchTime  = strtotime($match['match_datetime']);
     $now        = time();
     $hoursUntil = ($matchTime - $now) / 3600;
