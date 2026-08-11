@@ -3216,14 +3216,14 @@ const MatchesController = {
         const partnerHelp = document.getElementById('cm-partner-help');
         let partnerTimeout = null;
 
-        // Badge references removed.
-
         if (partnerInput && partnerHelp) {
-
             partnerInput.addEventListener('input', (e) => {
                 clearTimeout(partnerTimeout);
 
                 const q = e.target.value.trim();
+                const badge = document.getElementById('cm-partner-badge');
+                if (badge) badge.style.display = 'none';
+
                 partnerHelp.textContent = "Enter your partner's player XCode";
                 partnerHelp.style.color = 'var(--c-text-muted)';
                 partnerInput.classList.remove('error');
@@ -3233,20 +3233,25 @@ const MatchesController = {
                     partnerTimeout = setTimeout(async () => {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
-                            partnerInput.value = q; // Standardize value to just the code
-                            partnerHelp.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`); partnerHelp.style.color = "var(--c-text-blue)";
+                            partnerInput.value = q;
+                            partnerHelp.textContent = "✓ Player found";
+                            partnerHelp.style.color = "var(--c-text-blue)";
+                            if (badge) {
+                                badge.textContent = res.data.name;
+                                badge.style.display = 'block';
+                            }
                         } else {
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
                             partnerInput.classList.add('error');
+                            if (badge) badge.style.display = 'none';
                         }
                     }, 400);
                 } else if (q.length > 4) {
-                    // Trim long inputs if pasted
                     e.target.value = q.substring(0, 4);
                     e.target.dispatchEvent(new Event('input'));
                 } else {
-                    // Do nothing
+                    if (badge) badge.style.display = 'none';
                 }
             });
         }
@@ -5065,6 +5070,9 @@ const MatchesController = {
         input.oninput = (e) => {
             clearTimeout(lookupTimeout);
             const q = e.target.value.trim();
+            const badge = document.getElementById('mv-partner-badge');
+            if (badge) badge.style.display = 'none';
+
             help.textContent = "Your partner will receive a request to approve.";
             help.style.color = 'var(--c-text-muted)';
             input.classList.remove('error');
@@ -5084,12 +5092,17 @@ const MatchesController = {
                         }
 
                         input.value = q;
-                        help.innerHTML = safeHTML(`✓ Found player: <strong style="color:var(--c-text); margin-left:4px;">${res.data.name}</strong>`);
+                        help.textContent = "✓ Player found";
                         help.style.color = "var(--c-text-blue)";
+                        if (badge) {
+                            badge.textContent = res.data.name;
+                            badge.style.display = 'block';
+                        }
                     } else {
                         help.textContent = (res && res.message) ? res.message : "Player not found";
                         help.style.color = "var(--c-danger)";
                         input.classList.add('error');
+                        if (badge) badge.style.display = 'none';
                     }
                 }, 400);
             } else if (q.length > 7) {

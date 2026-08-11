@@ -146,10 +146,10 @@
         <div style="font-size:13px; font-weight:700; margin-bottom:14px;">Send Team Join Request</div>
         <div class="form-group">
           <label class="form-label">Partner Player XCode</label>
-          <div style="position:relative;">
+          <div style="position:relative; display:flex; align-items:center;">
             <input type="text" id="mv-partner-code-input" class="form-input" placeholder="e.g. A123" maxlength="7"
-              style="border: 1px solid rgba(255,255,255,0.1);" />
-
+              style="border: 1px solid rgba(255,255,255,0.1); padding-right: 120px;" />
+            <div id="mv-partner-badge" style="position:absolute; right:12px; font-size:12px; font-weight:700; color:var(--c-text-blue); background:rgba(91,139,255,0.1); padding:4px 8px; border-radius:6px; pointer-events:none; display:none; white-space:nowrap;"></div>
           </div>
           <span class="form-help" id="mv-partner-help">Your partner will receive a request to approve.</span>
         </div>
