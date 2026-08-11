@@ -71,19 +71,29 @@ try {
     $isSolo = empty($wl['partner_id']);
     $targetSlots = []; // Array of [team, slot, user_id]
 
+    $team_no = (int)($data['team_no'] ?? 0);
+    $slot_no = (int)($data['slot_no'] ?? 0);
+
     if ($isSolo) {
-        // Solo Logic: find first free slot
-        $found = false;
-        $preferOrder = [[2,1],[2,2],[1,2],[1,1]];
-        foreach ($preferOrder as [$t, $s]) {
-            if (!isset($occupied[$t . '_' . $s])) {
-                $targetSlots[] = [$t, $s, $uid];
-                $found = true;
-                break;
+        if ($team_no > 0 && $slot_no > 0) {
+            if (isset($occupied[$team_no . '_' . $slot_no])) {
+                throw new Exception('The selected slot is already occupied.');
             }
-        }
-        if (!$found) {
-            throw new Exception('No open slots available for solo join.');
+            $targetSlots[] = [$team_no, $slot_no, $uid];
+        } else {
+            // Solo Logic: find first free slot
+            $found = false;
+            $preferOrder = [[2,1],[2,2],[1,2],[1,1]];
+            foreach ($preferOrder as [$t, $s]) {
+                if (!isset($occupied[$t . '_' . $s])) {
+                    $targetSlots[] = [$t, $s, $uid];
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                throw new Exception('No open slots available for solo join.');
+            }
         }
     } else {
         // Team Logic: find a team with both slots free
