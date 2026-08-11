@@ -2156,4 +2156,5 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - UI Polish: Changed report modal header to a compact single-row layout and reduced nested margins to eliminate empty space.
 - Match List Logic: Instantly transition open (non-full) matches to "past" at their scheduled start time instead of waiting 4 hours.
 - UI Polish: Appended pts unit suffix to the eligibility range badge on upcoming match cards (e.g. 268 to 568 pts).
+- Scoring: Changed base points result of competition matches from 6 to 10 in ranking_helper.php and updated the rules page to match.
 
