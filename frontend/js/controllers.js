@@ -4425,6 +4425,11 @@ const MatchesController = {
         const countdownWrap = document.getElementById('mv-countdown-wrap');
         const countdownValue = document.getElementById('mv-countdown-value');
 
+        if (MatchesController._countdownInterval) {
+            clearInterval(MatchesController._countdownInterval);
+            MatchesController._countdownInterval = null;
+        }
+
         if (countdownWrap && countdownValue) {
             const confirmedSlots = slots.filter(s => s.status === 'confirmed').length;
             const allFilled = confirmedSlots >= 4;
@@ -4434,16 +4439,19 @@ const MatchesController = {
             const nowMs = Date.now();
             const diffMs = matchDt ? (matchDt.getTime() - nowMs) : -1;
             const tenHoursMs = 10 * 60 * 60 * 1000;
+            const isCancelled = match.status === 'cancelled';
 
-            if (allFilled && matchDt && diffMs > 0 && diffMs <= tenHoursMs) {
+            if (!isCancelled && allFilled && matchDt && diffMs > 0 && diffMs <= tenHoursMs) {
                 countdownWrap.style.display = 'block';
 
                 const tick = () => {
                     const remaining = matchDt.getTime() - Date.now();
                     if (remaining <= 0) {
                         countdownValue.textContent = '0:00:00';
-                        clearInterval(MatchesController._countdownInterval);
-                        MatchesController._countdownInterval = null;
+                        if (MatchesController._countdownInterval) {
+                            clearInterval(MatchesController._countdownInterval);
+                            MatchesController._countdownInterval = null;
+                        }
                         return;
                     }
                     const totalSec = Math.floor(remaining / 1000);
