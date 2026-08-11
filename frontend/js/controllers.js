@@ -5154,6 +5154,9 @@ const MatchesController = {
         const input = document.getElementById('mv-partner-code-input');
         const help = document.getElementById('mv-partner-help');
         const btn = document.querySelector('#mv-join-team-form button[type="submit"]');
+        const badge = document.getElementById('mv-partner-badge');
+
+        if (badge) badge.style.display = 'none';
 
         if (input) {
             input.value = '';
