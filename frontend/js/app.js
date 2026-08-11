@@ -345,13 +345,17 @@ var ConfirmModal = {
                     const playerWrap = this._modal.querySelector('#gcm-radio-player-wrap');
                     radios.forEach(r => {
                         r.onchange = () => {
+                            const label = r.closest('label');
                             if (r.value === 'other') {
                                 otherWrap.style.display = 'block';
                                 if (playerWrap) playerWrap.style.display = 'none';
                                 setTimeout(() => inp.focus(), 100);
                             } else {
                                 otherWrap.style.display = 'none';
-                                if (playerWrap) playerWrap.style.display = 'block';
+                                if (playerWrap) {
+                                    playerWrap.style.display = 'block';
+                                    label.parentNode.insertBefore(playerWrap, label.nextSibling);
+                                }
                             }
                         };
                     });
