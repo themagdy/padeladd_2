@@ -145,6 +145,7 @@
         window.safeHTML = function (html) {
             if (!html) return '';
             return DOMPurify.sanitize(html, {
+                ADD_TAGS: ['select', 'option'],
                 ADD_ATTR: ['id', 'name', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
