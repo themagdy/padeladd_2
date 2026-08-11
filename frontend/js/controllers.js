@@ -5189,7 +5189,6 @@ const MatchesController = {
         });
     },
 
-    // ── Actions ──────────────────────────────────────────
     joinSolo: async function (match_id, btn) {
         // Hide team form if open
         const teamForm = document.getElementById('mv-join-team-form');
@@ -5199,42 +5198,51 @@ const MatchesController = {
         const teamBtn = document.getElementById('mv-join-team-btn');
         if (teamBtn) teamBtn.style.display = 'none';
 
-        // If match is full, join waitlist immediately
         const slotsCount = MatchesController._currentMatchSlotsCount || 0;
         if (slotsCount >= 4) {
             return MatchesController.performJoinSolo(match_id, btn);
         }
 
-        // Otherwise, enter selection mode
-        btn.disabled = true;
-        btn.innerText = 'Select a spot ↑';
-
-        // Find all empty slots and make them interactive
         const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
+        const emptyTeams = new Set();
         emptySlots.forEach(el => {
-            el.innerText = 'Join here';
-            el.style.cursor = 'pointer';
-            el.classList.add('pulse-selection');
-
-            // Extract team/slot from ID e.g. mv-team1-slot2
-            const parts = el.id.split('-');
-            const team = parseInt(parts[1].replace('team', ''));
-            const slot = parseInt(parts[2].replace('slot', ''));
-
-            el.onclick = () => {
-                if (MatchesController._soloSelectionTimeout) {
-                    clearTimeout(MatchesController._soloSelectionTimeout);
-                    MatchesController._soloSelectionTimeout = null;
-                }
-                MatchesController.performJoinSolo(match_id, el, team, slot);
-            };
+            if (el.id.includes('team1')) emptyTeams.add(1);
+            if (el.id.includes('team2')) emptyTeams.add(2);
         });
 
-        // --- NEW: 3s Auto-dismiss ---
-        if (this._soloSelectionTimeout) clearTimeout(this._soloSelectionTimeout);
-        this._soloSelectionTimeout = setTimeout(() => {
-            this.cancelSelectionMode();
-        }, 3000);
+        // Only enter selection mode if empty slots span multiple different teams
+        if (emptyTeams.size > 1) {
+            btn.disabled = true;
+            btn.innerText = 'Select a spot ↑';
+
+            emptySlots.forEach(el => {
+                el.innerText = 'Join here';
+                el.style.cursor = 'pointer';
+                el.classList.add('pulse-selection');
+
+                // Extract team/slot from ID e.g. mv-team1-slot2
+                const parts = el.id.split('-');
+                const team = parseInt(parts[1].replace('team', ''));
+                const slot = parseInt(parts[2].replace('slot', ''));
+
+                el.onclick = () => {
+                    if (MatchesController._soloSelectionTimeout) {
+                        clearTimeout(MatchesController._soloSelectionTimeout);
+                        MatchesController._soloSelectionTimeout = null;
+                    }
+                    MatchesController.performJoinSolo(match_id, el, team, slot);
+                };
+            });
+
+            // 3s Auto-dismiss
+            if (this._soloSelectionTimeout) clearTimeout(this._soloSelectionTimeout);
+            this._soloSelectionTimeout = setTimeout(() => {
+                this.cancelSelectionMode();
+            }, 3000);
+        } else {
+            // Join the single available team automatically
+            return MatchesController.performJoinSolo(match_id, btn);
+        }
     },
 
     performJoinSolo: async function (match_id, btn, team_no = null, slot_no = null, force_waitlist = false) {
@@ -5566,13 +5574,18 @@ const MatchesController = {
 
     jumpIn: async function (waitlist_id, match_id, btn) {
         const isSolo = this._myWaitlistEntry && !this._myWaitlistEntry.partner_id;
-        const emptySlotsCount = document.querySelectorAll('.mv-slot.slot-empty').length;
+        const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
+        const emptyTeams = new Set();
+        emptySlots.forEach(el => {
+            if (el.id.includes('team1')) emptyTeams.add(1);
+            if (el.id.includes('team2')) emptyTeams.add(2);
+        });
 
-        if (isSolo && emptySlotsCount > 1) {
+        // Only enter selection mode if empty slots span multiple different teams
+        if (isSolo && emptyTeams.size > 1) {
             btn.disabled = true;
             btn.innerText = 'Select a spot ↑';
 
-            const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
             emptySlots.forEach(el => {
                 el.innerText = 'Jump here';
                 el.style.cursor = 'pointer';
