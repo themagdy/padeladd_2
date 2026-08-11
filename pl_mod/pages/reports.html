@@ -93,3 +93,40 @@
         border-color: rgba(255,255,255,0.15);
     }
 </style>
+
+<!-- Report Details Modal -->
+<div id="report-details-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="report-details-title">Report Details</h3>
+            <button onclick="AdminControllers.reports.closeDetailsModal()" class="btn-close-modal">✕</button>
+        </div>
+        <div class="modal-body" style="padding-bottom:32px;">
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <div>
+                    <label style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Reporter</label>
+                    <div id="rd-reporter" style="font-size:14px; font-weight:600; color:#fff;"></div>
+                </div>
+                <div id="rd-target-wrapper">
+                    <label id="rd-target-label" style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Reported Player</label>
+                    <div id="rd-target" style="font-size:14px; font-weight:600; color:#fff;"></div>
+                </div>
+                <div id="rd-match-wrapper">
+                    <label style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Match Code</label>
+                    <div id="rd-match" style="font-size:14px; font-weight:700; color:var(--c-primary);"></div>
+                </div>
+                <div>
+                    <label style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Reason / Details</label>
+                    <div id="rd-reason" style="font-size:14px; color:#fff; line-height:1.5; white-space:pre-wrap; background:rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);"></div>
+                </div>
+                <div>
+                    <label style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">Date Submitted</label>
+                    <div id="rd-date" style="font-size:13px; color:var(--c-text-muted);"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="AdminControllers.reports.closeDetailsModal()" class="btn-secondary">Close</button>
+        </div>
+    </div>
+</div>

@@ -902,9 +902,12 @@ window.AdminControllers = {
                             <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.reason || r.report_reason || r.reason_text || 'No reason provided'}</td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
-                                <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'profile')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
-                                    ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
-                                </button>
+                                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button onclick="AdminControllers.reports.showDetails(${r.id}, 'profile')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'profile')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
+                                        ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `).join('');
@@ -918,9 +921,12 @@ window.AdminControllers = {
                             <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.reason || r.report_reason || r.reason_text || 'No reason provided'}</td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
-                                <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'match')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
-                                    ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
-                                </button>
+                                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button onclick="AdminControllers.reports.showDetails(${r.id}, 'match')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'match')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
+                                        ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `).join('');
@@ -943,6 +949,7 @@ window.AdminControllers = {
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
                                 <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button onclick="AdminControllers.reports.showDetails(${r.id}, 'dispute')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
                                     <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'approve')" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">APPROVE</button>
                                     <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'reject')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">REJECT</button>
                                     <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'dispute')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 10px; border:1px solid rgba(255,255,255,0.05); font-size:10px;">
@@ -965,9 +972,12 @@ window.AdminControllers = {
                             </td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
                             <td style="text-align:right;">
-                                <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'system')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
-                                    ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
-                                </button>
+                                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                                    <button onclick="AdminControllers.reports.showDetails(${r.id}, 'system')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'system')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
+                                        ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     `).join('');
@@ -1047,6 +1057,48 @@ window.AdminControllers = {
                     this.renderReports();
                 }
             } catch (e) { console.error('Archive error:', e); }
+        },
+        showDetails(id, type) {
+            let listKey = 'profile_reports';
+            if (type === 'match') listKey = 'match_reports';
+            if (type === 'dispute') listKey = 'score_disputes';
+            if (type === 'system') listKey = 'system_reports';
+
+            const r = (this.allReports[listKey] || []).find(x => x.id == id);
+            if (!r) return;
+
+            document.getElementById('rd-reporter').innerHTML = `${r.reporter_name || 'System'} <small style="opacity:0.6;">(${r.reporter_code || '---'})</small>`;
+            
+            const targetWrap = document.getElementById('rd-target-wrapper');
+            const targetLabel = document.getElementById('rd-target-label');
+            const targetVal = document.getElementById('rd-target');
+            if (r.target_name) {
+                targetWrap.style.display = 'block';
+                targetLabel.innerText = type === 'dispute' ? 'Score Submitter' : 'Reported Player';
+                targetVal.innerHTML = `<b style="color:#fff;">${r.target_name}</b> <small style="opacity:0.6;">(${r.target_code || '---'})</small>`;
+            } else {
+                targetWrap.style.display = 'none';
+            }
+
+            const matchWrap = document.getElementById('rd-match-wrapper');
+            const matchVal = document.getElementById('rd-match');
+            if (r.match_code) {
+                matchWrap.style.display = 'block';
+                matchVal.innerHTML = `<b style="color:var(--c-primary);">${r.match_code}</b>`;
+            } else {
+                matchWrap.style.display = 'none';
+            }
+
+            const reasonText = r.reason || r.report_reason || r.reason_text || 'No details provided';
+            document.getElementById('rd-reason').innerText = reasonText;
+            document.getElementById('rd-date').innerText = r.created_at ? new Date(r.created_at).toLocaleString() : 'N/A';
+
+            document.getElementById('report-details-modal').style.display = 'flex';
+            AdminApp.updateModalScrollLock();
+        },
+        closeDetailsModal() {
+            document.getElementById('report-details-modal').style.display = 'none';
+            AdminApp.updateModalScrollLock();
         },
         toggleSort(field) {
             if (this.sortField === field) {
