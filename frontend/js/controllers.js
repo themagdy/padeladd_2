@@ -4540,14 +4540,53 @@ const MatchesController = {
 
             if (match.status === 'cancelled') {
                 actionArea.innerHTML = safeHTML(`
-                        <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
+                        <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start; margin-bottom: 24px;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
                             <div style="flex:1; text-align:left;">
                                 <h3 style="font-size:15px; font-weight:800; color:var(--c-red); margin:0 0 4px 0;">Match Cancelled</h3>
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
+                            </div>
                         </div>`);
+
+                // Render chat/sub-actions for authorized participants even if match is cancelled
+                let chatBtnHtml = '';
+                const unreadCount = res.data.unread_count || 0;
+                const badgeHtml = unreadCount > 0 ? `
+                    <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
+                        ${unreadCount > 99 ? '99+' : unreadCount}
+                    </span>` : '';
+
+                if (isAuthorized) {
+                    chatBtnHtml += `
+                        <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
+                        <button type="button" onclick="ChatController.open(${match.id}); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                            <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
+                            <span style="background: linear-gradient(to right, #ffffff, #a5c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
+                            ${badgeHtml}
+                        </button>
+                    `;
+                }
+
+                // Sub-Actions Grid (Location & Share)
+                chatBtnHtml += `
+                    <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 32px 0 24px;"></div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        ${match.venue_location_link ? `
+                        <a href="${match.venue_location_link}" target="_blank" rel="noopener noreferrer" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(27,82,206,0.08); color:#7da7ff; border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(27,82,206,0.15)'" onmouseout="this.style.background='rgba(27,82,206,0.08)'">
+                            <img src="assets/icons/location_3d.png" style="width:18px; height:18px; object-fit:contain;" alt="Location"> Location
+                        </a>` : ''}
+                        <button onclick="MatchesController.share(${match.id}, '${match.match_code}')" class="btn" style="padding:14px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(247,148,29,0.08); color:var(--c-orange); border-radius:14px; backdrop-filter: blur(8px); transition: all 0.2s;" onmouseover="this.style.background='rgba(247,148,29,0.15)'" onmouseout="this.style.background='rgba(247,148,29,0.08)'">
+                            <img src="assets/icons/share_3d.png" style="width:18px; height:18px; object-fit:contain;" alt="Share"> Share
+                        </button>
+                    </div>
+                `;
+
+                if (chatArea) {
+                    chatArea.innerHTML = safeHTML(`<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`);
+                }
+
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
                 return;
