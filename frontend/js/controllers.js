@@ -4503,6 +4503,8 @@ const MatchesController = {
                     }
 
                     const icon = isLateCancel && !lateWithdrawal ? '🚫' : '⚠️';
+                    const violationsCount = (lateWithdrawal ? 1 : 0) + (isLateCancel ? 1 : 0);
+                    const subject = violationsCount > 1 ? 'Players' : 'Player';
 
                     combinedHtml = `
                         <div style="background:rgba(255,59,48,0.04); border-radius:18px; padding:16px; margin-bottom:16px;">
@@ -4513,7 +4515,7 @@ const MatchesController = {
                             <div style="display:flex; flex-direction:column;">
                                 ${itemsHtml}
                             </div>
-                            <div style="margin-top:12px; padding-top:10px; border-top:1px dashed rgba(255,59,48,0.15); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">Player may receive a violation/ban.</div>
+                            <div style="margin-top:12px; padding-top:10px; border-top:1px dashed rgba(255,59,48,0.15); font-size:13px; color:var(--c-red); opacity:0.8; font-weight:600;">${subject} may receive a violation/ban.</div>
                         </div>`;
                 }
 
