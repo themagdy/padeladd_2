@@ -909,10 +909,11 @@ window.AdminControllers = {
                         </tr>
                     `).join('');
                 } else if (this.currentTab === 'match') {
-                    head.innerHTML = `<tr><th>Reporter</th><th>Match Code</th><th>Reason</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
+                    head.innerHTML = `<tr><th>Reporter</th><th>Reported Player</th><th>Match Code</th><th>Reason</th><th>Date</th><th style="text-align:right;">Actions</th></tr>`;
                     list.innerHTML = reports.map(r => `
                         <tr>
                             <td>${r.reporter_name || 'System'} <small style="opacity:0.6">(${r.reporter_code || '---'})</small></td>
+                            <td>${r.target_name ? `<b style="color:#fff">${r.target_name}</b> <small style="opacity:0.6">(${r.target_code})</small>` : '<span style="color:var(--c-text-muted);">Match / General</span>'}</td>
                             <td><b style="color:var(--c-primary); font-weight:800;">${r.match_code || '---'}</b></td>
                             <td style="max-width:400px; font-size:13px; color:var(--c-text-muted); line-height:1.4;">${r.reason || r.report_reason || r.reason_text || 'No reason provided'}</td>
                             <td style="font-size:12px; color:var(--c-text-muted)">${r.created_at ? new Date(r.created_at).toLocaleDateString() : 'N/A'}</td>
