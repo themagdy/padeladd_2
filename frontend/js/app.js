@@ -104,7 +104,7 @@ var Toast = {
 
         let icon = '🔔';
         if (type === 'success') icon = '✅';
-        if (type === 'error') icon = '❌';
+        if (type === 'error') icon = '⚠️';
         if (type === 'warning') icon = '⚠️';
 
         toast.innerHTML = safeHTML(`
@@ -344,7 +344,7 @@ var ConfirmModal = {
             if (showInput) {
                 const inp = this._modal.querySelector('#gcm-input');
                 const count = this._modal.querySelector('#gcm-counter');
-                
+
                 if (inputType === 'radio') {
                     // Set up radio change event listener to toggle "other" text input area
                     const radios = this._modal.querySelectorAll('input[name="gcm-radio-opt"]');
@@ -367,12 +367,12 @@ var ConfirmModal = {
                         };
                     });
                 }
-                
+
                 inp.oninput = () => {
                     if (count) count.innerText = `${inp.value.length}/${inputMaxLength}`;
                     inp.style.borderColor = 'var(--c-border)';
                 };
-                
+
                 if (inputType !== 'radio') {
                     setTimeout(() => inp.focus(), 300);
                 }
