@@ -1864,6 +1864,28 @@ window.AdminControllers = {
                 }
             } catch (e) { console.error('Archive error:', e); }
         },
+        async deleteItem(id) {
+            if (!confirm('Are you sure you want to permanently delete this violation event record?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await _admFetch(`../backend/api/admin/system/delete_violation.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Update local state
+                    const idx = this.allViolations.findIndex(v => v.id == id);
+                    if (idx !== -1) {
+                        this.allViolations.splice(idx, 1);
+                    }
+                    this.filterViolations(document.getElementById('violation-search')?.value || '');
+                    AdminApp.toast('Violation event permanently deleted.');
+                } else {
+                    AdminApp.toast(data.message || 'Failed to delete violation.', 'error');
+                }
+            } catch (e) { console.error('Delete violation error:', e); }
+        },
         renderViolations(listToRender) {
             const list = document.getElementById('violations-list');
             const empty = document.getElementById('violations-empty');
@@ -1898,9 +1920,14 @@ window.AdminControllers = {
                         <td style="max-width:250px; font-size:12px; color:var(--c-text-muted)">${v.reason}</td>
                         <td style="font-size:12px; color:var(--c-text-muted)">${new Date(v.created_at).toLocaleString()}</td>
                         <td style="text-align:right;">
-                            <button onclick="AdminControllers.violations.archiveItem(${v.id}, ${v.is_archived || 0})" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${v.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
-                                ${v.is_archived ? '📂 Unarchive' : '📁 Archive'}
-                            </button>
+                            <div style="display:inline-flex; gap:8px; justify-content:flex-end;">
+                                <button onclick="AdminControllers.violations.archiveItem(${v.id}, ${v.is_archived || 0})" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${v.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
+                                    ${v.is_archived ? '📂 Unarchive' : '📁 Archive'}
+                                </button>
+                                <button onclick="AdminControllers.violations.deleteItem(${v.id})" class="btn-badge" style="background:rgba(255,59,48,0.08); color:var(--c-red); border-radius:100px; padding:6px 12px; border:1px solid rgba(255,59,48,0.15);">
+                                    🗑️ Delete
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;

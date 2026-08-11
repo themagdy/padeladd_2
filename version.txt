@@ -2177,3 +2177,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Scoring Cron: Deduplicated auto-approve notifications per match (sends exactly 1 notification even if 2 scores are approved at the same time).
 - DetailsView: Kept Chat button visible for authorized match participants even if a match is cancelled.
 - Dashboard: Implemented announcements carousel autoplay looping every 4 seconds with manual scroll tracking sync and automatic teardown on routing.
+- Admin Panel: Added "Delete" action next to "Archive" for Time Policy Violations, complete with a permanent deletion API and confirmation prompts.
