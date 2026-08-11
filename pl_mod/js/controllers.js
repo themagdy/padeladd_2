@@ -904,6 +904,7 @@ window.AdminControllers = {
                             <td style="text-align:right;">
                                 <div style="display:flex; justify-content:flex-end; gap:8px;">
                                     <button onclick="AdminControllers.reports.showDetails(${r.id}, 'profile')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.deleteItem(${r.id}, 'profile')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:700;">🗑️ Delete</button>
                                     <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'profile')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
                                         ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
                                     </button>
@@ -923,6 +924,7 @@ window.AdminControllers = {
                             <td style="text-align:right;">
                                 <div style="display:flex; justify-content:flex-end; gap:8px;">
                                     <button onclick="AdminControllers.reports.showDetails(${r.id}, 'match')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.deleteItem(${r.id}, 'match')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:700;">🗑️ Delete</button>
                                     <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'match')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
                                         ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
                                     </button>
@@ -950,6 +952,7 @@ window.AdminControllers = {
                             <td style="text-align:right;">
                                 <div style="display:flex; justify-content:flex-end; gap:8px;">
                                     <button onclick="AdminControllers.reports.showDetails(${r.id}, 'dispute')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.deleteItem(${r.id}, 'dispute')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:700;">🗑️ Delete</button>
                                     <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'approve')" class="btn-badge" style="background:rgba(16, 185, 129, 0.1); color:var(--c-green); border:1px solid rgba(16, 185, 129, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">APPROVE</button>
                                     <button onclick="AdminControllers.reports.resolveDispute(${r.id}, 'reject')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:800; font-size:10px;">REJECT</button>
                                     <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'dispute')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 10px; border:1px solid rgba(255,255,255,0.05); font-size:10px;">
@@ -974,6 +977,7 @@ window.AdminControllers = {
                             <td style="text-align:right;">
                                 <div style="display:flex; justify-content:flex-end; gap:8px;">
                                     <button onclick="AdminControllers.reports.showDetails(${r.id}, 'system')" class="btn-badge" style="background:rgba(27, 82, 206, 0.1); color:var(--c-primary); border:1px solid rgba(27, 82, 206, 0.2); padding:6px 12px; font-weight:700;">🔍 Details</button>
+                                    <button onclick="AdminControllers.reports.deleteItem(${r.id}, 'system')" class="btn-badge" style="background:rgba(239, 68, 68, 0.1); color:var(--c-red); border:1px solid rgba(239, 68, 68, 0.2); padding:6px 12px; font-weight:700;">🗑️ Delete</button>
                                     <button onclick="AdminControllers.reports.archiveItem(${r.id}, ${r.is_archived || 0}, 'system')" class="btn-badge" style="background:rgba(255,255,255,0.03); color:${r.is_archived ? 'var(--c-primary)' : 'var(--c-text-muted)'}; border-radius:100px; padding:6px 12px; border:1px solid rgba(255,255,255,0.05);">
                                         ${r.is_archived ? '📂 Unarchive' : '📁 Archive'}
                                     </button>
@@ -1099,6 +1103,38 @@ window.AdminControllers = {
         closeDetailsModal() {
             document.getElementById('report-details-modal').style.display = 'none';
             AdminApp.updateModalScrollLock();
+        },
+        async deleteItem(id, type) {
+            if (!confirm("Are you sure you want to permanently delete this report? This action cannot be undone.")) return;
+            
+            let apiType = 'profile_report';
+            if (type === 'match') apiType = 'match_report';
+            if (type === 'dispute') apiType = 'score_dispute';
+            if (type === 'system') apiType = 'system_report';
+
+            try {
+                const res = await _admFetch(`../backend/api/admin/reports/delete.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id, type: apiType })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    let listKey = 'profile_reports';
+                    if (type === 'match') listKey = 'match_reports';
+                    if (type === 'dispute') listKey = 'score_disputes';
+                    if (type === 'system') listKey = 'system_reports';
+
+                    this.allReports[listKey] = this.allReports[listKey].filter(r => r.id != id);
+                    this.updateCounts();
+                    this.renderReports();
+                    AdminApp.toast("Report permanently deleted.", "success");
+                } else {
+                    AdminApp.toast(data.message || "Deletion failed.", "error");
+                }
+            } catch (e) {
+                console.error("Delete report error:", e);
+                AdminApp.toast("Error deleting report.", "error");
+            }
         },
         toggleSort(field) {
             if (this.sortField === field) {
