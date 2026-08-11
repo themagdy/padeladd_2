@@ -4485,7 +4485,7 @@ const MatchesController = {
                             <div style="background:rgba(255,59,48,0.04); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">⚠️</div>
-                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Withdrawal)</div>
+                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation</div>
                                 </div>
                                 <div style="font-size:12px; line-height:1.4; color:var(--c-text);">
                                     ${clickableUser}${codeTag} left the match within the 5-hour.
@@ -4501,7 +4501,7 @@ const MatchesController = {
                             <div style="background:rgba(255,59,48,0.04); border-radius:18px; padding:16px; margin-bottom:16px;">
                                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                                     <div style="font-size:16px;">🚫</div>
-                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation (Late Cancellation)</div>
+                                    <div style="font-size:11px; font-weight:800; color:var(--c-red); text-transform:uppercase; letter-spacing:1px; opacity:0.8;">Policy Violation</div>
                                 </div>
                                 <div style="font-size:12px; line-height:1.4; color:var(--c-text);">
                                     This match was cancelled within the 5-hour by the creator.
