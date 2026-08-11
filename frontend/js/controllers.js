@@ -4547,14 +4547,9 @@ const MatchesController = {
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
-                            </div>
                         </div>`);
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
-
-                if (!isAuthorized) {
-                    return;
-                }
             } else {
                 const confirmedCount = slots.filter(s => s.status === 'confirmed').length;
                 const isFull = match.status === 'full' || confirmedCount >= 4;
@@ -4926,7 +4921,7 @@ const MatchesController = {
                 }
             }
 
-                // Phase 5: Chat access logic
+            // Phase 5: Chat access logic
                 // Phase 5: Chat access logic
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
                 const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
