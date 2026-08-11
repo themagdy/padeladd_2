@@ -169,7 +169,7 @@ var ConfirmModal = {
                     }
 
                     inputHtml = `
-                        <div id="gcm-radio-container" style="margin-bottom:16px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
+                        <div id="gcm-radio-container" style="margin-bottom:4px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
                             <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
                                 <input type="radio" name="gcm-radio-opt" value="No show" style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
                                 <span>No show</span>
@@ -186,7 +186,7 @@ var ConfirmModal = {
                             </label>
 
                             ${playersList && Array.isArray(playersList) ? `
-                            <div id="gcm-radio-player-wrap" style="display:none; margin-bottom:16px; width:100%; padding-left:28px; box-sizing:border-box;">
+                            <div id="gcm-radio-player-wrap" style="display:none; margin-bottom:8px; width:100%; padding-left:28px; box-sizing:border-box;">
                                 <label style="color:rgba(255,255,255,0.6); display:block; text-align:left; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:6px; font-family:var(--font);">Select Player</label>
                                 <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98) url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B9BB4' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E&quot;) no-repeat right 16px center; appearance:none; -webkit-appearance:none; color:#fff; border-radius:12px; padding:14px 44px 14px 16px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
                                     ${playerOptions}
@@ -199,9 +199,9 @@ var ConfirmModal = {
                                 <span>Other</span>
                             </label>
 
-                            <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:16px; width:100%; padding-left:28px; box-sizing:border-box;">
+                            <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:8px; width:100%; padding-left:28px; box-sizing:border-box;">
                                 <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none; margin-bottom:4px;" rows="3"></textarea>
-                                <div style="display:flex; justify-content:space-between; margin-bottom:8px; padding:0 4px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:0; padding:0 4px;">
                                     <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
                                     <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
                                 </div>
