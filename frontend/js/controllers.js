@@ -4121,7 +4121,8 @@ const MatchesController = {
         MatchesController._currentMatchViewerGender = res.data.viewer_gender || 'male';
 
         let isPast = false;
-        let isAuthorized = false;
+        const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
+        const isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
 
         const dt = new Date(match.match_datetime.replace(' ', 'T'));
         const dateStr = UI.formatMatchDateOnly(match.match_datetime);
@@ -4947,8 +4948,6 @@ const MatchesController = {
                 // Phase 5: Chat access logic
                 // Phase 5: Chat access logic
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
-                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
-                isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
 
                 let chatBtnHtml = '';
                 const unreadCount = res.data.unread_count || 0;
