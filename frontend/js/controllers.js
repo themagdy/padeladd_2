@@ -4550,7 +4550,12 @@ const MatchesController = {
                         </div>`);
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
-                return;
+
+                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
+                const isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
+                if (!isAuthorized) {
+                    return;
+                }
             } else {
                 const confirmedCount = slots.filter(s => s.status === 'confirmed').length;
                 const isFull = match.status === 'full' || confirmedCount >= 4;
