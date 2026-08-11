@@ -5792,7 +5792,7 @@ const ChatController = {
                 <div id="phone-btn-${userId}" 
                      onclick="event.stopPropagation(); window.location.href='tel:${mobile.replace(/\s+/g, '')}'"
                      style="cursor:pointer; padding:8px 16px; background:rgba(247,148,29,0.1); border:1px solid var(--c-orange); color:#cbd5e1; border-radius:8px; font-size:14px; font-weight:700; white-space:nowrap; display:flex; align-items:center; gap:6px;">
-                     🤙🏼 ${mobile}
+                     ${mobile}
                 </div>`;
         } else if (isPending) {
             btnContent = `
