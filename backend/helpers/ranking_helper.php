@@ -312,7 +312,7 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
         }
 
         // Base + adj + heavy
-        $base = $isWinner ? +6 : -6;
+        $base = $isWinner ? +10 : -10;
         $heavy = $isWinner ? +$heavyMod : -$heavyMod;
         $subtotal = $base + $strengthAdj + $heavy;
 
