@@ -118,7 +118,12 @@ if ($mode === 'play_upcoming') {
         WHERE m.status IN ('open', 'full', 'on_hold')
           AND (
             (m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid1) 
-             AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR))
+             AND (
+               (m.status IN ('full', 'on_hold') AND m.match_datetime > DATE_SUB(NOW(), INTERVAL 4 HOUR))
+               OR
+               (m.status = 'open' AND m.match_datetime > NOW())
+             )
+            )
             OR
             (m.id IN (SELECT match_id FROM waiting_list WHERE (requester_id = :uid2 OR partner_id = :uid3) AND request_status IN ('pending', 'approved'))
              AND m.match_datetime > NOW())
@@ -178,9 +183,11 @@ if ($mode === 'play_upcoming') {
                OR m.id IN (SELECT match_id FROM match_players WHERE user_id = :uid2)
         )
         AND (
-            (m.status = 'cancelled') 
+            m.status = 'cancelled' 
             OR 
-            (m.match_datetime <= DATE_SUB(NOW(), INTERVAL 4 HOUR))
+            (m.status = 'open' AND m.match_datetime <= NOW())
+            OR
+            (m.status != 'open' AND m.match_datetime <= DATE_SUB(NOW(), INTERVAL 4 HOUR))
         )
     ";
 
