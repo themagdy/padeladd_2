@@ -7329,20 +7329,25 @@ const ScoringController = {
     reportIssue: async function (matchId, targetUserId = null) {
         let playersList = null;
 
-        // If targetUserId is not already provided (meaning reported from Match Details page),
-        // let the user select which player they want to report.
+        console.log('[ReportIssue] matchId:', matchId, 'targetUserId:', targetUserId);
+        console.log('[ReportIssue] MatchesController._currentMatchSlots:', typeof MatchesController !== 'undefined' ? MatchesController._currentMatchSlots : 'undefined');
+
         if (!targetUserId && typeof MatchesController !== 'undefined' && MatchesController._currentMatchSlots) {
             const currentUserId = typeof Auth !== 'undefined' ? Auth.getUserId() : null;
+            console.log('[ReportIssue] currentUserId:', currentUserId);
             const otherPlayers = MatchesController._currentMatchSlots
                 .filter(s => s && s.user_id && parseInt(s.user_id) !== parseInt(currentUserId))
                 .map(s => ({
                     id: parseInt(s.user_id),
                     name: s.nickname || s.name || (s.first_name + ' ' + s.last_name)
                 }));
+            console.log('[ReportIssue] otherPlayers parsed:', otherPlayers);
             if (otherPlayers.length > 0) {
                 playersList = otherPlayers;
             }
         }
+
+        console.log('[ReportIssue] final playersList to modal:', playersList);
 
         const result = await ConfirmModal.show({
             title: targetUserId ? 'Report player conduct' : 'Report an issue',
