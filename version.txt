@@ -2159,4 +2159,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Scoring: Changed base points result of competition matches from 6 to 10 in ranking_helper.php and updated the rules page to match.
 - Rules Page: Replaced ± with green/red up and down arrows (↑↓) placed side-by-side at 24px and medium weight.
 - Rules Page: Rephrased scoring system details (Domination renamed to Heavy Score, added 2-set condition details, and updated new player bonus to doubled points).
+- Chat: Implemented persistent read receipts ("Seen by") with 22px player avatars under the last message in the chat window, mapping reader status through chat_read_status.
+- Chat: Cleaned up bubble spacing, reduced margins, and removed the call emoji from the player phone number button.
 
