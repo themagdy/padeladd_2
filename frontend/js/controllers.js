@@ -2522,9 +2522,9 @@ const ProfileController = {
     reportPlayer: async function (targetUserId) {
         const reason = await ConfirmModal.show({
             title: 'Report player conduct',
-            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level',
+            message: 'Please choose the category that best describes your report.',
             showInput: true,
-            inputPlaceholder: 'Unfair behavior / Inappropriate conduct...',
+            inputType: 'radio',
             inputMaxLength: 300,
             tipText: 'Tell us exactly what this player did.',
             confirmText: 'Submit Report',
@@ -7328,10 +7328,10 @@ const ScoringController = {
 
     reportIssue: async function (matchId, targetUserId = null) {
         const reason = await ConfirmModal.show({
-            title: targetUserId ? 'Report player conduct' : 'Tell us what happened?',
-            message: '<b>Common reasons:</b>\n• No show\n• Rude behavior\n• Wrong skill level' + (targetUserId ? '' : '\n• Technical issue'),
+            title: targetUserId ? 'Report player conduct' : 'Report an issue',
+            message: 'Please choose the category that best describes your report.',
             showInput: true,
-            inputPlaceholder: targetUserId ? 'Unfair behavior / Inappropriate conduct...' : 'Unfair behavior / App issue...',
+            inputType: 'radio',
             inputMaxLength: 300,
             tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide details about the incident.',
             confirmText: 'Submit Report',

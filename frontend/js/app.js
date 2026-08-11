@@ -158,9 +158,40 @@ var ConfirmModal = {
             const icon = customIcon !== null && customIcon !== undefined ? customIcon : (isWarning ? '⚡' : '');
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
-            let inputHtml = showInput ? `
-                <${inputType === 'textarea' ? 'textarea' : 'input'} id="gcm-input" type="${inputType}" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; margin-bottom:${inputType === 'password' ? '18px' : '4px'}; resize:none; font-family:var(--font); outline:none;" ${inputType === 'textarea' ? 'rows="6"' : ''}></${inputType === 'textarea' ? 'textarea' : 'input'}>
-            ` : '';
+            let inputHtml = '';
+            if (showInput) {
+                if (inputType === 'radio') {
+                    // Render Radio buttons + hidden text area for "Other"
+                    let optionsHtml = '';
+                    const options = [
+                        { value: 'No show', label: 'No show' },
+                        { value: 'Level mismatch', label: 'Level mismatch' },
+                        { value: 'Bad attitude', label: 'Bad attitude' },
+                        { value: 'other', label: 'Other' }
+                    ];
+                    options.forEach((opt, idx) => {
+                        optionsHtml += `
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
+                                <input type="radio" name="gcm-radio-opt" value="${opt.value}" ${idx === 0 ? 'checked' : ''} style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
+                                <span>${opt.label}</span>
+                            </label>
+                        `;
+                    });
+
+                    inputHtml = `
+                        <div id="gcm-radio-container" style="margin-bottom:16px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
+                            ${optionsHtml}
+                        </div>
+                        <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:16px; width:100%;">
+                            <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none;" rows="3"></textarea>
+                        </div>
+                    `;
+                } else {
+                    inputHtml = `
+                        <${inputType === 'textarea' ? 'textarea' : 'input'} id="gcm-input" type="${inputType}" placeholder="${inputPlaceholder}" maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; margin-bottom:${inputType === 'password' ? '18px' : '4px'}; resize:none; font-family:var(--font); outline:none;" ${inputType === 'textarea' ? 'rows="6"' : ''}></${inputType === 'textarea' ? 'textarea' : 'input'}>
+                    `;
+                }
+            }
 
             if (showInput) {
                 inputHtml += `
@@ -236,15 +267,35 @@ var ConfirmModal = {
             };
             this._modal.querySelector('#gcm-confirm').onclick = () => {
                 if (showInput) {
-                    const val = this._modal.querySelector('#gcm-input').value.trim();
-                    if (required && val === '') {
-                        const inp = this._modal.querySelector('#gcm-input');
-                        inp.style.borderColor = 'var(--c-red)';
-                        const errorMsg = inputType === 'password' ? 'Please enter your password.' : 'Please enter a message.';
-                        Toast.show(errorMsg, 'error');
-                        return;
+                    if (inputType === 'radio') {
+                        const selectedRadio = this._modal.querySelector('input[name="gcm-radio-opt"]:checked');
+                        if (!selectedRadio) {
+                            Toast.show('Please select an option.', 'error');
+                            return;
+                        }
+                        const selectedVal = selectedRadio.value;
+                        if (selectedVal === 'other') {
+                            const details = this._modal.querySelector('#gcm-input').value.trim();
+                            if (details === '') {
+                                this._modal.querySelector('#gcm-input').style.borderColor = 'var(--c-red)';
+                                Toast.show('Please describe the issue.', 'error');
+                                return;
+                            }
+                            this.close('Other: ' + details);
+                        } else {
+                            this.close(selectedVal);
+                        }
+                    } else {
+                        const val = this._modal.querySelector('#gcm-input').value.trim();
+                        if (required && val === '') {
+                            const inp = this._modal.querySelector('#gcm-input');
+                            inp.style.borderColor = 'var(--c-red)';
+                            const errorMsg = inputType === 'password' ? 'Please enter your password.' : 'Please enter a message.';
+                            Toast.show(errorMsg, 'error');
+                            return;
+                        }
+                        this.close(val);
                     }
-                    this.close(val);
                 } else {
                     this.close(true);
                 }
@@ -253,12 +304,31 @@ var ConfirmModal = {
             if (showInput) {
                 const inp = this._modal.querySelector('#gcm-input');
                 const count = this._modal.querySelector('#gcm-counter');
+                
+                if (inputType === 'radio') {
+                    // Set up radio change event listener to toggle "other" text input area
+                    const radios = this._modal.querySelectorAll('input[name="gcm-radio-opt"]');
+                    const otherWrap = this._modal.querySelector('#gcm-radio-other-wrap');
+                    radios.forEach(r => {
+                        r.onchange = () => {
+                            if (r.value === 'other') {
+                                otherWrap.style.display = 'block';
+                                setTimeout(() => inp.focus(), 100);
+                            } else {
+                                otherWrap.style.display = 'none';
+                            }
+                        };
+                    });
+                }
+                
                 inp.oninput = () => {
                     if (count) count.innerText = `${inp.value.length}/${inputMaxLength}`;
                     inp.style.borderColor = 'var(--c-border)';
                 };
-                // Auto-focus with slight delay for transition
-                setTimeout(() => inp.focus(), 300);
+                
+                if (inputType !== 'radio') {
+                    setTimeout(() => inp.focus(), 300);
+                }
             }
 
             if (thirdText) {
