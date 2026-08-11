@@ -6100,7 +6100,7 @@ const ChatController = {
                         const col = this._lastMsgEl.querySelector('.chat-msg-column');
                         if (col) {
                             col.appendChild(bubble);
-                            this._lastMsgEl.style.marginBottom = '16px';
+                            this._lastMsgEl.style.marginBottom = '10px';
                             this._lastMsgEl.dataset.createdAt = msg.created_at;
                             this._lastMsgEl.dataset.senderId = msg.user_id;
                             this._lastMsgEl.dataset.msgId = msgId;
@@ -6108,7 +6108,7 @@ const ChatController = {
                     } else {
                         const group = document.createElement('div');
                         group.className = 'chat-msg-group';
-                        group.style.cssText = `display:flex; gap:10px; align-items:flex-end; margin-bottom:16px; width:100%;` + (isMe ? 'flex-direction:row-reverse;' : '');
+                        group.style.cssText = `display:flex; gap:10px; align-items:flex-end; margin-bottom:10px; width:100%;` + (isMe ? 'flex-direction:row-reverse;' : '');
                         group.dataset.createdAt = msg.created_at;
                         group.dataset.senderId = msg.user_id;
                         group.dataset.msgId = msgId;
@@ -6313,12 +6313,12 @@ const ChatController = {
         });
 
         if (seenPlayers.length === 0) {
-            lastGroup.style.marginBottom = '16px';
+            lastGroup.style.marginBottom = '10px';
             return;
         }
 
         // Apply a larger margin bottom to the last group to accommodate the seen row without pushing other items
-        lastGroup.style.marginBottom = '46px';
+        lastGroup.style.marginBottom = '38px';
         col.style.position = 'relative';
 
         // Render seen container
