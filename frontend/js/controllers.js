@@ -4547,12 +4547,11 @@ const MatchesController = {
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
+                            </div>
                         </div>`);
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
 
-                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
-                const isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
                 if (!isAuthorized) {
                     return;
                 }
@@ -4925,6 +4924,7 @@ const MatchesController = {
                     joinHtml += `</div>`;
                     actionArea.innerHTML = safeHTML(joinHtml);
                 }
+            }
 
                 // Phase 5: Chat access logic
                 // Phase 5: Chat access logic
@@ -4967,7 +4967,6 @@ const MatchesController = {
                 if (chatArea) {
                     chatArea.innerHTML = safeHTML(`<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`);
                 }
-            }
         }
 
         const wlSection = document.getElementById('mv-waiting-section');
