@@ -4860,7 +4860,7 @@ const MatchesController = {
                             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:rgba(27,82,206,0.06); border-radius:var(--r-md); padding:12px 16px;">
                                 <div style="font-size:13px; font-weight:600; color:var(--c-text-muted);"><span style="margin-right:6px;">🕒</span>${wlNames}</div>
                                 <div style="display:flex; gap:8px;">
-                                    ${(isLiveMatch && canJumpIn) ? `<button onclick="MatchesController.jumpIn(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:#1D8348; border:none; border-radius:var(--r-sm); color:#fff; font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); box-shadow:0 2px 8px rgba(29,131,72,0.2);">⚡ Jump In</button>` : ''}
+                                    ${(isLiveMatch && canJumpIn) ? `<button id="mv-jump-in-btn" onclick="MatchesController.jumpIn(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:#1D8348; border:none; border-radius:var(--r-sm); color:#fff; font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font); box-shadow:0 2px 8px rgba(29,131,72,0.2);">⚡ Jump In</button>` : ''}
                                     ${isLiveMatch ? `<button onclick="MatchesController.withdraw(${my_waitlist_entry.id}, ${match.id}, this)" style="padding:7px 12px; background:var(--c-bg-secondary); border:none; border-radius:var(--r-sm); color:var(--c-text); font-size:11px; font-weight:800; text-transform:uppercase; cursor:pointer; font-family:var(--font);">Withdraw</button>` : '<span style="font-size:11px; color:var(--c-text-muted); letter-spacing:0.5px; opacity:0.8;">MATCH ENDED</span>'}
                                 </div>
                             </div>
@@ -5171,6 +5171,13 @@ const MatchesController = {
         const teamBtn = document.getElementById('mv-join-team-btn');
         if (teamBtn) {
             teamBtn.style.display = 'block';
+        }
+
+        const jumpInBtn = document.getElementById('mv-jump-in-btn');
+        if (jumpInBtn) {
+            jumpInBtn.style.display = 'block';
+            jumpInBtn.disabled = false;
+            jumpInBtn.innerText = '⚡ Jump In';
         }
 
         const emptySlots = document.querySelectorAll('.mv-slot.slot-empty');
