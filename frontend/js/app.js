@@ -159,49 +159,52 @@ var ConfirmModal = {
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             let inputHtml = '';
-            if (playersList && Array.isArray(playersList)) {
-                let optionsMarkup = '';
-                playersList.forEach(p => {
-                    optionsMarkup += `<option value="${p.id}">${p.name}</option>`;
-                });
-                inputHtml += `
-                    <div style="margin-bottom:18px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
-                        <label style="color:rgba(255,255,255,0.6); font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:6px; font-family:var(--font);">Who are you reporting?</label>
-                        <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98); color:#fff; border-radius:12px; padding:12px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
-                            ${optionsMarkup}
-                        </select>
-                    </div>
-                `;
-            }
-
             if (showInput) {
                 if (inputType === 'radio') {
-                    // Render Radio buttons + hidden text area for "Other"
-                    let optionsHtml = '';
-                    const options = [
-                        { value: 'No show', label: 'No show' },
-                        { value: 'Level mismatch', label: 'Level mismatch' },
-                        { value: 'Bad attitude', label: 'Bad attitude' },
-                        { value: 'other', label: 'Other' }
-                    ];
-                    options.forEach((opt, idx) => {
-                        optionsHtml += `
-                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
-                                <input type="radio" name="gcm-radio-opt" value="${opt.value}" ${idx === 0 ? 'checked' : ''} style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
-                                <span>${opt.label}</span>
-                            </label>
-                        `;
-                    });
+                    let playerOptions = '';
+                    if (playersList && Array.isArray(playersList)) {
+                        playersList.forEach(p => {
+                            playerOptions += `<option value="${p.id}">${p.name}</option>`;
+                        });
+                    }
 
                     inputHtml = `
                         <div id="gcm-radio-container" style="margin-bottom:16px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
-                            ${optionsHtml}
-                        </div>
-                        <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:16px; width:100%;">
-                            <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none; margin-bottom:4px;" rows="3"></textarea>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; padding:0 4px;">
-                                <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
-                                <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
+                                <input type="radio" name="gcm-radio-opt" value="No show" style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
+                                <span>No show</span>
+                            </label>
+                            
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
+                                <input type="radio" name="gcm-radio-opt" value="Level mismatch" style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
+                                <span>Level mismatch</span>
+                            </label>
+                            
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
+                                <input type="radio" name="gcm-radio-opt" value="Bad attitude" style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
+                                <span>Bad attitude</span>
+                            </label>
+
+                            ${playersList && Array.isArray(playersList) ? `
+                            <div id="gcm-radio-player-wrap" style="display:none; margin-bottom:16px; width:100%; padding-left:28px; box-sizing:border-box;">
+                                <label style="color:rgba(255,255,255,0.6); display:block; text-align:left; font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:6px; font-family:var(--font);">Select Player</label>
+                                <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98); color:#fff; border-radius:12px; padding:12px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
+                                    ${playerOptions}
+                                </select>
+                            </div>
+                            ` : ''}
+
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; cursor:pointer; color:#fff; font-size:14px; font-weight:600; text-align:left; width:100%;">
+                                <input type="radio" name="gcm-radio-opt" value="other" style="accent-color:var(--c-primary); width:18px; height:18px; cursor:pointer;" />
+                                <span>Other</span>
+                            </label>
+
+                            <div id="gcm-radio-other-wrap" style="display:none; margin-bottom:16px; width:100%; padding-left:28px; box-sizing:border-box;">
+                                <textarea id="gcm-input" placeholder="Please describe the issue..." maxlength="${inputMaxLength}" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.06); color:#fff; border-radius:12px; padding:12px; font-size:14px; resize:none; font-family:var(--font); outline:none; margin-bottom:4px;" rows="3"></textarea>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px; padding:0 4px;">
+                                    <span id="gcm-tip" style="font-size:11px; color:var(--c-text-dim); text-align:left; flex:1; padding-right:10px;">${tipText}</span>
+                                    <span id="gcm-counter" style="font-size:11px; color:var(--c-text-muted); font-weight:700; white-space:nowrap;">0/${inputMaxLength}</span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -321,8 +324,10 @@ var ConfirmModal = {
                 }
 
                 if (playersList && Array.isArray(playersList)) {
+                    const selectedRadio = this._modal.querySelector('input[name="gcm-radio-opt"]:checked');
+                    const isOther = selectedRadio && selectedRadio.value === 'other';
                     const sel = this._modal.querySelector('#gcm-player-select');
-                    const targetPlayerId = sel ? parseInt(sel.value) : null;
+                    const targetPlayerId = (!isOther && sel) ? parseInt(sel.value) : null;
                     this.close({ reason: resolvedValue, targetUserId: targetPlayerId });
                 } else {
                     this.close(resolvedValue);
@@ -337,13 +342,16 @@ var ConfirmModal = {
                     // Set up radio change event listener to toggle "other" text input area
                     const radios = this._modal.querySelectorAll('input[name="gcm-radio-opt"]');
                     const otherWrap = this._modal.querySelector('#gcm-radio-other-wrap');
+                    const playerWrap = this._modal.querySelector('#gcm-radio-player-wrap');
                     radios.forEach(r => {
                         r.onchange = () => {
                             if (r.value === 'other') {
                                 otherWrap.style.display = 'block';
+                                if (playerWrap) playerWrap.style.display = 'none';
                                 setTimeout(() => inp.focus(), 100);
                             } else {
                                 otherWrap.style.display = 'none';
+                                if (playerWrap) playerWrap.style.display = 'block';
                             }
                         };
                     });
