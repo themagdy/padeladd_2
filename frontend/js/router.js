@@ -341,6 +341,7 @@ const Router = {
         // Stop any active polling from the previous page
         if (typeof PollManager !== 'undefined') PollManager.stop();
         if (typeof ChatController !== 'undefined') ChatController.stop();
+        if (typeof DashboardController !== 'undefined') DashboardController.stop();
 
 
         // Normalize path by stripping CONFIG.BASE_PATH
