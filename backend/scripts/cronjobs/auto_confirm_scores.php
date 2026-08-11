@@ -74,6 +74,8 @@ $autoStmt = $pdo->prepare("
 $autoStmt->execute();
 $toApprove = $autoStmt->fetchAll(PDO::FETCH_ASSOC);
 
+$approvedMatches = [];
+
 foreach ($toApprove as $score) {
     $match_id = (int)$score['match_id'];
     $score_id = (int)$score['id'];
@@ -89,16 +91,24 @@ foreach ($toApprove as $score) {
 
         $pdo->commit();
 
-        // Notify all participants
-        notifyMatchParticipants($pdo, $match_id, 'score_approved', 
-            "Score for your match was auto-confirmed after 24 hours. Points have been updated.", 
-            ADMIN_SYSTEM_USER_ID);
-
+        $approvedMatches[$match_id] = true;
         echo date('[Y-m-d H:i:s]') . " Auto-confirmed score #{$score_id} for match #{$match_id}.\n";
 
     } catch (Exception $e) {
         $pdo->rollBack();
         echo date('[Y-m-d H:i:s]') . " ERROR auto-confirming score #{$score_id}: " . $e->getMessage() . "\n";
+    }
+}
+
+// Send exactly one notification per approved match
+foreach (array_keys($approvedMatches) as $match_id) {
+    try {
+        notifyMatchParticipants($pdo, $match_id, 'score_approved', 
+            "Score for your match was auto-confirmed after 24 hours. Points have been updated.", 
+            ADMIN_SYSTEM_USER_ID);
+        echo date('[Y-m-d H:i:s]') . " Sent auto-confirm notification for match #{$match_id}.\n";
+    } catch (Exception $e) {
+        echo date('[Y-m-d H:i:s]') . " ERROR sending auto-confirm notification for match #{$match_id}: " . $e->getMessage() . "\n";
     }
 }
 
