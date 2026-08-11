@@ -7351,7 +7351,8 @@ const ScoringController = {
             tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide details about the incident.',
             confirmText: 'Submit Report',
             type: 'warning',
-            playersList: playersList
+            playersList: playersList,
+            headerLayout: 'row'
         });
 
         if (!result) return;
