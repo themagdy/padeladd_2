@@ -6004,7 +6004,7 @@ const ChatController = {
 
         const viewerId = parseInt(res.data.viewer_id);
         this._viewerId = viewerId;
-        this._presenceTimes = res.data.presence_times || {};
+        this._readStatuses = res.data.read_statuses || {};
 
         const online_users = res.data.online_users || [];
         this._onlineUsers = online_users;
@@ -6103,6 +6103,7 @@ const ChatController = {
                             this._lastMsgEl.style.marginBottom = '16px';
                             this._lastMsgEl.dataset.createdAt = msg.created_at;
                             this._lastMsgEl.dataset.senderId = msg.user_id;
+                            this._lastMsgEl.dataset.msgId = msgId;
                         }
                     } else {
                         const group = document.createElement('div');
@@ -6110,6 +6111,7 @@ const ChatController = {
                         group.style.cssText = `display:flex; gap:10px; align-items:flex-end; margin-bottom:16px; width:100%;` + (isMe ? 'flex-direction:row-reverse;' : '');
                         group.dataset.createdAt = msg.created_at;
                         group.dataset.senderId = msg.user_id;
+                        group.dataset.msgId = msgId;
 
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
@@ -6276,16 +6278,11 @@ const ChatController = {
         const col = lastGroup.querySelector('.chat-msg-column');
         if (!col) return;
 
-        const parseDate = (str) => {
-            if (!str) return 0;
-            return new Date(str.replace(/-/g, '/')).getTime();
-        };
-
-        const msgTime = parseDate(lastGroup.dataset.createdAt);
+        const lastMsgId = parseInt(lastGroup.dataset.msgId || 0);
         const senderId = parseInt(lastGroup.dataset.senderId);
 
-        // Fetch presence times
-        const presence = this._presenceTimes || {};
+        // Fetch read statuses
+        const readStatuses = this._readStatuses || {};
         
         // Find match players and waitlist players to get their details (profile image, nickname, initials)
         const slots = MatchesController._currentMatchSlots || [];
@@ -6311,12 +6308,8 @@ const ChatController = {
             const uid = parseInt(p.user_id);
             if (uid === senderId) return false; // exclude sender of the message
             
-            const lastSeenStr = presence[uid];
-            if (!lastSeenStr) return false;
-            
-            const lastSeenTime = parseDate(lastSeenStr);
-            // Allow 5-second clock skew tolerance
-            return lastSeenTime >= (msgTime - 5000);
+            const lastReadId = parseInt(readStatuses[uid] || 0);
+            return lastReadId >= lastMsgId;
         });
 
         if (seenPlayers.length === 0) {
