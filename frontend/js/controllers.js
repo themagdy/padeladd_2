@@ -5127,8 +5127,8 @@ const MatchesController = {
             if (!noticeEl) {
                 noticeEl = document.createElement('div');
                 noticeEl.id = 'mv-team-waitlist-notice';
-                noticeEl.style.cssText = 'background:rgba(247,148,29,0.07); border:1px solid rgba(247,148,29,0.2); border-radius:10px; padding:10px 14px; font-size:12px; color:var(--c-orange); font-weight:600; margin-bottom:14px; line-height:1.4;';
-                noticeEl.innerHTML = '🕒 <strong>Match is full.</strong> Your request will be added to the waitlist. You and your partner will be notified when a team slot opens up.';
+                noticeEl.style.cssText = 'background:rgba(247,148,29,0.07); border:1px solid rgba(247,148,29,0.2); border-radius:10px; padding:10px 14px; font-size:14px; color:var(--c-orange); font-weight:800; margin-bottom:14px; line-height:1.4;';
+                noticeEl.innerHTML = '🕒 <strong>Join Waitlist</strong>';
                 form.insertBefore(noticeEl, form.firstChild);
             } else {
                 noticeEl.style.display = 'block';
