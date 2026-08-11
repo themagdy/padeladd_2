@@ -4490,9 +4490,15 @@ const MatchesController = {
                             </div>`;
                     }
                     if (isLateCancel) {
+                        const mcUser = match.creator_nickname || match.creator_name || 'Creator';
+                        const mcCode = match.creator_code || '';
+                        const profileUrl = `/p/${mcCode}`;
+                        const codeTag = mcCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${mcCode}</a>` : '';
+                        const clickableUser = mcCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${mcUser}</a>` : `<strong>${mcUser}</strong>`;
+
                         itemsHtml += `
                             <div style="font-size:12px; line-height:1.4; color:var(--c-text); margin-bottom:8px;">
-                                This match was cancelled within the 5-hour by the creator.
+                                ${clickableUser}${codeTag} cancelled the match within the 5-hour.
                             </div>`;
                     }
 
