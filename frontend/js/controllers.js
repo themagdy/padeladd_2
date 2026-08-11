@@ -5598,6 +5598,8 @@ const ChatController = {
         this._isShowing = true;
         this._lastSenderId = 0;
         this._lastMsgEl = null;
+        this._onlineUsers = [];
+        this._prevOnlineUsers = [];
         this._savedScrollTop = window.scrollY || document.documentElement.scrollTop;
 
         const overlay = document.getElementById('mv-chat-overlay');
@@ -5670,6 +5672,7 @@ const ChatController = {
         });
 
         const currentUserId = this._viewerId || 0;
+        const onlineSet = new Set((this._onlineUsers || []).map(id => String(id)));
 
         let meUser = null;
         const otherUsers = [];
@@ -5682,6 +5685,13 @@ const ChatController = {
             }
         });
 
+        // Sort other users: online players first in line
+        otherUsers.sort((a, b) => {
+            const aOnline = onlineSet.has(String(a.user_id)) ? 1 : 0;
+            const bOnline = onlineSet.has(String(b.user_id)) ? 1 : 0;
+            return bOnline - aOnline;
+        });
+
         let html = '';
 
         const buildAvatar = (p, isMe) => {
@@ -5690,7 +5700,8 @@ const ChatController = {
             const thumb = p.profile_image_thumb || p.profile_image;
             const imgPath = thumb ? `src="${CONFIG.ASSET_BASE}/${thumb}"` : '';
 
-            const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:none; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
+            const isOnline = onlineSet.has(String(p.user_id)) || String(p.user_id) === String(currentUserId);
+            const onlineDot = `<div id="avatar-online-dot-${p.user_id}" style="display:${isOnline ? 'block' : 'none'}; position:absolute; bottom:-1px; right:-1px; width:13px; height:13px; background-color:#10B981; border:2px solid var(--c-bg); border-radius:50%; z-index:10; box-shadow:0 0 4px rgba(16,185,129,0.4);"></div>`;
 
             // Restriction: In Mixed matches, Males cannot click on Females
             const isMixed = MatchesController._currentMatchGenderType === 'open';
@@ -5968,7 +5979,6 @@ const ChatController = {
         if (this._isLoading) return;
         // Phase 6: Don't poll if the tab is in the background (prevents "ghost online" status)
         if (document.hidden && !initial) return;
-
         const container = document.getElementById('chat-messages-container');
         const inner = document.getElementById('chat-messages-inner');
         if (!container || !inner) return;
@@ -5995,24 +6005,34 @@ const ChatController = {
         const viewerId = parseInt(res.data.viewer_id);
         this._viewerId = viewerId;
 
-        if (initial) {
+        const online_users = res.data.online_users || [];
+        this._onlineUsers = online_users;
+
+        const prevOnlineString = JSON.stringify(this._prevOnlineUsers || []);
+        const newOnlineString = JSON.stringify(online_users);
+
+        if (prevOnlineString !== newOnlineString) {
+            this._prevOnlineUsers = online_users;
+            this.renderPlayerBar();
+        } else {
+            // Fallback: update display status on existing dots if structure hasn't changed
+            const onlineSet = new Set(online_users.map(id => String(id)));
+            document.querySelectorAll('div[id^="avatar-online-dot-"]').forEach(el => {
+                const uid = el.id.replace('avatar-online-dot-', '');
+                if (onlineSet.has(uid) || uid === String(viewerId)) {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+
+        if (initial && prevOnlineString === newOnlineString) {
             this.renderPlayerBar();
         }
 
         const outgoing = res.data.outgoing_phone_requests || [];
         const pendingForMe = res.data.pending_phone_requests || [];
-        const online_users = res.data.online_users || [];
-
-        // Real-Time dynamically toggle the online indicator dots across the player bar
-        const onlineSet = new Set(online_users.map(id => String(id)));
-        document.querySelectorAll('div[id^="avatar-online-dot-"]').forEach(el => {
-            const uid = el.id.replace('avatar-online-dot-', '');
-            if (onlineSet.has(uid) || uid === String(viewerId)) {
-                el.style.display = 'block';
-            } else {
-                el.style.display = 'none';
-            }
-        });
 
         // Manage empty state and clearing on initial load
         const hasContent = messages.length > 0 || pendingForMe.length > 0 || outgoing.filter(pr => pr.status === 'approved').length > 0;
