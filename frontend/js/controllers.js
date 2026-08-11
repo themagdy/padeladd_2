@@ -4121,8 +4121,7 @@ const MatchesController = {
         MatchesController._currentMatchViewerGender = res.data.viewer_gender || 'male';
 
         let isPast = false;
-        const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
-        const isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
+        let isAuthorized = false;
 
         const dt = new Date(match.match_datetime.replace(' ', 'T'));
         const dateStr = UI.formatMatchDateOnly(match.match_datetime);
@@ -4541,37 +4540,14 @@ const MatchesController = {
 
             if (match.status === 'cancelled') {
                 actionArea.innerHTML = safeHTML(`
-                        <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start; margin-bottom: 24px;">
+                        <div style="background:rgba(255,59,48,0.05); border-left:4px solid var(--c-red); border-radius:16px; padding:16px 20px; display:flex; gap:16px; align-items:flex-start;">
                             <div style="font-size:24px; margin-top:2px;">🚫</div>
                             <div style="flex:1; text-align:left;">
                                 <h3 style="font-size:15px; font-weight:800; color:var(--c-red); margin:0 0 4px 0;">Match Cancelled</h3>
                                 <p style="font-size:13px; color:var(--c-text); margin:0; line-height:1.4; opacity:0.9;">
                                     ${match.cancellation_reason ? `Reason: <strong>${match.cancellation_reason}</strong>` : 'No specific reason was provided for this cancellation.'}
                                 </p>
-                            </div>
                         </div>`);
-
-                if (isAuthorized) {
-                    const unreadCount = res.data.unread_count || 0;
-                    const badgeHtml = unreadCount > 0 ? `
-                        <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
-                            ${unreadCount > 99 ? '99+' : unreadCount}
-                        </span>` : '';
-
-                    const chatBtnHtml = `
-                        <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
-                        <button type="button" onclick="ChatController.open(${match.id}); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
-                            <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
-                            <span style="background: linear-gradient(to right, #ffffff, #a5c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
-                            ${badgeHtml}
-                        </button>
-                    `;
-
-                    if (chatArea) {
-                        chatArea.innerHTML = safeHTML(`<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`);
-                    }
-                }
-
                 if (content) content.style.display = 'block';
                 if (skeleton) skeleton.style.display = 'none';
                 return;
@@ -4948,6 +4924,8 @@ const MatchesController = {
                 // Phase 5: Chat access logic
                 // Phase 5: Chat access logic
                 isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
+                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
+                isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
 
                 let chatBtnHtml = '';
                 const unreadCount = res.data.unread_count || 0;
