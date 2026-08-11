@@ -1004,39 +1004,80 @@ form {
 }
 
 .toast {
-  background: var(--c-bg-card);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-md);
-  padding: var(--space-md) var(--space-lg);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--c-text);
-  box-shadow: var(--shadow-card);
+  background: rgba(23, 23, 28, 0.98);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 12px;
   animation: toastIn 0.3s ease forwards;
   pointer-events: auto;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.toast-icon {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.toast-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.toast-close:active {
+  transform: scale(0.95);
 }
 
 .toast.success {
-  border-color: var(--c-green);
-  color: var(--c-green);
+  border-left: 4px solid var(--c-green);
 }
 
 .toast.error {
-  border-color: var(--c-red);
-  color: var(--c-red);
+  border-left: 4px solid var(--c-red);
 }
 
 .toast.info {
-  border-color: var(--c-primary);
-  color: var(--c-text-blue);
+  border-left: 4px solid var(--c-primary);
 }
 
 .toast.warning {
-  border-color: var(--c-orange);
-  color: var(--c-orange);
+  border-left: 4px solid var(--c-orange);
 }
 
 @keyframes toastIn {

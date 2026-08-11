@@ -110,7 +110,7 @@ var Toast = {
         toast.innerHTML = safeHTML(`
             <span class="toast-icon">${icon}</span>
             <span class="toast-message">${message}</span>
-            <span class="toast-close" style="margin-left:12px; cursor:pointer; opacity:0.6; font-weight:900; font-size:12px;" onclick="this.parentElement.remove()">✕</span>
+            <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
         `);
 
         container.appendChild(toast);
