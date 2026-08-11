@@ -2164,3 +2164,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Join/Jump In Solo: Added slot-selection workflow for solo waitlist players when jumping in.
 - Join/Jump In Solo: Automatically assign slot without selection if open slots exist on only one team.
 - Join/Jump In Solo: Prompt to choose a slot only when empty slots span multiple different teams.
+
+2.4.83 (Build 483) - 2026-08-11 [patch]
+- DetailsView Policy Warning: Simplified late-policy titles to "Policy Violation" and rephrased late cancellation to put player first.
+- DetailsView Policy Warning: Consolidated separate cancellation and withdrawal banners into a single unified card panel, ending with a dynamically pluralized subject ("Player" vs "Players").
+- DetailsView Countdown: Automatically clear countdown timer interval and hide the banner wrapper when a match is cancelled.
+- Partner Search: Displayed "✓ Found player:" and "✓ Player found" in brand light blue.
+- Partner Search: Added absolute-positioned floating player name badge inside inputs (creating match & join team overlay) aligned to the right.
+- Join Team Overlay: Simplified the waitlist warning message to "🕒 JOIN WAITLIST" styled in 11px uppercase bold orange.
