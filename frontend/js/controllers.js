@@ -7327,7 +7327,24 @@ const ScoringController = {
     },
 
     reportIssue: async function (matchId, targetUserId = null) {
-        const reason = await ConfirmModal.show({
+        let playersList = null;
+
+        // If targetUserId is not already provided (meaning reported from Match Details page),
+        // let the user select which player they want to report.
+        if (!targetUserId && typeof MatchesController !== 'undefined' && MatchesController._currentMatchSlots) {
+            const currentUserId = Auth.getUserId();
+            const otherPlayers = MatchesController._currentMatchSlots
+                .filter(s => s.status === 'confirmed' && parseInt(s.user_id) !== parseInt(currentUserId))
+                .map(s => ({
+                    id: s.user_id,
+                    name: s.nickname || s.name || (s.first_name + ' ' + s.last_name)
+                }));
+            if (otherPlayers.length > 0) {
+                playersList = otherPlayers;
+            }
+        }
+
+        const result = await ConfirmModal.show({
             title: targetUserId ? 'Report player conduct' : 'Report an issue',
             message: '',
             showInput: true,
@@ -7335,12 +7352,22 @@ const ScoringController = {
             inputMaxLength: 300,
             tipText: targetUserId ? 'Tell us exactly what this player did.' : 'Provide details about the incident.',
             confirmText: 'Submit Report',
-            type: 'warning'
+            type: 'warning',
+            playersList: playersList
         });
 
-        if (!reason) return;
+        if (!result) return;
 
-        const res = await API.post('/match/report', { match_id: matchId, target_user_id: targetUserId, reason });
+        let finalReason = result;
+        let finalTargetUserId = targetUserId;
+
+        if (playersList) {
+            finalReason = result.reason;
+            finalTargetUserId = result.targetUserId;
+            if (!finalReason) return;
+        }
+
+        const res = await API.post('/match/report', { match_id: matchId, target_user_id: finalTargetUserId, reason: finalReason });
         if (res && res.success) {
             Toast.show('Report submitted successfully.', 'success');
         } else {

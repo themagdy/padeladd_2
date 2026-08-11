@@ -133,7 +133,7 @@ var ConfirmModal = {
     _resolve: null,
     _isOpen: false,
 
-    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputType = 'textarea', required = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column' }) {
+    show: function ({ title, message, confirmText = 'Confirm', cancelText = 'Cancel', showCancel = true, thirdText = null, thirdColor = 'var(--c-secondary)', type = 'info', showInput = false, inputType = 'textarea', required = false, inputPlaceholder = 'Enter reason...', inputMaxLength = 300, tipText = '', icon: customIcon = null, undismissable = false, closeOnOverlayClick = true, headerLayout = 'column', playersList = null }) {
         return new Promise((resolve) => {
             this._resolve = resolve;
             this._undismissable = undismissable;
@@ -159,6 +159,21 @@ var ConfirmModal = {
             const confirmBtnColor = isWarning ? 'var(--c-red)' : 'var(--c-primary)';
 
             let inputHtml = '';
+            if (playersList && Array.isArray(playersList)) {
+                let optionsMarkup = '';
+                playersList.forEach(p => {
+                    optionsMarkup += `<option value="${p.id}">${p.name}</option>`;
+                });
+                inputHtml += `
+                    <div style="margin-bottom:18px; width:100%; display:flex; flex-direction:column; align-items:flex-start;">
+                        <label style="color:rgba(255,255,255,0.6); font-size:11px; font-weight:800; text-transform:uppercase; margin-bottom:6px; font-family:var(--font);">Who are you reporting?</label>
+                        <select id="gcm-player-select" style="width:100%; border:1px solid rgba(255,255,255,0.15); background:rgba(23, 23, 28, 0.98); color:#fff; border-radius:12px; padding:12px; font-size:14px; font-family:var(--font); outline:none; cursor:pointer;">
+                            ${optionsMarkup}
+                        </select>
+                    </div>
+                `;
+            }
+
             if (showInput) {
                 if (inputType === 'radio') {
                     // Render Radio buttons + hidden text area for "Other"
@@ -270,6 +285,7 @@ var ConfirmModal = {
                 if (e.target === this._modal && !this._undismissable && this._closeOnOverlayClick) this.close(false);
             };
             this._modal.querySelector('#gcm-confirm').onclick = () => {
+                let resolvedValue = null;
                 if (showInput) {
                     if (inputType === 'radio') {
                         const selectedRadio = this._modal.querySelector('input[name="gcm-radio-opt"]:checked');
@@ -285,9 +301,9 @@ var ConfirmModal = {
                                 Toast.show('Please describe the issue.', 'error');
                                 return;
                             }
-                            this.close('Other: ' + details);
+                            resolvedValue = 'Other: ' + details;
                         } else {
-                            this.close(selectedVal);
+                            resolvedValue = selectedVal;
                         }
                     } else {
                         const val = this._modal.querySelector('#gcm-input').value.trim();
@@ -298,10 +314,18 @@ var ConfirmModal = {
                             Toast.show(errorMsg, 'error');
                             return;
                         }
-                        this.close(val);
+                        resolvedValue = val;
                     }
                 } else {
-                    this.close(true);
+                    resolvedValue = true;
+                }
+
+                if (playersList && Array.isArray(playersList)) {
+                    const sel = this._modal.querySelector('#gcm-player-select');
+                    const targetPlayerId = sel ? parseInt(sel.value) : null;
+                    this.close({ reason: resolvedValue, targetUserId: targetPlayerId });
+                } else {
+                    this.close(resolvedValue);
                 }
             };
 
