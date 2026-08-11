@@ -140,11 +140,17 @@ $presStmt = $pdo->prepare("
 $presStmt->execute([$match_id, $match_id, $match_id, $match_id]);
 $online_users = $presStmt->fetchAll(PDO::FETCH_COLUMN);
 
+// Fetch presence times of all match participants
+$seenStmt = $pdo->prepare("SELECT user_id, last_seen FROM chat_presence WHERE match_id = ?");
+$seenStmt->execute([$match_id]);
+$presence_times = $seenStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
 jsonResponse(true, 'Messages loaded.', [
     'messages'               => $messages,
     'viewer_id'              => $uid,
     'pending_phone_requests' => $pendingPhoneRequests,
     'outgoing_phone_requests'=> $outgoingPhoneRequests,
     'online_users'           => $online_users,
+    'presence_times'         => $presence_times,
 ]);
 

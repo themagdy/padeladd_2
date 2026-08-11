@@ -6004,6 +6004,7 @@ const ChatController = {
 
         const viewerId = parseInt(res.data.viewer_id);
         this._viewerId = viewerId;
+        this._presenceTimes = res.data.presence_times || {};
 
         const online_users = res.data.online_users || [];
         this._onlineUsers = online_users;
@@ -6100,11 +6101,15 @@ const ChatController = {
                         if (col) {
                             col.appendChild(bubble);
                             this._lastMsgEl.style.marginBottom = '16px';
+                            this._lastMsgEl.dataset.createdAt = msg.created_at;
+                            this._lastMsgEl.dataset.senderId = msg.user_id;
                         }
                     } else {
                         const group = document.createElement('div');
                         group.className = 'chat-msg-group';
                         group.style.cssText = `display:flex; gap:10px; align-items:flex-end; margin-bottom:16px; width:100%;` + (isMe ? 'flex-direction:row-reverse;' : '');
+                        group.dataset.createdAt = msg.created_at;
+                        group.dataset.senderId = msg.user_id;
 
                         const name = msg.nickname || msg.first_name || 'Guest';
                         const code = msg.player_code || '';
@@ -6246,6 +6251,9 @@ const ChatController = {
         }
 
 
+        // Render seen indicators under the last message
+        this.renderSeenBy();
+
         if (initial || wasAtBottom || forceScroll) {
             if (initial) {
                 container.scrollTop = container.scrollHeight;
@@ -6255,6 +6263,84 @@ const ChatController = {
         }
 
         this._isLoading = false;
+    },
+
+    renderSeenBy: function () {
+        document.querySelectorAll('.chat-seen-by-container').forEach(el => el.remove());
+
+        const inner = document.getElementById('chat-messages-inner');
+        if (!inner) return;
+        const msgGroups = inner.querySelectorAll('.chat-msg-group');
+        if (msgGroups.length === 0) return;
+        const lastGroup = msgGroups[msgGroups.length - 1];
+        const col = lastGroup.querySelector('.chat-msg-column');
+        if (!col) return;
+
+        const parseDate = (str) => {
+            if (!str) return 0;
+            return new Date(str.replace(/-/g, '/')).getTime();
+        };
+
+        const msgTime = parseDate(lastGroup.dataset.createdAt);
+        const senderId = parseInt(lastGroup.dataset.senderId);
+
+        // Fetch presence times
+        const presence = this._presenceTimes || {};
+        
+        // Find match players and waitlist players to get their details (profile image, nickname, initials)
+        const slots = MatchesController._currentMatchSlots || [];
+        const waitlist = MatchesController._currentMatchWaitlist || [];
+
+        // Build a unique list of potential viewers
+        const players = [];
+        const seen = new Set();
+        const add = (p) => {
+            if (!p || !p.user_id || seen.has(p.user_id)) return;
+            seen.add(p.user_id);
+            players.push(p);
+        };
+        slots.forEach(s => add({ ...s }));
+        waitlist.forEach(w => {
+            if (!['pending', 'approved'].includes(w.request_status)) return;
+            if (w.requester_id) add({ user_id: w.requester_id, nickname: w.req_nickname, first_name: w.req_first, last_name: w.req_last, profile_image: w.req_profile, profile_image_thumb: w.req_profile_thumb, player_code: w.req_code });
+            if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code });
+        });
+
+        // Filter players who saw this message
+        const seenPlayers = players.filter(p => {
+            const uid = parseInt(p.user_id);
+            if (uid === senderId) return false; // exclude sender of the message
+            
+            const lastSeenStr = presence[uid];
+            if (!lastSeenStr) return false;
+            
+            const lastSeenTime = parseDate(lastSeenStr);
+            // Allow 5-second clock skew tolerance
+            return lastSeenTime >= (msgTime - 5000);
+        });
+
+        if (seenPlayers.length === 0) return;
+
+        // Render seen container
+        const seenContainer = document.createElement('div');
+        seenContainer.className = 'chat-seen-by-container';
+        
+        const isMeSender = senderId === (this._viewerId || 0);
+        seenContainer.style.cssText = `display:flex; align-items:center; gap:6px; font-size:10px; color:rgba(255,255,255,0.4); margin-top:4px; margin-bottom: 2px;` + (isMeSender ? 'align-self:flex-end; justify-content:flex-end;' : 'align-self:flex-start; justify-content:flex-start;');
+
+        let avatarsHtml = '';
+        seenPlayers.forEach(p => {
+            const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || (p.nickname?.[0] || '?').toUpperCase();
+            const thumb = p.profile_image_thumb || p.profile_image;
+            
+            const avatarImg = thumb 
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:16px; height:16px; border-radius:50%; object-fit:cover; border:1px solid var(--c-bg); margin-left:-4px;" title="${p.nickname || p.first_name || 'Player'}">`
+                : `<div style="width:16px; height:16px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:8px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1px solid var(--c-bg); margin-left:-4px;" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
+            avatarsHtml += avatarImg;
+        });
+
+        seenContainer.innerHTML = `<span style="font-size:10px; color:rgba(255,255,255,0.35);">Seen by</span> <div style="display:flex; align-items:center; padding-left:4px;">${avatarsHtml}</div>`;
+        col.appendChild(seenContainer);
     },
 
     buildBubbleEl: function (msg, isMe) {
