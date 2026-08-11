@@ -1483,7 +1483,10 @@ const DashboardController = {
                         return;
                     }
                     currentIndex = (currentIndex + 1) % list.length;
-                    c.scrollTo({ left: c.children[currentIndex].offsetLeft, behavior: 'smooth' });
+                    const nextChild = c.children[currentIndex];
+                    if (nextChild) {
+                        c.scrollTo({ left: nextChild.offsetLeft, behavior: 'smooth' });
+                    }
                 }, 4000);
             } else {
                 if (DashboardController._announcementsInterval) {
