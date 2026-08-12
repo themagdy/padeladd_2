@@ -15,9 +15,17 @@
                     <input type="text" id="venue-search" class="form-input" placeholder="Search venues by name..." style="padding-left:40px; margin-bottom:0;" oninput="AdminControllers.venues.setSearch(this.value)">
                 </div>
                 
+                <button onclick="AdminControllers.venues.openAddModal()" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 24px; font-weight:800; border-radius:8px; cursor:pointer; height:42px; white-space:nowrap;">+ ADD VENUE</button>
+
                 <label class="switch-container">
                     <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">Show Hidden</span>
                     <input type="checkbox" id="filter-hidden-venues" onchange="AdminControllers.venues.toggleFilter(this.checked)">
+                    <span class="switch-slider"></span>
+                </label>
+
+                <label class="switch-container">
+                    <span style="font-size:11px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:1px;">No Location</span>
+                    <input type="checkbox" id="filter-no-location" onchange="AdminControllers.venues.toggleNoLocation(this.checked)">
                     <span class="switch-slider"></span>
                 </label>
             </div>
@@ -124,6 +132,36 @@
             <div class="modal-footer">
                 <button type="button" onclick="AdminControllers.venues.processRequest('reject')" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:10px 24px;">Reject</button>
                 <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">APPROVE & ADD</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Venue Modal -->
+<div id="add-venue-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Add New Venue</h3>
+            <button onclick="AdminControllers.venues.closeModal()" class="btn-close-modal">✕</button>
+        </div>
+        
+        <form id="add-venue-form">
+            <div class="modal-body">
+                <div class="modal-form-grid">
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Official Club Name</label>
+                        <input type="text" id="add-venue-name" class="form-input" placeholder="e.g. Smash Tennis Academy" required>
+                    </div>
+                    <div class="modal-form-group" style="grid-column: span 2;">
+                        <label>Google Maps Location Link</label>
+                        <input type="url" id="add-venue-location" class="form-input" placeholder="https://maps.google.com/...">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" onclick="AdminControllers.venues.closeModal()" class="btn-badge" style="background:rgba(255, 255, 255, 0.05); color:var(--c-text-muted); border:none; padding:10px 24px;">Cancel</button>
+                <button type="submit" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:10px 32px; font-weight:800;">ADD CLUB</button>
             </div>
         </form>
     </div>

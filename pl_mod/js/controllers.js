@@ -1544,8 +1544,10 @@ window.AdminControllers = {
         currentTab: 'all',
         searchQuery: '',
         showHidden: false,
+        showNoLocation: false,
         async init() {
             this.showHidden = false; // Reset
+            this.showNoLocation = false; // Reset
             await this.fetchAllData();
 
             const approveForm = document.getElementById('approve-venue-form');
@@ -1561,6 +1563,14 @@ window.AdminControllers = {
                 editForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.updateVenue();
+                });
+            }
+
+            const addForm = document.getElementById('add-venue-form');
+            if (addForm) {
+                addForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addVenue();
                 });
             }
         },
@@ -1604,6 +1614,10 @@ window.AdminControllers = {
             this.showHidden = checked;
             this.renderAllVenues();
         },
+        toggleNoLocation(checked) {
+            this.showNoLocation = checked;
+            this.renderAllVenues();
+        },
         render() {
             if (this.currentTab === 'all') this.renderAllVenues();
             else this.renderRequests();
@@ -1618,6 +1632,11 @@ window.AdminControllers = {
             // Filter by hidden status
             const targetStatus = this.showHidden ? 1 : 0;
             filtered = filtered.filter(v => v.is_hidden == targetStatus);
+
+            // Filter by empty/null location
+            if (this.showNoLocation) {
+                filtered = filtered.filter(v => !v.venue_location_link || v.venue_location_link.trim() === '');
+            }
 
             if (this.searchQuery) {
                 filtered = filtered.filter(v => v.name.toLowerCase().includes(this.searchQuery));
@@ -1647,6 +1666,9 @@ window.AdminControllers = {
                             <button onclick="AdminControllers.venues.openEditModal(${v.id})" class="btn-badge" style="background:rgba(255,255,255,0.05); color:#fff; border:none; padding:6px 12px;">Edit</button>
                             <button onclick="AdminControllers.venues.toggleVisibility(${v.id}, ${v.is_hidden})" class="btn-badge" style="background:${v.is_hidden == 1 ? 'var(--c-green)' : 'rgba(241, 90, 41, 0.1)'}; color:${v.is_hidden == 1 ? '#fff' : 'var(--c-red)'}; border:none; padding:6px 12px; min-width:80px;">
                                 ${v.is_hidden == 1 ? 'Unhide' : 'Hide'}
+                            </button>
+                            <button onclick="AdminControllers.venues.deleteVenue(${v.id})" class="btn-badge" style="background:rgba(241, 90, 41, 0.1); color:var(--c-red); border:1px solid rgba(241, 90, 41, 0.2); padding:6px 12px; cursor:pointer;">
+                                Delete
                             </button>
                         </div>
                     </td>
@@ -1690,9 +1712,15 @@ window.AdminControllers = {
             document.getElementById('edit-venue-location').value = v.venue_location_link || '';
             document.getElementById('edit-venue-modal').style.display = 'flex';
         },
+        openAddModal() {
+            document.getElementById('add-venue-name').value = '';
+            document.getElementById('add-venue-location').value = '';
+            document.getElementById('add-venue-modal').style.display = 'flex';
+        },
         closeModal() {
             document.getElementById('review-venue-modal').style.display = 'none';
             document.getElementById('edit-venue-modal').style.display = 'none';
+            document.getElementById('add-venue-modal').style.display = 'none';
         },
         async toggleVisibility(venueId, currentHidden) {
             const token = localStorage.getItem('admin_token');
@@ -1729,6 +1757,42 @@ window.AdminControllers = {
                     this.fetchAllData();
                 } else AdminApp.toast(data.message, 'error');
             } catch (e) { console.error('Update venue error:', e); }
+        },
+        async addVenue() {
+            const token = localStorage.getItem('admin_token');
+            const payload = {
+                name: document.getElementById('add-venue-name').value,
+                location_link: document.getElementById('add-venue-location').value
+            };
+            try {
+                const res = await _admFetch(`../backend/api/admin/venues/create.php`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Venue added successfully!');
+                    this.closeModal();
+                    this.fetchAllData();
+                } else AdminApp.toast(data.message, 'error');
+            } catch (e) { console.error('Add venue error:', e); }
+        },
+        async deleteVenue(venueId) {
+            if (!confirm('Are you sure you want to permanently delete this venue?')) return;
+            const token = localStorage.getItem('admin_token');
+            try {
+                const res = await _admFetch(`../backend/api/admin/venues/delete.php`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id: venueId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('Venue deleted successfully!');
+                    this.fetchAllData();
+                } else {
+                    AdminApp.toast(data.message, 'error');
+                }
+            } catch (e) { console.error('Delete venue error:', e); }
         },
         async processRequest(action) {
             if (action === 'reject' && !confirm('Are you sure you want to reject this request?')) return;

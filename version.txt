@@ -2191,3 +2191,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Rules Page: Renamed Match Dynamics to Match Types, renamed Ranked Match to Competitive Match, simplified descriptions, and styled eligibility limits into 100% width pill badges.
 - Terms Page: Removed the "When to report? | تبلغ امتى؟" section and its three sub-chips (No-shows, Abuse, and Wrong Level), and removed the "Dashboard" chip from "Where to report?" list.
 - Venue Refactoring: Consolidated venue requests into the main venues table using a status ENUM and requester reference. Added immediate auto-fill & verification bypass for match creators using custom suggested venues.
+- Venue Administration: Added new features for admins to create and delete venues from scratch, and implemented a 'No Location' filtering toggle to audit records missing Google Maps link coordinates.
