@@ -6204,3 +6204,14 @@ body {
 .platform-ios #notif-panel-inner {
   padding-top: max(20px, env(safe-area-inset-top)) !important;
 }
+
+/* iOS Score Modal Anti-Shake / Fast-Tap Fix */
+.platform-ios .btn-score-adj,
+.platform-ios #score-modal .modal-card,
+.platform-ios #score-submission-modal .modal-card {
+  touch-action: manipulation !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  transform: translateZ(0);
+}
