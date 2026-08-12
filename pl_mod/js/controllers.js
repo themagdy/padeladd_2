@@ -1773,12 +1773,44 @@ window.AdminControllers = {
                     if (data.data.output) {
                         const lines = data.data.output.split('\n');
                         lines.forEach(line => {
-                            if (line.trim()) {
-                                consoleEl.innerHTML += `<div class="log-entry">i ${line}</div>`;
+                            const trimmed = line.trim();
+                            if (!trimmed) return;
+
+                            // Regex for [YYYY-MM-DD HH:MM:SS]
+                            const tsRegex = /^\[(\d{4}-\d{2}-\d{2})\s(\d{2}:\d{2}:\d{2})\]\s*(.*)$/;
+                            const match = trimmed.match(tsRegex);
+
+                            if (match) {
+                                const time = match[2];
+                                const msg = match[3];
+                                let textStyle = 'color:#e5e7eb;';
+                                let icon = 'ℹ️';
+
+                                const lowerMsg = msg.toLowerCase();
+                                if (lowerMsg.includes('error') || lowerMsg.includes('failed')) {
+                                    textStyle = 'color:#f87171; font-weight:700;';
+                                    icon = '❌';
+                                } else if (lowerMsg.includes('success') || lowerMsg.includes('done') || lowerMsg.includes('auto-confirmed')) {
+                                    textStyle = 'color:#34d399; font-weight:600;';
+                                    icon = '✅';
+                                } else if (lowerMsg.includes('warning') || lowerMsg.includes('reminded')) {
+                                    textStyle = 'color:#fbbf24;';
+                                    icon = '⚠️';
+                                }
+
+                                consoleEl.innerHTML += `
+                                    <div class="log-entry" style="display:flex; align-items:flex-start; gap:8px; padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.02);">
+                                        <span style="color:rgba(255,255,255,0.25); font-size:11px; font-family:monospace; flex-shrink:0; margin-top:2px;">[${time}]</span>
+                                        <span style="flex-shrink:0; font-size:12px;">${icon}</span>
+                                        <span style="${textStyle} flex:1; line-height:1.4;">${msg}</span>
+                                    </div>
+                                `;
+                            } else {
+                                consoleEl.innerHTML += `<div class="log-entry" style="color:#d1d5db; padding:3px 0; opacity:0.85;">${trimmed}</div>`;
                             }
                         });
                     } else {
-                        consoleEl.innerHTML += `<div class="log-entry" style="opacity:0.6">i Done (No output)</div>`;
+                        consoleEl.innerHTML += `<div class="log-entry" style="color:rgba(255,255,255,0.4); padding:3px 0; font-style:italic;">ℹ️ Done (No output)</div>`;
                     }
                     consoleEl.innerHTML += `<div class="log-entry task-success">✅ Task ${task} completed successfully.</div>`;
                 } else {
