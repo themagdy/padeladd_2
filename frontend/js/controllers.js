@@ -6480,6 +6480,7 @@ const ChatController = {
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble';
         bubble.dataset.msgId = msg.id;
+        bubble.setAttribute('dir', 'auto');
         bubble.style.cssText = 'position:relative; background:' + (isMe ? 'var(--g-primary)' : 'var(--g-card)') + '; border:1px solid ' + (isMe ? 'transparent' : 'var(--c-border)') + '; border-radius:' + (isMe ? '16px 16px 4px 16px' : '16px 16px 16px 4px') + '; padding:7px 12px; font-size:14px; line-height:1.4; color:var(--c-text); word-break:break-word; max-width:100%;';
 
         const escapedText = this.escapeHtml(msg.message_text);
