@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: ./mobile_app
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build Web Assets
         working-directory: ./mobile_app
