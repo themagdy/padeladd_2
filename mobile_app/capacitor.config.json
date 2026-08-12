@@ -12,5 +12,11 @@
       "presentationOptions": ["badge", "sound", "alert"],
       "iconColor": "#171C26"
     }
+  },
+  "ios": {
+    "allowsLinkPreview": false,
+    "handleApplicationNotifications": true,
+    "scrollEnabled": true,
+    "allowsBackForwardNavigationGestures": true
   }
 }
