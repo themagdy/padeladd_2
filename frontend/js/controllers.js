@@ -3568,7 +3568,13 @@ const MatchesController = {
                         const dbFlag = document.getElementById('cm-venue-is-db');
                         const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
 
-                        if (venueInput) venueInput.value = newVenue.name;
+                        if (venueInput) {
+                            venueInput.value = newVenue.name;
+                            venueInput.classList.remove('error');
+                            const group = venueInput.closest('.form-group');
+                            const errSpan = group?.querySelector('.form-error');
+                            if (errSpan) errSpan.style.display = 'none';
+                        }
                         if (idInput) idInput.value = newVenue.id;
                         if (dbFlag) dbFlag.value = '1';
                         if (addBtnWrap) addBtnWrap.style.display = 'none';
@@ -6634,8 +6640,8 @@ const ChatController = {
             const thumb = p.profile_image_thumb || p.profile_image;
 
             const avatarImg = thumb
-                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:22px; height:22px; border-radius:50%; object-fit:cover; border:1.5px solid var(--c-bg); margin-left:-6px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">`
-                : `<div style="width:22px; height:22px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--c-bg); margin-left:-6px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:26px; height:26px; border-radius:50%; object-fit:cover; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">`
+                : `<div style="width:26px; height:26px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
             avatarsHtml += avatarImg;
         });
 
