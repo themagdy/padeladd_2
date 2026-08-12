@@ -6207,6 +6207,8 @@ body {
 
 /* iOS Score Modal Anti-Shake / Fast-Tap Fix */
 .platform-ios .btn-score-adj,
+.platform-ios .scoring-modal,
+.platform-ios #scoring-modal-overlay,
 .platform-ios #score-modal .modal-card,
 .platform-ios #score-submission-modal .modal-card {
   touch-action: manipulation !important;

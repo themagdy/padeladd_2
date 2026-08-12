@@ -1254,6 +1254,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Capacitor Specific Logic
     if (window.Capacitor) {
         document.body.classList.add('is-mobile-app');
+        const platform = window.Capacitor?.getPlatform?.() || 'web';
+        if (platform) {
+            document.body.classList.add(`platform-${platform}`);
+        }
 
         // Force hide scrollbars via JS (Safety Injector for WebView)
         const style = document.createElement('style');
