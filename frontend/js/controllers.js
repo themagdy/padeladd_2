@@ -3310,7 +3310,7 @@ const MatchesController = {
 
             if (!venue) { UI.showError('venue_name', 'Venue name is required', form); return; }
             if (!isDbVenue) {
-                UI.showError('venue_name', 'Please select a venue from the official list or add a new one.', form);
+                UI.showError('venue_name', 'Select an Existing Venue or Click below to Add.', form);
                 return;
             }
             if (!court) { UI.showError('court_name', 'Court name or number is required', form); return; }
@@ -3395,20 +3395,36 @@ const MatchesController = {
 
     showVenueRequest: function () {
         ConfirmModal.show({
-            title: 'Venue details',
-            message: 'Enter the name and location of the venue you would like to add.',
+            title: 'Venue/Club name',
+            message: '',
             confirmText: 'Submit Request',
             showInput: true,
-            inputPlaceholder: 'Venue Name, City',
+            inputPlaceholder: 'Venue/Club Name - Area',
             inputMaxLength: 100,
-            tipText: 'Format: Club Name, City',
+            tipText: '',
             type: 'info'
         }).then(res => {
             // 'res' is the string input if confirmed, or false/null if cancelled
             if (res && typeof res === 'string' && res.trim()) {
                 const venueName = res.trim();
                 API.post('/match/request_venue', { venue_name: venueName }).then(response => {
-                    Toast.show("Our team will review and add this venue shortly. Stay tuned!", "success", 6000);
+                    if (response && response.success) {
+                        const newVenue = response.data;
+                        
+                        const venueInput = document.getElementById('cm-venue');
+                        const idInput = document.getElementById('cm-venue-id');
+                        const dbFlag = document.getElementById('cm-venue-is-db');
+                        const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
+                        
+                        if (venueInput) venueInput.value = newVenue.name;
+                        if (idInput) idInput.value = newVenue.id;
+                        if (dbFlag) dbFlag.value = '1';
+                        if (addBtnWrap) addBtnWrap.style.display = 'none';
+
+                        Toast.show("Venue added! It has been selected and submitted to admins for review.", "success", 6000);
+                    } else {
+                        Toast.show(response ? response.message : "Failed to add venue", "error");
+                    }
                 });
             }
         });

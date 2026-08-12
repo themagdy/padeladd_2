@@ -9,11 +9,11 @@ validateAdmin();
 $pdo = getDB();
 
 $sql = "
-    SELECT vr.*, u.nickname as requester_name, u.player_code as requester_code
-    FROM venue_requests vr
-    LEFT JOIN user_profiles u ON vr.user_id = u.user_id
-    WHERE vr.status = 'pending'
-    ORDER BY vr.created_at ASC
+    SELECT v.id, v.name as venue_name, v.created_at, u.nickname as requester_name, u.player_code as requester_code
+    FROM venues v
+    LEFT JOIN user_profiles u ON v.req_by = u.user_id
+    WHERE v.status = 'Requested'
+    ORDER BY v.created_at ASC
 ";
 
 $requests = $pdo->query($sql)->fetchAll();

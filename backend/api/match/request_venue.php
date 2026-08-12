@@ -10,10 +10,14 @@ if (empty($venue_name)) {
 }
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO venue_requests (user_id, venue_name) VALUES (?, ?)");
-    $stmt->execute([$uid, $venue_name]);
+    $stmt = $pdo->prepare("INSERT INTO venues (name, status, req_by) VALUES (?, 'Requested', ?)");
+    $stmt->execute([$venue_name, $uid]);
+    $newId = $pdo->lastInsertId();
 
-    jsonResponse(true, 'Venue request submitted successfully');
+    jsonResponse(true, 'Venue request submitted successfully', [
+        'id' => $newId,
+        'name' => $venue_name
+    ]);
 } catch (PDOException $e) {
     error_log("Venue Request Error: " . $e->getMessage());
     jsonResponse(false, 'Failed to submit venue request', null, 500);

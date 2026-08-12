@@ -22,7 +22,7 @@ $pdo = getDB();
 
 try {
     if ($action === 'reject') {
-        $stmt = $pdo->prepare("UPDATE venue_requests SET status = 'rejected' WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM venues WHERE id = ?");
         $stmt->execute([$requestId]);
         jsonResponse(true, 'Venue request rejected.');
     } 
@@ -32,13 +32,9 @@ try {
 
         if (empty($finalName)) jsonResponse(false, 'Venue name cannot be empty.', null, 400);
 
-        // 1. Insert into official venues table
-        $stmt = $pdo->prepare("INSERT INTO venues (name, venue_location_link) VALUES (?, ?)");
-        $stmt->execute([$finalName, $location]);
-        
-        // 2. Mark request as approved
-        $stmt = $pdo->prepare("UPDATE venue_requests SET status = 'approved' WHERE id = ?");
-        $stmt->execute([$requestId]);
+        // 1. Update the existing venue to Approved status
+        $stmt = $pdo->prepare("UPDATE venues SET name = ?, venue_location_link = ?, status = 'Approved' WHERE id = ?");
+        $stmt->execute([$finalName, $location, $requestId]);
 
         jsonResponse(true, 'Venue approved and added to the official list.');
     } 
