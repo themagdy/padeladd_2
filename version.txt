@@ -2219,3 +2219,4 @@ Version 2.4.86 (Build 486) - 2026-08-13
 - Typography Styling: Updated Arabic subtext color to white (`#fff`) on the Fair Play intro screen for maximum legibility.
 - Onboarding Continue Delay: Configured 3-second entrance delay (`animation-delay: 3s`) for the Fair Play intro Continue button.
 - My Matches Subtitle: Restricted upcoming match countdown calculation to confirmed players only (`m.user_in_match`), and formatted 0m matches as `Next match: Now`.
+- Create Match Datetime: Enforced local date construction (`YYYY-MM-DD`) and local datetime parsing in `controllers.js` to eliminate UTC timezone shifts during match creation.

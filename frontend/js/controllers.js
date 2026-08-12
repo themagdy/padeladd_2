@@ -3267,12 +3267,15 @@ const MatchesController = {
         const timeInput = document.getElementById('cm-time');
 
         if (dateScroller && dateInput) {
-            // Generate next 4 days (Today + 3)
+            // Generate next 4 days (Today + 3) using local date formatting to prevent timezone shift
             let html = '';
             for (let i = 0; i < 4; i++) {
                 const d = new Date();
                 d.setDate(d.getDate() + i);
-                const iso = d.toISOString().slice(0, 10);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const iso = `${year}-${month}-${day}`;
                 const dayName = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
                 const dayNum = d.getDate();
 
@@ -3472,11 +3475,10 @@ const MatchesController = {
             if (!dateVal) { UI.showError('date', 'Please select a date', form); return; }
             if (!timeVal) { UI.showError('time', 'Please select a time', form); return; }
 
-            // Combine
+            // Combine date & time and parse as local date
             const combined = dateVal + 'T' + timeVal;
-            const pickedDt = new Date(combined);
+            const pickedDt = new Date(dateVal.replace(/-/g, '/') + ' ' + timeVal);
             const now = new Date();
-            now.setMinutes(now.getMinutes() + 15); // Buffer
 
             if (pickedDt <= now) {
                 UI.showError('time', 'Match date must be in the future', form);
