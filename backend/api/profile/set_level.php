@@ -30,7 +30,8 @@ $ptsBeforeQuery->execute([$user['id']]);
 $rankPtsBefore = $ptsBeforeQuery->fetchColumn();
 $points_before = ($rankPtsBefore !== false && $rankPtsBefore !== null) ? (int)$rankPtsBefore : 0;
 
-$startPoints = $levelPoints[$levelKey] ?? 100;
+$calcPoints  = isset($data['calculated_points']) ? (int)$data['calculated_points'] : null;
+$startPoints = ($calcPoints !== null && $calcPoints >= 0) ? $calcPoints : ($levelPoints[$levelKey] ?? 100);
 
 // Check if player has ever completed a competition match
 $compPlayed = $pdo->prepare("
