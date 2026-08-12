@@ -159,12 +159,18 @@ $lw = $pdo->prepare("
 ");
 
 $lw->execute([$m['id']]);
-$lateWithdrawals = $lw->fetchAll(PDO::FETCH_ASSOC);
+$rawLateWithdrawals = $lw->fetchAll(PDO::FETCH_ASSOC);
 
-foreach ($lateWithdrawals as &$lwItem) {
-    $lwItem['event_data'] = json_decode($lwItem['event_data'], true);
+$seenUserIds = [];
+$lateWithdrawals = [];
+foreach ($rawLateWithdrawals as $lwItem) {
+    $uidKey = (int)$lwItem['user_id'];
+    if (!isset($seenUserIds[$uidKey])) {
+        $seenUserIds[$uidKey] = true;
+        $lwItem['event_data'] = json_decode($lwItem['event_data'], true);
+        $lateWithdrawals[] = $lwItem;
+    }
 }
-unset($lwItem);
 
 // Fetch current user's preferred side from profile
 $ups = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
