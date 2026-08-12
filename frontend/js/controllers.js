@@ -1871,7 +1871,9 @@ const DashboardController = {
             inputMaxLength: 300,
             tipText: 'Help us improve by being specific.',
             confirmText: 'Submit Report',
-            type: 'warning'
+            type: 'warning',
+            headerLayout: 'row',
+            icon: '⚡'
         });
 
         if (!reason) return;
@@ -2562,7 +2564,9 @@ const ProfileController = {
             inputMaxLength: 300,
             tipText: 'Tell us exactly what this player did.',
             confirmText: 'Submit Report',
-            type: 'warning'
+            type: 'warning',
+            headerLayout: 'row',
+            icon: '⚡'
         });
 
         if (!reason) return;

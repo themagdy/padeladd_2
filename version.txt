@@ -2178,4 +2178,10 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - DetailsView: Kept Chat button visible for authorized match participants even if a match is cancelled.
 - Dashboard: Implemented announcements carousel autoplay looping every 4 seconds with manual scroll tracking sync and automatic teardown on routing.
 - Admin Panel: Added "Delete" action next to "Archive" for Time Policy Violations, complete with a permanent deletion API and confirmation prompts.
-- Admin Panel: Removed obsolete "Threshold: 6h" badge header label from the Violations page.
+
+2.4.84 (Build 484) - 2026-08-12 [patch]
+- Referral Explorer Simulation: Built static referral tree page with a programmatically generated dataset of 100 players, featuring 10 top-level (Level 1) roots and 90 nested branches.
+- Dynamic Referral Stats: Added dynamic computing to the stats bar (Total Squad Members, Deepest Level, Active Promo Codes, and Top Recruiter).
+- Prestige Squad Badge: Overhauled the Squad badge design with a premium dark gold gradient background, golden metallic border, and high-readability gold typography.
+- Level Cards Display: Displayed player level details on all cards formatted as 'Level X • CODE'.
+- Unified Report Modals: Aligned the dashboard "Report a Problem" and profile "Report player conduct" modals to use the unified horizontal single-row header layout with the ⚡ lightning bolt icon.
