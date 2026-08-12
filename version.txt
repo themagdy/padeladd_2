@@ -2210,3 +2210,9 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Details UI: Display all late withdrawal events in match details view (`late_withdrawals` array) so multiple player withdrawals never overwrite each other.
 - Level Assessment Sync: Respect `calculated_points` payload in `set_level.php` so starting buffer points match the conservative minimum calculation of skill stars and overall level.
 
+==================================================
+Version 2.4.86 (Build 486) - 2026-08-13
+==================================================
+- Onboarding Intro Animations: Staggered smooth fade & slide entrance animations for Fair Play intro elements.
+- Level Selection Backdrop: Tuned modal overlay background opacity to 50% with backdrop glassmorphic blur filter.
+- Onboarding Scroll Lock: Enforced body scroll locks, overscroll-behavior contain, and touch-action locks to prevent background page scroll while completing skills assessment.

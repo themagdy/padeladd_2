@@ -146,32 +146,48 @@
     <div class="modal-card">
         <!-- Intro Screen -->
         <div id="intro-screen">
-            <span class="tag" style="margin-bottom: 16px;">Fair Play</span>
+            <style>
+                @keyframes introFadeUp {
+                    from { opacity: 0; transform: translateY(24px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .intro-anim {
+                    opacity: 0;
+                    animation: introFadeUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                }
+            </style>
+            <span class="tag intro-anim" style="margin-bottom: 16px; animation-delay: 0.15s;">Fair Play</span>
             <h1
                 style="font-family: 'Outfit', sans-serif; font-weight: 900; line-height: 0.85; text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 24px; text-align: center; width: 100%;">
-                <span
-                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Keep</span>
-                <span
-                    style="display: block; font-size: 48px; color: var(--c-text-blue); margin: 10px 0;">Padeladd</span>
-                <span
-                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Fair</span>
+                <span class="intro-anim"
+                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation-delay: 0.3s;">Keep</span>
+                <span class="intro-anim"
+                    style="display: block; font-size: 48px; color: var(--c-text-blue); margin: 10px 0; animation-delay: 0.45s;">Padeladd</span>
+                <span class="intro-anim"
+                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation-delay: 0.6s;">Fair</span>
             </h1>
-            <p
-                style="color: var(--c-text); font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.5; text-align: center;">
+            <p class="intro-anim"
+                style="color: var(--c-text); font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.5; text-align: center; animation-delay: 0.75s;">
                 Report Level Mismatch or <span style="white-space: nowrap;">Toxic Behavior.</span>
             </p>
-            <p
-                style="color: var(--c-text-muted); font-size: 16px; font-weight: 500; margin-bottom: 40px; line-height: 1.5; direction: rtl; text-align: center;">
+            <p class="intro-anim"
+                style="color: var(--c-text-muted); font-size: 16px; font-weight: 500; margin-bottom: 40px; line-height: 1.5; direction: rtl; text-align: center; animation-delay: 0.9s;">
                 بلّغ عن أي فرق في المستوى أو سوء سلوك.
             </p>
-            <button type="button" id="continue-level-btn" class="btn btn-primary"
-                style="width: 100%; max-width: 280px; padding: 14px; font-weight: 800;">Continue</button>
+            <button type="button" id="continue-level-btn" class="btn btn-primary intro-anim"
+                style="width: 100%; max-width: 280px; padding: 14px; font-weight: 800; animation-delay: 1.05s;">Continue</button>
         </div>
 
         <!-- Assessment Screen (Hidden Initially) -->
-        <div id="assessment-screen" style="display: none;">
+        <div id="assessment-screen" style="display: none; animation: fadeInSimple 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <style>
+                @keyframes fadeInSimple {
+                    from { opacity: 0; transform: scale(0.98); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+            </style>
             <div class="custom-scroll"
-                style="padding:24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
+                style="padding:24px; overflow-y:auto; overscroll-behavior:contain; flex:1; display:flex; flex-direction:column; gap:16px;">
                 <header
                     style="padding: 0 0 16px; border-bottom: 1px solid rgba(255,255,255,0.04); margin-bottom: 8px; text-align: center; width: 100%;">
                     <span class="tag">Assessment</span>
@@ -180,7 +196,9 @@
                         Skills Assessment</h1>
                     <p
                         style="color: #fff; font-size: 0.825rem; line-height: 1.5; max-width: 100%; width: 100%; margin: 0 auto; text-align: center;">
-                        Rate your proficiency. Be honest to <strong style="color: #fff; white-space: nowrap; font-size: inherit !important;">Avoid Violations or Ban.</strong>
+                        Rate your proficiency. Be honest to <strong
+                            style="color: #fff; white-space: nowrap; font-size: inherit !important;">Avoid Violations or
+                            Ban.</strong>
                     </p>
                 </header>
 
@@ -628,18 +646,23 @@
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.85);
+        background: rgba(13, 17, 23, 0.5);
         z-index: 9999;
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         align-items: center;
         justify-content: center;
         padding: 20px;
         overflow-y: hidden;
+        overscroll-behavior: contain;
+        touch-action: none;
         font-family: var(--font), sans-serif;
     }
 
     #level-selection-modal .modal-card {
-        background: var(--c-bg);
+        background: rgba(13, 17, 23, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         width: 100%;
         max-width: 480px;
         max-height: 85vh;
@@ -675,7 +698,9 @@
         #level-selection-modal {
             padding: 0 !important;
             align-items: stretch !important;
-            background: var(--c-bg) !important;
+            background: rgba(13, 17, 23, 0.5) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
             position: fixed !important;
             top: 0 !important;
             bottom: 0 !important;
@@ -684,6 +709,8 @@
             height: 100vh !important;
             height: 100dvh !important;
             width: 100% !important;
+            overscroll-behavior: contain !important;
+            touch-action: none !important;
         }
 
         #level-selection-modal .modal-card {
@@ -696,7 +723,10 @@
             border-radius: 0 !important;
             border: none !important;
             margin: 0 !important;
-            background: var(--c-bg) !important;
+            background: rgba(13, 17, 23, 0.5) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            overscroll-behavior: contain !important;
         }
 
         #intro-screen {
