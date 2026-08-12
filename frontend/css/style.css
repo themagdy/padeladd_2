@@ -6195,3 +6195,12 @@ body {
   pointer-events: none;
   z-index: 5;
 }
+
+/* Target iOS Native App Only (Safe Area Inset Fix) */
+.platform-ios .auth-page {
+  padding-top: max(36px, env(safe-area-inset-top)) !important;
+}
+
+.platform-ios #notif-panel-inner {
+  padding-top: max(20px, env(safe-area-inset-top)) !important;
+}
