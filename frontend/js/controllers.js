@@ -6567,9 +6567,16 @@ document.addEventListener('visibilitychange', () => {
     if (document.hidden && typeof ChatController !== 'undefined' && ChatController._isShowing && ChatController._matchId) {
         ChatController.stop();
     } else if (!document.hidden && typeof ChatController !== 'undefined' && ChatController._isShowing && ChatController._matchId) {
-        // Resume polling and instantly update online status
-        ChatController.startPoll();
-        ChatController.loadMessages(false);
+        // Prevent duplicate trigger on native apps since Capacitor's appStateChange handles it
+        if (window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web') return;
+
+        // Delay refresh slightly to allow the connection to wake up
+        setTimeout(() => {
+            if (navigator.onLine) {
+                ChatController.startPoll();
+                ChatController.loadMessages(false);
+            }
+        }, 300);
     }
 });
 

@@ -2187,3 +2187,4 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Unified Report Modals: Aligned the dashboard "Report a Problem" and profile "Report player conduct" modals to use the unified horizontal single-row header layout with the ⚡ lightning bolt icon.
 - Chat RTL Alignment: Added dir="auto" attribute to chat message bubbles in ChatController to support automatic RTL direction alignment for Arabic messages.
 - Admin Console: Overhauled task output logging with parsed timestamps, cleaner line margins, and dynamic status-level icons (ℹ️, ✅, ⚠️, ❌).
+- Native App Stability: Prevented duplicate background triggers and added a 300ms connection delay check (navigator.onLine) on app resume, resolving "Failed to process request" toast errors during wake-up.

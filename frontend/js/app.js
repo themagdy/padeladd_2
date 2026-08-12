@@ -1177,8 +1177,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Clear chat presence instantly on mobile app backgrounding
                 ChatController.stop();
             } else if (isActive && typeof ChatController !== 'undefined' && ChatController._isShowing && ChatController._matchId) {
-                ChatController.startPoll();
-                ChatController.loadMessages(false);
+                // Delay refresh slightly to allow the native OS network interface to re-establish connection
+                setTimeout(() => {
+                    if (navigator.onLine) {
+                        ChatController.startPoll();
+                        ChatController.loadMessages(false);
+                    }
+                }, 300);
             }
         });
 
