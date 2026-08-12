@@ -2206,4 +2206,6 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - iOS Score Modal Anti-Shake: Applied touch-action manipulation and GPU acceleration to score increment/decrement buttons to eliminate tap zoom shifting on iOS.
 - iOS Native Swipe Back: Enabled allowsBackForwardNavigationGestures in Capacitor iOS configuration for native edge swipe navigation.
 - Match Reminders Cron: Restricted automated pre-match reminders to full matches only (`m.status = 'full'`).
+- Policy Violations: Restricted late withdrawal violations to full matches only (`$isLate && $isFullMatch`), preventing penalties when leaving open matches.
+- Match Details UI: Display all late withdrawal events in match details view (`late_withdrawals` array) so multiple player withdrawals never overwrite each other.
 

@@ -3194,7 +3194,7 @@ const ProfileController = {
                 Auth.setOnboardingStep('completed');
                 Auth.setHasLevel(true);
                 Toast.show('Proficiency level successfully registered!', 'success');
-                
+
                 // Hide modal and restore overflow
                 const modal = document.getElementById('level-selection-modal');
                 if (modal) {

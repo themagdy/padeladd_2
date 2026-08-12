@@ -178,8 +178,10 @@ try {
         VALUES (?, ?, ?, ?)
     ")->execute([$match_id, $uid, $eventType, $eventData]);
 
-    // If late, log additional late_withdrawal event
-    if ($isLate) {
+    $isFullMatch = ($match['status'] === 'full');
+
+    // If late AND match was full, log additional late_withdrawal policy violation event
+    if ($isLate && $isFullMatch) {
         $pdo->prepare("
             INSERT INTO match_events (match_id, user_id, event_type, event_data)
             VALUES (?, ?, 'late_withdrawal', ?)
