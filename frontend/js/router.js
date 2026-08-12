@@ -392,15 +392,15 @@ const Router = {
         const isPublicVanity = path.startsWith('/p/') || path.startsWith('/profile/view/');
 
         // Force profile completion sequence: Terms -> Profile Edit
-        if (Auth.isAuthenticated() && (!Auth.hasProfile() || !Auth.hasLevel()) && path !== '/verify' && !isPublicVanity) {
-            const hasAgreed = sessionStorage.getItem('padeladd_agreed_terms') === 'true';
+        if (Auth.isAuthenticated() && Auth.getOnboardingStep() !== 'completed' && path !== '/verify' && !isPublicVanity) {
+            const step = Auth.getOnboardingStep();
 
-            if (!hasAgreed && path !== '/terms') {
+            if (step === 'terms' && path !== '/terms') {
                 this.navigate('/terms');
                 return;
             }
 
-            if (hasAgreed && path !== '/profile/edit' && path !== '/terms') {
+            if (step === 'profile' && path !== '/profile/edit') {
                 this.navigate('/profile/edit');
                 return;
             }

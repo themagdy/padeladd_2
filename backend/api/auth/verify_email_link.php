@@ -54,12 +54,13 @@ try {
     $pdo->commit();
 
     // Check if fully verified to auto-login
-    $stmtCheck = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified FROM users WHERE id = ?");
+    $stmtCheck = $pdo->prepare("SELECT id, is_email_verified, is_phone_verified, onboarding_step FROM users WHERE id = ?");
     $stmtCheck->execute([$row['user_id']]);
     $u = $stmtCheck->fetch();
 
     $authToken = null;
     $hasProfile = false;
+    $onboardingStep = 'terms';
     if ($u['is_email_verified'] && $u['is_phone_verified']) {
         $authToken = generateRandomString(40);
         $pdo->prepare("INSERT INTO user_sessions (user_id, token) VALUES (?, ?)")->execute([$u['id'], $authToken]);
@@ -69,11 +70,13 @@ try {
         $stmtProf->execute([$u['id']]);
         $profData = $stmtProf->fetch();
         $hasProfile = $profData !== false && !empty($profData['level']);
+        $onboardingStep = $u['onboarding_step'];
     }
 
     jsonResponse(true, 'Email verified successfully.', [
         'token' => $authToken,
         'has_profile' => $hasProfile,
+        'onboarding_step' => $onboardingStep,
         'fully_verified' => ($authToken !== null)
     ]);
 

@@ -142,239 +142,695 @@
 </div>
 
 <!-- Level Selection Modal (Hidden by default) -->
-<div id="level-selection-modal"
-    style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9999; backdrop-filter:blur(12px); align-items:flex-start; justify-content:center; padding:20px; overflow-y:auto;">
-    <div
-        style="margin: auto 0; background:var(--c-bg); width:100%; max-width:480px; border-radius:24px; border:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; max-height:85vh; box-shadow:0 24px 48px rgba(0,0,0,0.4);">
-
-        <div
-            style="padding:20px 32px 16px; display:flex; align-items:center; gap:14px; position:sticky; top:0; background:var(--c-bg); border-radius:24px 24px 0 0; z-index:10; border-bottom:1px solid rgba(255,255,255,0.04);">
-            <div
-                style="width:38px; height:38px; background:linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.05)); border:1px solid rgba(14, 165, 233, 0.2); color:var(--c-primary); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1); flex-shrink:0;">
-                🎾</div>
-            <h2 style="font-size:20px; font-weight:800; color:#fff; margin:0; letter-spacing:-0.3px;">Select Your Level
-                Wisely</h2>
+<div id="level-selection-modal" style="display: none;">
+    <div class="modal-card">
+        <!-- Intro Screen -->
+        <div id="intro-screen">
+            <span class="tag" style="margin-bottom: 16px;">Fair Play</span>
+            <h1
+                style="font-family: 'Outfit', sans-serif; font-weight: 900; line-height: 0.85; text-transform: uppercase; letter-spacing: -0.03em; margin-bottom: 24px; text-align: center; width: 100%;">
+                <span
+                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Keep</span>
+                <span
+                    style="display: block; font-size: 48px; color: var(--c-text-blue); margin: 10px 0;">Padeladd</span>
+                <span
+                    style="display: block; font-size: 82px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Fair</span>
+            </h1>
+            <p
+                style="color: var(--c-text); font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.5; text-align: center;">
+                Report Level Mismatch or <span style="white-space: nowrap;">Toxic Behavior.</span>
+            </p>
+            <p
+                style="color: var(--c-text-muted); font-size: 16px; font-weight: 500; margin-bottom: 40px; line-height: 1.5; direction: rtl; text-align: center;">
+                بلّغ عن أي فرق في المستوى أو سوء سلوك.
+            </p>
+            <button type="button" id="continue-level-btn" class="btn btn-primary"
+                style="width: 100%; max-width: 280px; padding: 14px; font-weight: 800;">Continue</button>
         </div>
 
-        <div class="custom-scroll"
-            style="padding:16px 32px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:12px;">
-            <!-- Fixed Calibration Card -->
-            <div
-                style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <div
-                        style="flex-shrink: 0; width: 36px; height: 36px; background: var(--c-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                        </svg>
+        <!-- Assessment Screen (Hidden Initially) -->
+        <div id="assessment-screen" style="display: none;">
+            <div class="custom-scroll"
+                style="padding:24px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:16px;">
+                <header
+                    style="padding: 0 0 16px; border-bottom: 1px solid rgba(255,255,255,0.04); margin-bottom: 8px; text-align: center; width: 100%;">
+                    <span class="tag">Assessment</span>
+                    <h1
+                        style="font-size: 1.85rem; font-weight: 900; letter-spacing: -0.02em; margin: 8px 0 6px; background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; width: 100%; text-align: center;">
+                        Skills Assessment</h1>
+                    <p
+                        style="color: #fff; font-size: 0.825rem; line-height: 1.5; max-width: 100%; width: 100%; margin: 0 auto; text-align: center;">
+                        Rate your proficiency. Be honest to <strong style="color: #fff; white-space: nowrap; font-size: inherit !important;">Avoid Violations or Ban.</strong>
+                    </p>
+                </header>
+
+                <!-- 1. Consistency -->
+                <div class="skill-card" id="card-consistency">
+                    <div class="skill-info">
+                        <span class="skill-name">Consistency</span>
+                        <span class="skill-desc">Strokes, serve & return</span>
                     </div>
-                    <div>
-                        <h4
-                            style="margin: 0; color: #fff; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
-                            Calibration Phase</h4>
-                        <div
-                            style="color: var(--c-primary); font-size: 10px; font-weight: 700; text-transform: uppercase;">
-                            20 Matches to unlock rank</div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="consistency-7" name="consistency" value="7" class="star-radio">
+                            <label for="consistency-7" class="star-label" title="Professional"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-6" name="consistency" value="6" class="star-radio">
+                            <label for="consistency-6" class="star-label" title="Competition"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-5" name="consistency" value="5" class="star-radio">
+                            <label for="consistency-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-4" name="consistency" value="4" class="star-radio">
+                            <label for="consistency-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-3" name="consistency" value="3" class="star-radio">
+                            <label for="consistency-3" class="star-label" title="Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-2" name="consistency" value="2" class="star-radio">
+                            <label for="consistency-2" class="star-label" title="Initiation Intermediate"><svg
+                                    width="22" height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="consistency-1" name="consistency" value="1" class="star-radio">
+                            <label for="consistency-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+                        </div>
+                        <span class="rating-feedback" id="feedback-consistency">Not rated</span>
                     </div>
                 </div>
 
-                <p style="font-size: 12px; color: var(--c-text-muted); line-height: 1.5; margin: 0 0 12px 0;">
-                    Your starting level grants you <strong>Buffer Points</strong>. In every match:
-                </p>
+                <!-- 2. Positioning -->
+                <div class="skill-card" id="card-positioning">
+                    <div class="skill-info">
+                        <span class="skill-name">Positioning</span>
+                        <span class="skill-desc">Court coverage & partner movement</span>
+                    </div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="positioning-7" name="positioning" value="7" class="star-radio">
+                            <label for="positioning-7" class="star-label" title="Professional"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <!-- On Win Card -->
-                    <div
-                        style="background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 12px;">
-                        <div
-                            style="color: #4ade80; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 14px;">👍</span> ON WIN
+                            <input type="radio" id="positioning-6" name="positioning" value="6" class="star-radio">
+                            <label for="positioning-6" class="star-label" title="Competition"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="positioning-5" name="positioning" value="5" class="star-radio">
+                            <label for="positioning-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="positioning-4" name="positioning" value="4" class="star-radio">
+                            <label for="positioning-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="positioning-3" name="positioning" value="3" class="star-radio">
+                            <label for="positioning-3" class="star-label" title="Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="positioning-2" name="positioning" value="2" class="star-radio">
+                            <label for="positioning-2" class="star-label" title="Initiation Intermediate"><svg
+                                    width="22" height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="positioning-1" name="positioning" value="1" class="star-radio">
+                            <label for="positioning-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
                         </div>
-                        <div style="color: #fff; font-size: 13px; font-weight: 800; line-height: 1.2;">+5% Buffer</div>
-                        <div style="color: rgba(255,255,255,0.6); font-size: 10px; font-weight: 600; margin-top: 2px;">
-                            added to points</div>
+                        <span class="rating-feedback" id="feedback-positioning">Not rated</span>
                     </div>
-                    <!-- On Loss Card -->
-                    <div
-                        style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 12px;">
-                        <div
-                            style="color: #f87171; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                            <span style="font-size: 14px;">👎</span> ON LOSS
+                </div>
+
+                <!-- 3. Defense -->
+                <div class="skill-card" id="card-defense">
+                    <div class="skill-info">
+                        <span class="skill-name">Defense</span>
+                        <span class="skill-desc">Wall shots, lobs, bandeja & low balls</span>
+                    </div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="defense-7" name="defense" value="7" class="star-radio">
+                            <label for="defense-7" class="star-label" title="Professional"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-6" name="defense" value="6" class="star-radio">
+                            <label for="defense-6" class="star-label" title="Competition"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-5" name="defense" value="5" class="star-radio">
+                            <label for="defense-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-4" name="defense" value="4" class="star-radio">
+                            <label for="defense-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-3" name="defense" value="3" class="star-radio">
+                            <label for="defense-3" class="star-label" title="Intermediate"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-2" name="defense" value="2" class="star-radio">
+                            <label for="defense-2" class="star-label" title="Initiation Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="defense-1" name="defense" value="1" class="star-radio">
+                            <label for="defense-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
                         </div>
-                        <div style="color: #fff; font-size: 13px; font-weight: 800; line-height: 1.2;">-5% Buffer</div>
-                        <div style="color: rgba(255,255,255,0.6); font-size: 10px; font-weight: 600; margin-top: 2px;">
-                            is wasted</div>
+                        <span class="rating-feedback" id="feedback-defense">Not rated</span>
                     </div>
+                </div>
+
+                <!-- 4. Volleys -->
+                <div class="skill-card" id="card-volleys">
+                    <div class="skill-info">
+                        <span class="skill-name">Volleys</span>
+                        <span class="skill-desc">Forehand, backhand & blocks</span>
+                    </div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="volleys-7" name="volleys" value="7" class="star-radio">
+                            <label for="volleys-7" class="star-label" title="Professional"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-6" name="volleys" value="6" class="star-radio">
+                            <label for="volleys-6" class="star-label" title="Competition"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-5" name="volleys" value="5" class="star-radio">
+                            <label for="volleys-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-4" name="volleys" value="4" class="star-radio">
+                            <label for="volleys-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-3" name="volleys" value="3" class="star-radio">
+                            <label for="volleys-3" class="star-label" title="Intermediate"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-2" name="volleys" value="2" class="star-radio">
+                            <label for="volleys-2" class="star-label" title="Initiation Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="volleys-1" name="volleys" value="1" class="star-radio">
+                            <label for="volleys-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+                        </div>
+                        <span class="rating-feedback" id="feedback-volleys">Not rated</span>
+                    </div>
+                </div>
+
+                <!-- 5. Overheads -->
+                <div class="skill-card" id="card-overheads">
+                    <div class="skill-info">
+                        <span class="skill-name">Overheads</span>
+                        <span class="skill-desc">Víbora, smash & finishing shots</span>
+                    </div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="overheads-7" name="overheads" value="7" class="star-radio">
+                            <label for="overheads-7" class="star-label" title="Professional"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-6" name="overheads" value="6" class="star-radio">
+                            <label for="overheads-6" class="star-label" title="Competition"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-5" name="overheads" value="5" class="star-radio">
+                            <label for="overheads-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-4" name="overheads" value="4" class="star-radio">
+                            <label for="overheads-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-3" name="overheads" value="3" class="star-radio">
+                            <label for="overheads-3" class="star-label" title="Intermediate"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-2" name="overheads" value="2" class="star-radio">
+                            <label for="overheads-2" class="star-label" title="Initiation Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="overheads-1" name="overheads" value="1" class="star-radio">
+                            <label for="overheads-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+                        </div>
+                        <span class="rating-feedback" id="feedback-overheads">Not rated</span>
+                    </div>
+                </div>
+
+                <!-- 6. Tactics -->
+                <div class="skill-card" id="card-tactics">
+                    <div class="skill-info">
+                        <span class="skill-name">Tactics</span>
+                        <span class="skill-desc">Shot selection & point construction</span>
+                    </div>
+                    <div class="rating-wrapper">
+                        <div class="rating-stars">
+                            <input type="radio" id="tactics-7" name="tactics" value="7" class="star-radio">
+                            <label for="tactics-7" class="star-label" title="Professional"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-6" name="tactics" value="6" class="star-radio">
+                            <label for="tactics-6" class="star-label" title="Competition"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-5" name="tactics" value="5" class="star-radio">
+                            <label for="tactics-5" class="star-label" title="Advanced"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-4" name="tactics" value="4" class="star-radio">
+                            <label for="tactics-4" class="star-label" title="Intermediate High"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-3" name="tactics" value="3" class="star-radio">
+                            <label for="tactics-3" class="star-label" title="Intermediate"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-2" name="tactics" value="2" class="star-radio">
+                            <label for="tactics-2" class="star-label" title="Initiation Intermediate"><svg width="22"
+                                    height="22" viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+
+                            <input type="radio" id="tactics-1" name="tactics" value="1" class="star-radio">
+                            <label for="tactics-1" class="star-label" title="Beginner"><svg width="22" height="22"
+                                    viewBox="0 0 576 512" fill="currentColor"
+                                    style="display:inline-block; vertical-align:middle; pointer-events:none;">
+                                    <path
+                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
+                                </svg></label>
+                        </div>
+                        <span class="rating-feedback" id="feedback-tactics">Not rated</span>
+                    </div>
+                </div>
+
+                <!-- Overall Level Dropdown -->
+                <div style="margin-top: 38px; margin-bottom: 30px; text-align: left;">
+                    <label class="form-label"
+                        style="display: block !important; font-size: 12px; margin-bottom: 18px !important;">Select
+                        Overall Level</label>
+                    <select id="level-select" class="form-select" style="background-color: var(--c-bg-card);">
+                        <option value="" disabled selected>Choose level...</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="initiation_intermediate">Initiation Intermediate</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="intermediate_high">Intermediate High</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="competition">Competition</option>
+                        <option value="professional">Professional</option>
+                    </select>
                 </div>
             </div>
-            <!-- Level Options -->
-            <label class="level-option">
-                <input type="radio" name="player_level" value="beginner">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Beginner</span>
-                        <span class="level-title-ar" dir="rtl">مبتدئ</span>
-                    </div>
-                    <div class="level-desc">New to racket sports.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="initiation_intermediate">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Initiation Intermediate</span>
-                        <span class="level-title-ar" dir="rtl">مبتدئ متوسط</span>
-                    </div>
-                    <div class="level-desc">Gaining experience and learning technique.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="intermediate">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Intermediate</span>
-                        <span class="level-title-ar" dir="rtl">متوسط</span>
-                    </div>
-                    <div class="level-desc">Developing tactics and consistency.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="intermediate_high">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Intermediate High</span>
-                        <span class="level-title-ar" dir="rtl">متوسط مرتفع</span>
-                    </div>
-                    <div class="level-desc">Confident with established strategies.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="advanced">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Advanced</span>
-                        <span class="level-title-ar" dir="rtl">متقدم</span>
-                    </div>
-                    <div class="level-desc">Skilled in transitioning between attack and defense.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="competition">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Competition</span>
-                        <span class="level-title-ar" dir="rtl">تنافسي</span>
-                    </div>
-                    <div class="level-desc">High-level tournament players.</div>
-                </div>
-            </label>
-            <label class="level-option">
-                <input type="radio" name="player_level" value="professional">
-                <div class="level-content">
-                    <div class="level-header">
-                        <span class="level-title-en">Professional</span>
-                        <span class="level-title-ar" dir="rtl">محترف</span>
-                    </div>
-                    <div class="level-desc">Top-tier professional players.</div>
-                </div>
-            </label>
-        </div>
 
-        <div
-            style="padding:24px 32px 32px; position:sticky; bottom:0; background:linear-gradient(to top, var(--c-bg) 80%, transparent); border-radius:0 0 24px 24px; z-index:10;">
-            <button id="level-selection-submit" type="button" onclick="ProfileController.submitLevel()"
-                class="btn btn-primary"
-                style="width:100%; font-size:16px; padding:16px; border-radius:14px; opacity:0.5; transition:all 0.3s;"
-                disabled>Save & Continue</button>
+            <!-- Modal Footer & Submit -->
+            <div
+                style="padding:16px 24px 24px; border-top:1px solid rgba(255,255,255,0.04); background:var(--c-bg); z-index: 10; display:flex; flex-direction:column; gap:10px;">
+                <button id="level-selection-submit" type="button" onclick="ProfileController.submitLevel()"
+                    class="btn btn-primary"
+                    style="width:100%; font-size:16px; padding:14px; border-radius:12px; opacity:0.5; transition:all 0.3s;"
+                    disabled>Confirm</button>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    .level-option {
-        display: flex;
+    /* Desktop Default Modal Styles */
+    #level-selection-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 9999;
+        backdrop-filter: blur(12px);
         align-items: center;
-        padding: 16px 20px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        cursor: pointer;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        background: rgba(255, 255, 255, 0.02);
-        position: relative;
+        justify-content: center;
+        padding: 20px;
+        overflow-y: hidden;
+        font-family: var(--font), sans-serif;
     }
 
-    .level-option:hover {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: rgba(255, 255, 255, 0.1);
+    #level-selection-modal .modal-card {
+        background: var(--c-bg);
+        width: 100%;
+        max-width: 480px;
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        margin: auto 0;
     }
 
-    .level-option input[type="radio"] {
+    #intro-screen {
+        text-align: center;
+        padding: 32px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 50vh;
+    }
+
+    #assessment-screen {
+        display: none;
+        flex-direction: column;
+        max-height: 85vh;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    /* Mobile Responsive Viewport Overrides */
+    @media (max-width: 768px) {
+        #level-selection-modal {
+            padding: 0 !important;
+            align-items: stretch !important;
+            background: var(--c-bg) !important;
+            position: fixed !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            width: 100% !important;
+        }
+
+        #level-selection-modal .modal-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            max-height: 100vh !important;
+            max-height: 100dvh !important;
+            border-radius: 0 !important;
+            border: none !important;
+            margin: 0 !important;
+            background: var(--c-bg) !important;
+        }
+
+        #intro-screen {
+            height: 100% !important;
+            flex: 1 !important;
+        }
+
+        #assessment-screen {
+            height: 100vh !important;
+            height: 100dvh !important;
+            max-height: 100vh !important;
+            max-height: 100dvh !important;
+        }
+    }
+
+    .tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--c-text-blue);
+        background: rgba(91, 139, 255, 0.08);
+        padding: 0.35rem 1rem;
+        border-radius: 100px;
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(91, 139, 255, 0.15);
+    }
+
+    .skill-card {
+        background: rgba(255, 255, 255, 0.015);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 0.75rem;
+        transition: all 0.25s ease;
+    }
+
+    .skill-card:hover {
+        background: rgba(255, 255, 255, 0.035);
+        border-color: rgba(91, 139, 255, 0.25);
+    }
+
+    .skill-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+
+    .skill-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .skill-desc {
+        font-size: 0.8rem;
+        color: var(--c-text-muted);
+        line-height: 1.35;
+    }
+
+    .rating-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        padding-top: 0.5rem;
+        margin-top: auto;
+        width: 100%;
+    }
+
+    .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 0.35rem;
+    }
+
+    .star-radio {
         display: none;
     }
 
-    .level-content {
-        flex: 1;
-    }
-
-    .level-header {
-        display: flex;
-        justify-content: space-between;
+    .star-label {
+        font-size: 1.85rem;
+        color: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
         align-items: center;
-        margin-bottom: 6px;
+        justify-content: center;
     }
 
-    .level-title-en {
-        font-size: 16px;
+    .star-label svg {
+        width: 2.3rem;
+        height: 2.3rem;
+        fill: currentColor;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .rating-stars:hover .star-label svg {
+        color: rgba(255, 255, 255, 0.1);
+        filter: none;
+    }
+
+    .star-label:hover svg,
+    .star-label:hover~.star-label svg,
+    .star-radio:checked~.star-label svg {
+        color: var(--c-orange);
+        filter: drop-shadow(0 0 6px rgba(255, 139, 0, 0.7));
+        transform: scale(1.12);
+    }
+
+    .rating-feedback {
+        font-size: 0.7rem;
         font-weight: 800;
-        color: #fff;
-        transition: color 0.2s;
-    }
-
-    .level-title-ar {
-        font-size: 15px;
-        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
         color: var(--c-text-muted);
-        transition: color 0.2s;
+        transition: color 0.25s ease;
     }
 
-    .level-desc {
-        font-size: 13px;
-        color: var(--c-text-muted);
-        line-height: 1.4;
+    .rating-feedback.rated {
+        color: var(--c-orange);
     }
 
-    /* Checked State */
-    /* Checked State - Premium Redesign */
-    .level-option:has(input:checked) {
-        border-color: var(--c-primary) !important;
-        background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(14, 165, 233, 0.04)) !important;
-        transform: translateY(-3px) scale(1.01);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--c-primary), inset 0 0 15px rgba(14, 165, 233, 0.1);
-        z-index: 2;
-    }
-
-    .level-option:has(input:checked) .level-title-en {
-        color: #fff;
-        text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
-    }
-
-    .level-option:has(input:checked) .level-title-ar {
-        color: var(--c-primary);
-    }
-
-    .level-option:has(input:checked) .level-desc {
-        color: rgba(255, 255, 255, 0.8);
-    }
-
-    /* Button Active State */
     #level-selection-submit.active {
         opacity: 1 !important;
         box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
     }
 
-    /* Custom Scrollbar for Modal */
     .custom-scroll::-webkit-scrollbar {
         width: 6px;
     }

@@ -3,6 +3,7 @@ const Auth = {
     _hasProfileCache: null,
     _hasLevelCache: null,
     _authUserIdCache: null,
+    _onboardingStepCache: null,
     _initialized: false,
 
     init: function() {
@@ -15,12 +16,14 @@ const Auth = {
                 SecureStorage.get({ key: 'auth_token' }).then(res => res.value).catch(() => null),
                 SecureStorage.get({ key: 'has_profile' }).then(res => res.value).catch(() => null),
                 SecureStorage.get({ key: 'has_level' }).then(res => res.value).catch(() => null),
-                SecureStorage.get({ key: 'auth_user_id' }).then(res => res.value).catch(() => null)
-            ]).then(([token, hasProfile, hasLevel, authUserId]) => {
+                SecureStorage.get({ key: 'auth_user_id' }).then(res => res.value).catch(() => null),
+                SecureStorage.get({ key: 'onboarding_step' }).then(res => res.value).catch(() => null)
+            ]).then(([token, hasProfile, hasLevel, authUserId, onboardingStep]) => {
                 this._tokenCache = token || null;
                 this._hasProfileCache = hasProfile || null;
                 this._hasLevelCache = hasLevel || null;
                 this._authUserIdCache = authUserId || null;
+                this._onboardingStepCache = onboardingStep || null;
                 this._initialized = true;
             }).catch(err => {
                 console.error('[Auth] SecureStorage init failed, falling back to localStorage:', err);
@@ -37,6 +40,7 @@ const Auth = {
         this._hasProfileCache = localStorage.getItem('has_profile');
         this._hasLevelCache = localStorage.getItem('has_level');
         this._authUserIdCache = localStorage.getItem('auth_user_id');
+        this._onboardingStepCache = localStorage.getItem('onboarding_step');
         this._initialized = true;
     },
 
@@ -122,11 +126,52 @@ const Auth = {
             localStorage.setItem('auth_user_id', idStr);
         }
     },
+    getOnboardingStep: function() {
+        if (!this._initialized) {
+            return localStorage.getItem('onboarding_step') || 'terms';
+        }
+        return this._onboardingStepCache || 'terms';
+    },
+    setOnboardingStep: function(val) {
+        this._onboardingStepCache = val;
+        const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
+        if (isCapacitor) {
+            window.Capacitor.Plugins.SecureStoragePlugin.set({ key: 'onboarding_step', value: val }).catch(() => {});
+        } else {
+            localStorage.setItem('onboarding_step', val);
+        }
+    },
+    syncWithServer: function() {
+        if (!this.isAuthenticated()) return Promise.resolve();
+        
+        if (typeof API !== 'undefined') {
+            return API.post('/profile/get', {}).then(res => {
+                if (res && res.success) {
+                    const u = res.data.user;
+                    const p = res.data.profile;
+                    if (u && u.onboarding_step) {
+                        this.setOnboardingStep(u.onboarding_step);
+                    }
+                    if (p) {
+                        this.setHasProfile(true);
+                        this.setHasLevel(!!p.level);
+                    } else {
+                        this.setHasProfile(false);
+                        this.setHasLevel(false);
+                    }
+                }
+            }).catch(err => {
+                console.error('[Auth] Server sync failed:', err);
+            });
+        }
+        return Promise.resolve();
+    },
     clearAll: function() {
         this._tokenCache = null;
         this._hasProfileCache = null;
         this._hasLevelCache = null;
         this._authUserIdCache = null;
+        this._onboardingStepCache = null;
         const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
         if (isCapacitor) {
             const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
@@ -134,11 +179,13 @@ const Auth = {
             SecureStorage.remove({ key: 'has_profile' }).catch(() => {});
             SecureStorage.remove({ key: 'has_level' }).catch(() => {});
             SecureStorage.remove({ key: 'auth_user_id' }).catch(() => {});
+            SecureStorage.remove({ key: 'onboarding_step' }).catch(() => {});
         } else {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('has_profile');
             localStorage.removeItem('has_level');
             localStorage.removeItem('auth_user_id');
+            localStorage.removeItem('onboarding_step');
         }
     }
 };

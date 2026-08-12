@@ -38,7 +38,7 @@ if ($viewingId === ADMIN_SYSTEM_USER_ID && $user['id'] !== ADMIN_SYSTEM_USER_ID)
 }
 
 // Get basic user info
-$stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile FROM users WHERE id = ? AND status IN ('active', 'suspended')");
+$stmtUser = $pdo->prepare("SELECT id, first_name, last_name, email, mobile, onboarding_step FROM users WHERE id = ? AND status IN ('active', 'suspended')");
 $stmtUser->execute([$viewingId]);
 $u = $stmtUser->fetch();
 if (!$u) jsonResponse(false, 'User not found.');
@@ -150,6 +150,7 @@ jsonResponse(true, 'Profile loaded.', [
         // Only expose contact details for self — never for third-party profile views
         'email'      => ($viewingId === $user['id']) ? $u['email'] : null,
         'mobile'     => ($viewingId === $user['id']) ? $u['mobile'] : null,
+        'onboarding_step' => ($viewingId === $user['id']) ? $u['onboarding_step'] : null,
     ],
     'profile' => $profile ? [
         'player_code'   => $profile['player_code'],

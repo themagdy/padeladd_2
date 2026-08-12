@@ -58,6 +58,7 @@ jsonResponse(true, 'Login successful', [
         'last_name' => $user['last_name'],
         'email' => $user['email']
     ],
-    'has_profile' => $hasProfile
+    'has_profile' => $hasProfile,
+    'onboarding_step' => $user['onboarding_step']
 ]);
 ?>

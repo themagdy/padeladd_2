@@ -2192,3 +2192,11 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Terms Page: Removed the "When to report? | تبلغ امتى؟" section and its three sub-chips (No-shows, Abuse, and Wrong Level), and removed the "Dashboard" chip from "Where to report?" list.
 - Venue Refactoring: Consolidated venue requests into the main venues table using a status ENUM and requester reference. Added immediate auto-fill & verification bypass for match creators using custom suggested venues.
 - Venue Administration: Added new features for admins to create and delete venues from scratch, and implemented a 'No Location' filtering toggle to audit records missing Google Maps link coordinates.
+
+2.4.85 (Build 485) - 2026-08-12 [patch]
+- Onboarding state tracking: Implemented dynamic onboarding state enforcement with the new 'onboarding_step' database column (ENUM 'terms', 'profile', 'completed') and router sync guards.
+- Mobile Layout Overrides: Styled the skills assessment modal to occupy 100% viewport width and height on mobile screens, removing left/right and bottom black margin spaces.
+- Portal Movement: Appended the modal to document.body dynamically in controllers.js to bypass CSS constraints of nested page wrappers.
+- UI Spacing & Typography: Forced block layout on overall level selection labels for correct spacing, increased stars rating elements size, customized heading text sizes, and prevented text wrapping on critical text lines.
+- Database Integration: Uncommented API endpoints integration to save calculated buffer and direct level selection to user_profiles table, updating onboarding_step to completed and navigating to the completed user profile.
+

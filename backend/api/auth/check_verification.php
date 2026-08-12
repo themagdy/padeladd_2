@@ -6,7 +6,7 @@ if (!$userId) {
     jsonResponse(false, 'User ID required.');
 }
 
-$stmt = $pdo->prepare("SELECT is_email_verified, is_phone_verified FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT is_email_verified, is_phone_verified, onboarding_step FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
@@ -16,6 +16,7 @@ if (!$user) {
 
 $emailV = (int)$user['is_email_verified'];
 $phoneV = (int)$user['is_phone_verified'];
+$onboardingStep = $user['onboarding_step'];
 $authToken = null;
 
 if ($emailV && $phoneV) {
@@ -42,6 +43,7 @@ jsonResponse(true, 'Status retrieved.', [
     'email_verified' => $emailV,
     'phone_verified' => $phoneV,
     'token' => $authToken,
-    'has_profile' => $hasProfile
+    'has_profile' => $hasProfile,
+    'onboarding_step' => $onboardingStep
 ]);
 ?>

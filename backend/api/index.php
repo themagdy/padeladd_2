@@ -111,6 +111,9 @@ try {
         case 'auth/resend-otp':
             require __DIR__ . '/auth/resend_otp.php';
             break;
+        case 'auth/update-onboarding-step':
+            require __DIR__ . '/auth/update_onboarding_step.php';
+            break;
         case 'profile/update':
             require __DIR__ . '/profile/update.php';
             break;

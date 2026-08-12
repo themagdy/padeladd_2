@@ -1144,6 +1144,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize the SPA router once DOM is ready
     Auth.init().then(() => {
+        return Auth.syncWithServer();
+    }).then(() => {
         Router.init();
 
         // Phase 6: Initialize notifications engine

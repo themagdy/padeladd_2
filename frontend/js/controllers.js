@@ -918,14 +918,20 @@ const AuthController = {
                 if (res.data.user_id) Auth.setUserId(res.data.user_id);
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile);
+                if (res.data.onboarding_step) {
+                    Auth.setOnboardingStep(res.data.onboarding_step);
+                }
 
                 // Initialize push notifications
                 if (typeof PushNotificationsController !== 'undefined') {
                     PushNotificationsController.init();
                 }
 
-                if (res.data.has_profile) {
+                const step = res.data.onboarding_step || 'terms';
+                if (step === 'completed') {
                     Router.navigate('/dashboard');
+                } else if (step === 'profile') {
+                    Router.navigate('/profile/edit');
                 } else {
                     Router.navigate('/terms');
                 }
@@ -1082,6 +1088,9 @@ const AuthController = {
                 if (res.data.token) {
                     Auth.setToken(res.data.token);
                 }
+                if (res.data.onboarding_step) {
+                    Auth.setOnboardingStep(res.data.onboarding_step);
+                }
                 if (res.data.fully_verified || (isEmailVerified && isPhoneVerified)) {
                     Auth.setHasProfile(res.data.has_profile);
                     Auth.setHasLevel(res.data.has_profile);
@@ -1131,6 +1140,9 @@ const AuthController = {
                     isPhoneVerified = true;
                     if (res.data.token) {
                         Auth.setToken(res.data.token);
+                    }
+                    if (res.data.onboarding_step) {
+                        Auth.setOnboardingStep(res.data.onboarding_step);
                     }
                     if (res.data.fully_verified) {
                         Auth.setHasProfile(res.data.has_profile);
@@ -1188,6 +1200,9 @@ const AuthController = {
             if (res.data.fully_verified) {
                 Auth.setHasProfile(res.data.has_profile);
                 Auth.setHasLevel(res.data.has_profile);
+                if (res.data.onboarding_step) {
+                    Auth.setOnboardingStep(res.data.onboarding_step);
+                }
             }
             const badge = document.getElementById('email-status-badge');
             const msg = document.getElementById('email-verified-msg');
@@ -1214,7 +1229,7 @@ const AuthController = {
         if (btnText) btnText.innerHTML = 'AGREE <span style="opacity:0.4; font-weight:300;">|</span> موافق';
 
         const agreeContainer = document.getElementById('terms-agree-container');
-        if (agreeContainer && Auth.isAuthenticated() && !Auth.hasProfile()) {
+        if (agreeContainer && Auth.getOnboardingStep() === 'terms') {
             agreeContainer.style.display = 'block';
         }
 
@@ -1247,7 +1262,10 @@ const AuthController = {
             return;
         }
 
-        sessionStorage.setItem('padeladd_agreed_terms', 'true');
+        if (Auth.isAuthenticated()) {
+            API.post('/auth/update-onboarding-step', { step: 'profile' }).catch(err => console.error(err));
+        }
+        Auth.setOnboardingStep('profile');
         Router.navigate('/profile/edit');
     },
 
@@ -2666,6 +2684,12 @@ const ProfileController = {
     },
 
     initEdit: async function () {
+        // Cleanup any old portalled modal in body to avoid duplicates
+        const oldModal = document.querySelector('body > #level-selection-modal');
+        if (oldModal) {
+            oldModal.remove();
+        }
+
         const form = document.getElementById('profile-form');
         if (!form) return;
 
@@ -2760,6 +2784,9 @@ const ProfileController = {
             if (res && res.success) {
                 const p = res.data.profile;
                 const u = res.data.user;
+                if (u && u.onboarding_step) {
+                    Auth.setOnboardingStep(u.onboarding_step);
+                }
                 if (u) {
                     const fn = q('first_name');
                     const ln = q('last_name');
@@ -2812,6 +2839,9 @@ const ProfileController = {
                     if (!p.level) {
                         const modal = document.getElementById('level-selection-modal');
                         if (modal) {
+                            if (modal.parentElement !== document.body) {
+                                document.body.appendChild(modal);
+                            }
                             modal.style.display = 'flex';
                             document.body.style.overflow = 'hidden';
                             document.documentElement.style.overflow = 'hidden';
@@ -2955,17 +2985,93 @@ const ProfileController = {
             });
         }
 
-        // Bind level selection radios (programmatic bypass for DOMPurify event stripping)
-        const levelRadios = document.querySelectorAll('input[name="player_level"]');
-        const submitLevelBtn = document.getElementById('level-selection-submit');
-        if (levelRadios.length && submitLevelBtn) {
-            levelRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    submitLevelBtn.disabled = false;
-                    submitLevelBtn.classList.add('active');
-                });
+        // Continue transition from Fair Play intro to Skills Assessment
+        const continueBtn = document.getElementById('continue-level-btn');
+        if (continueBtn) {
+            continueBtn.addEventListener('click', () => {
+                const intro = document.getElementById('intro-screen');
+                const assessment = document.getElementById('assessment-screen');
+                if (intro && assessment) {
+                    intro.style.display = 'none';
+                    assessment.style.display = 'flex';
+                }
             });
         }
+
+        // Skills self-assessment calculator and validator
+        const levelLabels = {
+            '1': 'beginner',
+            '2': 'initiation intermediate',
+            '3': 'intermediate',
+            '4': 'intermediate high',
+            '5': 'advanced',
+            '6': 'competition',
+            '7': 'professional'
+        };
+
+        const levelPoints = {
+            'beginner': 100,
+            'initiation_intermediate': 250,
+            'intermediate': 400,
+            'intermediate_high': 550,
+            'advanced': 700,
+            'competition': 850,
+            'professional': 1000
+        };
+
+        const updateLevelCalculations = () => {
+            const skills = ['consistency', 'positioning', 'defense', 'volleys', 'overheads', 'tactics'];
+            let allRated = true;
+            let totalStars = 0;
+
+            skills.forEach(skill => {
+                const checked = document.querySelector(`input[name="${skill}"]:checked`);
+                if (!checked) {
+                    allRated = false;
+                } else {
+                    totalStars += parseInt(checked.value);
+                }
+            });
+
+            const levelSelect = document.getElementById('level-select');
+            const selectedLevel = levelSelect ? levelSelect.value : '';
+            const submitLevelBtn = document.getElementById('level-selection-submit');
+            const previewEl = document.getElementById('level-calc-preview');
+
+            if (allRated && selectedLevel) {
+                if (submitLevelBtn) {
+                    submitLevelBtn.disabled = false;
+                    submitLevelBtn.classList.add('active');
+                }
+            } else {
+                if (submitLevelBtn) {
+                    submitLevelBtn.disabled = true;
+                    submitLevelBtn.classList.remove('active');
+                }
+            }
+        };
+
+        // Bind star label descriptions and trigger calculations
+        const starRadios = document.querySelectorAll('.star-radio');
+        starRadios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const name = e.target.name;
+                const val = e.target.value;
+                const feedback = document.getElementById(`feedback-${name}`);
+                if (feedback && val) {
+                    feedback.textContent = levelLabels[val] || 'Not rated';
+                    feedback.classList.add('rated');
+                }
+                updateLevelCalculations();
+            });
+        });
+
+        // Bind dropdown change
+        const levelSelect = document.getElementById('level-select');
+        if (levelSelect) {
+            levelSelect.addEventListener('change', updateLevelCalculations);
+        }
+
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -3024,6 +3130,9 @@ const ProfileController = {
                 if (res.data && res.data.is_new_profile) {
                     const modal = document.getElementById('level-selection-modal');
                     if (modal) {
+                        if (modal.parentElement !== document.body) {
+                            document.body.appendChild(modal);
+                        }
                         modal.style.display = 'flex';
                         document.body.style.overflow = 'hidden';
                         document.documentElement.style.overflow = 'hidden';
@@ -3042,22 +3151,65 @@ const ProfileController = {
     },
 
     submitLevel: async function () {
-        const selected = document.querySelector('input[name="player_level"]:checked');
-        if (!selected) return;
-        const level = selected.value;
-        const btn = document.getElementById('level-selection-submit');
-        if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+        const skills = ['consistency', 'positioning', 'defense', 'volleys', 'overheads', 'tactics'];
+        let totalStars = 0;
+        let allRated = true;
 
-        const res = await API.post('/profile/set_level', { level });
-        if (res && res.success) {
-            Auth.setHasLevel(true);
-            document.getElementById('level-selection-modal').style.display = 'none';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-            Router.navigate('/dashboard');
-        } else {
-            Toast.show(res ? res.message : 'Failed to save level');
-            if (btn) { btn.disabled = false; btn.textContent = 'Complete Profile'; }
+        skills.forEach(skill => {
+            const checked = document.querySelector(`input[name="${skill}"]:checked`);
+            if (!checked) allRated = false;
+            else totalStars += parseInt(checked.value);
+        });
+
+        const levelSelect = document.getElementById('level-select');
+        const selectedLevel = levelSelect ? levelSelect.value : '';
+
+        if (!allRated || !selectedLevel) {
+            Toast.show('Please rate all 6 skills and select an overall level.', 'error');
+            return;
+        }
+
+        const levelPoints = {
+            'beginner': 100,
+            'initiation_intermediate': 250,
+            'intermediate': 400,
+            'intermediate_high': 550,
+            'advanced': 700,
+            'competition': 850,
+            'professional': 1000
+        };
+
+        const starsPoints = Math.round((totalStars / 42) * 1000);
+        const dropdownPoints = levelPoints[selectedLevel] || 100;
+        const minPoints = Math.min(starsPoints, dropdownPoints);
+
+        try {
+            const payload = {
+                level: selectedLevel,
+                calculated_points: minPoints
+            };
+
+            const res = await API.post('/profile/set_level', payload);
+            if (res && res.success) {
+                Auth.setOnboardingStep('completed');
+                Auth.setHasLevel(true);
+                Toast.show('Proficiency level successfully registered!', 'success');
+                
+                // Hide modal and restore overflow
+                const modal = document.getElementById('level-selection-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+
+                // Redirect to profile view
+                Router.navigate('/profile/view');
+            } else {
+                Toast.show(res ? res.message : 'Failed to register level', 'error');
+            }
+        } catch (err) {
+            Toast.show('Error submitting level choice', 'error');
         }
     }
 };
@@ -3410,12 +3562,12 @@ const MatchesController = {
                 API.post('/match/request_venue', { venue_name: venueName }).then(response => {
                     if (response && response.success) {
                         const newVenue = response.data;
-                        
+
                         const venueInput = document.getElementById('cm-venue');
                         const idInput = document.getElementById('cm-venue-id');
                         const dbFlag = document.getElementById('cm-venue-is-db');
                         const addBtnWrap = document.getElementById('cm-add-venue-wrapper');
-                        
+
                         if (venueInput) venueInput.value = newVenue.name;
                         if (idInput) idInput.value = newVenue.id;
                         if (dbFlag) dbFlag.value = '1';
@@ -4976,20 +5128,20 @@ const MatchesController = {
             }
 
             // Phase 5: Chat access logic
-                // Phase 5: Chat access logic
-                isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
-                const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
-                isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
+            // Phase 5: Chat access logic
+            isPast = (new Date(match.match_datetime.replace(' ', 'T')) - new Date()) <= 0;
+            const isWaitlisted = !!(my_waitlist_entry || my_pending_request);
+            isAuthorized = !!(user_in_match || isWaitlisted || is_creator);
 
-                let chatBtnHtml = '';
-                const unreadCount = res.data.unread_count || 0;
-                const badgeHtml = unreadCount > 0 ? `
+            let chatBtnHtml = '';
+            const unreadCount = res.data.unread_count || 0;
+            const badgeHtml = unreadCount > 0 ? `
                     <span class="chat-unread-badge" style="background:var(--c-red); color:#fff; font-size:12px; font-weight:900; padding:3px 9px; border-radius:12px; min-width:24px; box-shadow:0 3px 12px rgba(241, 90, 41, 0.5); border:1px solid rgba(255,255,255,0.15);">
                         ${unreadCount > 99 ? '99+' : unreadCount}
                     </span>` : '';
 
-                if (isAuthorized) {
-                    chatBtnHtml += `
+            if (isAuthorized) {
+                chatBtnHtml += `
                         <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
                         <button type="button" onclick="ChatController.open(${match.id}); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
                             <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
@@ -4997,10 +5149,10 @@ const MatchesController = {
                             ${badgeHtml}
                         </button>
                     `;
-                }
+            }
 
-                // Sub-Actions Grid (Always visible)
-                chatBtnHtml += `
+            // Sub-Actions Grid (Always visible)
+            chatBtnHtml += `
                     <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 32px 0 24px;"></div>
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
                         ${match.venue_location_link ? `
@@ -5013,9 +5165,9 @@ const MatchesController = {
                     </div>
                 `;
 
-                if (chatArea) {
-                    chatArea.innerHTML = safeHTML(`<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`);
-                }
+            if (chatArea) {
+                chatArea.innerHTML = safeHTML(`<div style="margin-bottom:24px; padding: 0 4px;">${chatBtnHtml}</div>`);
+            }
         }
 
         const wlSection = document.getElementById('mv-waiting-section');

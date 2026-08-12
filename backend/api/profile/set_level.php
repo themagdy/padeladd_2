@@ -73,4 +73,7 @@ if (!$hasLog) {
     logPlayerPointsChange($pdo, $user['id'], null, 0, $points_after, 0, $buffer_after, 'initial_setup');
 }
 
+$stmtStep = $pdo->prepare("UPDATE users SET onboarding_step = 'completed' WHERE id = ?");
+$stmtStep->execute([$user['id']]);
+
 jsonResponse(true, 'Level saved successfully.');
