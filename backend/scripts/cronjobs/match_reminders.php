@@ -30,7 +30,7 @@ try {
         LEFT JOIN venues v ON m.venue_id = v.id
         WHERE mp.status = 'confirmed'
           AND mp.reminder_sent = 0
-          AND m.status IN ('open', 'full')
+          AND m.status = 'full'
           AND m.match_datetime BETWEEN NOW() + INTERVAL 1 HOUR AND NOW() + INTERVAL 3 HOUR
     ";
 
