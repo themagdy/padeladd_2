@@ -4692,18 +4692,18 @@ const MatchesController = {
         if (chatArea) chatArea.innerHTML = '';
         if (actionArea) {
             // Unified Policy Violation Area
-            const lateWithdrawal = res.data.late_withdrawal;
+            const lateWithdrawals = res.data.late_withdrawals || (res.data.late_withdrawal ? [res.data.late_withdrawal] : []);
             const isLateCancel = (match.status === 'cancelled' && match.is_policy_violation);
             const policyArea = document.getElementById('mv-policy-area');
             if (policyArea) {
                 let combinedHtml = '';
 
-                if (lateWithdrawal || isLateCancel) {
+                if (lateWithdrawals.length > 0 || isLateCancel) {
                     let itemsHtml = '';
-                    if (lateWithdrawal) {
-                        const lwUser = lateWithdrawal.nickname || `${lateWithdrawal.first_name} ${lateWithdrawal.last_name}`;
-                        const lwCode = lateWithdrawal.player_code || '';
-                        const lwReason = lateWithdrawal.event_data?.reason || '';
+                    lateWithdrawals.forEach(lw => {
+                        const lwUser = lw.nickname || `${lw.first_name} ${lw.last_name}`;
+                        const lwCode = lw.player_code || '';
+                        const lwReason = lw.event_data?.reason || '';
                         const profileUrl = `/p/${lwCode}`;
                         const codeTag = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="display:inline-block; margin-left:4px; padding:2px 8px; background:rgba(247,148,29,0.08); border:1px solid rgba(247,148,29,0.15); border-radius:6px; font-size:10px; font-weight:900; font-family:monospace; color:var(--c-orange); text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; cursor:pointer; text-decoration:none;">${lwCode}</a>` : '';
                         const clickableUser = lwCode ? `<a href="${profileUrl}" onclick="Router.navigate('${profileUrl}'); return false;" style="color:inherit; text-decoration:none; font-weight:700;">${lwUser}</a>` : `<strong>${lwUser}</strong>`;
@@ -4713,7 +4713,7 @@ const MatchesController = {
                                 ${clickableUser}${codeTag} left the match within the 5-hour.
                                 ${lwReason ? `<div style="margin-top:4px; padding-left:12px; border-left:2px solid rgba(255,59,48,0.2); font-style:italic; color:var(--c-text-muted); font-size:13px;">"${lwReason}"</div>` : ''}
                             </div>`;
-                    }
+                    });
                     if (isLateCancel) {
                         const mcUser = match.creator_nickname || match.creator_name || 'Creator';
                         const mcCode = match.creator_code || '';
@@ -4727,8 +4727,8 @@ const MatchesController = {
                             </div>`;
                     }
 
-                    const icon = isLateCancel && !lateWithdrawal ? '🚫' : '⚠️';
-                    const violationsCount = (lateWithdrawal ? 1 : 0) + (isLateCancel ? 1 : 0);
+                    const icon = isLateCancel && lateWithdrawals.length === 0 ? '🚫' : '⚠️';
+                    const violationsCount = lateWithdrawals.length + (isLateCancel ? 1 : 0);
                     const subject = violationsCount > 1 ? 'Players' : 'Player';
 
                     combinedHtml = `

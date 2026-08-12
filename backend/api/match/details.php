@@ -155,15 +155,16 @@ $lw = $pdo->prepare("
     JOIN users u ON me.user_id = u.id
     LEFT JOIN user_profiles up ON me.user_id = up.user_id
     WHERE me.match_id = ? AND me.event_type = 'late_withdrawal'
-    ORDER BY me.created_at DESC LIMIT 1
+    ORDER BY me.created_at ASC
 ");
 
 $lw->execute([$m['id']]);
-$lateWithdrawal = $lw->fetch(PDO::FETCH_ASSOC);
+$lateWithdrawals = $lw->fetchAll(PDO::FETCH_ASSOC);
 
-if ($lateWithdrawal) {
-    $lateWithdrawal['event_data'] = json_decode($lateWithdrawal['event_data'], true);
+foreach ($lateWithdrawals as &$lwItem) {
+    $lwItem['event_data'] = json_decode($lwItem['event_data'], true);
 }
+unset($lwItem);
 
 // Fetch current user's preferred side from profile
 $ups = $pdo->prepare("SELECT playing_side FROM user_profiles WHERE user_id = ?");
@@ -260,7 +261,8 @@ jsonResponse(true, 'Match details loaded.', [
         return null;
     })(),
     'user_playing_side' => $user_playing_side,
-    'late_withdrawal' => $lateWithdrawal,
+    'late_withdrawals' => $lateWithdrawals,
+    'late_withdrawal' => $lateWithdrawals[0] ?? null,
     'unread_count' => $unreadCount,
     'scores' => $scores,
     'disputes' => $disputes,
