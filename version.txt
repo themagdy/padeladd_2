@@ -2117,28 +2117,28 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Eligibility Range UI Polish: Redesigned the eligibility range block inside the match details page into a premium pill-shaped badge utilizing brand-blue gradient accents, rendering the values with a uniform micro-size (11px), cleaner weight (700), and formatted text separator (to).
 - Upcoming Match Cards Eligibility Badge: Added an inline eligibility rating tag (e.g. 🎯 250 to 550) beside the competition and gender status pills inside upcoming Play and Mine match list cards.
 
-2.4.75 (Build 475) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Scoring Engine Upgrades: Updated scoring points loss logic in ranking_helper.php to store combined losses (core rating points lost + buffer decay points lost) in match_players.point_change, ensuring red loss badges correctly display the total points lost for all matches (e.g. showing ↓ 13 or ↓ 28 for players capped at 0 core ranking points).
 - Moderator Panel History Logs: Added buffer delta calculation and display next to the buffer balance inside the moderator points log table in controllers.js.
 - UI Layout Optimization: Extracted the Creator Name & "Report a problem" row out of the collapsible match header wrap in view.html and controllers.js, ensuring it remains visible at all times.
 
-2.4.76 (Build 476) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Competition Match Type Button: Restyled the active Competition toggle button on the Create Match screen with a premium dark gold gradient fill (linear-gradient(135deg, #a17012 0%, #543908 100%)) and a 🏆 trophy icon for a distinctive premium look.
 - Dashboard MY MATCHES Subtitle: Replaced the static "View your schedule" subtitle with a dynamic contextual label based on the user's upcoming matches — "Next match: 4h 45m" when a match is today, "Match on Monday, 5:00 PM" for a single future match, "3 upcoming matches" for multiple future matches, and the original fallback when none exist.
 
-2.4.77 (Build 477) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Player Profile Pts Badge: Added a points change badge (↑ / ↓) next to the profiled player's name in each match score card on their profile page. Badge uses the same dark pill style as the match details screen (dark green/red background, colored arrow, border). Sourced from match_players.point_change via the matches/user.php endpoint.
 
-2.4.78 (Build 478) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Admin Edit Player: Added Mobile Number field to the edit player popup. Admins can now view and update a user's mobile number directly from the Players admin panel. Saves to the users.mobile column in the database.
 
-2.4.79 (Build 479) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Match Social Share (OG): Added /share/MATCH-CODE PHP endpoint that renders dynamic Open Graph meta tags for WhatsApp/social previews. Upcoming matches show "Join my Padeladd Match", completed matches show "Watch Padeladd Match M-XXX". Description shows match type, venue, and date/time. Real users are immediately redirected to the app deep link. Crawlers get the preview HTML.
 
-2.4.80 (Build 480) - 2026-08-10 [patch]
+2.4.74 (Build 474) - 2026-08-10 [patch]
 - Match Details Duration: Updated the match duration display on the match details page to show decimal hours instead of raw minutes (e.g., "1.5 hrs" instead of "90 min").
 
-2.4.81 (Build 481) - 2026-08-11 [patch]
+2.4.74 (Build 474) - 2026-08-11 [patch]
 - Level Badge Entrance Animation: Redesigned the level badge entrance on Player Profile views to scale up to 58px width/height (font-size 24px), performing a smooth 1.5s slide-up alongside a high-fidelity conic-gradient fire spiral loop rotating 1 round with no start delay.
 - Admin Panel: Added Mobile Number field input to edit player popups.
 - Matches stats calculation: Dynamic completed match totals (friendly + competition) on Dashboard and Profile.
@@ -2147,7 +2147,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Match Social Share: WhatsApp/social previews OG tags with automatic deep-links.
 - Ranking List Scroll Restoration: Implemented click-based scroll position saving and automated restoration using a clean sessionStorage pattern when navigating back from player profile views.
 
-2.4.82 (Build 482) - 2026-08-11 [patch]
+2.4.74 (Build 474) - 2026-08-11 [patch]
 - Match Reporting: Implemented match player selection dropdown inside the match details report issue modal. Toggles dynamically underneath selected category option. None of the radio options are pre-selected on open.
 - Admin Panel: Added target reported player column inside Match Reports listing. Fetches target nickname and code via list API query joins.
 - Admin Panel: Added "Details" modal popup to view complete details of any report.
@@ -2165,7 +2165,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Join/Jump In Solo: Automatically assign slot without selection if open slots exist on only one team.
 - Join/Jump In Solo: Prompt to choose a slot only when empty slots span multiple different teams.
 
-2.4.83 (Build 483) - 2026-08-11 [patch]
+2.4.74 (Build 474) - 2026-08-11 [patch]
 - DetailsView Policy Warning: Simplified late-policy titles to "Policy Violation" and rephrased late cancellation to put player first.
 - DetailsView Policy Warning: Consolidated separate cancellation and withdrawal banners into a single unified card panel, ending with a dynamically pluralized subject ("Player" vs "Players").
 - DetailsView Countdown: Automatically clear countdown timer interval and hide the banner wrapper when a match is cancelled.
@@ -2179,7 +2179,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Dashboard: Implemented announcements carousel autoplay looping every 4 seconds with manual scroll tracking sync and automatic teardown on routing.
 - Admin Panel: Added "Delete" action next to "Archive" for Time Policy Violations, complete with a permanent deletion API and confirmation prompts.
 
-2.4.84 (Build 484) - 2026-08-12 [patch]
+2.4.74 (Build 474) - 2026-08-12 [patch]
 - Referral Explorer Simulation: Built static referral tree page with a programmatically generated dataset of 100 players, featuring 10 top-level (Level 1) roots and 90 nested branches.
 - Dynamic Referral Stats: Added dynamic computing to the stats bar (Total Squad Members, Deepest Level, Active Promo Codes, and Top Recruiter).
 - Prestige Squad Badge: Overhauled the Squad badge design with a premium dark gold gradient background, golden metallic border, and high-readability gold typography.
@@ -2193,7 +2193,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Venue Refactoring: Consolidated venue requests into the main venues table using a status ENUM and requester reference. Added immediate auto-fill & verification bypass for match creators using custom suggested venues.
 - Venue Administration: Added new features for admins to create and delete venues from scratch, and implemented a 'No Location' filtering toggle to audit records missing Google Maps link coordinates.
 
-2.4.85 (Build 485) - 2026-08-12 [patch]
+2.4.74 (Build 474) - 2026-08-12 [patch]
 - Onboarding state tracking: Implemented dynamic onboarding state enforcement with the new 'onboarding_step' database column (ENUM 'terms', 'profile', 'completed') and router sync guards.
 - Mobile Layout Overrides: Styled the skills assessment modal to occupy 100% viewport width and height on mobile screens, removing left/right and bottom black margin spaces.
 - Portal Movement: Appended the modal to document.body dynamically in controllers.js to bypass CSS constraints of nested page wrappers.
