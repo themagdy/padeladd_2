@@ -2216,3 +2216,4 @@ Version 2.4.86 (Build 486) - 2026-08-13
 - Onboarding Intro Animations: Staggered smooth fade & slide entrance animations for Fair Play intro elements.
 - Level Selection Backdrop: Tuned modal overlay background opacity to 50% with backdrop glassmorphic blur filter.
 - Onboarding Scroll Lock: Enforced body scroll locks, overscroll-behavior contain, and touch-action locks to prevent background page scroll while completing skills assessment.
+- Typography Styling: Updated Arabic subtext color to white (`#fff`) on the Fair Play intro screen for maximum legibility.
