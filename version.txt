@@ -2202,4 +2202,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Chat seen-by avatars: Enlarged reader avatars to 26px and adjusted overlapping offsets for improved visibility.
 - Venue selector styling: Swapped venue suggestions button text color to brand light blue, and modernized its hover properties.
 - Venue validation cleanup: Automatically clear validation warning alerts and invalid input highlights immediately when a user requests and selects a custom suggested venue.
+- iOS Safe Area Insets: Added targeted .platform-ios safe area padding for auth/login views and notifications side panel.
+- iOS Score Modal Anti-Shake: Applied touch-action manipulation and GPU acceleration to score increment/decrement buttons to eliminate tap zoom shifting on iOS.
+- iOS Native Swipe Back: Enabled allowsBackForwardNavigationGestures in Capacitor iOS configuration for native edge swipe navigation.
 
