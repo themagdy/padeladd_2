@@ -2218,3 +2218,4 @@ Version 2.4.86 (Build 486) - 2026-08-13
 - Onboarding Scroll Lock: Enforced body scroll locks, overscroll-behavior contain, and touch-action locks to prevent background page scroll while completing skills assessment.
 - Typography Styling: Updated Arabic subtext color to white (`#fff`) on the Fair Play intro screen for maximum legibility.
 - Onboarding Continue Delay: Configured 3-second entrance delay (`animation-delay: 3s`) for the Fair Play intro Continue button.
+- My Matches Subtitle: Restricted upcoming match countdown calculation to confirmed players only (`m.user_in_match`), and formatted 0m matches as `Next match: Now`.

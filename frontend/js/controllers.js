@@ -1604,10 +1604,10 @@ const DashboardController = {
             const now = new Date();
             const todayStr = now.toISOString().slice(0, 10);
 
-            // Filter matches with datetime in the future (or within the 4hr grace window still considered active)
+            // Filter matches with datetime in the future where the user is a confirmed player (not just on waiting list)
             const futureMatches = upcomingMatches.filter(m => {
                 const dt = new Date(m.match_datetime);
-                return dt > now;
+                return dt > now && m.user_in_match;
             });
 
             const todayMatches = futureMatches.filter(m => {
@@ -1629,8 +1629,10 @@ const DashboardController = {
                     subtitle = `Next match: ${hrs}h ${mins}m`;
                 } else if (hrs > 0) {
                     subtitle = `Next match: ${hrs}h`;
-                } else {
+                } else if (mins > 0) {
                     subtitle = `Next match: ${mins}m`;
+                } else {
+                    subtitle = `Next match: Now`;
                 }
             } else if (futureMatches.length === 1) {
                 const dt = new Date(futureMatches[0].match_datetime);
