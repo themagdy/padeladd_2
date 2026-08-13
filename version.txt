@@ -2223,3 +2223,4 @@ Version 2.4.89 (Build 489) - 2026-08-13
 - Policy Violation Deduplication: Deduplicated late withdrawal policy violation records in `details.php` via PHP array processing and prevented duplicate event logging in `withdraw.php`.
 - Capacitor OTA Updates: Configured `@capgo/capacitor-updater` plugin for silent background over-the-air frontend bundle updates via `check_update.php` while keeping 100% local disk boot for instant offline startup.
 - Play Store Optimizations: Enabled R8 compilation minification (`minifyEnabled true`) in `build.gradle` to optimize app memory and performance while preserving portrait orientation.
+- OTA Security Hardening: Enforced `X-App-Update-Token` authentication in `check_update.php`, proxied file downloads through PHP script stream, and added `.htaccess` protection to block public direct browser access to `/downloads/bundles/`.

@@ -1,0 +1,3 @@
+# Block all public web browsing and direct file downloads
+Order Deny,Allow
+Deny from all

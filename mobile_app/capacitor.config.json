@@ -15,7 +15,10 @@
     "CapacitorUpdater": {
       "autoUpdate": true,
       "statsUrl": "",
-      "updateUrl": "https://padeladd.com/backend/api/app/check_update"
+      "updateUrl": "https://padeladd.com/backend/api/app/check_update",
+      "header": {
+        "X-App-Update-Token": "pdl_sec_ota_8f92a471b0c9e"
+      }
     }
   },
   "ios": {
