@@ -8,13 +8,13 @@ header('Content-Type: application/json; charset=utf-8');
 
 $SECRET_TOKEN = 'pdl_sec_ota_8f92a471b0c9e';
 
-// Log request for debugging
-$rawInput = file_get_contents('php://input');
-$data = json_decode($rawInput, true) ?: [];
-
 // Get headers robustly across Nginx / Apache
 $headers = function_exists('apache_request_headers') ? apache_request_headers() : (function_exists('getallheaders') ? getallheaders() : []);
 $providedToken = $_SERVER['HTTP_X_APP_UPDATE_TOKEN'] ?? ($headers['X-App-Update-Token'] ?? ($headers['x-app-update-token'] ?? ''));
+
+// Log every request to ota_debug.log for instant debugging
+$logMsg = date('Y-m-d H:i:s') . " | IP: " . ($_SERVER['REMOTE_ADDR'] ?? '') . " | GET: " . json_encode($_GET) . " | POST: " . file_get_contents('php://input') . " | TOKEN: " . ($providedToken ?: 'NONE') . "\n";
+@file_put_contents(__DIR__ . '/ota_debug.log', $logMsg, FILE_APPEND);
 
 $bundlesDir = __DIR__ . '/../../../downloads/bundles';
 $latestVersion = '0.0.0';
