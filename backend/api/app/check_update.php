@@ -66,5 +66,6 @@ $bundleUrl = "https://padeladd.com/backend/api/app/check_update.php?download={$l
 
 echo json_encode([
     'version' => $latestVersion,
-    'url'     => $bundleUrl
+    'url'     => $bundleUrl,
+    'session' => (object)[]
 ], JSON_UNESCAPED_SLASHES);
