@@ -2211,7 +2211,7 @@ a00a4ef - 2026-05-04 00:10:00 +0300
 - Level Assessment Sync: Respect `calculated_points` payload in `set_level.php` so starting buffer points match the conservative minimum calculation of skill stars and overall level.
 
 ==================================================
-Version 2.4.88 (Build 488) - 2026-08-13
+Version 2.4.89 (Build 489) - 2026-08-13
 ==================================================
 - Onboarding Intro Animations: Staggered smooth fade & slide entrance animations for Fair Play intro elements.
 - Level Selection Backdrop: Tuned modal overlay background opacity to 50% with backdrop glassmorphic blur filter.
@@ -2223,4 +2223,4 @@ Version 2.4.88 (Build 488) - 2026-08-13
 - Policy Violation Deduplication: Deduplicated late withdrawal policy violation records in `details.php` via PHP array processing and prevented duplicate event logging in `withdraw.php`.
 - Capacitor OTA Updates: Configured `@capgo/capacitor-updater` plugin for over-the-air frontend bundle updates and added `check_update.php` backend endpoint.
 - Capacitor Live Server URL: Configured `"server": { "url": "https://padeladd.com" }` in `capacitor.config.json` for instant live frontend web updates.
-- Play Store Optimizations: Enabled R8 compilation minification (`minifyEnabled true`) in `build.gradle` to optimize app memory and performance.
+- Play Store Optimizations: Enabled R8 compilation minification (`minifyEnabled true`) in `build.gradle` to optimize app memory and performance while preserving portrait orientation.
