@@ -8,8 +8,10 @@ header('Content-Type: application/json; charset=utf-8');
 
 $SECRET_TOKEN = 'pdl_sec_ota_8f92a471b0c9e';
 
-// Validate custom header token
-$providedToken = $_SERVER['HTTP_X_APP_UPDATE_TOKEN'] ?? ($_SERVER['HTTP_X_APP_UPDATE_KEY'] ?? '');
+// Get headers robustly across Nginx / Apache
+$headers = function_exists('apache_request_headers') ? apache_request_headers() : (function_exists('getallheaders') ? getallheaders() : []);
+$providedToken = $_SERVER['HTTP_X_APP_UPDATE_TOKEN'] ?? ($headers['X-App-Update-Token'] ?? ($headers['x-app-update-token'] ?? ''));
+
 if ($providedToken !== $SECRET_TOKEN) {
     http_response_code(403);
     echo json_encode(['error' => 'Unauthorized access'], JSON_UNESCAPED_SLASHES);
