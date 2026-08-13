@@ -11,6 +11,11 @@
     "PushNotifications": {
       "presentationOptions": ["badge", "sound", "alert"],
       "iconColor": "#171C26"
+    },
+    "CapacitorUpdater": {
+      "autoUpdate": true,
+      "statsUrl": "",
+      "updateUrl": "https://padeladd.com/backend/api/app/check_update"
     }
   },
   "ios": {
