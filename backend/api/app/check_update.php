@@ -62,13 +62,9 @@ if ($currentVersion === $latestVersion) {
     exit();
 }
 
-// Return secure authenticated download endpoint URL
 $bundleUrl = "https://padeladd.com/backend/api/app/check_update.php?download={$latestVersion}";
 
 echo json_encode([
     'version' => $latestVersion,
-    'url'     => $bundleUrl,
-    'session' => [
-        'checksum' => ''
-    ]
+    'url'     => $bundleUrl
 ], JSON_UNESCAPED_SLASHES);
