@@ -18,12 +18,20 @@ if ($providedToken !== $SECRET_TOKEN) {
     exit();
 }
 
-$versionFile = __DIR__ . '/../../../version.txt';
-$latestVersion = '2.4.89';
-if (file_exists($versionFile)) {
-    $content = file_get_contents($versionFile);
-    if (preg_match('/Version\s+([0-9\.]+)/i', $content, $m)) {
-        $latestVersion = trim($m[1]);
+$bundlesDir = __DIR__ . '/../../../downloads/bundles';
+$latestVersion = '0.0.0';
+
+if (is_dir($bundlesDir)) {
+    $files = scandir($bundlesDir);
+    $versions = [];
+    foreach ($files as $file) {
+        if (preg_match('/^web-v([0-9\.]+)\.zip$/i', $file, $m)) {
+            $versions[] = $m[1];
+        }
+    }
+    if (!empty($versions)) {
+        usort($versions, 'version_compare');
+        $latestVersion = end($versions);
     }
 }
 
