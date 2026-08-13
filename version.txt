@@ -2223,3 +2223,4 @@ Version 2.4.88 (Build 488) - 2026-08-13
 - Policy Violation Deduplication: Deduplicated late withdrawal policy violation records in `details.php` via PHP array processing and prevented duplicate event logging in `withdraw.php`.
 - Capacitor OTA Updates: Configured `@capgo/capacitor-updater` plugin for over-the-air frontend bundle updates and added `check_update.php` backend endpoint.
 - Capacitor Live Server URL: Configured `"server": { "url": "https://padeladd.com" }` in `capacitor.config.json` for instant live frontend web updates.
+- Play Store Optimizations: Enabled R8 compilation minification (`minifyEnabled true`) in `build.gradle` to optimize app memory and performance.
