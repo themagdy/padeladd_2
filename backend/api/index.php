@@ -61,8 +61,8 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $endpoint = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $requestUri);
 $endpoint = trim($endpoint, '/');
 
-// Only allow POST (except for specific system checks)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $endpoint !== 'system/check_in_app_messages') {
+// Only allow POST (except for specific system checks and app update downloads)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $endpoint !== 'system/check_in_app_messages' && !str_starts_with($endpoint, 'app/check_update')) {
     jsonResponse(false, 'Only POST method is allowed.', null, 405);
 }
 
@@ -283,6 +283,9 @@ try {
             break;
         case 'announcements/get':
             require __DIR__ . '/announcements/get.php';
+            break;
+        case 'app/check_update':
+            require __DIR__ . '/app/check_update.php';
             break;
 
         default:
