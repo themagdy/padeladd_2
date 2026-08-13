@@ -31,7 +31,7 @@ try {
         fs.unlinkSync(zipFilePath);
     }
 
-    // Zip contents of www directory into downloads/bundles/web-v{version}.zip
+    // Zip complete contents of www directory
     execSync(`cd "${wwwDir}" && zip -r "${zipFilePath}" . -x "*.DS_Store"`);
     console.log(`✅ Bundle created successfully at: downloads/bundles/${zipFileName}`);
 } catch (err) {

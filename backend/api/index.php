@@ -61,8 +61,8 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $endpoint = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $requestUri);
 $endpoint = trim($endpoint, '/');
 
-// Only allow POST (except for specific system checks, app update downloads, and OTA log viewing)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $endpoint !== 'system/check_in_app_messages' && !str_starts_with($endpoint, 'app/check_update') && $endpoint !== 'app/ota_debug.log') {
+// Only allow POST (except for specific system checks and app update downloads)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $endpoint !== 'system/check_in_app_messages' && !str_starts_with($endpoint, 'app/check_update')) {
     jsonResponse(false, 'Only POST method is allowed.', null, 405);
 }
 
@@ -286,16 +286,6 @@ try {
             break;
         case 'app/check_update':
             require __DIR__ . '/app/check_update.php';
-            break;
-        case 'app/ota_debug.log':
-            header('Content-Type: text/plain; charset=utf-8');
-            $logFile = __DIR__ . '/app/ota_debug.log';
-            if (file_exists($logFile)) {
-                readfile($logFile);
-            } else {
-                echo "No log entries yet.";
-            }
-            exit();
             break;
 
         default:
