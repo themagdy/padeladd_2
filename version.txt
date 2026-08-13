@@ -2222,3 +2222,4 @@ Version 2.4.87 (Build 487) - 2026-08-13
 - Create Match Datetime: Enforced local date construction (`YYYY-MM-DD`) and local datetime parsing in `controllers.js` to eliminate UTC timezone shifts during match creation.
 - Policy Violation Deduplication: Deduplicated late withdrawal policy violation records in `details.php` via PHP array processing and prevented duplicate event logging in `withdraw.php`.
 - Capacitor OTA Updates: Configured `@capgo/capacitor-updater` plugin for over-the-air frontend bundle updates and added `check_update.php` backend endpoint.
+- Capacitor Live Server URL: Configured `"server": { "url": "https://padeladd.com" }` in `capacitor.config.json` for instant live frontend web updates.

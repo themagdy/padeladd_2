@@ -2,6 +2,10 @@
   "appId": "com.padeladd.app",
   "appName": "Padeladd",
   "webDir": "www",
+  "server": {
+    "url": "https://padeladd.com",
+    "cleartext": true
+  },
   "bundledWebRuntime": false,
   "plugins": {
     "StatusBar": {
