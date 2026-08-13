@@ -54,7 +54,8 @@ if (isset($_GET['download'])) {
 $rawInput = file_get_contents('php://input');
 $data = json_decode($rawInput, true) ?: [];
 
-$currentVersion = $data['version'] ?? '';
+// Capgo plugin v5 sends 'version_name' or 'version_build' or 'version'
+$currentVersion = $data['version_name'] ?? ($data['version'] ?? ($data['version_build'] ?? ''));
 
 // If version matches latest build, return 204 No Content (Up to date)
 if ($currentVersion === $latestVersion) {
