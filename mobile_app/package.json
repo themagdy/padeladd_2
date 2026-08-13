@@ -4,7 +4,7 @@
   "description": "Padeladd Mobile App",
   "main": "index.js",
   "scripts": {
-    "build": "mkdir -p www && cp -v ../index.html www/ && cp -rv ../assets www/ && cp -rv ../frontend www/ && node scripts/prep-web.js && node scripts/minify-js.js",
+    "build": "mkdir -p www && cp -v ../index.html www/ && cp -rv ../assets www/ && cp -rv ../frontend www/ && node scripts/prep-web.js && node scripts/minify-js.js && node scripts/zip-bundle.js",
     "cap:sync": "cap sync",
     "cap:open:android": "cap open android",
     "cap:open:ios": "cap open ios"
