@@ -13,7 +13,7 @@
       "iconColor": "#171C26"
     },
     "CapacitorUpdater": {
-      "autoUpdate": true,
+      "autoUpdate": false,
       "statsUrl": "",
       "updateUrl": "https://padeladd.com/backend/api/app/check_update",
       "header": {

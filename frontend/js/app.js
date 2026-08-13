@@ -1268,6 +1268,17 @@ document.addEventListener('DOMContentLoaded', () => {
             html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; }
         `;
         document.head.appendChild(style);
+        // CapacitorUpdater background check and version lock
+        const updater = window.Capacitor?.Plugins?.CapacitorUpdater;
+        if (updater) {
+            updater.notifyAppReady().catch(err => console.log('notifyAppReady:', err));
+            // Perform background update check
+            updater.download().then(version => {
+                if (version) {
+                    updater.set(version).catch(err => console.log('set version err:', err));
+                }
+            }).catch(err => console.log('download check err:', err));
+        }
     }
 
     // Global Password Visibility Toggle
