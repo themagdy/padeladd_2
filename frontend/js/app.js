@@ -1268,10 +1268,16 @@ document.addEventListener('DOMContentLoaded', () => {
             html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; }
         `;
         document.head.appendChild(style);
-        // Explicitly trigger Capgo CapacitorUpdater check & sync on app load
+        // CapacitorUpdater background check and instant auto-reload on download complete
         if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorUpdater) {
             const updater = window.Capacitor.Plugins.CapacitorUpdater;
             updater.notifyAppReady().catch(function (e) { });
+
+            // Listen for download completion -> reload once immediately when a new version is downloaded
+            updater.addListener('downloadComplete', function () {
+                updater.reload().catch(function (e) { });
+            }).catch(function (e) { });
+
             updater.sync().catch(function (e) { });
         }
     }

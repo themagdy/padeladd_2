@@ -85,8 +85,11 @@ $currentVersion = $data['version_name'] ?? ($data['version'] ?? ($data['version_
 $deviceId = substr($data['device_id'] ?? 'Device', 0, 8);
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
 
-// Log check-in in plain human text
-$logMsg = date('Y-m-d H:i:s') . " | [CHECK] | Device: {$deviceId}... | App Running: v{$currentVersion} | Available: v{$latestVersion} | IP: {$ip}\n";
+// Log check-in in plain text with checkmark indicator if up-to-date
+$isUpToDate = ($currentVersion !== '' && version_compare($currentVersion, $latestVersion, '>='));
+$statusTag = $isUpToDate ? '[CHECK ✓ UP TO DATE]' : '[CHECK - UPDATE AVAILABLE]';
+
+$logMsg = date('Y-m-d H:i:s') . " | {$statusTag} | Device: {$deviceId}... | App Running: v{$currentVersion} | Available: v{$latestVersion} | IP: {$ip}\n";
 @file_put_contents(__DIR__ . '/ota_debug.log', $logMsg, FILE_APPEND);
 
 // If current version is already greater than or equal to latest zip on server, return 204 No Content
