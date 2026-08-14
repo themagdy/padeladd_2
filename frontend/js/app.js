@@ -1133,6 +1133,16 @@ const StatsUI = {
             }
         }
 
+        const matchesSubEl = document.getElementById(`${prefix}-matches-sub`);
+        if (matchesSubEl && stats.matches_played > 0) {
+            const compCount = stats.comp_played ?? 0;
+            const friendlyCount = stats.friendly_played ?? 0;
+            matchesSubEl.innerHTML = safeHTML(`<span style="color:var(--c-orange);">${compCount} Comp</span> <span style="opacity:0.85; margin:0 3px;">/</span> <span style="color:#5B8BFF;">${friendlyCount} Friendly</span>`);
+            matchesSubEl.style.fontSize = '11px';
+            matchesSubEl.style.fontWeight = '500';
+            matchesSubEl.style.letterSpacing = '0.5px';
+        }
+
         const wlEl = document.getElementById(`${prefix}-wl`);
         if (wlEl && stats.matches_played > 0) {
             wlEl.innerHTML = safeHTML(`<span style="color:#4ebd79;">${stats.matches_won}W</span> <span style="opacity:0.85; margin:0 3px;">/</span> <span style="color:#e57373;">${stats.matches_lost}L</span>`);

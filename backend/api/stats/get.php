@@ -28,22 +28,35 @@ if ($stats) {
 }
 
 $totalPlayed = 0;
+$compPlayed = 0;
+$friendlyPlayed = 0;
 if ($stats) {
     $countStmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT s.id)
+        SELECT m.match_type, COUNT(DISTINCT s.id) AS cnt
         FROM scores s
         JOIN match_players mp ON s.match_id = mp.match_id
         JOIN matches m ON s.match_id = m.id
         WHERE mp.user_id = ? AND s.status = 'approved' AND m.status = 'completed'
+        GROUP BY m.match_type
     ");
     $countStmt->execute([$user['id']]);
-    $totalPlayed = (int)$countStmt->fetchColumn();
+    $counts = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($counts as $c) {
+        if ($c['match_type'] === 'competition') {
+            $compPlayed = (int)$c['cnt'];
+        } elseif ($c['match_type'] === 'friendly') {
+            $friendlyPlayed = (int)$c['cnt'];
+        }
+    }
+    $totalPlayed = $compPlayed + $friendlyPlayed;
 }
 
 jsonResponse(true, 'Stats loaded.', [
     'points'           => $stats ? (int)($stats['rank_points'] ?? 0) : 0, // competition points (display/ranking)
     'eligibility_pts'  => $stats ? ((int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0)) : 100,           // total points for eligibility logic
     'matches_played'   => $totalPlayed,
+    'comp_played'      => $compPlayed,
+    'friendly_played'  => $friendlyPlayed,
     'matches_won'      => $stats ? (int)$stats['matches_won'] : 0,
     'matches_lost'     => $stats ? (int)$stats['matches_lost'] : 0,
     'ranking'          => $stats ? $stats['ranking'] : null,

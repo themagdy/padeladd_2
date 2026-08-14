@@ -131,16 +131,27 @@ $followingCount = (int)$followingStmt->fetchColumn();
 
 // Fetch dynamic scores played (competition + friendly)
 $totalPlayed = 0;
+$compPlayed = 0;
+$friendlyPlayed = 0;
 if ($stats) {
     $countStmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT s.id)
+        SELECT m.match_type, COUNT(DISTINCT s.id) AS cnt
         FROM scores s
         JOIN match_players mp ON s.match_id = mp.match_id
         JOIN matches m ON s.match_id = m.id
         WHERE mp.user_id = ? AND s.status = 'approved' AND m.status = 'completed'
+        GROUP BY m.match_type
     ");
     $countStmt->execute([$viewingId]);
-    $totalPlayed = (int)$countStmt->fetchColumn();
+    $counts = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($counts as $c) {
+        if ($c['match_type'] === 'competition') {
+            $compPlayed = (int)$c['cnt'];
+        } elseif ($c['match_type'] === 'friendly') {
+            $friendlyPlayed = (int)$c['cnt'];
+        }
+    }
+    $totalPlayed = $compPlayed + $friendlyPlayed;
 }
 
 jsonResponse(true, 'Profile loaded.', [
@@ -171,6 +182,8 @@ jsonResponse(true, 'Profile loaded.', [
         'points'           => (int)($stats['rank_points'] ?? 0),  // competition points for display
         'eligibility_pts'  => (int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0),     // total points (buffer + earned) for eligibility
         'matches_played'   => $totalPlayed,
+        'comp_played'      => $compPlayed,
+        'friendly_played'  => $friendlyPlayed,
         'matches_won'      => (int)$stats['matches_won'],
         'matches_lost'     => (int)$stats['matches_lost'],
         'ranking'          => $currentRanking,

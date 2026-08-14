@@ -114,7 +114,7 @@
           <div>
             <div id="pv-matches" class="val">0</div>
             <div class="lbl">Matches</div>
-            <div class="sub muted"></div>
+            <div id="pv-matches-sub" class="sub muted"></div>
           </div>
           <div class="ico">
             <img src="assets/icons/padel_racket_3d.png" style="border-radius: 6px;" alt="Matches">
@@ -334,7 +334,8 @@
     transform: translate(-50%, 20px) scale(0.7) !important;
     animation: levelBadgeSlideUp 1.5s cubic-bezier(0.25, 1, 0.50, 1) 0s forwards;
     position: absolute;
-    overflow: visible; /* allows box-shadow & border glow to pop */
+    overflow: visible;
+    /* allows box-shadow & border glow to pop */
   }
 
   /* Simplified Fire/Heat Glow overlay behind the badge during entrance */
@@ -356,6 +357,7 @@
       transform: translate(-50%, 20px) scale(0.7);
       box-shadow: 0 0 0 0px rgba(255, 94, 0, 0);
     }
+
     100% {
       opacity: 1;
       transform: translate(-50%, 0) scale(1);
@@ -368,10 +370,12 @@
       opacity: 0;
       transform: rotate(0deg) scale(0.9);
     }
+
     30% {
       opacity: 1;
       transform: rotate(120deg) scale(1.1);
     }
+
     100% {
       opacity: 0;
       transform: rotate(360deg) scale(1);
