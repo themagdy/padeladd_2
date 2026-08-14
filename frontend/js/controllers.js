@@ -2312,7 +2312,12 @@ const ProfileViewController = {
         if (!listEl) return;
 
         const newMatches = matchRes?.data?.matches || [];
+        const achievements = matchRes?.data?.achievements || [];
         ProfileViewController._hasMore = matchRes?.data?.has_more || false;
+
+        if (!isLoadMore && achievements) {
+            ProfileViewController.renderAchievements(achievements);
+        }
 
         if (isLoadMore) {
             // Remove pagination loading indicator
@@ -2400,6 +2405,57 @@ const ProfileViewController = {
         if (scrollTop + clientHeight >= scrollHeight - 300) {
             ProfileViewController.loadMatches(true, true);
         }
+    },
+
+    renderAchievements: function (achievements) {
+        const skelEl = document.getElementById('prof-achievements-skeleton');
+        const listEl = document.getElementById('prof-achievements-list');
+        if (!listEl) return;
+
+        if (skelEl) skelEl.style.display = 'none';
+
+        if (!achievements || achievements.length === 0) {
+            listEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--c-text-muted); font-size:12px;">No honors earned yet. Play Competition matches to unlock trophies!</div>`;
+            return;
+        }
+
+        let html = '';
+        for (const item of achievements) {
+            const isUnlocked = item.unlocked;
+            const bg = isUnlocked 
+                ? 'linear-gradient(135deg, rgba(255,165,0,0.08) 0%, rgba(255,255,255,0.03) 100%)' 
+                : 'rgba(255,255,255,0.02)';
+            const border = isUnlocked 
+                ? '1px solid rgba(255,165,0,0.3)' 
+                : '1px solid rgba(255,255,255,0.05)';
+            const boxShadow = isUnlocked 
+                ? '0 6px 20px rgba(255,140,0,0.1)' 
+                : 'none';
+            const opacity = isUnlocked ? '1' : '0.55';
+            const titleColor = isUnlocked ? '#FFF' : 'var(--c-text-muted)';
+            
+            let valDisplay = isUnlocked ? `Unlocked` : `${item.val || 0}`;
+            if (item.target) {
+                valDisplay = `${item.val || 0}/${item.target}`;
+            }
+
+            html += `
+                <div style="background:${bg}; border:${border}; box-shadow:${boxShadow}; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:14px; opacity:${opacity}; transition:all 0.3s; position:relative; overflow:hidden;">
+                    <div style="font-size:28px; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                        ${item.icon}
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:2px;">
+                            <span style="font-size:13px; font-weight:700; color:${titleColor}; letter-spacing:0.3px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${item.title}</span>
+                            ${isUnlocked ? `<span style="font-size:12px; background:rgba(74,222,128,0.15); padding:2px 7px; border-radius:8px; border:1px solid rgba(74,222,128,0.3);" title="Unlocked">🔓</span>` : `<span style="font-size:10px; font-weight:700; color:var(--c-text-dim); background:rgba(255,255,255,0.04); padding:2px 7px; border-radius:8px;">${valDisplay}</span>`}
+                        </div>
+                        <div style="font-size:11px; color:var(--c-text-muted); line-height:1.3; font-weight:500;">${item.desc}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        listEl.innerHTML = html;
     },
 
     toggleFollow: async function () {
