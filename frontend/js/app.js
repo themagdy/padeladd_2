@@ -1336,9 +1336,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const updater = window.Capacitor.Plugins.CapacitorUpdater;
             updater.notifyAppReady().catch(function (e) { });
 
-            // Listen for download completion -> reload once immediately when a new version is downloaded
-            updater.addListener('downloadComplete', function () {
-                updater.reload().catch(function (e) { });
+            // Listen for download completion -> set active bundle pointer and reload immediately (works on iOS & Android)
+            updater.addListener('downloadComplete', function (info) {
+                if (info && info.bundle && info.bundle.id) {
+                    updater.set({ id: info.bundle.id }).then(function () {
+                        return updater.reload();
+                    }).catch(function (e) {
+                        return updater.reload();
+                    });
+                } else {
+                    updater.reload().catch(function (e) { });
+                }
             }).catch(function (e) { });
 
             updater.sync().catch(function (e) { });
