@@ -235,18 +235,16 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
         WHERE mp.user_id = ?
           AND s.status = 'approved'
           AND m.match_type = 'competition'
+          AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 90 DAY)
         ORDER BY m.match_datetime ASC, s.created_at ASC
     ");
     $stmt->execute([$userId]);
     $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $totalCompWins = 0;
-    $monthlyCompWins = 0;
     $heavyWins = 0;
     $currentStreak = 0;
     $total3Streaks = 0;
-
-    $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
 
     foreach ($scores as $s) {
         $playerTeam = null;
@@ -277,10 +275,6 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             $currentStreak++;
             if ($currentStreak === 3) {
                 $total3Streaks++;
-            }
-
-            if ($s['match_datetime'] >= $thirtyDaysAgo) {
-                $monthlyCompWins++;
             }
 
             if (count($sets) === 2) {
@@ -342,13 +336,13 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'desc'     => "{$totalCompWins} / {$currentTarget} Competition Wins"
         ],
         [
-            'key'      => 'monthly',
-            'title'    => 'Monthly Machine',
+            'key'      => 'quarterly',
+            'title'    => '3 Months Machine',
             'icon'     => '🚀',
-            'unlocked' => ($monthlyCompWins >= 10),
-            'val'      => $monthlyCompWins,
+            'unlocked' => ($totalCompWins >= 10),
+            'val'      => $totalCompWins,
             'target'   => 10,
-            'desc'     => "{$monthlyCompWins} / 10 Wins in last 30 days"
+            'desc'     => "{$totalCompWins} / 10 Wins in past 3 months"
         ]
     ];
 }

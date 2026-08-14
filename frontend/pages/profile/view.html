@@ -161,11 +161,33 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="prof-content-grid" style="display:grid; grid-template-columns:1fr 340px; gap:60px; padding:60px 0 0 0;">
+    <div class="prof-content-grid" style="display:grid; grid-template-columns:1fr; gap:40px; padding:40px 0 0 0;">
 
-      <!-- LEFT: MATCH HISTORY -->
+      <!-- TOP: COMPETITION HONORS -->
+      <div id="prof-honors-wrapper">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="assets/logo_ico.png" style="height:22px; width:auto;">
+            <span class="section-title" style="letter-spacing:0.8px;">COMPETITION HONORS</span>
+          </div>
+          <span style="font-size:11px; color:var(--c-text-muted); font-weight:600;">🏆 Past 3 months</span>
+        </div>
+
+        <div id="prof-achievements-skeleton" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+          <div class="skeleton" style="height:76px; border-radius:14px; opacity:0.15;"></div>
+          <div class="skeleton" style="height:76px; border-radius:14px; opacity:0.15;"></div>
+          <div class="skeleton" style="height:76px; border-radius:14px; opacity:0.15;"></div>
+          <div class="skeleton" style="height:76px; border-radius:14px; opacity:0.15;"></div>
+        </div>
+
+        <div id="prof-achievements-list" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+          <!-- Loaded dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- BOTTOM: MATCH HISTORY -->
       <div>
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:32px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
           <img src="assets/logo_ico.png" style="height:22px; width:auto;">
           <span class="section-title">Match History</span>
         </div>
@@ -209,19 +231,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: ACHIEVEMENTS -->
-      <div style="padding-left:40px;">
-        <div class="section-title" style="margin-bottom:32px;">Achievements</div>
-        <div
-          style="background:transparent; border:1px solid var(--c-border); border-radius: var(--r-md); padding:60px 30px; text-align:center; color:var(--c-text-dim);">
-          <div style="font-size:48px; margin-bottom:20px;">🏆</div>
-          <div style="font-size:14px; font-weight:700; color:var(--c-text-muted); margin-bottom:8px;">Achievements
-            Coming Soon</div>
-          <div id="prof-achievements-empty-msg" style="font-size:12px;">Complete matches to earn trophies and special
-            badges!</div>
         </div>
       </div>
 
