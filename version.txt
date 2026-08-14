@@ -2243,3 +2243,4 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Honors Prioritized Display: Updated achievement cards renderer in `controllers.js` to automatically sort and display unlocked (achieved) honors at the top first.
 - Honors Unlocked Badge Format: Updated unlocked achievement badge on the right of the card to display 🔑 followed by total count (e.g. `🔑 6`) in green emerald typography in `controllers.js`.
 - Responsive Profile Line Separator Spacing: Enhanced `.prof-line-separator` margins to 24px on mobile and 36px on desktop in `style.css` for balanced section spacing across all screen sizes.
+- Desktop 3-Column Achievements Grid: Added `.prof-achievements-grid` CSS rules enforcing 3 cards per row on desktop screens (`@media (min-width: 900px)`).

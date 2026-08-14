@@ -2031,6 +2031,19 @@ form {
   }
 }
 
+/* Achievements Responsive Grid */
+.prof-achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .prof-achievements-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .desk-nav {
   display: flex;
   align-items: center;
