@@ -1,7 +1,6 @@
 <?php
 /**
- * Migration 006: Run Points Log Backfill
- * Safe to run directly from browser or CLI.
+ * Migration 006: Run Points Log Backfill via Live Ranking Engine
  * Run at: http://localhost:8888/padeladd4/backend/migrations/006_run_points_backfill.php
  * Or live: https://padeladd.com/backend/migrations/006_run_points_backfill.php
  */
@@ -13,78 +12,58 @@ header('Content-Type: application/json');
 $pdo = getDB();
 
 try {
-    // 1. Clear existing log table
+    // 1. Reset player_points_log and match_players point changes
     $pdo->exec("TRUNCATE TABLE player_points_log");
+    $pdo->exec("UPDATE match_players SET point_change = NULL");
 
-    $pdo->beginTransaction();
+    // 2. Reset player_stats to starting values based on level
+    $stats = $pdo->query("
+        SELECT ps.user_id, up.level_key 
+        FROM player_stats ps
+        LEFT JOIN user_profiles up ON ps.user_id = up.user_id
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. Fetch all players
-    $players = $pdo->query("SELECT user_id, rank_points, current_buffer, initial_buffer FROM player_stats")->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($stats as $st) {
+        $uId = (int)$st['user_id'];
+        $startingPoints = getStartingPoints($st['level_key'] ?? 'beginner');
+        $pdo->prepare("
+            UPDATE player_stats 
+            SET rank_points = 0, initial_buffer = ?, current_buffer = ?, buffer_matches_left = 20,
+                matches_played = 0, matches_won = 0, matches_lost = 0, win_rate = 0, streak = 0
+            WHERE user_id = ?
+        ")->execute([$startingPoints, $startingPoints, $uId]);
 
-    $logsCreated = 0;
+        logPlayerPointsChange($pdo, $uId, null, 0, 0, 0, $startingPoints, 'initial_setup', null);
+    }
 
-    foreach ($players as $p) {
-        $userId = (int)$p['user_id'];
-        $initialBuffer = (int)($p['initial_buffer'] ?: 100);
+    // 3. Fetch all completed competition matches ordered chronologically
+    $matches = $pdo->query("
+        SELECT id FROM matches 
+        WHERE status = 'completed' AND match_type = 'competition'
+        ORDER BY match_datetime ASC, id ASC
+    ")->fetchAll(PDO::FETCH_COLUMN);
 
-        // a. Initial setup entry
-        logPlayerPointsChange($pdo, $userId, null, 0, 0, 0, $initialBuffer, 'initial_setup', null);
-        $logsCreated++;
+    $processedScores = 0;
 
-        // b. Fetch all completed competitive matches for this user
-        $stmt = $pdo->prepare("
-            SELECT mp.match_id, mp.point_change, m.match_datetime
-            FROM match_players mp
-            JOIN matches m ON mp.match_id = m.id
-            WHERE mp.user_id = ? AND m.status = 'completed' AND m.match_type = 'competition'
-            ORDER BY m.match_datetime ASC, m.id ASC
-        ");
-        $stmt->execute([$userId]);
-        $matches = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($matches as $mId) {
+        $mId = (int)$mId;
+        // Fetch approved scores for this match
+        $scores = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND status = 'approved' ORDER BY created_at ASC, id ASC");
+        $scores->execute([$mId]);
+        $scoreIds = $scores->fetchAll(PDO::FETCH_COLUMN);
 
-        $runningCore = 0;
-        $runningBuffer = $initialBuffer;
-
-        foreach ($matches as $m) {
-            $matchId = (int)$m['match_id'];
-            $totalMatchChange = (int)($m['point_change'] ?? 0);
-
-            // Fetch approved scores for this match
-            $sStmt = $pdo->prepare("SELECT id FROM scores WHERE match_id = ? AND status = 'approved' ORDER BY created_at ASC, id ASC");
-            $sStmt->execute([$matchId]);
-            $approvedScores = $sStmt->fetchAll(PDO::FETCH_COLUMN);
-
-            $numScores = count($approvedScores);
-            if ($numScores === 0) continue;
-
-            // Divide point change across scores proportionally
-            $perScoreChange = (int)round($totalMatchChange / $numScores);
-            $decayPerScore = (int)round(($initialBuffer * 5 / 100) / $numScores);
-
-            foreach ($approvedScores as $idx => $scoreId) {
-                $scoreId = (int)$scoreId;
-                $pointsBefore = $runningCore;
-
-                // On last score of match, adjust for rounding difference to match exact total
-                $scoreChange = ($idx === $numScores - 1) ? ($totalMatchChange - ($perScoreChange * ($numScores - 1))) : $perScoreChange;
-                $pointsAfter = max(0, $pointsBefore + $scoreChange);
-                $newBuffer = max(0, $runningBuffer - $decayPerScore);
-
-                logPlayerPointsChange($pdo, $userId, $matchId, $pointsBefore, $pointsAfter, $scoreChange, $newBuffer, 'match_completion', $scoreId);
-                $logsCreated++;
-
-                $runningCore = $pointsAfter;
-                $runningBuffer = $newBuffer;
-            }
+        foreach ($scoreIds as $sId) {
+            $sId = (int)$sId;
+            calculateRankingUpdates($pdo, $mId, $sId);
+            $processedScores++;
         }
     }
 
-    $pdo->commit();
-    echo json_encode(['success' => true, 'message' => "Backfill completed successfully. Created {$logsCreated} log records for " . count($players) . " players."]);
+    echo json_encode([
+        'success' => true, 
+        'message' => "Live ranking engine backfill complete! Recalculated {$processedScores} approved scores across " . count($matches) . " competition matches."
+    ]);
 } catch (\Throwable $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
     echo json_encode(['success' => false, 'message' => 'Backfill error: ' . $e->getMessage()]);
 }
 ?>
