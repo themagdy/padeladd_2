@@ -1137,7 +1137,7 @@ const StatsUI = {
         if (matchesSubEl && stats.matches_played > 0) {
             const compCount = stats.comp_played ?? 0;
             const friendlyCount = stats.friendly_played ?? 0;
-            matchesSubEl.innerHTML = safeHTML(`<span style="color:var(--c-orange);">${compCount} Comp</span> <span style="opacity:0.85; margin:0 3px;">/</span> <span style="color:#5B8BFF;">${friendlyCount} Friendly</span>`);
+            matchesSubEl.innerHTML = safeHTML(`<span style="color:var(--c-orange);">${compCount} Comp</span> <span style="opacity:0.6; margin:0 4px;">|</span> <span style="color:#5B8BFF;">${friendlyCount} Fr</span>`);
             matchesSubEl.style.fontSize = '11px';
             matchesSubEl.style.fontWeight = '500';
             matchesSubEl.style.letterSpacing = '0.5px';
