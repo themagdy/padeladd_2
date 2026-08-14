@@ -13,17 +13,19 @@ $pdo = getDB();
 
 try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-    $pdo->exec("TRUNCATE TABLE match_players");
-    $pdo->exec("TRUNCATE TABLE scores");
-    $pdo->exec("TRUNCATE TABLE disputes");
-    $pdo->exec("TRUNCATE TABLE match_chat");
-    $pdo->exec("TRUNCATE TABLE player_points_log");
-    $pdo->exec("TRUNCATE TABLE matches");
+    $tables = ['match_players', 'scores', 'disputes', 'match_chat', 'chat_messages', 'player_points_log', 'matches'];
+    foreach ($tables as $t) {
+        try {
+            $pdo->exec("TRUNCATE TABLE `$t`");
+        } catch (\Throwable $e) {
+            // Ignore if table does not exist
+        }
+    }
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
     // Reset player_stats and insert initial setup logs
     $players = $pdo->query("
-        SELECT ps.user_id, up.level_key 
+        SELECT ps.user_id, up.level 
         FROM player_stats ps
         LEFT JOIN user_profiles up ON ps.user_id = up.user_id
     ")->fetchAll(PDO::FETCH_ASSOC);
@@ -31,7 +33,7 @@ try {
     $resetCount = 0;
     foreach ($players as $st) {
         $uId = (int)$st['user_id'];
-        $startingPoints = getStartingPoints($st['level_key'] ?? 'beginner');
+        $startingPoints = getStartingPoints($st['level'] ?? 'beginner');
 
         $upd = $pdo->prepare("
             UPDATE player_stats 

@@ -211,28 +211,10 @@ $rawScores = $scoresStmt->fetchAll(PDO::FETCH_ASSOC);
 // Is the current user a player in this match?
 $isPlayer = ($mySlotData !== null);
 
-$scoreIds = array_filter(array_map(fn($s) => (int)$s['id'], $rawScores));
-$pointChangesByScore = [];
-if (!empty($scoreIds)) {
-    $scoreIdsStr = implode(',', $scoreIds);
-    $logStmt = $pdo->prepare("
-        SELECT score_id, user_id, change_amount 
-        FROM player_points_log 
-        WHERE score_id IN ($scoreIdsStr)
-    ");
-    $logStmt->execute();
-    $logs = $logStmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($logs as $l) {
-        $pointChangesByScore[(int)$l['score_id']][(int)$l['user_id']] = (int)$l['change_amount'];
-    }
-}
-
 $scores = [];
 foreach ($rawScores as $sc) {
     if ($sc['status'] === 'approved' || $isPlayer) {
-        $mapped = mapScoreComposition($sc);
-        $mapped['point_changes'] = $pointChangesByScore[(int)$sc['id']] ?? (object)[];
-        $scores[] = $mapped;
+        $scores[] = mapScoreComposition($sc);
     }
 }
 
