@@ -2248,5 +2248,8 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Player Profile Honors System: Fully dynamic backend API competition achievements rendering with zero JS fallback hardcoding.
 - Asset & Icon Optimizations: Optimized 3D icons, rank badges, and compressed web bundles for performance.
 - Other Players Profile Honors Visibility: Show unlocked achievements only on other players' profiles, and hide the Competition Honors section entirely if no achievements are unlocked.
+- Match Details Point Badges: Updated `match/details.php` to attach `point_changes` maps to score objects, and updated `ScoreUI.renderMatchScore` in `app.js` to render point badges (`↑` / `↓`) for all players on Match Details view.
+- Complete Reset & Database Cleaning Migration: Created `backend/migrations/007_reset_matches_and_rankings.php` to wipe all 21 match, score, notification, story, dispute, report, chat, and waiting list tables, resetting player stats back to starting buffer points.
+- iOS Universal Links Optimization: Updated `.well-known/apple-app-site-association` with `/share/*` path, configured Apache `Content-Type: application/json` header in `.htaccess`, and updated Capacitor `appUrlOpen` deep link router in `app.js` to parse both `/share/` and `/matches/` URLs on iOS.
 
 
