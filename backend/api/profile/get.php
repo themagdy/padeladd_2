@@ -129,14 +129,15 @@ $followingStmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id =
 $followingStmt->execute([$viewingId]);
 $followingCount = (int)$followingStmt->fetchColumn();
 
-// Fetch dynamic matches played (competition + friendly)
+// Fetch dynamic scores played (competition + friendly)
 $totalPlayed = 0;
 if ($stats) {
     $countStmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT mp.match_id)
-        FROM match_players mp
-        JOIN matches m ON mp.match_id = m.id
-        WHERE mp.user_id = ? AND m.status = 'completed'
+        SELECT COUNT(DISTINCT s.id)
+        FROM scores s
+        JOIN match_players mp ON s.match_id = mp.match_id
+        JOIN matches m ON s.match_id = m.id
+        WHERE mp.user_id = ? AND s.status = 'approved' AND m.status = 'completed'
     ");
     $countStmt->execute([$viewingId]);
     $totalPlayed = (int)$countStmt->fetchColumn();

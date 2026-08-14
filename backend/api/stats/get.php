@@ -30,10 +30,11 @@ if ($stats) {
 $totalPlayed = 0;
 if ($stats) {
     $countStmt = $pdo->prepare("
-        SELECT COUNT(DISTINCT mp.match_id)
-        FROM match_players mp
-        JOIN matches m ON mp.match_id = m.id
-        WHERE mp.user_id = ? AND m.status = 'completed'
+        SELECT COUNT(DISTINCT s.id)
+        FROM scores s
+        JOIN match_players mp ON s.match_id = mp.match_id
+        JOIN matches m ON s.match_id = m.id
+        WHERE mp.user_id = ? AND s.status = 'approved' AND m.status = 'completed'
     ");
     $countStmt->execute([$user['id']]);
     $totalPlayed = (int)$countStmt->fetchColumn();
