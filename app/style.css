@@ -95,6 +95,29 @@ body::before {
     flex-shrink: 0;
 }
 
+.btn-instagram {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(225, 48, 108, 0.12), rgba(253, 29, 29, 0.12));
+    border: 1px solid rgba(225, 48, 108, 0.3);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.btn-instagram:hover {
+    background: linear-gradient(135deg, rgba(225, 48, 108, 0.25), rgba(253, 29, 29, 0.25));
+    border-color: rgba(225, 48, 108, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(225, 48, 108, 0.25);
+}
+
 .pulse-dot {
     width: 6px;
     height: 6px;
@@ -132,6 +155,14 @@ body::before {
     container-name: heroleft;
 }
 
+.hero-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
 .tag-pill {
     display: inline-flex;
     align-items: center;
@@ -144,7 +175,6 @@ body::before {
     padding: 6px 14px;
     border-radius: 999px;
     letter-spacing: 1.2px;
-    margin-bottom: 24px;
 }
 
 .flag-icon {
