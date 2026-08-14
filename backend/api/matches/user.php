@@ -338,7 +338,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
         ],
         [
             'key'      => 'quarterly',
-            'title'    => '3 Months Machine',
+            'title'    => 'Court Machine',
             'icon'     => '🚀',
             'unlocked' => ($totalCompPlayed >= 100),
             'val'      => $totalCompPlayed,
