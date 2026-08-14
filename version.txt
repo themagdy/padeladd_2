@@ -2246,8 +2246,7 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Desktop 3-Column Achievements Grid: Added `.prof-achievements-grid` CSS rules enforcing 3 cards per row on desktop screens (`@media (min-width: 900px)`).
 - Guaranteed Honors Grid Rendering: Updated `renderAchievements` in `controllers.js` to always render standard 5 achievement cards with 0-progress indicators for new players.
 - Player Profile Honors System: Fully dynamic backend API competition achievements rendering with zero JS fallback hardcoding.
-- Other Players Profile Honors Visibility: Show unlocked achievements only on other players' profiles, and hide the Competition Honors section entirely if no achievements are unlocked.
-- Honors Card Typography Spacing: Tightened title and subtitle vertical margin and line-heights in achievement cards for a cleaner, compact appearance.
 - Asset & Icon Optimizations: Optimized 3D icons, rank badges, and compressed web bundles for performance.
+- Other Players Profile Honors Visibility: Show unlocked achievements only on other players' profiles, and hide the Competition Honors section entirely if no achievements are unlocked.
 
 
