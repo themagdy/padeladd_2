@@ -30,8 +30,6 @@ jobs:
       - name: Generate Launcher Icons
         working-directory: mobile_app
         run: |
-          npx @capacitor/assets generate --ios
-          
           # Use macOS native sips tool to resize the source image into all standard sizes
           APPICONSET_DIR="ios/App/App/Assets.xcassets/AppIcon.appiconset"
           SOURCE_IMG="$APPICONSET_DIR/AppIcon-512@2x.png"
