@@ -318,7 +318,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'unlocked' => ($total3Streaks >= 3),
             'val'      => $total3Streaks,
             'target'   => 3,
-            'desc'     => $total3Streaks >= 3 ? "Achieved 3-Win Streak {$total3Streaks}x" : "{$total3Streaks}/3 Achieved 3-Win Streak"
+            'desc'     => $total3Streaks >= 3 ? "Achieved 3-Win Streak {$total3Streaks}x" : "Achieved 3-Win Streak"
         ],
         [
             'key'      => 'heavy',
@@ -327,7 +327,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'unlocked' => ($heavyWins >= 3),
             'val'      => $heavyWins,
             'target'   => 3,
-            'desc'     => $heavyWins >= 3 ? "{$heavyWins} Heavy Victories (Diff ≥ 8)" : "{$heavyWins} / 3 Heavy Victories (Diff ≥ 8)"
+            'desc'     => "Heavy Victories (Diff ≥ 8)"
         ],
         [
             'key'      => 'veteran',
@@ -336,16 +336,16 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'unlocked' => ($totalCompWins >= 10),
             'val'      => $totalCompWins,
             'target'   => $currentTarget,
-            'desc'     => "{$totalCompWins} / {$currentTarget} Competition Wins"
+            'desc'     => "Competition Wins"
         ],
         [
             'key'      => 'quarterly',
             'title'    => 'Court Machine',
             'icon'     => '🚀',
-            'unlocked' => ($totalCompPlayed >= 100),
+            'unlocked' => ($totalCompPlayed >= 60),
             'val'      => $totalCompPlayed,
-            'target'   => 100,
-            'desc'     => "{$totalCompPlayed}/100 matches played"
+            'target'   => 60,
+            'desc'     => "Matches Played"
         ]
     ];
 }
