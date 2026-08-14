@@ -55,9 +55,28 @@ $sStmt = $pdo->prepare("
 ");
 $sStmt->execute();
 $allScores = $sStmt->fetchAll(PDO::FETCH_ASSOC);
+
+$scoreIds = array_filter(array_map(fn($s) => (int)$s['id'], $allScores));
+$pointChangesByScore = [];
+if (!empty($scoreIds)) {
+    $scoreIdsStr = implode(',', $scoreIds);
+    $logStmt = $pdo->prepare("
+        SELECT score_id, user_id, change_amount 
+        FROM player_points_log 
+        WHERE score_id IN ($scoreIdsStr)
+    ");
+    $logStmt->execute();
+    $logs = $logStmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($logs as $l) {
+        $pointChangesByScore[(int)$l['score_id']][(int)$l['user_id']] = (int)$l['change_amount'];
+    }
+}
+
 $scoresByMatch = [];
 foreach ($allScores as $s) {
-    $scoresByMatch[$s['match_id']][] = mapScoreComposition($s);
+    $mapped = mapScoreComposition($s);
+    $mapped['point_changes'] = $pointChangesByScore[(int)$s['id']] ?? (object)[];
+    $scoresByMatch[$s['match_id']][] = $mapped;
 }
 
 // Bulk fetch players

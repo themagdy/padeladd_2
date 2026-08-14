@@ -55,9 +55,8 @@ try {
 
             $pointsBefore = $runningCore;
             $pointsAfter = max(0, $runningCore + $delta);
-            $actualChange = $pointsAfter - $pointsBefore;
 
-            logPlayerPointsChange($pdo, $userId, $matchId, $pointsBefore, $pointsAfter, $actualChange, $newBuffer, 'match_completion', $scoreId);
+            logPlayerPointsChange($pdo, $userId, $matchId, $pointsBefore, $pointsAfter, $delta, $newBuffer, 'match_completion', $scoreId);
 
             // Update running balances
             $runningCore = $pointsAfter;

@@ -2224,3 +2224,10 @@ Version 2.4.93 (Build 493) - 2026-08-13
 - Capacitor OTA Updates: Configured `@capgo/capacitor-updater` plugin for silent background over-the-air frontend bundle updates via `check_update.php` while keeping 100% local disk boot for instant offline startup.
 - Play Store Optimizations: Enabled R8 compilation minification (`minifyEnabled true`) in `build.gradle` to optimize app memory and performance while preserving portrait orientation.
 - OTA Security Hardening: Enforced `X-App-Update-Token` authentication in `check_update.php`, proxied file downloads through PHP script stream, and added `.htaccess` protection to block public direct browser access to `/downloads/bundles/`.
+
+==================================================
+Version 2.4.94 (Build 494) - 2026-08-14
+==================================================
+- Player Profile Per-Score Points: Updated `/matches/user` and `/matches/recent` backend API endpoints to fetch score-specific point changes from `player_points_log` by `score_id` and attach `point_changes` maps to returned score objects.
+- Scoring Log Accuracy: Updated `ranking_helper.php` and `backfill_points_log.php` to store reported point changes (`$reported_change`, including core rating + buffer decay losses) in `player_points_log` so players at 0 rating points accurately display their red loss badges (e.g. `↓ 25`).
+- Profile Score Card Renderer: Updated `ScoreUI.renderMatchScore` in `app.js` to read score-specific `point_changes` first when displaying point badges next to the profile owner's name on player profile match cards.

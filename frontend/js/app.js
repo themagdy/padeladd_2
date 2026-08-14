@@ -889,8 +889,11 @@ const ScoreUI = {
 
             const renderPlayerName = (p) => {
                 let badge = '';
-                if (highlightUserId && parseInt(p.user_id) === parseInt(highlightUserId) && p.point_change !== null && p.point_change !== undefined) {
-                    const pts = parseInt(p.point_change);
+                const scorePts = approvedScore?.point_changes?.[p.user_id] ?? approvedScore?.point_changes?.[String(p.user_id)];
+                const ptsToUse = (scorePts !== undefined && scorePts !== null) ? scorePts : p.point_change;
+
+                if (highlightUserId && parseInt(p.user_id) === parseInt(highlightUserId) && ptsToUse !== null && ptsToUse !== undefined) {
+                    const pts = parseInt(ptsToUse);
                     if (pts !== 0 && !isNaN(pts)) {
                         const bg = pts > 0 ? '#064e3b' : '#450a0a';
                         const color = pts > 0 ? '#4ade80' : '#f87171';

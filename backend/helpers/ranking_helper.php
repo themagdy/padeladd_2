@@ -408,14 +408,14 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
                     $p['user_id'],
                 ]);
 
-        logPlayerPointsChange($pdo, $p['user_id'], $match_id, $points_before, $points_after, $actual_change, (int)$p['new_current_buffer'], 'match_completion', $score_id);
+        $buffer_loss = (int)$p['current_buffer'] - (int)$p['new_current_buffer'];
+        $reported_change = $p['won'] ? $actual_change : ($actual_change - $buffer_loss);
+
+        logPlayerPointsChange($pdo, $p['user_id'], $match_id, $points_before, $points_after, $reported_change, (int)$p['new_current_buffer'], 'match_completion', $score_id);
 
         // Store the combined point change in match_players for visual app badges and weekly stats
         // Wins show the core rating points gained (which includes buffer conversion).
         // Losses show the combined core ranking points loss + buffer decay points loss.
-        $buffer_loss = (int)$p['current_buffer'] - (int)$p['new_current_buffer'];
-        $reported_change = $p['won'] ? $actual_change : ($actual_change - $buffer_loss);
-
         $pdo->prepare("UPDATE match_players SET point_change = IFNULL(point_change, 0) + ? WHERE match_id = ? AND user_id = ?")
             ->execute([$reported_change, $match_id, $p['user_id']]);
 
