@@ -2240,3 +2240,4 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Password Reset & Email Verification Deep Links: Configured Android Intent Filters and `App.addListener('appUrlOpen')` in `app.js` to route `/reset-password` and `/verify-email` links directly inside the native app when tapped on mobile.
 - Honors Card Legibility: Cleaned up subtext descriptions to remove duplicate counts and enhanced right-side progress badges (`1/3`, `3/10`, `4/100`) with high-contrast white typography and pill borders for maximum readability.
 - Court Machine Achievement Threshold: Adjusted Court Machine completion requirement to 60 matches played.
+- Honors Prioritized Display: Updated achievement cards renderer in `controllers.js` to automatically sort and display unlocked (achieved) honors at the top first.
