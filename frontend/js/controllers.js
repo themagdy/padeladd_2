@@ -2414,10 +2414,7 @@ const ProfileViewController = {
 
         if (skelEl) skelEl.style.display = 'none';
 
-        if (!achievements || achievements.length === 0) {
-            listEl.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--c-text-muted); font-size:12px;">No honors earned yet. Play Competition matches to unlock trophies!</div>`;
-            return;
-        }
+        if (!achievements) achievements = [];
 
         // Display unlocked (achieved) honors first
         achievements.sort((a, b) => (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0));
