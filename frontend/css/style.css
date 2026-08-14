@@ -6217,3 +6217,11 @@ body {
   -webkit-tap-highlight-color: transparent !important;
   transform: translateZ(0);
 }
+
+/* Unified Profile Section Divider */
+.prof-section-divider {
+  border: 0;
+  border-top: 1px solid var(--c-border);
+  margin: 36px 0;
+  width: 100%;
+}
