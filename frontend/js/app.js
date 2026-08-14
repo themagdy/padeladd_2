@@ -892,7 +892,9 @@ const ScoreUI = {
                 const scorePts = approvedScore?.point_changes?.[p.user_id] ?? approvedScore?.point_changes?.[String(p.user_id)];
                 const ptsToUse = (scorePts !== undefined && scorePts !== null) ? scorePts : p.point_change;
 
-                if (highlightUserId && parseInt(p.user_id) === parseInt(highlightUserId) && ptsToUse !== null && ptsToUse !== undefined) {
+                const shouldShow = highlightUserId ? parseInt(p.user_id) === parseInt(highlightUserId) : true;
+
+                if (shouldShow && ptsToUse !== null && ptsToUse !== undefined) {
                     const pts = parseInt(ptsToUse);
                     if (pts !== 0 && !isNaN(pts)) {
                         const bg = pts > 0 ? '#064e3b' : '#450a0a';
