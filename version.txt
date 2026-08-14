@@ -2258,5 +2258,6 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Standalone Web App Legal & Rules Pages: Added standalone /app landing page and decoupled Rules, Terms, and Privacy pages with subpixel font smoothing, glassmorphic back arrow controls, and matching mobile typography.
 - Ranking Tie-Breaker Update: Updated leaderboard sorting in `backend/api/ranking/list.php` to sort players equal in points strictly by alphabetical First Name (`u.first_name ASC`).
 - Top-3 Rank Medal Condition: Updated Dashboard and Ranking Page renderers in `controllers.js` to display medal graphics for top 3 positions only when players have won at least 1 competition match, falling back to clean rank numbers (`1`, `2`, `3`) otherwise.
+- Live-Only Root Redirect: Added domain-level `HTTP_HOST` condition in `.htaccess` to redirect `https://padeladd.com/` to `https://padeladd.com/app/` on live server ONLY while leaving localhost subfolder environments 100% untouched.
 
 

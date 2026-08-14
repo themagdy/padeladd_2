@@ -22,6 +22,13 @@
     # Route /share/MATCH-CODE to the social share PHP page
     RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php?code=$1 [QSA,L]
 
+    # Redirect root domain to /app/ on LIVE SERVER ONLY (padeladd.com)
+    # Leaves localhost / 127.0.0.1 100% untouched
+    RewriteCond %{HTTP_HOST} ^(www\.)?padeladd\.com$ [NC]
+    RewriteCond %{REQUEST_URI} ^/+$ [OR]
+    RewriteCond %{REQUEST_URI} ^/index\.html$
+    RewriteRule ^ https://padeladd.com/app/ [R=301,L]
+
     # Handle SPA routing - relative to wherever .htaccess is placed
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
