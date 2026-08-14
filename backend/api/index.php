@@ -287,6 +287,9 @@ try {
         case 'app/check_update':
             require __DIR__ . '/app/check_update.php';
             break;
+        case 'admin/system/backfill_points':
+            require __DIR__ . '/admin/system/backfill_points.php';
+            break;
 
         default:
             $notFoundMsg = (defined('APP_ENV') && APP_ENV === 'development')
