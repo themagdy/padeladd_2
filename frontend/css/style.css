@@ -6219,9 +6219,9 @@ body {
 }
 
 /* Unified Profile Section Divider */
-.prof-section-divider {
+hr.prof-divider {
   border: 0;
   border-top: 1px solid var(--c-border);
-  margin: 36px 0;
+  margin: 32px 0;
   width: 100%;
 }
