@@ -1137,9 +1137,9 @@ const StatsUI = {
         if (matchesSubEl && stats.matches_played > 0) {
             const compCount = stats.comp_played ?? 0;
             const friendlyCount = stats.friendly_played ?? 0;
-            matchesSubEl.innerHTML = safeHTML(`<span style="color:var(--c-orange);"><span style="font-size:15px; vertical-align:-1px; margin-right:3px;">🏆</span>${compCount}</span> <span style="opacity:0.5; margin:0 5px;">|</span> <span style="color:#5B8BFF;"><span style="font-size:15px; vertical-align:-1px; margin-right:3px;">🤝</span>${friendlyCount}</span>`);
+            matchesSubEl.innerHTML = safeHTML(`<span style="color:var(--c-orange);"><span style="font-size:15px; vertical-align:-1px; margin-right:3px;">🏆</span>${compCount}</span> <span style="opacity:0.5; margin:0 5px;">|</span> <span style="color:#5B8BFF;"><span style="font-size:18px; vertical-align:-2px; margin-right:3px;">🤝</span>${friendlyCount}</span>`);
             matchesSubEl.style.fontSize = '13px';
-            matchesSubEl.style.fontWeight = '700';
+            matchesSubEl.style.fontWeight = '500';
             matchesSubEl.style.letterSpacing = '0.5px';
         }
 
@@ -1147,7 +1147,7 @@ const StatsUI = {
         if (wlEl && stats.matches_played > 0) {
             wlEl.innerHTML = safeHTML(`<span style="color:#4ebd79;">${stats.matches_won}W</span> <span style="opacity:0.5; margin:0 5px;">/</span> <span style="color:#e57373;">${stats.matches_lost}L</span>`);
             wlEl.style.fontSize = '13px';
-            wlEl.style.fontWeight = '700';
+            wlEl.style.fontWeight = '500';
             wlEl.style.letterSpacing = '0.5px';
         }
     }
