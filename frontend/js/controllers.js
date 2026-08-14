@@ -2447,7 +2447,7 @@ const ProfileViewController = {
                     <div style="flex:1; min-width:0;">
                         <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:2px;">
                             <span style="font-size:13px; font-weight:700; color:${titleColor}; letter-spacing:0.3px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${item.title}</span>
-                            ${isUnlocked ? `<span style="font-size:12px; background:rgba(74,222,128,0.15); padding:2px 7px; border-radius:8px; border:1px solid rgba(74,222,128,0.3);" title="Unlocked">🔓</span>` : `<span style="font-size:10px; font-weight:700; color:var(--c-text-dim); background:rgba(255,255,255,0.04); padding:2px 7px; border-radius:8px;">${valDisplay}</span>`}
+                            ${isUnlocked ? `<span style="font-size:12px; background:rgba(74,222,128,0.15); padding:2px 7px; border-radius:8px; border:1px solid rgba(74,222,128,0.3);" title="Unlocked">🔓</span>` : `<span style="font-size:10px; font-weight:700; color:var(--c-text-dim); background:rgba(255,255,255,0.04); padding:2px 7px; border-radius:8px;">🔐 ${valDisplay}</span>`}
                         </div>
                         <div style="font-size:11px; color:var(--c-text-muted); line-height:1.3; font-weight:500;">${item.desc}</div>
                     </div>
