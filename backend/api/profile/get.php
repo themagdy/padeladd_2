@@ -201,6 +201,7 @@ jsonResponse(true, 'Profile loaded.', [
     'is_following' => $isFollowing,
     'has_active_story' => $hasActiveStory,
     'followers_count' => $followersCount,
-    'following_count' => $followingCount
+    'following_count' => $followingCount,
+    'achievements'    => calculatePlayerAchievements($pdo, $viewingId)
 ]);
 ?>

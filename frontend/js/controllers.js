@@ -2246,6 +2246,11 @@ const ProfileViewController = {
             // Stats cards
             StatsUI.update(stats, 'pv');
 
+            // Render dynamic API achievements directly from Stage 1 payload
+            if (res?.data?.achievements) {
+                ProfileViewController.renderAchievements(res.data.achievements);
+            }
+
             // Update achievements empty msg based on context
             const achMsg = document.getElementById('prof-achievements-empty-msg');
             if (achMsg) {
@@ -2410,11 +2415,9 @@ const ProfileViewController = {
     renderAchievements: function (achievements) {
         const skelEl = document.getElementById('prof-achievements-skeleton');
         const listEl = document.getElementById('prof-achievements-list');
-        if (!listEl) return;
+        if (!listEl || !achievements || !Array.isArray(achievements)) return;
 
         if (skelEl) skelEl.style.display = 'none';
-
-        achievements = achievements || [];
 
         // Display unlocked (achieved) honors first
         achievements.sort((a, b) => (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0));
