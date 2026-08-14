@@ -1155,8 +1155,10 @@ const StatsUI = {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // iOS Native Left-Edge Swipe Back Gesture Handler (iOS only)
-    const isIOSDevice = (window.Capacitor?.getPlatform?.() === 'ios') || (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    // iOS & iPadOS Native Left-Edge Swipe Back Gesture Handler
+    const isIOSDevice = (window.Capacitor?.getPlatform?.() === 'ios') || 
+                        (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
+                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isIOSDevice) {
         let edgeTouchStartX = 0;
@@ -1166,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('touchstart', (e) => {
             if (!e.touches || e.touches.length !== 1) return;
             const touch = e.touches[0];
-            if (touch.clientX <= 30) {
+            if (touch.clientX <= 50) {
                 edgeTouchStartX = touch.clientX;
                 edgeTouchStartY = touch.clientY;
                 isEdgeSwipeCandidate = true;
