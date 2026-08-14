@@ -225,9 +225,138 @@ foreach ($matches as $m) {
 
 $has_more = ($offset + count($result)) < $totalMatches;
 
+function calculatePlayerAchievements(PDO $pdo, int $userId): array
+{
+    $stmt = $pdo->prepare("
+        SELECT s.*, m.match_datetime
+        FROM scores s
+        JOIN match_players mp ON s.match_id = mp.match_id
+        JOIN matches m ON s.match_id = m.id
+        WHERE mp.user_id = ?
+          AND s.status = 'approved'
+          AND m.match_type = 'competition'
+        ORDER BY m.match_datetime ASC, s.created_at ASC
+    ");
+    $stmt->execute([$userId]);
+    $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $totalCompWins = 0;
+    $monthlyCompWins = 0;
+    $heavyWins = 0;
+    $currentStreak = 0;
+    $total3Streaks = 0;
+
+    $thirtyDaysAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+    foreach ($scores as $s) {
+        $playerTeam = null;
+        if ((int)$s['t1_p1_user_id'] === $userId || (int)$s['t1_p2_user_id'] === $userId) {
+            $playerTeam = 1;
+        } elseif ((int)$s['t2_p1_user_id'] === $userId || (int)$s['t2_p2_user_id'] === $userId) {
+            $playerTeam = 2;
+        }
+        if (!$playerTeam) continue;
+
+        $t1Sets = 0;
+        $t2Sets = 0;
+        $sets = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $g1 = (int)$s["t1_set$i"];
+            $g2 = (int)$s["t2_set$i"];
+            if ($g1 === 0 && $g2 === 0) continue;
+            if ($g1 > $g2) $t1Sets++;
+            elseif ($g2 > $g1) $t2Sets++;
+            $sets[] = ['g1' => $g1, 'g2' => $g2];
+        }
+
+        $winnerTeam = ($t1Sets > $t2Sets) ? 1 : 2;
+        $userWon = ($playerTeam === $winnerTeam);
+
+        if ($userWon) {
+            $totalCompWins++;
+            $currentStreak++;
+            if ($currentStreak === 3) {
+                $total3Streaks++;
+            }
+
+            if ($s['match_datetime'] >= $thirtyDaysAgo) {
+                $monthlyCompWins++;
+            }
+
+            if (count($sets) === 2) {
+                $diff = 0;
+                foreach ($sets as $set) {
+                    $diff += abs($set['g1'] - $set['g2']);
+                }
+                if ($diff >= 8) {
+                    $heavyWins++;
+                }
+            }
+        } else {
+            $currentStreak = 0;
+        }
+    }
+
+    $milestoneTargets = [10, 25, 50, 100, 250, 500];
+    $currentTarget = 10;
+    foreach ($milestoneTargets as $t) {
+        if ($totalCompWins < $t) {
+            $currentTarget = $t;
+            break;
+        }
+        $currentTarget = $t;
+    }
+
+    return [
+        [
+            'key'      => 'streak',
+            'title'    => 'Hot Streak',
+            'icon'     => '🔥',
+            'unlocked' => ($currentStreak >= 3),
+            'val'      => $currentStreak,
+            'desc'     => $currentStreak >= 3 ? "Active {$currentStreak} Win Streak" : "Reach 3 consecutive wins (Current: {$currentStreak})"
+        ],
+        [
+            'key'      => 'streak_master',
+            'title'    => 'Streak Master',
+            'icon'     => '⚡',
+            'unlocked' => ($total3Streaks > 0),
+            'val'      => $total3Streaks,
+            'desc'     => $total3Streaks > 0 ? "Achieved 3-Win Streak {$total3Streaks}x" : "Achieve a 3-win streak milestone"
+        ],
+        [
+            'key'      => 'heavy',
+            'title'    => 'Heavy Dominator',
+            'icon'     => '💥',
+            'unlocked' => ($heavyWins > 0),
+            'val'      => $heavyWins,
+            'desc'     => $heavyWins > 0 ? "{$heavyWins} Heavy Victories (Diff ≥ 8)" : "Win a 2-set match by 8+ games"
+        ],
+        [
+            'key'      => 'veteran',
+            'title'    => 'Comp Veteran',
+            'icon'     => '🏆',
+            'unlocked' => ($totalCompWins >= 10),
+            'val'      => $totalCompWins,
+            'target'   => $currentTarget,
+            'desc'     => "{$totalCompWins} / {$currentTarget} Competition Wins"
+        ],
+        [
+            'key'      => 'monthly',
+            'title'    => 'Monthly Machine',
+            'icon'     => '🚀',
+            'unlocked' => ($monthlyCompWins >= 10),
+            'val'      => $monthlyCompWins,
+            'target'   => 10,
+            'desc'     => "{$monthlyCompWins} / 10 Wins in last 30 days"
+        ]
+    ];
+}
+
 jsonResponse(true, 'User matches loaded.', [
-    'matches' => $result,
-    'has_more' => $has_more,
-    'offset' => $offset
+    'matches'      => $result,
+    'has_more'     => $has_more,
+    'offset'       => $offset,
+    'achievements' => calculatePlayerAchievements($pdo, $target_id)
 ]);
 ?>
