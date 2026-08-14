@@ -2260,5 +2260,6 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Top-3 Rank Medal Condition: Updated Dashboard and Ranking Page renderers in `controllers.js` to display medal graphics for top 3 positions only when players have won at least 1 competition match, falling back to clean rank numbers (`1`, `2`, `3`) otherwise.
 - Live-Only Root Redirect: Added domain-level `HTTP_HOST` condition in `.htaccess` to redirect `https://padeladd.com/` to `https://padeladd.com/app/` on live server ONLY while leaving localhost subfolder environments 100% untouched.
 - Instagram Social Links: Added custom glassmorphic "Follow" button in navbar header and direct "Instagram" link in footer of `/app` landing page linking to `https://www.instagram.com/thepadeladd/`.
+- iOS Build Version Bump (Build 495): Updated `CURRENT_PROJECT_VERSION` in `project.pbxproj` from `1` to `495` to satisfy App Store Connect build number requirements (>486).
 
 
