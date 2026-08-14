@@ -292,8 +292,8 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
         }
     }
 
-    $milestoneTargets = [10, 25, 50, 100, 250, 500];
-    $currentTarget = 10;
+    $milestoneTargets = [15, 30, 50, 100, 250, 500];
+    $currentTarget = 15;
     foreach ($milestoneTargets as $t) {
         if ($totalCompWins < $t) {
             $currentTarget = $t;
@@ -331,9 +331,9 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
         ],
         [
             'key'      => 'veteran',
-            'title'    => 'Comp Veteran',
+            'title'    => 'Victory Master',
             'icon'     => '🏆',
-            'unlocked' => ($totalCompWins >= 10),
+            'unlocked' => ($totalCompWins >= 15),
             'val'      => $totalCompWins,
             'target'   => $currentTarget,
             'desc'     => "Competition Wins"
