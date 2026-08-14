@@ -2410,9 +2410,29 @@ const ProfileViewController = {
     renderAchievements: function (achievements) {
         const skelEl = document.getElementById('prof-achievements-skeleton');
         const listEl = document.getElementById('prof-achievements-list');
+        const wrapperEl = document.getElementById('prof-honors-wrapper');
+        const sepEl = document.getElementById('prof-honors-separator');
         if (!listEl) return;
 
         if (skelEl) skelEl.style.display = 'none';
+
+        const isSelf = Boolean(ProfileViewController._targetUserId && Auth.getUserId() && Number(ProfileViewController._targetUserId) === Number(Auth.getUserId()));
+
+        if (!isSelf) {
+            // For other players, only display unlocked achievements
+            const unlockedOnly = Array.isArray(achievements) ? achievements.filter(item => item.unlocked) : [];
+            if (unlockedOnly.length === 0) {
+                // Hide the whole section if no unlocked achievements
+                if (wrapperEl) wrapperEl.style.display = 'none';
+                if (sepEl) sepEl.style.display = 'none';
+                return;
+            }
+            achievements = unlockedOnly;
+        }
+
+        // Ensure section and separator are visible
+        if (wrapperEl) wrapperEl.style.display = 'block';
+        if (sepEl) sepEl.style.display = 'block';
 
         if (!achievements || !Array.isArray(achievements) || achievements.length === 0) {
             achievements = [
@@ -2453,11 +2473,11 @@ const ProfileViewController = {
                         ${item.icon}
                     </div>
                     <div style="flex:1; min-width:0;">
-                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:2px;">
-                            <span style="font-size:13px; font-weight:700; color:${titleColor}; letter-spacing:0.3px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">${item.title}</span>
-                            ${isUnlocked ? `<span style="font-size:12px; font-weight:700; color:#4ade80; background:rgba(74,222,128,0.15); padding:4px 10px; border-radius:8px; border:1px solid rgba(74,222,128,0.35); display:inline-flex; align-items:center; gap:5px;" title="Unlocked">🔑 <span style="font-size:14px; font-weight:700;">${item.val !== undefined ? item.val : ''}</span></span>` : `<span style="font-size:11px; font-weight:800; color:#fff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); padding:3px 9px; border-radius:8px; letter-spacing:0.5px;">${valDisplay}</span>`}
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:0px;">
+                            <span style="font-size:13px; font-weight:700; color:${titleColor}; letter-spacing:0.3px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; line-height:1.2;">${item.title}</span>
+                            ${isUnlocked ? `<span style="font-size:12px; font-weight:700; color:#4ade80; background:rgba(74,222,128,0.15); padding:3px 9px; border-radius:8px; border:1px solid rgba(74,222,128,0.35); display:inline-flex; align-items:center; gap:5px;" title="Unlocked">🔑 <span style="font-size:14px; font-weight:700;">${item.val !== undefined ? item.val : ''}</span></span>` : `<span style="font-size:11px; font-weight:800; color:#fff; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); padding:3px 9px; border-radius:8px; letter-spacing:0.5px;">${valDisplay}</span>`}
                         </div>
-                        <div style="font-size:11px; color:var(--c-text-muted); line-height:1.3; font-weight:500;">${item.desc}</div>
+                        <div style="font-size:11px; color:var(--c-text-muted); line-height:1.2; font-weight:500;">${item.desc}</div>
                     </div>
                 </div>
             `;
