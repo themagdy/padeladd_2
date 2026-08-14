@@ -10,7 +10,7 @@ async function fetchLatestScores() {
     if (!list) return;
 
     try {
-        const res = await fetch('api/latest_scores.php');
+        const res = await fetch('app/api/latest_scores.php');
         const data = await res.json();
 
         if (data && data.status === 'success' && Array.isArray(data.data) && data.data.length > 0) {
