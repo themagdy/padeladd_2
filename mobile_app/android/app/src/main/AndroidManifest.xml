@@ -28,6 +28,14 @@
                 <data android:scheme="https" android:host="padeladd.com" android:pathPrefix="/matches/" />
                 <data android:scheme="http" android:host="www.padeladd.com" android:pathPrefix="/matches/" />
                 <data android:scheme="https" android:host="www.padeladd.com" android:pathPrefix="/matches/" />
+                <data android:scheme="http" android:host="padeladd.com" android:pathPrefix="/reset-password" />
+                <data android:scheme="https" android:host="padeladd.com" android:pathPrefix="/reset-password" />
+                <data android:scheme="http" android:host="www.padeladd.com" android:pathPrefix="/reset-password" />
+                <data android:scheme="https" android:host="www.padeladd.com" android:pathPrefix="/reset-password" />
+                <data android:scheme="http" android:host="padeladd.com" android:pathPrefix="/verify-email" />
+                <data android:scheme="https" android:host="padeladd.com" android:pathPrefix="/verify-email" />
+                <data android:scheme="http" android:host="www.padeladd.com" android:pathPrefix="/verify-email" />
+                <data android:scheme="https" android:host="www.padeladd.com" android:pathPrefix="/verify-email" />
             </intent-filter>
         </activity>
 

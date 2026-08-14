@@ -1206,18 +1206,33 @@ document.addEventListener('DOMContentLoaded', () => {
         App.addListener('appUrlOpen', (data) => {
             console.log('[App] Deep link received:', data.url);
             if (data.url) {
-                // Example: https://padeladd.com/matches/M-J438
-                const urlObj = new URL(data.url);
-                const path = urlObj.pathname; // "/matches/M-J438"
-                if (path && path.startsWith('/matches/')) {
-                    const parts = path.split('/matches/');
-                    if (parts[1]) {
-                        const matchCode = parts[1].trim();
-                        console.log('[App] Routing to deep linked match:', matchCode);
+                try {
+                    const urlObj = new URL(data.url);
+                    const path = urlObj.pathname;
+                    const search = urlObj.search;
+
+                    if (path && path.startsWith('/matches/')) {
+                        const parts = path.split('/matches/');
+                        if (parts[1]) {
+                            const matchCode = parts[1].trim();
+                            console.log('[App] Routing to deep linked match:', matchCode);
+                            if (typeof Router !== 'undefined') {
+                                Router.navigate('/matches/' + matchCode, true, true);
+                            }
+                        }
+                    } else if (path === '/reset-password') {
+                        console.log('[App] Routing to reset-password with token:', search);
                         if (typeof Router !== 'undefined') {
-                            Router.navigate('/matches/' + matchCode, true, true);
+                            Router.navigate('/reset-password' + search, true, true);
+                        }
+                    } else if (path === '/verify-email') {
+                        console.log('[App] Routing to verify-email with token:', search);
+                        if (typeof Router !== 'undefined') {
+                            Router.navigate('/verify-email' + search, true, true);
                         }
                     }
+                } catch (err) {
+                    console.error('[App] Deep link routing error:', err);
                 }
             }
         });

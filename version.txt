@@ -2241,3 +2241,4 @@ Version 2.4.95 (Build 495) - 2026-08-14
 - 6 Competition Achievements: Features Hot Streak (🔥 active 3+ win streak), Streak Master (⚡ total 3-win streak milestones), Heavy Dominator (💥 2-set win with game diff ≥ 8), Thriller Specialist (👑 3-set thriller wins), Comp Veteran (🏆 milestone wins), and Monthly Machine (🚀 10+ wins in last 30 days).
 - Glassmorphism Honors Cards UI: Designed responsive 2-column grid in `view.html` & `controllers.js` featuring glowing gold/emerald borders and badges for unlocked items, alongside muted progress indicators for locked items.
 - Profile Line Separators: Unified profile section line dividers using a reusable `.prof-line-separator` CSS class.
+- Password Reset & Email Verification Deep Links: Configured Android Intent Filters and `App.addListener('appUrlOpen')` in `app.js` to route `/reset-password` and `/verify-email` links directly inside the native app when tapped on mobile.
