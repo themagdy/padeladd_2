@@ -13,7 +13,22 @@ $pdo = getDB();
 
 try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-    $tables = ['match_players', 'scores', 'disputes', 'match_chat', 'chat_messages', 'player_points_log', 'matches'];
+    $tables = [
+        'notifications',
+        'phone_requests',
+        'stories',
+        'story_views',
+        'reports',
+        'disputes',
+        'chat_presence',
+        'chat_read_status',
+        'chat_messages',
+        'match_chat',
+        'scores',
+        'match_players',
+        'matches',
+        'player_points_log'
+    ];
     foreach ($tables as $t) {
         try {
             $pdo->exec("TRUNCATE TABLE `$t`");
