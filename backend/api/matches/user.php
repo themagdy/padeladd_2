@@ -245,7 +245,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
     $totalCompPlayed = count($scores);
     $heavyWins = 0;
     $currentStreak = 0;
-    $total3Streaks = 0;
+    $total4Streaks = 0;
 
     foreach ($scores as $s) {
         $playerTeam = null;
@@ -274,8 +274,8 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
         if ($userWon) {
             $totalCompWins++;
             $currentStreak++;
-            if ($currentStreak === 3) {
-                $total3Streaks++;
+            if ($currentStreak === 4) {
+                $total4Streaks++;
             }
 
             if (count($sets) === 2) {
@@ -307,18 +307,18 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'key'      => 'streak',
             'title'    => 'Hot Streak',
             'icon'     => '🔥',
-            'unlocked' => ($currentStreak >= 3),
+            'unlocked' => ($currentStreak >= 4),
             'val'      => $currentStreak,
-            'desc'     => $currentStreak >= 3 ? "Active {$currentStreak} Win Streak" : "Reach 3 consecutive wins (Current: {$currentStreak})"
+            'desc'     => $currentStreak >= 4 ? "Active {$currentStreak} Win Streak" : "Reach 4 consecutive wins (Current: {$currentStreak})"
         ],
         [
             'key'      => 'streak_master',
             'title'    => 'Streak Master',
             'icon'     => '⚡',
-            'unlocked' => ($total3Streaks >= 3),
-            'val'      => $total3Streaks,
+            'unlocked' => ($total4Streaks >= 3),
+            'val'      => $total4Streaks,
             'target'   => 3,
-            'desc'     => $total3Streaks >= 3 ? "Achieved 3-Win Streak {$total3Streaks}x" : "Achieved 3-Win Streak"
+            'desc'     => $total4Streaks >= 3 ? "Achieved 4-Win Streak {$total4Streaks}x" : "Achieved 4-Win Streak"
         ],
         [
             'key'      => 'heavy',
