@@ -14,6 +14,11 @@
     Header set X-Content-Type-Options "nosniff"
     Header set X-XSS-Protection "1; mode=block"
 
+    # Serve Apple App Site Association as application/json
+    <Files "apple-app-site-association">
+        Header set Content-Type "application/json"
+    </Files>
+
     # Route /share/MATCH-CODE to the social share PHP page
     RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php?code=$1 [QSA,L]
 
