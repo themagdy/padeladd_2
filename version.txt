@@ -2255,5 +2255,6 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - iOS Native Push Notifications Setup: Configured `App.entitlements` with `aps-environment = production` and connected Apple APNs Production Certificate in Firebase Console for live iOS push notifications.
 - iOS OTA Instant Auto-Reload: Updated `CapacitorUpdater.downloadComplete` listener in `app.js` to execute `updater.set({ id: info.bundle.id })` prior to `updater.reload()`, ensuring iOS instantly reloads the new bundle upon download.
 - iPadOS Left-Edge Swipe Back Gesture: Updated `isIOSDevice` detection in `app.js` using `MacIntel` touch points and expanded touch target width to 50px for iPad compatibility.
+- Standalone Web App Legal & Rules Pages: Added standalone /app landing page and decoupled Rules, Terms, and Privacy pages with subpixel font smoothing, glassmorphic back arrow controls, and matching mobile typography.
 
 
