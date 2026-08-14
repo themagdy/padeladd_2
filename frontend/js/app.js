@@ -1155,6 +1155,38 @@ const StatsUI = {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // iOS Native Left-Edge Swipe Back Gesture Handler
+    let edgeTouchStartX = 0;
+    let edgeTouchStartY = 0;
+    let isEdgeSwipeCandidate = false;
+
+    document.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        if (touch.clientX <= 30) {
+            edgeTouchStartX = touch.clientX;
+            edgeTouchStartY = touch.clientY;
+            isEdgeSwipeCandidate = true;
+        } else {
+            isEdgeSwipeCandidate = false;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (!isEdgeSwipeCandidate || !e.changedTouches || e.changedTouches.length !== 1) return;
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - edgeTouchStartX;
+        const deltaY = Math.abs(touch.clientY - edgeTouchStartY);
+
+        if (deltaX > 70 && deltaY < 50 && deltaX > deltaY * 1.5) {
+            isEdgeSwipeCandidate = false;
+            if (typeof Router !== 'undefined' && Router.back) {
+                Router.back();
+            }
+        }
+        isEdgeSwipeCandidate = false;
+    }, { passive: true });
+
     // Initialize the SPA router once DOM is ready
     Auth.init().then(() => {
         return Auth.syncWithServer();
