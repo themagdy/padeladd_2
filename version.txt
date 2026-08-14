@@ -2252,5 +2252,6 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Complete Reset & Database Cleaning Migration: Created `backend/migrations/007_reset_matches_and_rankings.php` to wipe all 21 match, score, notification, story, dispute, report, chat, and waiting list tables, resetting player stats back to starting buffer points.
 - iOS Universal Links Optimization: Updated `.well-known/apple-app-site-association` with `/share/*` path, configured Apache `Content-Type: application/json` header in `.htaccess`, and updated Capacitor `appUrlOpen` deep link router in `app.js` to parse both `/share/` and `/matches/` URLs on iOS.
 - iOS Left-Edge Swipe Back Gesture: Added global touch gesture listener in `app.js` scoped strictly to iOS devices (`isIOSDevice`) to detect left-edge rightward swipes (`clientX <= 30px`, `deltaX > 70px`) and trigger `Router.back()`, leaving Android 100% untouched.
+- iOS Native Push Notifications Setup: Configured `App.entitlements` with `aps-environment = production` and connected Apple APNs Production Certificate in Firebase Console for live iOS push notifications.
 
 
