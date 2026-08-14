@@ -2246,11 +2246,6 @@ const ProfileViewController = {
             // Stats cards
             StatsUI.update(stats, 'pv');
 
-            // Render dynamic API achievements directly from Stage 1 payload
-            if (res?.data?.achievements) {
-                ProfileViewController.renderAchievements(res.data.achievements);
-            }
-
             // Update achievements empty msg based on context
             const achMsg = document.getElementById('prof-achievements-empty-msg');
             if (achMsg) {
@@ -2415,9 +2410,19 @@ const ProfileViewController = {
     renderAchievements: function (achievements) {
         const skelEl = document.getElementById('prof-achievements-skeleton');
         const listEl = document.getElementById('prof-achievements-list');
-        if (!listEl || !achievements || !Array.isArray(achievements)) return;
+        if (!listEl) return;
 
         if (skelEl) skelEl.style.display = 'none';
+
+        if (!achievements || !Array.isArray(achievements) || achievements.length === 0) {
+            achievements = [
+                { key: 'streak', title: 'Hot Streak', icon: '🔥', unlocked: false, val: 0, target: 4, desc: 'Reach 4 consecutive wins' },
+                { key: 'streak_master', title: 'Streak Master', icon: '⚡', unlocked: false, val: 0, target: 3, desc: 'Achieved 4-Win Streak' },
+                { key: 'heavy', title: 'Heavy Dominator', icon: '💥', unlocked: false, val: 0, target: 3, desc: 'Heavy Victories (Diff ≥ 8)' },
+                { key: 'veteran', title: 'Victory Master', icon: '🏆', unlocked: false, val: 0, target: 15, desc: 'Competition Wins' },
+                { key: 'quarterly', title: 'Court Machine', icon: '🚀', unlocked: false, val: 0, target: 60, desc: 'Matches Played' }
+            ];
+        }
 
         // Display unlocked (achieved) honors first
         achievements.sort((a, b) => (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0));
@@ -2425,18 +2430,18 @@ const ProfileViewController = {
         let html = '';
         for (const item of achievements) {
             const isUnlocked = item.unlocked;
-            const bg = isUnlocked 
-                ? 'linear-gradient(135deg, rgba(255,165,0,0.08) 0%, rgba(255,255,255,0.03) 100%)' 
+            const bg = isUnlocked
+                ? 'linear-gradient(135deg, rgba(255,165,0,0.08) 0%, rgba(255,255,255,0.03) 100%)'
                 : 'rgba(255,255,255,0.02)';
-            const border = isUnlocked 
-                ? '1px solid rgba(255,165,0,0.3)' 
+            const border = isUnlocked
+                ? '1px solid rgba(255,165,0,0.3)'
                 : '1px solid rgba(255,255,255,0.05)';
-            const boxShadow = isUnlocked 
-                ? '0 6px 20px rgba(255,140,0,0.1)' 
+            const boxShadow = isUnlocked
+                ? '0 6px 20px rgba(255,140,0,0.1)'
                 : 'none';
             const opacity = isUnlocked ? '1' : '0.55';
             const titleColor = isUnlocked ? '#FFF' : 'var(--c-text-muted)';
-            
+
             let valDisplay = isUnlocked ? `Unlocked` : `${item.val || 0}`;
             if (item.target) {
                 valDisplay = `${item.val || 0}/${item.target}`;
