@@ -33,6 +33,7 @@ $stmt = $pdo->prepare("
            AND m.match_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         ) as points_this_week,
         ps.matches_played,
+        ps.matches_won,
         ps.win_rate,
         (SELECT 1 FROM stories s 
          JOIN match_players mp_s ON s.match_id = mp_s.match_id 
@@ -41,7 +42,7 @@ $stmt = $pdo->prepare("
     JOIN users u ON ps.user_id = u.id
     JOIN user_profiles up ON ps.user_id = up.user_id
     WHERE up.gender = :gender AND u.status = 'active'
-    ORDER BY (ps.matches_played > 0) DESC, ps.rank_points DESC, ps.matches_played DESC, u.first_name ASC
+    ORDER BY (ps.matches_played > 0) DESC, ps.rank_points DESC, LOWER(COALESCE(NULLIF(TRIM(up.nickname), ''), u.first_name)) ASC
     LIMIT :limit OFFSET :offset
 ");
 
@@ -77,6 +78,7 @@ foreach ($ranking as $index => &$row) {
     // Ensure numeric types
     $row['points_this_week'] = (int)$row['points_this_week'];
     $row['matches_played']   = (int)$row['matches_played'];
+    $row['matches_won']      = (int)$row['matches_won'];
     $row['win_rate']         = (int)$row['win_rate'];
     $row['has_active_story'] = (bool)$row['has_active_story'];
 

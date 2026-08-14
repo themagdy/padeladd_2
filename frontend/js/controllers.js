@@ -1848,12 +1848,15 @@ const DashboardController = {
             const avatarHtml = UI.getAvatarHtml(thumb, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', `width:32px; height:32px; border-radius:50%; flex-shrink:0; border:1px solid var(--c-border);`, initials, hasStory ? 'story-ring' : '', extraAttr);
 
             let rankHtml = `<span style="font-weight:800; color:#fff; font-size:15px;">${r.rank}</span>`;
-            if (r.rank === 1) {
-                rankHtml = `<img src="assets/icons/rank/rank1.png" style="width:42px; height:42px; object-fit:contain;" alt="Gold Medal">`;
-            } else if (r.rank === 2) {
-                rankHtml = `<img src="assets/icons/rank/rank2.png" style="width:42px; height:42px; object-fit:contain;" alt="Silver Medal">`;
-            } else if (r.rank === 3) {
-                rankHtml = `<img src="assets/icons/rank/rank3.png" style="width:42px; height:42px; object-fit:contain;" alt="Bronze Medal">`;
+            const hasWonMatch = (r.matches_won && r.matches_won > 0) || (r.rank_points && r.rank_points > 0) || (r.points && r.points > 0);
+            if (hasWonMatch) {
+                if (r.rank === 1) {
+                    rankHtml = `<img src="assets/icons/rank/rank1.png" style="width:42px; height:42px; object-fit:contain;" alt="Gold Medal">`;
+                } else if (r.rank === 2) {
+                    rankHtml = `<img src="assets/icons/rank/rank2.png" style="width:42px; height:42px; object-fit:contain;" alt="Silver Medal">`;
+                } else if (r.rank === 3) {
+                    rankHtml = `<img src="assets/icons/rank/rank3.png" style="width:42px; height:42px; object-fit:contain;" alt="Bronze Medal">`;
+                }
             }
 
             html += `
@@ -8127,15 +8130,17 @@ const RankingController = {
             let row = listEl.querySelector(`.rank-grid-full[data-player-code="${r.player_code}"]`);
 
             const renderRankWrapHtml = (rankVal) => {
-                if (rankVal === 1) {
-                    return `<img src="assets/icons/rank/rank1.png" style="width:45px; height:45px; object-fit:contain;" alt="Gold Medal">`;
-                } else if (rankVal === 2) {
-                    return `<img src="assets/icons/rank/rank2.png" style="width:45px; height:45px; object-fit:contain;" alt="Silver Medal">`;
-                } else if (rankVal === 3) {
-                    return `<img src="assets/icons/rank/rank3.png" style="width:45px; height:45px; object-fit:contain;" alt="Bronze Medal">`;
-                } else {
-                    return `<span class="rank-text-val" style="text-align:left; font-size:20px; font-weight:700; color:#fff;">${rankVal}</span>`;
+                const hasWonMatch = (r.matches_won && r.matches_won > 0) || (r.rank_points && r.rank_points > 0) || (r.points && r.points > 0);
+                if (hasWonMatch) {
+                    if (rankVal === 1) {
+                        return `<img src="assets/icons/rank/rank1.png" style="width:45px; height:45px; object-fit:contain;" alt="Gold Medal">`;
+                    } else if (rankVal === 2) {
+                        return `<img src="assets/icons/rank/rank2.png" style="width:45px; height:45px; object-fit:contain;" alt="Silver Medal">`;
+                    } else if (rankVal === 3) {
+                        return `<img src="assets/icons/rank/rank3.png" style="width:45px; height:45px; object-fit:contain;" alt="Bronze Medal">`;
+                    }
                 }
+                return `<span class="rank-text-val" style="text-align:left; font-size:20px; font-weight:700; color:#fff;">${rankVal}</span>`;
             };
 
             const renderTotalWrapHtml = (pointsVal, diffValue) => {
