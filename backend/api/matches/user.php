@@ -309,6 +309,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'icon'     => '🔥',
             'unlocked' => ($currentStreak >= 4),
             'val'      => $currentStreak,
+            'target'   => 4,
             'desc'     => $currentStreak >= 4 ? "Active {$currentStreak} Win Streak" : "Reach 4 consecutive wins"
         ],
         [

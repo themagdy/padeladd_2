@@ -2414,7 +2414,15 @@ const ProfileViewController = {
 
         if (skelEl) skelEl.style.display = 'none';
 
-        if (!achievements) return;
+        if (!achievements || !Array.isArray(achievements) || achievements.length === 0) {
+            achievements = [
+                { key: 'streak', title: 'Hot Streak', icon: '🔥', unlocked: false, val: 0, target: 4, desc: 'Reach 4 consecutive wins' },
+                { key: 'streak_master', title: 'Streak Master', icon: '⚡', unlocked: false, val: 0, target: 3, desc: 'Achieved 4-Win Streak' },
+                { key: 'heavy', title: 'Heavy Dominator', icon: '💥', unlocked: false, val: 0, target: 3, desc: 'Heavy Victories (Diff ≥ 8)' },
+                { key: 'veteran', title: 'Victory Master', icon: '🏆', unlocked: false, val: 0, target: 15, desc: 'Competition Wins' },
+                { key: 'quarterly', title: 'Court Machine', icon: '🚀', unlocked: false, val: 0, target: 60, desc: 'Matches Played' }
+            ];
+        }
 
         // Display unlocked (achieved) honors first
         achievements.sort((a, b) => (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0));
