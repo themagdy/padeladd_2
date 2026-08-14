@@ -1211,10 +1211,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const path = urlObj.pathname;
                     const search = urlObj.search;
 
-                    if (path && path.startsWith('/matches/')) {
-                        const parts = path.split('/matches/');
-                        if (parts[1]) {
-                            const matchCode = parts[1].trim();
+                    if (path && (path.startsWith('/matches/') || path.startsWith('/share/'))) {
+                        const matchCode = path.replace('/matches/', '').replace('/share/', '').trim();
+                        if (matchCode) {
                             console.log('[App] Routing to deep linked match:', matchCode);
                             if (typeof Router !== 'undefined') {
                                 Router.navigate('/matches/' + matchCode, true, true);
