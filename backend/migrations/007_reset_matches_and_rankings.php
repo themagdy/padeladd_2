@@ -1,6 +1,6 @@
 <?php
 /**
- * Migration 007: Wipe all matches/scores and reset player stats & buffers to original level points
+ * Migration 007: Complete Wipe of all matches, scores, notifications, stories, reports & chats
  * Run at: http://localhost:8888/padeladd4/backend/migrations/007_reset_matches_and_rankings.php
  * Or live: https://padeladd.com/backend/migrations/007_reset_matches_and_rankings.php
  */
@@ -13,29 +13,39 @@ $pdo = getDB();
 
 try {
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-    $tables = [
-        'notifications',
-        'phone_requests',
-        'stories',
-        'story_views',
-        'reports',
-        'disputes',
+
+    $tablesToTruncate = [
+        'blocked_partner_requests',
+        'chat_messages',
         'chat_presence',
         'chat_read_status',
-        'chat_messages',
-        'match_chat',
-        'scores',
+        'disputes',
+        'in_app_message_views',
+        'match_events',
         'match_players',
+        'match_reports',
         'matches',
-        'player_points_log'
+        'notifications',
+        'phone_requests',
+        'player_flags',
+        'player_points_log',
+        'profile_reports',
+        'score_approvals',
+        'scores',
+        'stories',
+        'story_seen',
+        'system_reports',
+        'waiting_list'
     ];
-    foreach ($tables as $t) {
+
+    foreach ($tablesToTruncate as $t) {
         try {
             $pdo->exec("TRUNCATE TABLE `$t`");
         } catch (\Throwable $e) {
             // Ignore if table does not exist
         }
     }
+
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
 
     // Reset player_stats and insert initial setup logs
@@ -71,7 +81,7 @@ try {
 
     echo json_encode([
         'success' => true, 
-        'message' => "Successfully wiped all matches, scores, chat, and disputes! Reset {$resetCount} players to original starting buffer points."
+        'message' => "Complete reset successful! Wiped " . count($tablesToTruncate) . " match/notification/story tables and reset {$resetCount} players to original level buffer points."
     ]);
 } catch (\Throwable $e) {
     echo json_encode(['success' => false, 'message' => 'Reset error: ' . $e->getMessage()]);
