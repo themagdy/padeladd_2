@@ -323,9 +323,10 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'key'      => 'heavy',
             'title'    => 'Heavy Dominator',
             'icon'     => '💥',
-            'unlocked' => ($heavyWins > 0),
+            'unlocked' => ($heavyWins >= 3),
             'val'      => $heavyWins,
-            'desc'     => $heavyWins > 0 ? "{$heavyWins} Heavy Victories (Diff ≥ 8)" : "Win a 2-set match by 8+ games"
+            'target'   => 3,
+            'desc'     => $heavyWins >= 3 ? "{$heavyWins} Heavy Victories (Diff ≥ 8)" : "{$heavyWins} / 3 Heavy Victories (Diff ≥ 8)"
         ],
         [
             'key'      => 'veteran',
