@@ -2022,7 +2022,13 @@ form {
 /* Profile Line Separator */
 .prof-line-separator {
   border-top: 1px solid var(--c-border);
-  margin: 15px 0;
+  margin: 24px 0;
+}
+
+@media (min-width: 768px) {
+  .prof-line-separator {
+    margin: 36px 0;
+  }
 }
 
 .desk-nav {
