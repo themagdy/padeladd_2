@@ -315,9 +315,10 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'key'      => 'streak_master',
             'title'    => 'Streak Master',
             'icon'     => '⚡',
-            'unlocked' => ($total3Streaks > 0),
+            'unlocked' => ($total3Streaks >= 3),
             'val'      => $total3Streaks,
-            'desc'     => $total3Streaks > 0 ? "Achieved 3-Win Streak {$total3Streaks}x" : "Achieve a 3-win streak milestone"
+            'target'   => 3,
+            'desc'     => $total3Streaks >= 3 ? "Achieved 3-Win Streak {$total3Streaks}x" : "{$total3Streaks}/3 Achieved 3-Win Streak"
         ],
         [
             'key'      => 'heavy',
