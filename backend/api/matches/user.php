@@ -242,6 +242,7 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
     $scores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $totalCompWins = 0;
+    $totalCompPlayed = count($scores);
     $heavyWins = 0;
     $currentStreak = 0;
     $total3Streaks = 0;
@@ -339,10 +340,10 @@ function calculatePlayerAchievements(PDO $pdo, int $userId): array
             'key'      => 'quarterly',
             'title'    => '3 Months Machine',
             'icon'     => '🚀',
-            'unlocked' => ($totalCompWins >= 10),
-            'val'      => $totalCompWins,
-            'target'   => 10,
-            'desc'     => "{$totalCompWins} / 10 Wins in past 3 months"
+            'unlocked' => ($totalCompPlayed >= 100),
+            'val'      => $totalCompPlayed,
+            'target'   => 100,
+            'desc'     => "{$totalCompPlayed}/100 matches played"
         ]
     ];
 }
