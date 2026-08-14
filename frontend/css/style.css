@@ -1010,7 +1010,7 @@ form {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 14px 18px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2017,6 +2017,12 @@ form {
   border-bottom: 1px solid var(--c-border);
   position: static;
   z-index: 100;
+}
+
+/* Profile Line Separator */
+.prof-line-separator {
+  border-top: 1px solid var(--c-border);
+  margin: 40px 0;
 }
 
 .desk-nav {
@@ -6216,12 +6222,4 @@ body {
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
   transform: translateZ(0);
-}
-
-/* Unified Profile Section Divider */
-hr.prof-divider {
-  border: 0;
-  border-top: 1px solid var(--c-border);
-  margin: 32px 0;
-  width: 100%;
 }
