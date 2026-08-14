@@ -249,10 +249,16 @@
 </div>
 
 <style>
+  .prof-section-divider {
+    border: 0 !important;
+    border-top: 1px solid var(--c-border) !important;
+    margin: 32px 0 !important;
+    width: 100% !important;
+  }
+
   @media (max-width: 992px) {
     .prof-content-grid {
       grid-template-columns: 1fr !important;
-      gap: 40px !important;
     }
 
     .prof-content-grid>div:last-child {
@@ -311,7 +317,7 @@
     }
 
     .prof-header {
-      padding: 24px 0 32px !important;
+      padding: 24px 0 0 !important;
     }
 
     .prof-header-top {
@@ -319,7 +325,7 @@
     }
 
     .prof-content-grid {
-      padding-top: 32px !important;
+      padding-top: 0 !important;
     }
 
     #prof-view-content {
