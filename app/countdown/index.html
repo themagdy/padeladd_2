@@ -104,6 +104,46 @@
             50% { opacity: 0.4; transform: scale(0.85); }
         }
 
+        /* Teaser Headline Typography */
+        .teaser-headline {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -1px;
+            margin: 0 0 14px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .teaser-line-1 {
+            color: #ffffff;
+            font-weight: 400;
+        }
+
+        .teaser-line-2 {
+            font-weight: 800;
+        }
+
+        .teaser-subtitle {
+            font-size: 16px;
+            color: #94a3b8;
+            max-width: 480px;
+            margin: 0 auto 36px auto;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        @media (max-width: 600px) {
+            .teaser-headline {
+                font-size: 34px;
+            }
+            .teaser-subtitle {
+                font-size: 14px;
+                margin-bottom: 28px;
+            }
+        }
+
         /* Countdown Grid */
         .countdown-grid {
             display: grid;
@@ -230,6 +270,16 @@
         <div class="teaser-pill">
             <span class="teaser-pulse"></span> LAUNCHING AUGUST 25
         </div>
+
+        <!-- Teaser Headline & Subtitle -->
+        <h1 class="teaser-headline">
+            <span class="teaser-line-1">The Game Is</span>
+            <span class="teaser-line-2 gradient-text">Shifting.</span>
+        </h1>
+
+        <p class="teaser-subtitle">
+            Get ready for Egypt's ultimate padel experience.
+        </p>
 
         <!-- Live Countdown Grid -->
         <div class="countdown-grid">
