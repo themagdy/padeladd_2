@@ -2264,5 +2264,7 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Landing Page Structure & Navigation: Reorganized `/app` structure with `/app/index.html` at root and all sub-assets in `/app/app/`, updating asset paths, brand logo link (`https://padeladd.com`), and legal back button navigation.
 - Security Hardening & 403/404 Redirects: Configured `Options -Indexes` site-wide in `.htaccess` to disable directory browsing, and set `ErrorDocument 403` and `ErrorDocument 404` to `https://padeladd.com/` for HTTP browser redirects to the homepage.
 - Mobile WebView Password Toggle Fix: Resolved password visibility toggle issues across Login, Register, and Reset Password pages on iOS and Android native WebViews by whitelisting `togglePasswordVisibility`, `ontouchstart`, and `onpointerdown` in DOMPurify (`index.html`), exposing `window.togglePasswordVisibility` at top-level module scope (`app.js`), and adding a 300ms debounce guard to prevent dual touch/click event bounce on mobile touch screens.
+- Desktop Password Reset Notice Page: Created modern glassmorphic static notice page at `/app/app/reset_pass/index.html` informing desktop web users to open the password reset link directly inside the Padeladd mobile app.
+- Live Web Password Reset Redirect: Added RewriteRule in root `.htaccess` to automatically redirect live web requests for `https://padeladd.com/reset-password` to `https://padeladd.com/app/reset_pass`.
 
 
