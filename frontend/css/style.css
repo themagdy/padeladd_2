@@ -6307,22 +6307,12 @@ body {
   display: inline;
 }
 
-@media (max-width: 768px) {
-  .mobile-desc {
-    display: inline;
-  }
+@media (max-width: 1024px) {
+  .mobile-desc { display: inline; }
+  .desktop-desc { display: none; }
+  .marketing-content .btn { width: 100% !important; display: block !important; text-align: center; }
 
-  .desktop-desc {
-    display: none;
-  }
-
-  .marketing-content .btn {
-    width: 100% !important;
-    display: block !important;
-    text-align: center;
-  }
-
-  /* Pure Simple Slide Down / Slide Up */
+  /* Mobile & Tablet Auth Toggle */
   .auth-page:not(.mobile-show-form) .auth-form-wrap {
     display: none !important;
   }
