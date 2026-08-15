@@ -7,7 +7,7 @@
 
     <!-- OpenGraph Tags -->
     <meta property="og:title" content="Padeladd - Reset Password">
-    <meta property="og:description" content="Please reset your Padeladd password directly inside the mobile app on your phone.">
+    <meta property="og:description" content="Please open your password reset email directly on your mobile phone to continue.">
     <meta property="og:image" content="../../assets/padeladd_share_thumb.jpg">
 
     <link rel="icon" type="image/png" href="../../assets/logo_ico.png">
@@ -41,7 +41,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: var(--radius-lg, 24px);
-            padding: 40px 32px;
+            padding: 44px 36px;
             text-align: center;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             width: 100%;
@@ -108,30 +108,33 @@
             font-size: 15px;
             color: var(--c-text-muted, #8B949E);
             line-height: 1.6;
-            margin: 0 0 32px 0;
+            margin: 0 0 24px 0;
             font-weight: 400;
         }
 
-        .reset-btn-action {
-            display: inline-flex;
+        .mobile-instruction-box {
+            background: rgba(0, 229, 255, 0.06);
+            border: 1px dashed rgba(0, 229, 255, 0.25);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 16px 24px;
-            border-radius: var(--radius-md, 14px);
-            background: linear-gradient(135deg, var(--color-primary, #00E5FF) 0%, #00B0FF 100%);
-            color: #000000;
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            gap: 12px;
+            text-align: left;
         }
 
-        .reset-btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(0, 229, 255, 0.45);
+        .mobile-instruction-box svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-primary, #00E5FF);
+            flex-shrink: 0;
+        }
+
+        .mobile-instruction-text {
+            font-size: 13px;
+            color: #FFFFFF;
+            line-height: 1.4;
+            font-weight: 500;
         }
 
         .reset-footer {
@@ -166,22 +169,24 @@
                 </div>
 
                 <div class="reset-status-pill">
-                    <span>🔒</span> SECURITY NOTICE
+                    <span>📱</span> MOBILE DEVICE REQUIRED
                 </div>
 
-                <h1 class="reset-title">Reset Password on Your Mobile Phone</h1>
+                <h1 class="reset-title">Please Reset Password on Your Mobile Phone</h1>
 
                 <p class="reset-description">
-                    For your account security, please open the <strong>Padeladd mobile app</strong> on your phone to complete your password reset.
+                    Password reset links must be opened directly on your smartphone to connect securely with the Padeladd app.
                 </p>
 
-                <a href="https://padeladd.com" class="reset-btn-action">
-                    <span>Open Padeladd App</span>
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
+                <div class="mobile-instruction-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-                </a>
+                    <div class="mobile-instruction-text">
+                        Open your email application on your phone and tap the reset link there to set your new password.
+                    </div>
+                </div>
 
             </div>
         </div>
