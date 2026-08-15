@@ -2266,5 +2266,10 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Mobile WebView Password Toggle Fix: Resolved password visibility toggle issues across Login, Register, and Reset Password pages on iOS and Android native WebViews by whitelisting `togglePasswordVisibility`, `ontouchstart`, and `onpointerdown` in DOMPurify (`index.html`), exposing `window.togglePasswordVisibility` at top-level module scope (`app.js`), and adding a 300ms debounce guard to prevent dual touch/click event bounce on mobile touch screens.
 - Desktop Password Reset Notice Page: Created modern glassmorphic static notice page at `/app/app/reset_pass/index.html` informing desktop web users to open the password reset link directly inside the Padeladd mobile app.
 - Live Web Password Reset Redirect: Added RewriteRule in root `.htaccess` to automatically redirect live web requests for `https://padeladd.com/reset-password` to `https://padeladd.com/app/reset_pass`.
+- Countdown Teaser Landing Page: Created static standalone teaser page at `/app/countdown/index.html` featuring luxury centered Padeladd logo, "LAUNCHING AUGUST 25" status badge, 4-digit glassmorphic live countdown timer, "The Game is Shifting." headline with animated gradient flow, and "Get ready for Egypt's ultimate padel experience." subtitle.
+- Social Share OpenGraph Thumbnails: Configured absolute HTTPS OpenGraph and Twitter card image tags (`https://padeladd.com/app/plshare.jpg`) on `/app` and `/app/countdown` for WhatsApp, Facebook, iMessage, and Twitter link preview thumbnails.
+- Sign In Input Label Update: Updated Login form input label and placeholder text to "Email or Mobile number" across mobile and web auth interfaces.
+- Mobile Auth Slide Reveal & Back Button: Implemented interactive mobile hero view with solid "Create an Account" primary CTA, glassmorphic "Sign in" outline CTA with centered text and right-anchored arrow, square 52x52px glassmorphic Back button with minimal filled white arrow, clean 0.3s vertical slide transitions, and touch ghost-click prevention.
+
 
 
