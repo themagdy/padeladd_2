@@ -96,7 +96,7 @@ function renderFallbackScores() {
         {
             venue: 'Smouha Club',
             date: 'Yesterday',
-            score: '6-3, 4-6, 10-8',
+            score: '6-3, 4-6, 7-6',
             team_a: [{ name: 'Mohamed Ali' }, { name: 'Karim' }],
             team_b: [{ name: 'Omar K.' }, { name: 'Youssef' }]
         },

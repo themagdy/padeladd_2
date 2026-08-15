@@ -114,8 +114,8 @@ try {
                 $userPairs[] = ['name' => $name, 'code' => $u['player_code'] ?: ('P-' . $u['id'])];
             }
 
-            // Match 1: 2 sets (6-4, 7-5), Match 2: 3 sets (6-3, 4-6, 10-8), Match 3: 2 sets (7-6, 6-2)
-            $predefinedScores = ['6-4, 7-5', '6-3, 4-6, 10-8', '7-6, 6-2'];
+            // Match 1: 2 sets (6-4, 7-5), Match 2: 3 sets (6-3, 4-6, 7-6), Match 3: 2 sets (7-6, 6-2)
+            $predefinedScores = ['6-4, 7-5', '6-3, 4-6, 7-6', '7-6, 6-2'];
             $predefinedDates = ['Today', 'Yesterday', '13 Aug'];
 
             for ($i = 0; $i < 3; $i++) {
