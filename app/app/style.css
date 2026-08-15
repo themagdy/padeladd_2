@@ -193,22 +193,52 @@ body::before {
 }
 
 .headline-line {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.28em;
     width: 100%;
-    white-space: nowrap;
 }
 
-/* Line 1: Egypt's Premier (15 chars) */
+.hero-word {
+    display: inline-block;
+}
+
+/* Line 1: Egypt's Premier */
 .headline-line.line-1 {
     font-size: 12.8cqw;
     font-weight: 400;
     color: #ffffff;
 }
 
-/* Line 2: Padel Network. (14 chars bold) */
+/* Line 2: Padel Network. */
 .headline-line.line-2 {
     font-size: 14.0cqw;
     font-weight: 800;
+}
+
+/* Mobile: Stack each word on its own line with huge title impact */
+@media (max-width: 650px) {
+    .headline-line {
+        flex-direction: column;
+        gap: 0;
+    }
+    .headline-line.line-1,
+    .headline-line.line-2 {
+        font-size: inherit;
+    }
+    .hero-word {
+        display: block;
+        width: 100%;
+        font-size: 17.5cqw;
+        line-height: 0.95;
+    }
+    .headline-line.line-1 .hero-word {
+        font-weight: 400;
+        color: #ffffff;
+    }
+    .headline-line.line-2 .hero-word {
+        font-weight: 800;
+    }
 }
 
 /* Fallback for browsers before container queries */
