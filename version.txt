@@ -2275,6 +2275,8 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Auth Links Color Standardization: Unified all text links across Login, Register, Forgot Password, and Reset Password pages to system token `var(--c-text-blue)` (`#5B8BFF`).
 - Tablet Responsive Layout Fix: Expanded mobile auth toggle media query breakpoint from `@media (max-width: 768px)` to `@media (max-width: 1024px)` to resolve stacked dual-view rendering on iPad and tablet screens.
 - Typography & Layout Adjustments: Bound "Egypt 🇪🇬" with `white-space: nowrap` to prevent orphan flag line wraps, set `max-width: 100%` on `.marketing-desc`, and moved Forgot Password page footer links inside the `<form>` element to eliminate vertical flex gap under the submit button.
+- Glassmorphic Outline Button Refinement: Refined mobile Sign in outline CTA with 24px backdrop blur, sleek 0.06 opacity ultra-thin border, and delicate top rim glass reflection.
+
 
 
 
