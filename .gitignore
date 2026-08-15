@@ -24,3 +24,7 @@ mobile_app/ios/App/build/
 # Private/Secrets directory
 secrets/
 
+# Simulation directory
+simulation/
+
+

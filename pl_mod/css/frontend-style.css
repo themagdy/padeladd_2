@@ -1770,7 +1770,35 @@ form {
   padding: 10px 14px;
 }
 
+/* -------------------------------------------------------
+   [26] ADMIN
+   ------------------------------------------------------- */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
 
+.admin-table th {
+  background: var(--c-bg-secondary);
+  color: var(--c-text-muted);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 10px var(--space-md);
+  text-align: left;
+}
+
+.admin-table td {
+  padding: 12px var(--space-md);
+  border-bottom: 1px solid var(--c-border);
+  color: var(--c-text);
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
 
 /* -------------------------------------------------------
    [27] UTILITY CLASSES

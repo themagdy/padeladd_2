@@ -2280,6 +2280,14 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Score Display Correction: Corrected demo preview tiebreak scores from 10-8 super tiebreak to standard 7-6 set tiebreak across API and app fallback logic.
 - Google Search Favicon Optimization: Updated all page head icon links across `/app`, `/app/countdown`, `/app/verify_email`, and `/app/reset_pass` to point to `https://padeladd.com/app/padeladd_icon.jpg` for clean dark-background Google Search result icon rendering.
 
+==================================================
+Version 2.4.96 (Build 496) - 2026-08-16
+==================================================
+- Admin Panel Asset Isolation: Cloned required frontend CSS (`frontend-style.css`) and Chart.js (`chart.umd.min.js`) into `/pl_mod/`, making `/pl_mod` 100% independent.
+- Clean App Frontend: Removed unused Chart.js script and legacy `.admin-table` CSS rules from frontend app codebase.
+
+
+
 
 
 
