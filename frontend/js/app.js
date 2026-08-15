@@ -1368,11 +1368,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isPassword = input.type === 'password' || input.getAttribute('type') === 'password';
         const newType = isPassword ? 'text' : 'password';
+        const val = input.value;
 
-        // Mutate native input property, HTML attribute, and WebKit secure layer
+        // Mutate native input property, HTML attribute, WebKit secure layer, and force OS value redraw
         input.type = newType;
         input.setAttribute('type', newType);
         input.style.webkitTextSecurity = isPassword ? 'none' : 'disc';
+        input.value = val;
 
         // Swap the eye SVG icon state safely
         const svg = toggle.querySelector('svg');
