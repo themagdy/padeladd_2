@@ -1,9 +1,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Disable directory browsing site-wide and redirect 403 errors to homepage
+    # Disable directory browsing site-wide and redirect 403/404 errors to homepage
     Options -Indexes
     ErrorDocument 403 /
+    ErrorDocument 404 /
     
     # ----------------------------------------------------------------------
     # Pass Authorization headers to PHP
