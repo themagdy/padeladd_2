@@ -38,7 +38,7 @@
   --c-red: #F15A29;
   --c-gold: #F5C518;
   --c-pink: #AD1457;
-  --c-text-blue: #5B8BFF;
+  --c-text-blue: #38bdf8;
 
   /* Gradients */
   --g-primary: linear-gradient(135deg, #1B52CE 0%, #0F3490 100%);
@@ -1564,10 +1564,11 @@ form {
 }
 
 .auth-link {
-  color: var(--c-text-blue);
-  font-weight: 700;
+  color: #38bdf8 !important;
+  font-weight: 600;
   cursor: pointer;
   transition: opacity var(--t-fast);
+  text-decoration: none;
 }
 
 .auth-link:hover {
