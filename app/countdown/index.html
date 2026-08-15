@@ -3,123 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Padeladd - Egypt's Premier Padel Network</title>
+    <title>Padeladd - Something Big is Coming</title>
 
     <!-- OpenGraph Tags -->
-    <meta property="og:title" content="Padeladd - Egypt's Premier Padel Network">
-    <meta property="og:description" content="Track live scores, climb official Egypt rankings, and match with rated padel players near you.">
+    <meta property="og:title" content="Padeladd - Launching August 25">
+    <meta property="og:description" content="Egypt's Premier Padel Network is launching soon. Count down to the official release on August 25.">
     <meta property="og:image" content="../../assets/padeladd_share_thumb.jpg">
 
     <link rel="icon" type="image/png" href="../../assets/logo_ico.png">
     <link rel="stylesheet" href="../app/style.css">
 
     <style>
-        .hero-wrapper.standalone-hero {
+        body {
+            background-color: #030508;
+            color: #ffffff;
+            font-family: 'Outfit', 'Montserrat', -apple-system, sans-serif;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            justify-content: space-between;
+            align-items: center;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Ambient Lighting Effects */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(212, 175, 55, 0.08) 40%, transparent 70%);
+            filter: blur(140px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .teaser-container {
+            width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            grid-template-columns: 1fr;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* Centered Logo */
+        .teaser-logo-wrap {
+            margin-bottom: 36px;
+        }
+
+        .teaser-logo {
+            height: 64px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 32px rgba(56, 189, 248, 0.3));
+        }
+
+        /* Status Badge */
+        .teaser-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 44px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .teaser-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: #38bdf8;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #38bdf8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Countdown Grid */
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .countdown-card {
+            background: rgba(12, 16, 26, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 28px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .countdown-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+        }
+
+        .countdown-num {
+            font-family: 'Outfit', 'Inter', monospace;
+            font-size: 52px;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .countdown-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* Minimal Luxury Footer */
+        .teaser-footer {
+            width: 100%;
+            padding: 32px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .teaser-footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .teaser-footer a:hover {
+            color: #ffffff;
+        }
+
+        @media (max-width: 600px) {
+            .teaser-logo {
+                height: 52px;
+            }
+
+            .countdown-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                max-width: 320px;
+            }
+
+            .countdown-card {
+                padding: 22px 12px;
+                border-radius: 20px;
+            }
+
+            .countdown-num {
+                font-size: 42px;
+            }
+
+            .teaser-footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Minimal Luxury Top Navbar -->
-    <header class="navbar">
-        <a href="https://padeladd.com" class="brand-logo">
-            <img src="../../assets/logo.png" alt="Padeladd" class="logo-img" onerror="this.onerror=null; this.src='../../assets/logo_ico.png';">
-        </a>
-        <div class="nav-badge">
-            <span class="pulse-dot"></span> Live App
-        </div>
-    </header>
-
-    <!-- Hero Section (Full-Bleed Luxury Layout) -->
-    <main class="hero-wrapper standalone-hero">
+    <div class="teaser-container">
         
-        <!-- Hero Content -->
-        <div class="hero-left">
-            <div class="hero-pills">
-                <div class="tag-pill">
-                    <span class="flag-icon">🇪🇬</span> EGYPT
-                </div>
-                <a href="https://www.instagram.com/thepadeladd/" target="_blank" rel="noopener noreferrer" class="btn-instagram">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                    </svg>
-                    <span>Follow Padeladd</span>
-                </a>
+        <!-- Centered Logo -->
+        <div class="teaser-logo-wrap">
+            <a href="https://padeladd.com">
+                <img src="../../assets/logo.png" alt="Padeladd" class="teaser-logo" onerror="this.onerror=null; this.src='../../assets/logo_ico.png';">
+            </a>
+        </div>
+
+        <!-- Teaser Status Badge -->
+        <div class="teaser-pill">
+            <span class="teaser-pulse"></span> LAUNCHING AUGUST 25
+        </div>
+
+        <!-- Live Countdown Grid -->
+        <div class="countdown-grid">
+            <div class="countdown-card">
+                <span class="countdown-num" id="days">00</span>
+                <span class="countdown-label">Days</span>
             </div>
 
-            <!-- Hero Headline -->
-            <h1 class="hero-headline">
-                <span class="headline-line line-1">
-                    <span class="hero-word">Egypt’s</span>
-                    <span class="hero-word">Premier</span>
-                </span>
-                <span class="headline-line line-2 gradient-text">
-                    <span class="hero-word">Padel</span>
-                    <span class="hero-word">Network.</span>
-                </span>
-            </h1>
-
-            <p class="hero-description">
-                Track live match scores, climb national rankings, and challenge verified padel players across Egypt.
-            </p>
-
-            <!-- Ultra-Classy Store Buttons -->
-            <div class="cta-group">
-                <a href="https://apps.apple.com/app/id6742586718" target="_blank" rel="noopener noreferrer" class="btn-store btn-apple">
-                    <svg viewBox="0 0 384 512">
-                        <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-14.4 69.5-34.3z"/>
-                    </svg>
-                    <div class="btn-label">
-                        <span class="sub">DOWNLOAD FOR</span>
-                        <span class="title">iOS App</span>
-                    </div>
-                </a>
-
-                <a href="https://play.google.com/store/apps/details?id=com.padeladd.app" target="_blank" rel="noopener noreferrer" class="btn-store btn-google">
-                    <svg viewBox="0 0 512 512">
-                        <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l220.7-221.3 60.1 60.1L104.6 499z"/>
-                    </svg>
-                    <div class="btn-label">
-                        <span class="sub">DOWNLOAD FOR</span>
-                        <span class="title">Android App</span>
-                    </div>
-                </a>
+            <div class="countdown-card">
+                <span class="countdown-num" id="hours">00</span>
+                <span class="countdown-label">Hours</span>
             </div>
 
-            <div class="app-highlights">
-                <div class="highlight-item">
-                    <span class="check-icon">✓</span> Verified Egypt Players
-                </div>
-                <div class="highlight-item">
-                    <span class="check-icon">✓</span> Real-Time Score Approvals
-                </div>
-                <div class="highlight-item">
-                    <span class="check-icon">✓</span> Official Egypt Rating System
-                </div>
+            <div class="countdown-card">
+                <span class="countdown-num" id="minutes">00</span>
+                <span class="countdown-label">Minutes</span>
+            </div>
+
+            <div class="countdown-card">
+                <span class="countdown-num" id="seconds">00</span>
+                <span class="countdown-label">Seconds</span>
             </div>
         </div>
 
-    </main>
+    </div>
 
-    <!-- Minimal Luxury Footer -->
-    <footer class="footer-bar">
-        <div class="footer-links">
-            <a href="../app/pages/privacy.html" class="footer-link">Privacy Policy</a>
-            <span class="sep">&bull;</span>
-            <a href="../app/pages/terms.html" class="footer-link">Terms of Service</a>
-            <span class="sep">&bull;</span>
-            <a href="../app/pages/rules.html" class="footer-link">Rules & Ranking</a>
-            <span class="sep">&bull;</span>
-            <a href="https://www.instagram.com/thepadeladd/" target="_blank" rel="noopener noreferrer" class="footer-link">Instagram</a>
+    <!-- Footer -->
+    <footer class="teaser-footer">
+        <div>&copy; 2026 Padeladd. All rights reserved.</div>
+        <div>
+            <a href="https://www.instagram.com/thepadeladd/" target="_blank" rel="noopener noreferrer">Follow on Instagram ↗</a>
         </div>
-        <div class="copyright">&copy; 2026 Padeladd. All rights reserved.</div>
     </footer>
 
+    <!-- Countdown Timer Logic -->
+    <script>
+        (function() {
+            // Target Launch Date: August 25, 2026 00:00:00 EEST (Cairo GMT+3)
+            const targetDate = new Date('2026-08-25T00:00:00+03:00').getTime();
+
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const diff = targetDate - now;
+
+                if (diff <= 0) {
+                    daysEl.textContent = '00';
+                    hoursEl.textContent = '00';
+                    minutesEl.textContent = '00';
+                    secondsEl.textContent = '00';
+                    return;
+                }
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                daysEl.textContent = String(d).padStart(2, '0');
+                hoursEl.textContent = String(h).padStart(2, '0');
+                minutesEl.textContent = String(m).padStart(2, '0');
+                secondsEl.textContent = String(s).padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        })();
+    </script>
 </body>
 </html>
