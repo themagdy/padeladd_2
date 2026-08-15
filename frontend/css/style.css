@@ -689,22 +689,15 @@ form {
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
-  border: none;
-  z-index: 10;
   color: var(--c-text-muted);
   font-size: 16px;
   padding: 4px;
   cursor: pointer;
-  touch-action: manipulation;
   transition: color var(--t-fast);
 }
 
 .password-toggle:hover {
   color: var(--c-text);
-}
-
-.password-toggle * {
-  pointer-events: none;
 }
 
 /* -------------------------------------------------------
