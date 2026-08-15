@@ -1356,10 +1356,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Global Password Visibility Toggle
-    document.addEventListener('click', (e) => {
-        const toggle = e.target.closest('.password-toggle');
+    window.togglePasswordVisibility = function (toggle) {
         if (!toggle) return;
-
         const wrap = toggle.closest('.password-wrap');
         if (!wrap) return;
 
@@ -1397,6 +1395,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <circle cx="12" cy="12" r="3"></circle>
                 </svg>
             `;
+        }
+    };
+
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.password-toggle');
+        if (toggle) {
+            window.togglePasswordVisibility(toggle);
         }
     });
 });
