@@ -6258,3 +6258,11 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+.mobile-desc { display: none; }
+.desktop-desc { display: inline; }
+
+@media (max-width: 768px) {
+  .mobile-desc { display: inline; }
+  .desktop-desc { display: none; }
+}
