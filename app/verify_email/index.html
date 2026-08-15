@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Padeladd - Email Verified</title>
+
+    <!-- OpenGraph Tags -->
+    <meta property="og:title" content="Padeladd - Email Verified">
+    <meta property="og:description" content="Your Padeladd email address has been successfully verified.">
+    <meta property="og:image" content="../../assets/plshare.jpg">
+
+    <link rel="icon" type="image/png" href="../../assets/logo_ico.png">
+    <link rel="stylesheet" href="../app/style.css">
+    
+    <style>
+        body {
+            background-color: #030508;
+            color: #ffffff;
+            font-family: 'Outfit', 'Montserrat', -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .verify-page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .verify-card-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 440px;
+            margin: 40px auto;
+        }
+
+        .verify-card {
+            background: rgba(22, 27, 34, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verify-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00CE00, transparent);
+        }
+
+        .verify-icon-badge {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(0, 206, 0, 0.18) 0%, rgba(13, 17, 23, 0.4) 70%);
+            border: 1px solid rgba(0, 206, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(0, 206, 0, 0.25);
+        }
+
+        .verify-icon-badge svg {
+            width: 36px;
+            height: 36px;
+            color: #00CE00;
+        }
+
+        .verify-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 100px;
+            background: rgba(0, 206, 0, 0.08);
+            border: 1px solid rgba(0, 206, 0, 0.25);
+            color: #00CE00;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .verify-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin: 0 0 10px 0;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+        }
+
+        .verify-description {
+            font-size: 14px;
+            color: #8B949E;
+            line-height: 1.5;
+            margin: 0 0 24px 0;
+            font-weight: 400;
+        }
+
+        .verify-instruction-box {
+            background: rgba(0, 206, 0, 0.05);
+            border: 1px dashed rgba(0, 206, 0, 0.25);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .verify-instruction-text {
+            font-size: 13px;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .verify-footer {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            text-align: center;
+            margin-top: auto;
+            padding-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="verify-page-container">
+        
+        <!-- Header -->
+        <header class="navbar" style="position: relative; top: 0; background: transparent; border-bottom: none; width: 100%;">
+            <a href="https://padeladd.com" class="brand-logo" style="margin: 0 auto;">
+                <img src="../../assets/logo.png" alt="Padeladd" class="logo-img" style="height: 44px; width: auto;" onerror="this.onerror=null; this.src='../../assets/logo_ico.png';">
+            </a>
+        </header>
+
+        <!-- Main Card -->
+        <div class="verify-card-wrapper">
+            <div class="verify-card">
+                
+                <div class="verify-icon-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+
+                <div class="verify-status-pill">
+                    <span>✓</span> EMAIL VERIFIED
+                </div>
+
+                <h1 class="verify-title">Email Confirmed!</h1>
+
+                <p class="verify-description">
+                    Your email address has been successfully verified for Padeladd.
+                </p>
+
+                <div class="verify-instruction-box">
+                    <span>🚀</span>
+                    <span class="verify-instruction-text">You can now open the app & log in to your account</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="verify-footer">
+            &copy; 2026 Padeladd. All rights reserved.
+        </footer>
+
+    </div>
+
+</body>
+</html>
