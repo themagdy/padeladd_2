@@ -2549,7 +2549,7 @@ form {
   }
 
   .marketing-headline {
-    font-size: 50px !important;
+    margin-bottom: 20px;
   }
 }
 
@@ -2559,12 +2559,43 @@ form {
   margin-bottom: 25px;
 }
 
+.marketing-content {
+  container-type: inline-size;
+  width: 100%;
+}
+
 .marketing-headline {
-  font-size: 56px;
-  line-height: 1.15;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+
+.marketing-headline .headline-line {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.marketing-headline .headline-line.line-1 {
+  font-size: 11.0cqw;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.marketing-headline .headline-line.line-2 {
+  font-size: 12.0cqw;
   font-weight: 800;
-  letter-spacing: -1px;
-  margin-bottom: 30px;
+}
+
+@supports not (font-size: 1cqw) {
+  .marketing-headline .headline-line.line-1 {
+    font-size: clamp(28px, 9vw, 56px);
+  }
+  .marketing-headline .headline-line.line-2 {
+    font-size: clamp(30px, 9.5vw, 60px);
+  }
 }
 
 .marketing-desc {
@@ -2642,7 +2673,6 @@ form {
   }
 
   .marketing-headline {
-    font-size: 38px !important;
     margin-bottom: 16px !important;
   }
 
