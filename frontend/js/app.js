@@ -1410,6 +1410,22 @@ const handleGlobalPasswordToggle = (e) => {
         e.preventDefault();
         window.togglePasswordVisibility(toggle);
     }
+
+    const showBtn = e.target.closest('.show-login-form-btn');
+    if (showBtn) {
+        e.preventDefault();
+        const page = document.querySelector('.auth-page');
+        if (page) page.classList.add('mobile-show-form');
+        return;
+    }
+
+    const backBtn = e.target.closest('.mobile-back-hero-btn');
+    if (backBtn) {
+        e.preventDefault();
+        const page = document.querySelector('.auth-page');
+        if (page) page.classList.remove('mobile-show-form');
+        return;
+    }
 };
 
 document.addEventListener('pointerdown', handleGlobalPasswordToggle);
