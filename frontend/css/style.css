@@ -6296,4 +6296,29 @@ body {
   .mobile-desc { display: inline; }
   .desktop-desc { display: none; }
   .marketing-content .btn { width: 100% !important; display: block !important; text-align: center; }
+
+  /* Mobile Auth Slide Transition */
+  .auth-page:not(.mobile-show-form) .auth-form-wrap {
+    display: none !important;
+  }
+
+  .auth-page.mobile-show-form .auth-marketing {
+    display: none !important;
+  }
+
+  .auth-page.mobile-show-form .auth-form-wrap {
+    display: block !important;
+    animation: slideDownAuth 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes slideDownAuth {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -29,11 +29,13 @@
         </p>
         <button class="btn btn-primary" style="padding:16px 40px; font-size:16px;" data-link
           href="/register">Create an Account</button>
+        <button type="button" class="btn btn-outline show-login-form-btn hidden-desktop" style="padding:16px; font-size:16px; margin-top:12px; border: 1px solid rgba(255, 255, 255, 0.2); background: transparent; color: #ffffff; width: 100%; border-radius: var(--r-md); cursor: pointer;" onclick="document.querySelector('.auth-page').classList.add('mobile-show-form')">Sign in</button>
       </div>
     </div>
 
     <!-- Right Side: The Form -->
     <div class="auth-form-wrap">
+      <button type="button" class="mobile-back-hero-btn hidden-desktop" onclick="document.querySelector('.auth-page').classList.remove('mobile-show-form')" style="background: transparent; border: none; color: var(--c-primary); font-size: 14px; font-weight: 600; padding: 0 0 16px 0; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">← Back</button>
       <!-- Unified Title -->
       <h1 class="auth-desk-title" style="font-size:24px; margin-bottom:30px;">Sign in to Padeladd</h1>
 
