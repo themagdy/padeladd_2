@@ -1373,8 +1373,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Swap the eye SVG icon state safely
         const svg = toggle.querySelector('svg');
-        const width = svg ? (svg.getAttribute('width') || '18') : '18';
-        const height = svg ? (svg.getAttribute('height') || '18') : '18';
+        const width = svg ? (svg.getAttribute('width') || '20') : '20';
+        const height = svg ? (svg.getAttribute('height') || '20') : '20';
 
         if (isPassword) {
             // Slashed Eye
@@ -1395,10 +1395,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    document.addEventListener('click', (e) => {
+    const handleToggleEvent = (e) => {
         const toggle = e.target.closest('.password-toggle');
         if (toggle) {
+            e.preventDefault();
             window.togglePasswordVisibility(toggle);
         }
-    });
+    };
+
+    document.addEventListener('pointerdown', handleToggleEvent);
+    document.addEventListener('click', handleToggleEvent);
 });

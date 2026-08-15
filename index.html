@@ -146,13 +146,13 @@
             if (!html) return '';
             return DOMPurify.sanitize(html, {
                 ADD_TAGS: ['select', 'option'],
-                ADD_ATTR: ['id', 'name', 'style', 'onerror', 'onload', 'onclick', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
+                ADD_ATTR: ['id', 'name', 'style', 'onerror', 'onload', 'onclick', 'ontouchstart', 'onpointerdown', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup', 'target', 'rel']
             });
         };
 
         // Precision Hardening: Only allow event handlers that match trusted app patterns
         DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-            const handlers = ['onclick', 'onerror', 'onload', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup'];
+            const handlers = ['onclick', 'ontouchstart', 'onpointerdown', 'onerror', 'onload', 'onmouseover', 'onmouseout', 'onkeydown', 'oninput', 'onmousedown', 'onmouseup'];
             handlers.forEach(attr => {
                 if (node.hasAttribute(attr)) {
                     const val = node.getAttribute(attr);
@@ -173,7 +173,7 @@
                             'event.stopPropagation()', 'ConfirmModal', 'ProfileController',
                             'sessionStorage.setItem', 'StatsUI', 'ScoreUI', 'PollManager',
                             'RankingController', 'ProfileViewController', 'StoriesController',
-                            'InviteModal',
+                            'InviteModal', 'togglePasswordVisibility',
                             '.click()', '.focus()'
                         ];
 
