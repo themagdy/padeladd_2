@@ -1360,7 +1360,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const toggle = e.target.closest('.password-toggle');
         if (!toggle) return;
 
-        e.preventDefault();
         const wrap = toggle.closest('.password-wrap');
         if (!wrap) return;
 
