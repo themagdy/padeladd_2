@@ -30,7 +30,7 @@
 
     # Redirect /verify-email and /verify_email on live website (padeladd.com) to /app/verify_email
     RewriteCond %{HTTP_HOST} ^(www\.)?padeladd\.com$ [NC]
-    RewriteRule ^(verify-email|verify_email) /app/verify_email/ [QSA,R=302,L]
+    RewriteRule ^(verify-email|verify_email) /app/verify_email [R=302,L]
 
     # Route /share/MATCH-CODE to the social share PHP page
     RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php?code=$1 [QSA,L]

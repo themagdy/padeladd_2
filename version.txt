@@ -2276,8 +2276,9 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - Tablet Responsive Layout Fix: Expanded mobile auth toggle media query breakpoint from `@media (max-width: 768px)` to `@media (max-width: 1024px)` to resolve stacked dual-view rendering on iPad and tablet screens.
 - Typography & Layout Adjustments: Bound "Egypt 🇪🇬" with `white-space: nowrap` to prevent orphan flag line wraps, set `max-width: 100%` on `.marketing-desc`, and moved Forgot Password page footer links inside the `<form>` element to eliminate vertical flex gap under the submit button.
 - Glassmorphic Outline Button Refinement: Refined mobile Sign in outline CTA with 24px backdrop blur, sleek 0.06 opacity ultra-thin border, and delicate top rim glass reflection.
+- Email Verified Static Page: Created static email verified notice page at /app/verify_email/index.html with green checkmark badge and added root .htaccess RewriteRule for /verify-email.
+- Score Display Correction: Corrected demo preview tiebreak scores from 10-8 super tiebreak to standard 7-6 set tiebreak across API and app fallback logic.
 - Google Search Favicon Optimization: Updated all page head icon links across `/app`, `/app/countdown`, `/app/verify_email`, and `/app/reset_pass` to point to `https://padeladd.com/app/padeladd_icon.jpg` for clean dark-background Google Search result icon rendering.
-
 
 
 
