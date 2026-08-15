@@ -1359,6 +1359,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // Top-Level Global Password Visibility Toggle (instantly available before DOMContentLoaded)
 window.togglePasswordVisibility = function (toggle) {
     if (!toggle) return;
+
+    // 300ms debounce guard to prevent dual touchstart/click event bounce on mobile
+    const now = Date.now();
+    if (toggle._lastToggle && (now - toggle._lastToggle < 300)) {
+        return;
+    }
+    toggle._lastToggle = now;
+
     const wrap = toggle.closest('.password-wrap');
     if (!wrap) return;
 
