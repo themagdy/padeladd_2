@@ -1404,24 +1404,21 @@ window.togglePasswordVisibility = function (toggle) {
     }
 };
 
-const handleGlobalPasswordToggle = (e) => {
-    const toggle = e.target.closest('.password-toggle');
-    if (toggle) {
-        e.preventDefault();
-        window.togglePasswordVisibility(toggle);
-    }
-
+const handleGlobalMobileAuthToggle = (e) => {
     const showBtn = e.target.closest('.show-login-form-btn');
     if (showBtn) {
         e.preventDefault();
         e.stopPropagation();
-        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         const page = document.querySelector('.auth-page');
         if (page) {
             page.classList.add('mobile-show-form');
             const form = page.querySelector('#login-form');
-            if (form && typeof UI !== 'undefined' && UI.clearErrors) {
-                UI.clearErrors(form);
+            if (form) {
+                if (typeof UI !== 'undefined' && UI.clearErrors) UI.clearErrors(form);
+                setTimeout(() => {
+                    if (typeof UI !== 'undefined' && UI.clearErrors) UI.clearErrors(form);
+                    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+                }, 50);
             }
         }
         return false;
@@ -1431,7 +1428,6 @@ const handleGlobalPasswordToggle = (e) => {
     if (backBtn) {
         e.preventDefault();
         e.stopPropagation();
-        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         const page = document.querySelector('.auth-page');
         if (page) {
             page.classList.remove('mobile-show-form');
@@ -1444,5 +1440,14 @@ const handleGlobalPasswordToggle = (e) => {
     }
 };
 
+const handleGlobalPasswordToggle = (e) => {
+    const toggle = e.target.closest('.password-toggle');
+    if (toggle) {
+        e.preventDefault();
+        window.togglePasswordVisibility(toggle);
+    }
+};
+
 document.addEventListener('pointerdown', handleGlobalPasswordToggle);
 document.addEventListener('click', handleGlobalPasswordToggle);
+document.addEventListener('click', handleGlobalMobileAuthToggle, true);
