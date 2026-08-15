@@ -1414,17 +1414,33 @@ const handleGlobalPasswordToggle = (e) => {
     const showBtn = e.target.closest('.show-login-form-btn');
     if (showBtn) {
         e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         const page = document.querySelector('.auth-page');
-        if (page) page.classList.add('mobile-show-form');
-        return;
+        if (page) {
+            page.classList.add('mobile-show-form');
+            const form = page.querySelector('#login-form');
+            if (form && typeof UI !== 'undefined' && UI.clearErrors) {
+                UI.clearErrors(form);
+            }
+        }
+        return false;
     }
 
     const backBtn = e.target.closest('.mobile-back-hero-btn');
     if (backBtn) {
         e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         const page = document.querySelector('.auth-page');
-        if (page) page.classList.remove('mobile-show-form');
-        return;
+        if (page) {
+            page.classList.remove('mobile-show-form');
+            const form = page.querySelector('#login-form');
+            if (form && typeof UI !== 'undefined' && UI.clearErrors) {
+                UI.clearErrors(form);
+            }
+        }
+        return false;
     }
 };
 
