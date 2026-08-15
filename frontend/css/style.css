@@ -2604,7 +2604,7 @@ form {
   font-size: 16px;
   line-height: 1.6;
   color: var(--c-text-muted);
-  max-width: 500px;
+  max-width: 100%;
   margin-bottom: 40px;
 }
 
