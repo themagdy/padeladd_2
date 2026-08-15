@@ -3,8 +3,8 @@
     
     # Disable directory browsing site-wide and redirect 403/404 errors to homepage
     Options -Indexes
-    ErrorDocument 403 /
-    ErrorDocument 404 /
+    ErrorDocument 403 https://padeladd.com/
+    ErrorDocument 404 https://padeladd.com/
     
     # ----------------------------------------------------------------------
     # Pass Authorization headers to PHP
