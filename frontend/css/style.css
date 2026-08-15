@@ -6242,3 +6242,19 @@ body {
   -webkit-tap-highlight-color: transparent !important;
   transform: translateZ(0);
 }
+
+/* Gradient Animated Headline Text */
+.gradient-text {
+  background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 25%, #f97316 50%, #ec4899 75%, #38bdf8 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  animation: slowGradientFlow 8s ease infinite;
+}
+
+@keyframes slowGradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
