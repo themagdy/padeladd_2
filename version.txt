@@ -1,10 +1,3 @@
-c077fe0 - 2026-08-15 17:35:00 +0300
-- Fixed password visibility toggle responsiveness on mobile native WebViews (iOS & Android).
-- Resolved DOMPurify attribute stripping by adding togglePasswordVisibility to the security whitelist.
-- Exposed togglePasswordVisibility at top-level module scope to eliminate silent ReferenceErrors.
-- Implemented 300ms debounce guard to prevent dual touchstart/click event bounce on mobile touch screens.
-- Updated Reset Password, Register, and Login pages with explicit debounced toggle handlers.
-
 a28060d - 2026-04-24 16:46:13 +0300
 - Resolved Match Chat Permalink auto-open issues.
 - Fixed back button logic to return to match details from chat.
@@ -2270,5 +2263,6 @@ Version 2.4.94 (Build 494) - 2026-08-14
 - iOS Build Version Bump (Build 495): Updated `CURRENT_PROJECT_VERSION` in `project.pbxproj` and `CFBundleVersion` / `CFBundleShortVersionString` in `Info.plist` to `495` / `2.4.95` to satisfy App Store Connect build number requirements (>486).
 - Landing Page Structure & Navigation: Reorganized `/app` structure with `/app/index.html` at root and all sub-assets in `/app/app/`, updating asset paths, brand logo link (`https://padeladd.com`), and legal back button navigation.
 - Security Hardening & 403/404 Redirects: Configured `Options -Indexes` site-wide in `.htaccess` to disable directory browsing, and set `ErrorDocument 403` and `ErrorDocument 404` to `https://padeladd.com/` for HTTP browser redirects to the homepage.
+- Mobile WebView Password Toggle Fix: Resolved password visibility toggle issues across Login, Register, and Reset Password pages on iOS and Android native WebViews by whitelisting `togglePasswordVisibility`, `ontouchstart`, and `onpointerdown` in DOMPurify (`index.html`), exposing `window.togglePasswordVisibility` at top-level module scope (`app.js`), and adding a 300ms debounce guard to prevent dual touch/click event bounce on mobile touch screens.
 
 
