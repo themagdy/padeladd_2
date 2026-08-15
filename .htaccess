@@ -24,6 +24,10 @@
         Header set Content-Type "application/json"
     </Files>
 
+    # Redirect /reset-password on live website (padeladd.com) to /app/reset_pass
+    RewriteCond %{HTTP_HOST} ^(www\.)?padeladd\.com$ [NC]
+    RewriteRule ^reset-password /app/reset_pass [R=302,L]
+
     # Route /share/MATCH-CODE to the social share PHP page
     RewriteRule ^share/([A-Za-z0-9\-]+)$ share/match.php?code=$1 [QSA,L]
 
