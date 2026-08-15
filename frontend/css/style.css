@@ -695,6 +695,7 @@ form {
   font-size: 16px;
   padding: 4px;
   cursor: pointer;
+  touch-action: manipulation;
   transition: color var(--t-fast);
 }
 
@@ -702,7 +703,7 @@ form {
   color: var(--c-text);
 }
 
-.password-toggle svg {
+.password-toggle * {
   pointer-events: none;
 }
 

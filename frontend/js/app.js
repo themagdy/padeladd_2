@@ -1156,9 +1156,9 @@ const StatsUI = {
 document.addEventListener('DOMContentLoaded', () => {
 
     // iOS & iPadOS Native Left-Edge Swipe Back Gesture Handler
-    const isIOSDevice = (window.Capacitor?.getPlatform?.() === 'ios') || 
-                        (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
-                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isIOSDevice = (window.Capacitor?.getPlatform?.() === 'ios') ||
+        (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isIOSDevice) {
         let edgeTouchStartX = 0;
@@ -1366,13 +1366,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const isPassword = input.type === 'password' || input.getAttribute('type') === 'password';
         const newType = isPassword ? 'text' : 'password';
-        const val = input.value;
 
-        // Mutate native input property, HTML attribute, WebKit secure layer, and force OS value redraw
+        // Mutate native input property and HTML attribute
         input.type = newType;
         input.setAttribute('type', newType);
-        input.style.webkitTextSecurity = isPassword ? 'none' : 'disc';
-        input.value = val;
 
         // Swap the eye SVG icon state safely
         const svg = toggle.querySelector('svg');
