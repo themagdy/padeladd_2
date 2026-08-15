@@ -6265,4 +6265,5 @@ body {
 @media (max-width: 768px) {
   .mobile-desc { display: inline; }
   .desktop-desc { display: none; }
+  .marketing-content .btn { width: 100% !important; display: block !important; text-align: center; }
 }
