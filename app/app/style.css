@@ -198,26 +198,26 @@ body::before {
     white-space: nowrap;
 }
 
-/* Line 1: Egypt's Premier (15 chars) - 90% container width */
+/* Line 1: Egypt's Premier (15 chars) */
 .headline-line.line-1 {
-    font-size: 11.0cqw;
+    font-size: 12.8cqw;
     font-weight: 400;
     color: #ffffff;
 }
 
-/* Line 2: Padel Network. (14 chars bold) - 90% container width */
+/* Line 2: Padel Network. (14 chars bold) */
 .headline-line.line-2 {
-    font-size: 12.0cqw;
+    font-size: 14.0cqw;
     font-weight: 800;
 }
 
 /* Fallback for browsers before container queries */
 @supports not (font-size: 1cqw) {
     .headline-line.line-1 {
-        font-size: clamp(40px, 11.2vw, 84px);
+        font-size: clamp(44px, 12.5vw, 84px);
     }
     .headline-line.line-2 {
-        font-size: clamp(44px, 12.4vw, 94px);
+        font-size: clamp(48px, 13.8vw, 94px);
     }
 }
 
