@@ -6297,35 +6297,31 @@ body {
   .desktop-desc { display: none; }
   .marketing-content .btn { width: 100% !important; display: block !important; text-align: center; }
 
-  /* Mobile Auth Dual Layer Parallax Transition */
+  /* Mobile Auth Clean Slide Transition */
   .auth-split-container {
     position: relative;
     width: 100%;
-    min-height: 480px;
     overflow: hidden;
   }
 
   .auth-marketing,
   .auth-form-wrap {
-    transition: transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1), 
-                filter 0.42s ease !important;
-    will-change: transform, opacity, filter;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.3s ease !important;
+    will-change: transform, opacity;
   }
 
   /* Default State: Hero Visible, Form Hidden */
   .auth-page:not(.mobile-show-form) .auth-marketing {
     opacity: 1 !important;
-    transform: translateY(0) scale(1) !important;
-    filter: blur(0px) !important;
+    transform: translateY(0) !important;
     pointer-events: auto !important;
     position: relative !important;
   }
 
   .auth-page:not(.mobile-show-form) .auth-form-wrap {
     opacity: 0 !important;
-    transform: translateY(50px) scale(0.95) !important;
-    filter: blur(8px) !important;
+    transform: translateY(24px) !important;
     pointer-events: none !important;
     position: absolute !important;
     top: 0;
@@ -6338,8 +6334,7 @@ body {
   /* Active State (Sign In Tapped): Form Visible, Hero Hidden */
   .auth-page.mobile-show-form .auth-marketing {
     opacity: 0 !important;
-    transform: translateY(-50px) scale(0.95) !important;
-    filter: blur(8px) !important;
+    transform: translateY(-24px) !important;
     pointer-events: none !important;
     position: absolute !important;
     top: 0;
@@ -6351,8 +6346,7 @@ body {
 
   .auth-page.mobile-show-form .auth-form-wrap {
     opacity: 1 !important;
-    transform: translateY(0) scale(1) !important;
-    filter: blur(0px) !important;
+    transform: translateY(0) !important;
     pointer-events: auto !important;
     position: relative !important;
     height: auto !important;
