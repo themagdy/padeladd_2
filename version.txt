@@ -2325,4 +2325,4 @@ Version 2.5.01 (Build 501) - 2026-08-16
 Version 2.5.02 (Build 502) - 2026-08-16
 ==================================================
 - Admin Players Infinite Scroll Pagination: Added server-side SQL pagination (`limit`, `offset`, `status`, `has_more`, `total_count`) in `/backend/api/admin/players/list.php`.
-- Admin Players Infinite Scroll Loader: Integrated debounced search, DB-level status filtering, and an infinite window scroll listener in `AdminControllers.players` with a glassmorphic bottom spinner indicator.
+- Admin Players Infinite Scroll Loader: Integrated debounced search, DB-level status filtering, and an infinite scroll listener targeting the `.admin-main` scroll container (`scrollTop + clientHeight >= scrollHeight - 300`) in `AdminControllers.players` with a glassmorphic bottom spinner indicator.

@@ -169,12 +169,14 @@ window.AdminControllers = {
                     editForm.addEventListener('submit', (e) => this.handleUpdate(e));
                 }
 
-                // Window scroll listener for pagination
-                if (this._scrollHandler) {
-                    window.removeEventListener('scroll', this._scrollHandler);
+                // Scroll listener on .admin-main container for pagination
+                const scrollEl = document.querySelector('.admin-main') || window;
+                if (this._scrollTarget && this._scrollHandler) {
+                    this._scrollTarget.removeEventListener('scroll', this._scrollHandler);
                 }
+                this._scrollTarget = scrollEl;
                 this._scrollHandler = () => this.handleScroll();
-                window.addEventListener('scroll', this._scrollHandler);
+                scrollEl.addEventListener('scroll', this._scrollHandler);
             } catch (err) {
                 console.error('Players init error:', err);
             }
@@ -233,9 +235,18 @@ window.AdminControllers = {
             const table = document.getElementById('player-list');
             if (!table) return;
 
-            const scrollHeight = document.documentElement.scrollHeight;
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            const clientHeight = window.innerHeight;
+            const scrollEl = document.querySelector('.admin-main');
+            let scrollTop = 0, clientHeight = 0, scrollHeight = 0;
+
+            if (scrollEl) {
+                scrollTop = scrollEl.scrollTop;
+                clientHeight = scrollEl.clientHeight;
+                scrollHeight = scrollEl.scrollHeight;
+            } else {
+                scrollTop = window.scrollY || document.documentElement.scrollTop;
+                clientHeight = window.innerHeight;
+                scrollHeight = document.documentElement.scrollHeight;
+            }
 
             if (scrollTop + clientHeight >= scrollHeight - 300) {
                 this.fetchPlayers();
