@@ -6371,11 +6371,20 @@ body {
   left: 0;
   width: 100%;
   height: 20px;
-  background: transparent;
-  -webkit-appearance: none;
+  background: transparent !important;
+  -webkit-appearance: none !important;
   pointer-events: none;
   margin: 0;
   outline: none;
+}
+.dual-range-thumb::-webkit-slider-runnable-track {
+  background: transparent !important;
+  border: none !important;
+  -webkit-appearance: none !important;
+}
+.dual-range-thumb::-moz-range-track {
+  background: transparent !important;
+  border: none !important;
 }
 .dual-range-thumb::-webkit-slider-thumb {
   -webkit-appearance: none;
