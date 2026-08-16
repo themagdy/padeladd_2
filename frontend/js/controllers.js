@@ -3632,32 +3632,40 @@ const MatchesController = {
             }
         });
 
-        // Initialize Creator Points & Sliders for Friendly Range Selector
+        // Read cached session bounds instantly from Auth
+        const applyBounds = (creatorPts, minPts, maxPts) => {
+            MatchesController._creatorEligibilityPts = creatorPts;
+            MatchesController._sliderMinBound = minPts;
+            MatchesController._sliderMaxBound = maxPts;
+
+            const minS = document.getElementById('cm-eligible-min-slider');
+            const maxS = document.getElementById('cm-eligible-max-slider');
+            if (minS && maxS) {
+                minS.min = minPts;
+                minS.max = maxPts;
+                minS.value = Math.max(minPts, creatorPts - 200);
+
+                maxS.min = minPts;
+                maxS.max = maxPts;
+                maxS.value = Math.min(maxPts, creatorPts + 200);
+            }
+            MatchesController.updateFriendlyEligibility();
+        };
+
+        const sessionMin = Auth.getMinPlayerPts();
+        const sessionMax = Math.max(1000, Auth.getMaxPlayerPts());
+
         API.post('/stats/get', {}).then(res => {
             if (res && res.success && res.data) {
                 const creatorPts = res.data.eligibility_pts ?? 100;
-                const minPts = res.data.min_player_pts ?? 0;
-                const maxPts = Math.max(1000, res.data.max_player_pts ?? 1000, creatorPts + 200);
-
-                MatchesController._creatorEligibilityPts = creatorPts;
-                MatchesController._sliderMinBound = minPts;
-                MatchesController._sliderMaxBound = maxPts;
-
-                const minS = document.getElementById('cm-eligible-min-slider');
-                const maxS = document.getElementById('cm-eligible-max-slider');
-                if (minS && maxS) {
-                    minS.min = minPts;
-                    minS.max = maxPts;
-                    minS.value = Math.max(minPts, creatorPts - 200);
-
-                    maxS.min = minPts;
-                    maxS.max = maxPts;
-                    maxS.value = Math.min(maxPts, creatorPts + 200);
-                }
-
-                MatchesController.updateFriendlyEligibility();
+                const minPts = res.data.min_player_pts ?? sessionMin;
+                const maxPts = Math.max(1000, res.data.max_player_pts ?? sessionMax, creatorPts + 200);
+                Auth.setSessionBounds(minPts, maxPts);
+                applyBounds(creatorPts, minPts, maxPts);
             }
-        }).catch(() => {});
+        }).catch(() => {
+            applyBounds(100, sessionMin, sessionMax);
+        });
     },
 
     setToggle: function (fieldName, btn) {

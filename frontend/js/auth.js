@@ -145,7 +145,7 @@ const Auth = {
         if (!this.isAuthenticated()) return Promise.resolve();
         
         if (typeof API !== 'undefined') {
-            return API.post('/profile/get', {}).then(res => {
+            const p1 = API.post('/profile/get', {}).then(res => {
                 if (res && res.success) {
                     const u = res.data.user;
                     const p = res.data.profile;
@@ -163,8 +163,37 @@ const Auth = {
             }).catch(err => {
                 console.error('[Auth] Server sync failed:', err);
             });
+
+            const p2 = API.post('/stats/get', {}).then(res => {
+                if (res && res.success && res.data) {
+                    if (res.data.min_player_pts !== undefined && res.data.max_player_pts !== undefined) {
+                        this.setSessionBounds(res.data.min_player_pts, res.data.max_player_pts);
+                    }
+                }
+            }).catch(() => {});
+
+            return Promise.all([p1, p2]);
         }
         return Promise.resolve();
+    },
+    _minPlayerPtsCache: null,
+    _maxPlayerPtsCache: null,
+
+    getMinPlayerPts: function() {
+        if (this._minPlayerPtsCache !== null) return this._minPlayerPtsCache;
+        const stored = sessionStorage.getItem('min_player_pts');
+        return stored !== null ? parseInt(stored) : 0;
+    },
+    getMaxPlayerPts: function() {
+        if (this._maxPlayerPtsCache !== null) return this._maxPlayerPtsCache;
+        const stored = sessionStorage.getItem('max_player_pts');
+        return stored !== null ? parseInt(stored) : 1000;
+    },
+    setSessionBounds: function(minPts, maxPts) {
+        this._minPlayerPtsCache = parseInt(minPts) || 0;
+        this._maxPlayerPtsCache = parseInt(maxPts) || 1000;
+        sessionStorage.setItem('min_player_pts', String(this._minPlayerPtsCache));
+        sessionStorage.setItem('max_player_pts', String(this._maxPlayerPtsCache));
     },
     clearAll: function() {
         this._tokenCache = null;
@@ -172,6 +201,10 @@ const Auth = {
         this._hasLevelCache = null;
         this._authUserIdCache = null;
         this._onboardingStepCache = null;
+        this._minPlayerPtsCache = null;
+        this._maxPlayerPtsCache = null;
+        sessionStorage.removeItem('min_player_pts');
+        sessionStorage.removeItem('max_player_pts');
         const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
         if (isCapacitor) {
             const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
