@@ -2304,3 +2304,9 @@ Version 2.4.98 (Build 498) - 2026-08-16
 - Simplified Weekly Trend Indicator: Simplified weekly points change indicator (`.rank-pts-diff-badge`), stripping heavy background boxes, borders, `+`/`-` text signs, and glow shadows to render clean minimal text with scaled-down directional arrows (`▲ 505` emerald, `▼ 50` crimson).
 - Dashboard Trend Dimming: Applied `.rank-grid-dash .rank-pts-diff-badge { opacity: 0.75; }` CSS rule to subtly dim weekly change indicators on the Dashboard ranking list.
 - Match Eligibility Global SQL Ordering: Refactored `/match/list.php` `play_upcoming` SQL query to order by `(CASE WHEN m.match_type = 'competition' AND (:my_pts BETWEEN m.eligible_min AND m.eligible_max) THEN 1 WHEN m.match_type = 'friendly' THEN 2 ELSE 3 END) ASC, m.match_datetime ASC`, guaranteeing all eligible competition matches across the database return first across continuous pagination offsets before friendly or ineligible matches.
+
+==================================================
+Version 2.4.99 (Build 499) - 2026-08-16
+==================================================
+- Play Upcoming Match Search: Integrated a search bar under the filters row in `Play > Upcoming`, matching the ranking page search bar style (3D glass asset icon, dark card background, 12px rounded corners, and interactive clear button).
+- Multi-Field Match Search Engine: Implemented multi-word search in `MatchesController` across player names, nicknames, player XCodes (`SIM...`), venue names, and court names.

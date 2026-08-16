@@ -3330,6 +3330,7 @@ const MatchesController = {
     _hasMore: true,
     _isLoading: false,
     _countdownInterval: null,
+    _searchQuery: '',
 
     // ── Create ──────────────────────────────────────────
 
@@ -3895,6 +3896,24 @@ const MatchesController = {
         MatchesController.loadList();
     },
 
+    handleSearch: function (query) {
+        const q = query.trim();
+        this._searchQuery = q;
+
+        const clearBtn = document.getElementById('ml-search-clear');
+        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+        const cacheKey = `${this._currentTab}_${this._playFilterType}_${this._playFilterGender}`;
+        const allMatches = this._cache[cacheKey] || [];
+        this.renderList(allMatches);
+    },
+
+    clearSearch: function () {
+        const input = document.getElementById('ml-search');
+        if (input) input.value = '';
+        this.handleSearch('');
+    },
+
     switchTab: async function (tab) {
         MatchesController._currentTab = tab;
         sessionStorage.setItem('last_sub_tab_' + MatchesController._lastMode, tab);
@@ -4061,13 +4080,45 @@ const MatchesController = {
             matches = matches.filter(m => m.status === 'completed');
         }
 
+        // Client-side search filtering (player name/nickname, player code, venue name, court)
+        if (this._searchQuery) {
+            const words = this._searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+            matches = matches.filter(m => {
+                let haystack = [
+                    m.venue_name || '',
+                    m.official_venue_name || '',
+                    m.court_name || '',
+                    m.creator_name || '',
+                    m.creator_nickname || '',
+                    m.match_code || ''
+                ];
+
+                if (m.slots && Array.isArray(m.slots)) {
+                    m.slots.forEach(s => {
+                        haystack.push(s.first_name || '');
+                        haystack.push(s.last_name || '');
+                        haystack.push(s.nickname || '');
+                        haystack.push(s.player_code || '');
+                        haystack.push(`${s.first_name || ''} ${s.last_name || ''}`);
+                    });
+                }
+
+                const fullHaystack = haystack.join(' ').toLowerCase();
+                return words.every(w => fullHaystack.includes(w));
+            });
+        }
+
         // Empty state handling
         if (matches.length === 0) {
             let msg = 'Nothing found';
             let sub = 'Check back later for new matches.';
             let icon = '🔍';
 
-            if (MatchesController._currentTab === 'play_upcoming') {
+            if (this._searchQuery) {
+                msg = 'No matching matches';
+                sub = `No matches found matching "${this._searchQuery}"`;
+                icon = '🔍';
+            } else if (MatchesController._currentTab === 'play_upcoming') {
                 msg = 'The Court Is Quiet';
                 sub = 'The next move is yours ⚔️';
                 icon = '🎾';

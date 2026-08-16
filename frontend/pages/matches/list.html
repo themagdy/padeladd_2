@@ -62,6 +62,19 @@
             onclick="MatchesController.setPlayFilter('gender_type', 'same_gender', this)">Men</button>
         </div>
       </div>
+
+      <!-- Search Input (Matching ranking search bar style) -->
+      <div class="rank-search-container" style="position:relative; width:100%; margin-top:14px;">
+        <input type="text" id="ml-search" placeholder="Search player name, code, or venue..."
+          oninput="MatchesController.handleSearch(this.value)"
+          style="width:100%; background:var(--c-bg-card); border:none; border-radius:12px; padding:12px 40px 12px 40px; color:#fff; font-size:14px; outline:none;">
+        <img src="assets/icons/magnifying_glass_3d.png"
+          style="position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; object-fit:contain; pointer-events:none;"
+          alt="Search">
+        <span id="ml-search-clear" onclick="MatchesController.clearSearch()"
+          style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; opacity:0.5; font-size:18px; color:#fff;"
+          onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">✕</span>
+      </div>
     </div>
 
     <!-- Loading skeletons -->
