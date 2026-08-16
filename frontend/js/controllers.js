@@ -3632,40 +3632,27 @@ const MatchesController = {
             }
         });
 
-        // Read cached session bounds instantly from Auth
-        const applyBounds = (creatorPts, minPts, maxPts) => {
-            MatchesController._creatorEligibilityPts = creatorPts;
-            MatchesController._sliderMinBound = minPts;
-            MatchesController._sliderMaxBound = maxPts;
-
-            const minS = document.getElementById('cm-eligible-min-slider');
-            const maxS = document.getElementById('cm-eligible-max-slider');
-            if (minS && maxS) {
-                minS.min = minPts;
-                minS.max = maxPts;
-                minS.value = Math.max(minPts, creatorPts - 200);
-
-                maxS.min = minPts;
-                maxS.max = maxPts;
-                maxS.value = Math.min(maxPts, creatorPts + 200);
-            }
-            MatchesController.updateFriendlyEligibility();
-        };
-
+        // Read cached session bounds instantly from Auth (0ms delay, zero API calls)
         const sessionMin = Auth.getMinPlayerPts();
         const sessionMax = Math.max(1000, Auth.getMaxPlayerPts());
+        const sessionCreatorPts = Auth.getCreatorPts();
 
-        API.post('/stats/get', {}).then(res => {
-            if (res && res.success && res.data) {
-                const creatorPts = res.data.eligibility_pts ?? 100;
-                const minPts = res.data.min_player_pts ?? sessionMin;
-                const maxPts = Math.max(1000, res.data.max_player_pts ?? sessionMax, creatorPts + 200);
-                Auth.setSessionBounds(minPts, maxPts);
-                applyBounds(creatorPts, minPts, maxPts);
-            }
-        }).catch(() => {
-            applyBounds(100, sessionMin, sessionMax);
-        });
+        MatchesController._creatorEligibilityPts = sessionCreatorPts;
+        MatchesController._sliderMinBound = sessionMin;
+        MatchesController._sliderMaxBound = Math.max(sessionMax, sessionCreatorPts + 200);
+
+        const minS = document.getElementById('cm-eligible-min-slider');
+        const maxS = document.getElementById('cm-eligible-max-slider');
+        if (minS && maxS) {
+            minS.min = sessionMin;
+            minS.max = MatchesController._sliderMaxBound;
+            minS.value = Math.max(sessionMin, sessionCreatorPts - 200);
+
+            maxS.min = sessionMin;
+            maxS.max = MatchesController._sliderMaxBound;
+            maxS.value = Math.min(MatchesController._sliderMaxBound, sessionCreatorPts + 200);
+        }
+        MatchesController.updateFriendlyEligibility();
     },
 
     setToggle: function (fieldName, btn) {

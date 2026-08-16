@@ -167,7 +167,7 @@ const Auth = {
             const p2 = API.post('/stats/get', {}).then(res => {
                 if (res && res.success && res.data) {
                     if (res.data.min_player_pts !== undefined && res.data.max_player_pts !== undefined) {
-                        this.setSessionBounds(res.data.min_player_pts, res.data.max_player_pts);
+                        this.setSessionBounds(res.data.min_player_pts, res.data.max_player_pts, res.data.eligibility_pts);
                     }
                 }
             }).catch(() => {});
@@ -178,6 +178,7 @@ const Auth = {
     },
     _minPlayerPtsCache: null,
     _maxPlayerPtsCache: null,
+    _creatorPtsCache: null,
 
     getMinPlayerPts: function() {
         if (this._minPlayerPtsCache !== null) return this._minPlayerPtsCache;
@@ -189,11 +190,20 @@ const Auth = {
         const stored = sessionStorage.getItem('max_player_pts');
         return stored !== null ? parseInt(stored) : 1000;
     },
-    setSessionBounds: function(minPts, maxPts) {
+    getCreatorPts: function() {
+        if (this._creatorPtsCache !== null) return this._creatorPtsCache;
+        const stored = sessionStorage.getItem('creator_pts');
+        return stored !== null ? parseInt(stored) : 100;
+    },
+    setSessionBounds: function(minPts, maxPts, creatorPts = null) {
         this._minPlayerPtsCache = parseInt(minPts) || 0;
         this._maxPlayerPtsCache = parseInt(maxPts) || 1000;
         sessionStorage.setItem('min_player_pts', String(this._minPlayerPtsCache));
         sessionStorage.setItem('max_player_pts', String(this._maxPlayerPtsCache));
+        if (creatorPts !== null) {
+            this._creatorPtsCache = parseInt(creatorPts) || 100;
+            sessionStorage.setItem('creator_pts', String(this._creatorPtsCache));
+        }
     },
     clearAll: function() {
         this._tokenCache = null;
@@ -203,8 +213,10 @@ const Auth = {
         this._onboardingStepCache = null;
         this._minPlayerPtsCache = null;
         this._maxPlayerPtsCache = null;
+        this._creatorPtsCache = null;
         sessionStorage.removeItem('min_player_pts');
         sessionStorage.removeItem('max_player_pts');
+        sessionStorage.removeItem('creator_pts');
         const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
         if (isCapacitor) {
             const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
