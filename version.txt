@@ -2315,3 +2315,8 @@ Version 2.4.99 (Build 499) - 2026-08-16
 Version 2.5.00 (Build 500) - 2026-08-16
 ==================================================
 - Leaderboard Pinned Card Rank Alignment: Fixed calculation bug in `/backend/api/ranking/list.php` line 138 where pinned user rank evaluated `matches_played > 2` instead of points comparison (`rank_points > X`). Pinned leaderboard card rank is now 100% identical to Profile page stat box (#791).
+
+==================================================
+Version 2.5.01 (Build 501) - 2026-08-16
+==================================================
+- Leaderboard Rank Tie Separation: Updated rank tie formatting in `/backend/api/ranking/list.php` so active players with played matches (0 pts) receive a distinct, higher rank number badge than unplayed accounts (0 pts) on the leaderboard table.

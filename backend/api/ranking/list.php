@@ -78,16 +78,19 @@ $ranking = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Formatting for frontend
 $currentRank    = $offset + 1;
 $previousPoints = null;
+$previousPlayed = null;
 
 foreach ($ranking as $index => &$row) {
     if ($search !== '') {
         $row['rank'] = (int)$row['true_global_rank'];
     } else {
-        if ($previousPoints !== null && $row['rank_points'] < $previousPoints) {
+        $isPlayed = ($row['matches_played'] > 0);
+        if ($previousPoints !== null && ($row['rank_points'] < $previousPoints || ($previousPlayed && !$isPlayed))) {
             $currentRank = $offset + $index + 1;
         }
         $row['rank']    = $currentRank;
         $previousPoints = $row['rank_points'];
+        $previousPlayed = $isPlayed;
     }
     unset($row['true_global_rank']);
 
