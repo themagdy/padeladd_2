@@ -1800,7 +1800,7 @@ const DashboardController = {
             listEl.innerHTML = RankingUI.renderSkeleton(5);
         }
 
-        const res = await API.post('/ranking/list', { gender: gender, limit: 10 });
+        const res = await API.post('/ranking/list', { gender: gender, limit: 8 });
         if (!res || !res.success) {
             if (!cached) {
                 listEl.innerHTML = safeHTML(`<div class="empty-state" style="padding:40px 0;"><div class="empty-icon">⚠️</div><h3>Unable to load ranking</h3></div>`);
@@ -1839,7 +1839,14 @@ const DashboardController = {
         ranking.forEach((r, idx) => {
             const isLast = idx === ranking.length - 1;
             const trend = r.points_this_week;
-            const trendHtml = trend > 0 ? `<span style="color:var(--c-green);">+${trend}</span>` : (trend < 0 ? `<span style="color:var(--c-red);">${trend}</span>` : `<span style="color:var(--c-text-dim);">0</span>`);
+            let trendBadge = '';
+            if (trend !== 0 && trend !== null && trend !== undefined) {
+                if (trend > 0) {
+                    trendBadge = `<span class="rank-pts-diff-badge positive"><span style="font-size:9px; margin-right:1px;">▲</span>+${trend}</span>`;
+                } else {
+                    trendBadge = `<span class="rank-pts-diff-badge negative"><span style="font-size:9px; margin-right:1px;">▼</span>${trend}</span>`;
+                }
+            }
 
             const initials = ((r.first_name?.[0] || '') + (r.last_name?.[0] || '')).toUpperCase() || (r.nickname?.[0] || '?').toUpperCase();
             const thumb = r.profile_image_thumb || r.profile_image;
@@ -1872,9 +1879,10 @@ const DashboardController = {
                             </div>
                         </div>
                     </div>
-                    <span class="hide-mobile" style="text-align:center; font-size:13px; font-weight:600; color:var(--c-text-muted);">${r.age || '—'}</span>
-                    <span style="text-align:right; font-size:14px; font-weight:800; color:#fff;">${r.points}</span>
-                    <span class="hide-mobile" style="text-align:right; font-size:12px; font-weight:700;">${trendHtml}</span>
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:center; text-align:right;">
+                        <span style="font-size:14px; font-weight:800; color:#fff; line-height:1.2;">${r.points}</span>
+                        ${trendBadge ? `<div style="display:flex; justify-content:flex-end; margin-top:2px;">${trendBadge}</div>` : ''}
+                    </div>
                 </div>
             `;
         });
@@ -7897,21 +7905,13 @@ const RankingController = {
     _offset: 0,
     _hasMore: true,
     _isLoading: false,
+    _searchQuery: '',
+    _searchTimer: null,
 
-    init: async function () {
+    init: function () {
         UI.syncNav();
 
-        const savedGender = sessionStorage.getItem('ranking_gender');
-        if (savedGender) {
-            this._currentTab = savedGender;
-        } else if (DashboardController._cache && DashboardController._cache.profile && DashboardController._cache.profile.profile) {
-            this._currentTab = DashboardController._cache.profile.profile.gender || 'male';
-        } else {
-            const res = await API.post('/profile/get', {});
-            if (res && res.success && res.data.profile) {
-                this._currentTab = res.data.profile.gender || 'male';
-            }
-        }
+        this._currentTab = sessionStorage.getItem('ranking_gender') || 'male';
 
         // Update UI buttons to reflect default tab
         const mBtn = document.getElementById('rank-tab-male');
@@ -7921,11 +7921,15 @@ const RankingController = {
             fBtn.classList.toggle('active', this._currentTab === 'female');
         }
 
-        // Reset pagination
+        const input = document.getElementById('rank-search');
+        if (input) input.value = '';
+
+        // Reset pagination & search
         this._offset = 0;
         this._hasMore = true;
         this._isLoading = false;
         this._fullList = [];
+        this._searchQuery = '';
 
         window.removeEventListener('scroll', RankingController.handleScroll);
         window.addEventListener('scroll', RankingController.handleScroll);
@@ -7945,11 +7949,15 @@ const RankingController = {
             fBtn.classList.toggle('active', gender === 'female');
         }
 
-        // Reset pagination
+        const input = document.getElementById('rank-search');
+        if (input) input.value = '';
+
+        // Reset pagination & search
         this._offset = 0;
         this._hasMore = true;
         this._isLoading = false;
         this._fullList = [];
+        this._searchQuery = '';
 
         this.loadData();
     },
@@ -7963,13 +7971,13 @@ const RankingController = {
         const cacheKey = this._currentTab;
         const hasCache = this._cache[cacheKey];
 
-        // Only show skeletons if we have no cache and loading first page
-        if (!isSilent && !hasCache && this._offset === 0) {
+        // Only show skeletons if we have no cache, no search, and loading first page
+        if (!isSilent && !hasCache && this._offset === 0 && !this._searchQuery) {
             listEl.innerHTML = RankingUI.renderSkeleton(10);
         }
 
-        // If we have cache, render it immediately
-        if (!isSilent && hasCache && this._offset === 0) {
+        // If we have cache and no search, render it immediately
+        if (!isSilent && hasCache && this._offset === 0 && !this._searchQuery) {
             this._fullList = hasCache;
             this.render(hasCache);
         }
@@ -7979,12 +7987,29 @@ const RankingController = {
         const expectedTab = this._currentTab;
         const currentOffset = this._offset;
 
-        // Fetch paginated ranking list
+        // Show bottom scroll loader when paginating beyond initial page
+        if (currentOffset > 0) {
+            let loaderEl = document.getElementById('ranking-scroll-loader');
+            if (!loaderEl) {
+                loaderEl = document.createElement('div');
+                loaderEl.id = 'ranking-scroll-loader';
+                loaderEl.style.cssText = 'padding: 24px 16px; text-align: center; color: var(--c-text-muted); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;';
+                loaderEl.innerHTML = '<span style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.2);border-top-color:var(--c-blue);border-radius:50%;display:inline-block;animation:spin 0.8s linear infinite;"></span> Loading more players...';
+                listEl.appendChild(loaderEl);
+            }
+        }
+
+        // Fetch paginated ranking list with optional search query
         const res = await API.post('/ranking/list', {
             gender: expectedTab,
             limit: this._limit,
-            offset: currentOffset
+            offset: currentOffset,
+            search: this._searchQuery || ''
         });
+
+        // Clean up bottom scroll loader
+        const activeLoader = document.getElementById('ranking-scroll-loader');
+        if (activeLoader) activeLoader.remove();
 
         // Prevent race condition if user switched tabs during the fetch
         if (this._currentTab !== expectedTab) {
@@ -8004,7 +8029,9 @@ const RankingController = {
 
         if (currentOffset === 0) {
             this._fullList = newItems;
-            this._cache[cacheKey] = newItems;
+            if (!this._searchQuery) {
+                this._cache[cacheKey] = newItems;
+            }
         } else {
             // Append and merge new entries to prevent duplicate items by player_code
             const existingCodes = new Set(this._fullList.map(r => r.player_code));
@@ -8043,32 +8070,21 @@ const RankingController = {
     },
 
     handleSearch: function (query) {
-        const q = query.toLowerCase().trim();
+        const q = query.trim();
+        this._searchQuery = q;
 
         const clearBtn = document.getElementById('rank-search-clear');
         if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
 
-        if (!q) {
-            this.render(this._fullList);
-            return;
-        }
+        if (this._searchTimer) clearTimeout(this._searchTimer);
 
-        const filtered = this._fullList.filter(r => {
-            const fullName = ((r.first_name || '') + ' ' + (r.last_name || '')).toLowerCase();
-            const nickCode = ((r.nickname || '') + ' ' + (r.player_code || '')).toLowerCase();
-            // Every word in the query must appear somewhere across the combined fields
-            const words = q.split(/\s+/).filter(Boolean);
-            const haystack = [
-                (r.nickname || '').toLowerCase(),
-                (r.first_name || '').toLowerCase(),
-                (r.last_name || '').toLowerCase(),
-                (r.player_code || '').toLowerCase(),
-                fullName,
-                nickCode
-            ].join(' ');
-            return words.every(w => haystack.includes(w));
-        });
-        this.render(filtered);
+        this._searchTimer = setTimeout(() => {
+            this._offset = 0;
+            this._hasMore = true;
+            this._isLoading = false;
+            this._fullList = [];
+            this.loadData(true);
+        }, 300);
     },
 
     clearSearch: function () {
@@ -8088,9 +8104,9 @@ const RankingController = {
             return;
         }
 
-        // Pin the current user (if present) to the very top of the list
+        // Pin the current user (if present) to the very top of the list ONLY when search is inactive
         const currentUserId = typeof Auth !== 'undefined' ? Auth.getUserId() : null;
-        if (currentUserId) {
+        if (currentUserId && !this._searchQuery) {
             const myIndex = list.findIndex(r => parseInt(r.user_id) === parseInt(currentUserId));
             if (myIndex > -1) {
                 const me = list.splice(myIndex, 1)[0];
@@ -8147,14 +8163,14 @@ const RankingController = {
                 let badgeHtml = '';
                 if (diffValue !== 0 && diffValue !== null && diffValue !== undefined) {
                     if (diffValue > 0) {
-                        badgeHtml = `<span class="rank-pts-diff-badge" style="color:var(--c-green); background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); display:inline-block;">+${diffValue}</span>`;
+                        badgeHtml = `<span class="rank-pts-diff-badge positive"><span style="font-size:9px; margin-right:1px;">▲</span>+${diffValue}</span>`;
                     } else {
-                        badgeHtml = `<span class="rank-pts-diff-badge" style="color:#ef4444; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); display:inline-block;">${diffValue}</span>`;
+                        badgeHtml = `<span class="rank-pts-diff-badge negative"><span style="font-size:9px; margin-right:1px;">▼</span>${diffValue}</span>`;
                     }
                 }
                 return `
-                    <span class="points-num-val" style="text-align:right; font-size:16px; font-weight:800; color:${pointsColor};">${pointsVal}</span>
-                    ${badgeHtml}
+                    <span class="points-num-val" style="text-align:right; font-size:16px; font-weight:800; color:${pointsColor}; width:100%; display:block; line-height:1.2;">${pointsVal}</span>
+                    ${badgeHtml ? `<div style="display:flex; justify-content:flex-end; margin-top:3px; width:100%;">${badgeHtml}</div>` : ''}
                 `;
             };
 
@@ -8166,20 +8182,11 @@ const RankingController = {
                 if (rankWrap) rankWrap.innerHTML = safeHTML(renderRankWrapHtml(r.rank));
 
                 // 2. Update Stats
-                const age = row.querySelector('.stat-age');
-                if (age) age.textContent = r.age || '—';
-
                 const played = row.querySelector('.stat-played');
                 if (played) played.textContent = r.matches_played;
 
                 const rate = row.querySelector('.stat-rate');
                 if (rate) rate.textContent = r.win_rate + '%';
-
-                const diff = row.querySelector('.stat-diff');
-                if (diff) {
-                    diff.style.color = r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)';
-                    diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
-                }
 
                 // 3. Update Points Column (and mobile stacked badge)
                 const totalWrap = row.querySelector('.total-wrap-el');
@@ -8246,11 +8253,6 @@ const RankingController = {
                 infoWrap.appendChild(nameWrap);
 
                 // Stats
-                const age = document.createElement('span');
-                age.className = 'hide-mobile stat-age';
-                age.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text-muted);';
-                age.textContent = r.age || '—';
-
                 const played = document.createElement('span');
                 played.className = 'hide-mobile stat-played';
                 played.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-text);';
@@ -8261,23 +8263,16 @@ const RankingController = {
                 rate.style.cssText = 'text-align:center; font-size:14px; font-weight:600; color:var(--c-green);';
                 rate.textContent = r.win_rate + '%';
 
-                const diff = document.createElement('span');
-                diff.className = 'hide-mobile stat-diff';
-                diff.style.cssText = `text-align:center; font-size:13px; font-weight:600; color:${r.points_this_week > 0 ? 'var(--c-green)' : r.points_this_week < 0 ? '#ef4444' : 'var(--c-text-muted)'};`;
-                diff.textContent = (r.points_this_week > 0 ? '+' : '') + (r.points_this_week !== 0 ? r.points_this_week : '—');
-
                 // Points column wrapper (mobile: stacked number + badge)
                 const totalWrap = document.createElement('div');
                 totalWrap.className = 'total-wrap-el';
-                totalWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; padding-right:5px;';
+                totalWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; justify-content:center; text-align:right; width:100%;';
                 totalWrap.innerHTML = safeHTML(renderTotalWrapHtml(r.points, r.points_this_week));
 
                 row.appendChild(rankWrap);
                 row.appendChild(infoWrap);
-                row.appendChild(age);
                 row.appendChild(played);
                 row.appendChild(rate);
-                row.appendChild(diff);
                 row.appendChild(totalWrap);
             }
 

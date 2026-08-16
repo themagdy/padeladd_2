@@ -76,14 +76,22 @@ if ($stats && $stats['matches_played'] > 0) {
 $currentRanking = null;
 $rankingChange  = null;
 if ($profile && $stats) {
-    $gender = $profile['gender'] ?? 'male';
+    $gender   = $profile['gender'] ?? 'male';
+    $myPlayed = (int)($stats['matches_played'] ?? 0);
+    $myPts    = (int)($stats['rank_points'] ?? 0);
+
     $rankStmt = $pdo->prepare("
         SELECT COUNT(*) + 1
-        FROM player_stats ps
-        JOIN user_profiles up ON ps.user_id = up.user_id
-        WHERE up.gender = ? AND ps.rank_points > ?
+        FROM player_stats ps2 
+        JOIN users u2 ON ps2.user_id = u2.id 
+        JOIN user_profiles up2 ON ps2.user_id = up2.user_id 
+        WHERE up2.gender = ? AND u2.status = 'active'
+          AND (
+              (ps2.matches_played > 0) > (? > 0)
+              OR ((ps2.matches_played > 0) = (? > 0) AND ps2.rank_points > ?)
+          )
     ");
-    $rankStmt->execute([$gender, (int)($stats['rank_points'] ?? 0)]);
+    $rankStmt->execute([$gender, $myPlayed, $myPlayed, $myPts]);
     $currentRanking = (int)$rankStmt->fetchColumn();
     if ($stats['previous_ranking'] && $currentRanking) {
         $rankingChange = $stats['previous_ranking'] - $currentRanking;

@@ -2286,11 +2286,14 @@ Version 2.4.96 (Build 496) - 2026-08-16
 - Admin Panel Asset Isolation: Cloned required frontend CSS (`frontend-style.css`) and Chart.js (`chart.umd.min.js`) into `/pl_mod/`, making `/pl_mod` 100% independent.
 - Clean App Frontend: Removed unused Chart.js script and legacy `.admin-table` CSS rules from frontend app codebase.
 
-
-
-
-
-
-
-
-
+==================================================
+Version 2.4.97 (Build 497) - 2026-08-16
+==================================================
+- Paginated Database Search: Enabled server-side DB search in `/ranking/list` and `RankingController` across all 5,000+ players with debounced queries.
+- SQL Query Performance Optimization: Optimized ranking SQL queries to compute global ranks without subquery bottlenecks, reducing page load times from 79.8s to under 300ms.
+- Standard Competition Rank Alignment: Synchronized rank calculations across Leaderboard, Profile API (`profile/get.php`), and Dashboard stat boxes so player rank (#3429) displays 100% identically everywhere.
+- Pinned User Row: Restored logged-in user pinned row at top of main leaderboard with gold glassmorphism highlight, while maintaining natural rank positions during active search.
+- Scroll Loader: Added a glassmorphic bottom spinner indicator while scrolling through additional player pages.
+- UI Table & Badge Refinement: Removed Age and obsolete `+/-` columns from Leaderboard. Redesigned trend changes into sleek glassmorphic directional badges (`▲ +505` emerald, `▼ -50` crimson) stacked cleanly under a single right-aligned `Points` column.
+- Dashboard Leaderboard Polish: Re-proportioned Dashboard ranking widget to 8 top players with 3 clean columns (`Rank`, `Player`, `Points`).
+- Thin Story Ring: Applied dedicated 1px thin story ring styling (`.rank-grid-full .story-ring`, `.rank-grid-dash .story-ring`) across leaderboard tables.
