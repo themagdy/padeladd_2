@@ -1168,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('touchstart', (e) => {
             if (!e.touches || e.touches.length !== 1) return;
             const touch = e.touches[0];
-            if (touch.clientX <= 50) {
+            if (touch.clientX <= 25) {
                 edgeTouchStartX = touch.clientX;
                 edgeTouchStartY = touch.clientY;
                 isEdgeSwipeCandidate = true;
