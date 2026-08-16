@@ -74,6 +74,8 @@ if ($mode === 'play_upcoming') {
     $countStmt->execute($params);
     $totalMatches = (int)$countStmt->fetchColumn();
 
+    $params[':my_pts'] = $myPoints;
+
     $sql = "
         SELECT m.*, v.name AS official_venue_name, 
                u.first_name AS creator_first, u.last_name AS creator_last, up.nickname AS creator_nickname, up.gender AS creator_gender
@@ -82,7 +84,13 @@ if ($mode === 'play_upcoming') {
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id
         LEFT JOIN venues v ON m.venue_id = v.id
         $where
-        ORDER BY m.match_datetime ASC 
+        ORDER BY 
+          (CASE 
+            WHEN m.match_type = 'competition' AND (:my_pts BETWEEN m.eligible_min AND m.eligible_max) THEN 1
+            WHEN m.match_type = 'friendly' THEN 2
+            ELSE 3
+          END) ASC,
+          m.match_datetime ASC 
         LIMIT :limit OFFSET :offset
     ";
     

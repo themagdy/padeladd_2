@@ -1842,9 +1842,9 @@ const DashboardController = {
             let trendBadge = '';
             if (trend !== 0 && trend !== null && trend !== undefined) {
                 if (trend > 0) {
-                    trendBadge = `<span class="rank-pts-diff-badge positive"><span style="font-size:9px; margin-right:1px;">▲</span>+${trend}</span>`;
+                    trendBadge = `<span class="rank-pts-diff-badge positive"><span style="font-size:8px; margin-right:2px; transform:scale(0.85); display:inline-block;">▲</span>${Math.abs(trend)}</span>`;
                 } else {
-                    trendBadge = `<span class="rank-pts-diff-badge negative"><span style="font-size:9px; margin-right:1px;">▼</span>${trend}</span>`;
+                    trendBadge = `<span class="rank-pts-diff-badge negative"><span style="font-size:8px; margin-right:2px; transform:scale(0.85); display:inline-block;">▼</span>${Math.abs(trend)}</span>`;
                 }
             }
 
@@ -8163,9 +8163,9 @@ const RankingController = {
                 let badgeHtml = '';
                 if (diffValue !== 0 && diffValue !== null && diffValue !== undefined) {
                     if (diffValue > 0) {
-                        badgeHtml = `<span class="rank-pts-diff-badge positive"><span style="font-size:9px; margin-right:1px;">▲</span>+${diffValue}</span>`;
+                        badgeHtml = `<span class="rank-pts-diff-badge positive"><span style="font-size:8px; margin-right:2px; transform:scale(0.85); display:inline-block;">▲</span>${Math.abs(diffValue)}</span>`;
                     } else {
-                        badgeHtml = `<span class="rank-pts-diff-badge negative"><span style="font-size:9px; margin-right:1px;">▼</span>${diffValue}</span>`;
+                        badgeHtml = `<span class="rank-pts-diff-badge negative"><span style="font-size:8px; margin-right:2px; transform:scale(0.85); display:inline-block;">▼</span>${Math.abs(diffValue)}</span>`;
                     }
                 }
                 return `

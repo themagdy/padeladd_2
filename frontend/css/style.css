@@ -4717,37 +4717,34 @@ form {
 .rank-pts-diff-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
+  justify-content: flex-end;
+  gap: 2px;
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
   line-height: 1;
-  letter-spacing: 0.2px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  transition: all 0.2s ease;
+  letter-spacing: 0.1px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-top: 2px;
 }
 
 .rank-pts-diff-badge.positive {
   color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
 }
 
 .rank-pts-diff-badge.negative {
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
 }
 
 .rank-pts-diff-badge.neutral {
   color: var(--c-text-muted);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Slightly dimmed on Dashboard Leaderboard specifically */
+.rank-grid-dash .rank-pts-diff-badge {
+  opacity: 0.75;
 }
 
 @media (max-width: 600px) {
