@@ -4736,16 +4736,48 @@ const MatchesController = {
         const t2p = document.getElementById('mv-team2-points');
         if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts` : 'EMPTY');
 
-        // Eligibility Range
+        // Eligibility Range Track Bar
         const rangeEl = document.getElementById('mv-eligibility-range');
         const rangeValEl = document.getElementById('mv-range-val');
         if (rangeEl) {
             const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
-            if (isMatchPast) {
+            if (isMatchPast || match.eligible_min === undefined || match.eligible_min === null) {
                 rangeEl.style.display = 'none';
-            } else if (rangeValEl && match.eligible_min !== undefined) {
-                rangeEl.style.display = 'flex';
-                rangeValEl.innerHTML = `${match.eligible_min} <span style="opacity:0.5; margin:0 4px; font-weight:700; text-transform:uppercase;">to</span> ${match.eligible_max} <span style="opacity:0.6; font-weight:700; margin-left:2px;">pts</span>`;
+            } else {
+                rangeEl.style.display = 'block';
+                if (rangeValEl) {
+                    rangeValEl.innerHTML = `${match.eligible_min} <span style="opacity:0.5; margin:0 4px; font-weight:700; text-transform:uppercase;">to</span> ${match.eligible_max} <span style="opacity:0.6; font-weight:700; margin-left:2px;">pts</span>`;
+                }
+
+                // Global bounds from session memory
+                const minBound = Auth.getMinPlayerPts();
+                const maxBound = Math.max(1000, Auth.getMaxPlayerPts(), parseInt(match.eligible_max) || 1000);
+                const span = maxBound - minBound || 1;
+
+                const eMin = parseInt(match.eligible_min) || 0;
+                const eMax = parseInt(match.eligible_max) || 1000;
+
+                const leftPct = Math.max(0, Math.min(100, ((eMin - minBound) / span) * 100));
+                const rightPct = Math.max(0, Math.min(100, 100 - (((eMax - minBound) / span) * 100)));
+
+                const highlight = document.getElementById('mv-slider-highlight');
+                if (highlight) {
+                    highlight.style.left = leftPct + '%';
+                    highlight.style.right = rightPct + '%';
+                }
+
+                // Render User Pin Marker
+                const userPin = document.getElementById('mv-user-pin');
+                const userPinText = document.getElementById('mv-user-pin-text');
+                const userPts = Auth.getCreatorPts();
+                if (userPin && userPts !== null && userPts !== undefined) {
+                    const userPct = Math.max(0, Math.min(100, ((userPts - minBound) / span) * 100));
+                    userPin.style.left = userPct + '%';
+                    userPin.style.display = 'flex';
+                    if (userPinText) {
+                        userPinText.textContent = `📍 You: ${userPts} pts`;
+                    }
+                }
             }
         }
 
