@@ -2326,3 +2326,8 @@ Version 2.5.02 (Build 502) - 2026-08-16
 ==================================================
 - Admin Players Infinite Scroll Pagination: Added server-side SQL pagination (`limit`, `offset`, `status`, `has_more`, `total_count`) in `/backend/api/admin/players/list.php`.
 - Admin Players Infinite Scroll Loader: Integrated debounced search, DB-level status filtering, and an infinite scroll listener targeting the `.admin-main` scroll container (`scrollTop + clientHeight >= scrollHeight - 300`) in `AdminControllers.players` with a glassmorphic bottom spinner indicator.
+
+==================================================
+Version 2.5.03 (Build 503) - 2026-08-16
+==================================================
+- Core Match Points Cap Removed: Removed the 25 pts match points cap in `/backend/helpers/ranking_helper.php` so match score points and new player multipliers (e.g., 14 x 2 = 28 pts) calculate in full without truncation.

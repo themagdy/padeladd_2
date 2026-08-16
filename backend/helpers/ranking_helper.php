@@ -328,7 +328,6 @@ function calculateRankingUpdates(PDO $pdo, int $match_id, int $score_id): array
             $change = 0;
         } else {
             $change = (int) round($subtotal * $newFactor * $integrityFac);
-            $change = max(-25, min(25, $change)); // clamp ±25
         }
 
         $buffer_delta = 0;
