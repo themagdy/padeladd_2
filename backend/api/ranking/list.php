@@ -134,13 +134,16 @@ if ($user && $offset === 0 && empty($search) && !in_array((int)$user['id'], arra
     if ($myRow = $myStmt->fetch(PDO::FETCH_ASSOC)) {
         $myPlayed = (int)($myRow['matches_played'] ?? 0);
         $myPts    = (int)($myRow['points'] ?? 0);
-        if ($myPlayed > 0) {
-            $rStmt = $pdo->prepare("SELECT COUNT(*) + 1 FROM player_stats ps JOIN users u ON ps.user_id = u.id JOIN user_profiles up ON ps.user_id = up.user_id WHERE up.gender = ? AND u.status = 'active' AND (ps.matches_played > ? OR (ps.matches_played = ? AND ps.rank_points > ?))");
-            $rStmt->execute([$gender, $myPlayed, $myPlayed, $myPts]);
-        } else {
-            $rStmt = $pdo->prepare("SELECT COUNT(*) + 1 FROM player_stats ps JOIN users u ON ps.user_id = u.id JOIN user_profiles up ON ps.user_id = up.user_id WHERE up.gender = ? AND u.status = 'active' AND ps.matches_played > 0");
-            $rStmt->execute([$gender]);
-        }
+        $rStmt = $pdo->prepare("
+            SELECT COUNT(*) + 1 
+            FROM player_stats ps JOIN users u ON ps.user_id = u.id JOIN user_profiles up ON ps.user_id = up.user_id 
+            WHERE up.gender = ? AND u.status = 'active'
+              AND (
+                  (ps.matches_played > 0) > (? > 0)
+                  OR ((ps.matches_played > 0) = (? > 0) AND ps.rank_points > ?)
+              )
+        ");
+        $rStmt->execute([$gender, $myPlayed, $myPlayed, $myPts]);
         $myRow['rank']             = (int)$rStmt->fetchColumn();
         $myRow['points']           = (int)$myRow['points'];
         $myRow['points_this_week'] = (int)$myRow['points_this_week'];

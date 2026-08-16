@@ -2310,3 +2310,8 @@ Version 2.4.99 (Build 499) - 2026-08-16
 ==================================================
 - Play Upcoming Match Search: Integrated a search bar under the filters row in `Play > Upcoming`, matching the ranking page search bar style (3D glass asset icon, dark card background, 12px rounded corners, and interactive clear button).
 - Multi-Field Match Search Engine: Implemented multi-word search in `MatchesController` across player names, nicknames, player XCodes (`SIM...`), venue names, and court names.
+
+==================================================
+Version 2.5.00 (Build 500) - 2026-08-16
+==================================================
+- Leaderboard Pinned Card Rank Alignment: Fixed calculation bug in `/backend/api/ranking/list.php` line 138 where pinned user rank evaluated `matches_played > 2` instead of points comparison (`rank_points > X`). Pinned leaderboard card rank is now 100% identical to Profile page stat box (#791).
