@@ -141,42 +141,128 @@ window.AdminControllers = {
         allPlayers: [],
         currentSort: 'name',
         currentOrder: 'ASC',
+        _offset: 0,
+        _limit: 50,
+        _hasMore: true,
+        _isLoading: false,
+        _searchTimer: null,
+        _scrollHandler: null,
+
         async init() {
             console.log('Initializing Players Controller...');
             this.updateSortIcons();
             try {
-                await this.fetchPlayers();
+                this.resetAndFetch();
                 const searchInput = document.getElementById('player-search');
                 if (searchInput) {
-                    searchInput.addEventListener('input', () => this.filterPlayers());
+                    searchInput.addEventListener('input', () => {
+                        clearTimeout(this._searchTimer);
+                        this._searchTimer = setTimeout(() => this.resetAndFetch(), 300);
+                    });
                 }
                 const statusFilter = document.getElementById('player-status-filter');
                 if (statusFilter) {
-                    statusFilter.addEventListener('change', () => this.filterPlayers());
+                    statusFilter.addEventListener('change', () => this.resetAndFetch());
                 }
                 const editForm = document.getElementById('edit-player-form');
                 if (editForm) {
                     editForm.addEventListener('submit', (e) => this.handleUpdate(e));
                 }
+
+                // Window scroll listener for pagination
+                if (this._scrollHandler) {
+                    window.removeEventListener('scroll', this._scrollHandler);
+                }
+                this._scrollHandler = () => this.handleScroll();
+                window.addEventListener('scroll', this._scrollHandler);
             } catch (err) {
                 console.error('Players init error:', err);
             }
         },
-        async fetchPlayers(search = '') {
-            const token = localStorage.getItem('admin_token');
+
+        resetAndFetch() {
+            this._offset = 0;
+            this._hasMore = true;
+            this._isLoading = false;
+            this.allPlayers = [];
+            const tbody = document.getElementById('player-list');
+            if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--c-text-muted);">Loading players...</td></tr>';
+            this.fetchPlayers();
+        },
+
+        async fetchPlayers() {
+            if (this._isLoading || !this._hasMore) return;
+            this._isLoading = true;
+            this.updateScrollLoader();
+
+            const queryInput = document.getElementById('player-search');
+            const statusSelect = document.getElementById('player-status-filter');
+            const q = queryInput ? queryInput.value.trim() : '';
+            const status = statusSelect ? statusSelect.value : 'all';
+
             try {
-                const res = await _admFetch(`../backend/api/admin/players/list.php?search=${search}&sort=${this.currentSort}&order=${this.currentOrder}`);
+                const res = await _admFetch(`../backend/api/admin/players/list.php?search=${encodeURIComponent(q)}&status=${status}&sort=${this.currentSort}&order=${this.currentOrder}&limit=${this._limit}&offset=${this._offset}`);
                 const data = await res.json();
-                if (data.success) {
-                    this.allPlayers = data.data.players;
-                    this.filterPlayers();
+                if (data.success && data.data) {
+                    const newPlayers = data.data.players || [];
+                    this._hasMore = !!data.data.has_more;
+                    this._offset += newPlayers.length;
+
+                    if (this._offset === newPlayers.length) {
+                        this.allPlayers = newPlayers;
+                    } else {
+                        const existingIds = new Set(this.allPlayers.map(p => p.id));
+                        newPlayers.forEach(p => {
+                            if (!existingIds.has(p.id)) this.allPlayers.push(p);
+                        });
+                    }
+
+                    this.renderPlayers(this.allPlayers);
                 } else {
                     console.error('Failed to fetch players:', data.message);
                 }
             } catch (err) {
                 console.error('Network error fetching players:', err);
+            } finally {
+                this._isLoading = false;
+                this.updateScrollLoader();
             }
         },
+
+        handleScroll() {
+            const table = document.getElementById('player-list');
+            if (!table) return;
+
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const clientHeight = window.innerHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight - 300) {
+                this.fetchPlayers();
+            }
+        },
+
+        updateScrollLoader() {
+            let loader = document.getElementById('adm-players-scroll-loader');
+            if (!loader) {
+                const table = document.getElementById('player-list')?.parentElement;
+                if (table) {
+                    loader = document.createElement('div');
+                    loader.id = 'adm-players-scroll-loader';
+                    loader.style.cssText = 'padding:20px; text-align:center; color:var(--c-text-muted); font-size:13px; font-weight:600; display:none;';
+                    table.parentElement.appendChild(loader);
+                }
+            }
+            if (loader) {
+                if (this._isLoading && this.allPlayers.length > 0) {
+                    loader.style.display = 'block';
+                    loader.innerHTML = '<div style="width:20px; height:20px; border:2px solid rgba(255,255,255,0.1); border-top-color:var(--c-primary); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 6px;"></div>Loading more players...';
+                } else {
+                    loader.style.display = 'none';
+                }
+            }
+        },
+
         renderPlayers(players) {
             const tbody = document.getElementById('player-list');
             if (!tbody) {
@@ -184,7 +270,7 @@ window.AdminControllers = {
                 return;
             }
             if (players.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--c-text-muted);">No players found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--c-text-muted);">No players found.</td></tr>';
                 return;
             }
             tbody.innerHTML = players.map(p => `
@@ -237,27 +323,6 @@ window.AdminControllers = {
                     </td>
                 </tr>
             `).join('');
-        },
-        filterPlayers() {
-            const queryInput = document.getElementById('player-search');
-            const statusSelect = document.getElementById('player-status-filter');
-            const q = queryInput ? queryInput.value.toLowerCase().trim() : '';
-            const status = statusSelect ? statusSelect.value : 'all';
-
-            const filtered = this.allPlayers.filter(p => {
-                const matchesSearch = !q ||
-                    (p.full_name && p.full_name.toLowerCase().includes(q)) ||
-                    (p.nickname && p.nickname.toLowerCase().includes(q)) ||
-                    (p.phone && p.phone.includes(q)) ||
-                    (p.email && p.email.toLowerCase().includes(q)) ||
-                    (p.player_code && p.player_code.toLowerCase().includes(q));
-
-                const playerStatus = p.account_status || 'active';
-                const matchesStatus = status === 'all' || playerStatus === status;
-
-                return matchesSearch && matchesStatus;
-            });
-            this.renderPlayers(filtered);
         },
         openModal(userId) {
             const p = this.allPlayers.find(x => x.id == userId);
@@ -505,7 +570,7 @@ window.AdminControllers = {
                 this.currentOrder = 'ASC';
             }
             this.updateSortIcons();
-            this.fetchPlayers(document.getElementById('player-search')?.value || '');
+            this.resetAndFetch();
         },
         updateSortIcons() {
             document.querySelectorAll('.sort-icon').forEach(el => el.innerText = '↕');

@@ -2320,3 +2320,9 @@ Version 2.5.00 (Build 500) - 2026-08-16
 Version 2.5.01 (Build 501) - 2026-08-16
 ==================================================
 - Leaderboard Rank Tie Separation: Updated rank tie formatting in `/backend/api/ranking/list.php` so active players with played matches (0 pts) receive a distinct, higher rank number badge than unplayed accounts (0 pts) on the leaderboard table.
+
+==================================================
+Version 2.5.02 (Build 502) - 2026-08-16
+==================================================
+- Admin Players Infinite Scroll Pagination: Added server-side SQL pagination (`limit`, `offset`, `status`, `has_more`, `total_count`) in `/backend/api/admin/players/list.php`.
+- Admin Players Infinite Scroll Loader: Integrated debounced search, DB-level status filtering, and an infinite window scroll listener in `AdminControllers.players` with a glassmorphic bottom spinner indicator.
