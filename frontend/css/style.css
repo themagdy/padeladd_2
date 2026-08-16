@@ -6446,7 +6446,7 @@ body {
 
 .mv-track-wrapper {
   position: relative;
-  padding-top: 20px;
+  padding-top: 25px;
   padding-bottom: 4px;
   margin: 0 4px;
 }
@@ -6454,7 +6454,7 @@ body {
 .mv-pin-marker {
   display: none;
   position: absolute;
-  top: 0;
+  top: -5px;
   left: 50%;
   transform: translateX(-50%);
   flex-direction: column;
