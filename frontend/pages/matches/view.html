@@ -113,26 +113,24 @@
         </div>
 
         <!-- Eligibility Range Bar Block -->
-        <div id="mv-eligibility-range"
-          style="display:none; margin-top:20px; padding:12px 16px 10px; background:rgba(27,82,206,0.05); border:1px solid rgba(27,82,206,0.15); border-radius:var(--r-md);">
-          
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="font-size:10px; font-weight:800; color:#7da7ff; text-transform:uppercase; letter-spacing:1px;">Eligibility</span>
-            <span id="mv-range-val" style="font-size:11px; font-weight:800; color:#fff; letter-spacing:0.5px;"></span>
+        <div id="mv-eligibility-range" class="mv-eligibility-block">
+          <div class="mv-eligibility-header">
+            <span class="mv-eligibility-title">Eligibility</span>
+            <span id="mv-range-val" class="mv-eligibility-val"></span>
           </div>
 
           <!-- Single Horizontal Track Bar -->
-          <div style="position:relative; padding-top:20px; padding-bottom:4px; margin:0 4px;">
+          <div class="mv-track-wrapper">
             <!-- User Position Pin Marker -->
-            <div id="mv-user-pin" style="display:none; position:absolute; top:0; left:50%; transform:translateX(-50%); flex-direction:column; align-items:center; z-index:5; pointer-events:none;">
-              <span id="mv-user-pin-text" style="font-size:9px; font-weight:800; color:#fff; background:var(--c-primary); padding:1px 6px; border-radius:100px; white-space:nowrap; box-shadow:0 2px 6px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2);">📍 You: 100 pts</span>
-              <div style="width:0; height:0; border-left:3px solid transparent; border-right:3px solid transparent; border-top:4px solid var(--c-primary);"></div>
+            <div id="mv-user-pin" class="mv-pin-marker">
+              <span id="mv-user-pin-text" class="mv-pin-badge">📍 You: 100 pts</span>
+              <div class="mv-pin-arrow"></div>
             </div>
 
             <!-- Single Horizontal Track Bar -->
-            <div style="position:relative; height:5px; background:rgba(255,255,255,0.1); border-radius:100px; width:100%;">
+            <div class="mv-track-bg">
               <!-- Active Highlighted Range Band -->
-              <div id="mv-slider-highlight" style="position:absolute; top:0; bottom:0; left:0%; right:0%; background:var(--c-primary); border-radius:100px;"></div>
+              <div id="mv-slider-highlight" class="mv-track-highlight"></div>
             </div>
           </div>
         </div>
