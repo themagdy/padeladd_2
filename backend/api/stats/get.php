@@ -51,6 +51,12 @@ if ($stats) {
     $totalPlayed = $compPlayed + $friendlyPlayed;
 }
 
+// Global min & max points for friendly match eligibility sliders
+$boundsStmt = $pdo->query("SELECT COALESCE(MIN(rank_points), 0) AS min_pts, COALESCE(MAX(rank_points), 1000) AS max_pts FROM player_stats");
+$boundsRow = $boundsStmt->fetch(PDO::FETCH_ASSOC);
+$minPlayerPts = (int)($boundsRow['min_pts'] ?? 0);
+$maxPlayerPts = max(1000, (int)($boundsRow['max_pts'] ?? 1000));
+
 jsonResponse(true, 'Stats loaded.', [
     'points'           => $stats ? (int)($stats['rank_points'] ?? 0) : 0, // competition points (display/ranking)
     'eligibility_pts'  => $stats ? ((int)($stats['rank_points'] ?? 0) + (int)($stats['current_buffer'] ?? 0)) : 100,           // total points for eligibility logic
@@ -63,5 +69,7 @@ jsonResponse(true, 'Stats loaded.', [
     'highest_ranking'  => $stats ? $stats['highest_ranking'] : null,
     'points_this_week' => $pointsThisWeek,
     'win_rate'         => $winRate,
+    'min_player_pts'   => $minPlayerPts,
+    'max_player_pts'   => $maxPlayerPts,
 ]);
 ?>

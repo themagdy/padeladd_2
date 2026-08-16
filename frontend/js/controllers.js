@@ -3592,6 +3592,15 @@ const MatchesController = {
                 match_type: form.match_type.value
             };
 
+            if (form.match_type.value === 'friendly') {
+                const minS = document.getElementById('cm-eligible-min-slider');
+                const maxS = document.getElementById('cm-eligible-max-slider');
+                if (minS && maxS) {
+                    payload.eligible_min = parseInt(minS.value) || 0;
+                    payload.eligible_max = parseInt(maxS.value) || 1000;
+                }
+            }
+
             if (MatchesController._partnerEnabled) {
                 let code = form.partner_player_code.value.trim();
                 // Strip the name if it was appended (e.g. "A123 (Ahmed Magdy)" -> "A123")
@@ -3622,10 +3631,38 @@ const MatchesController = {
                 Toast.show(res ? res.message : 'Failed to create match', 'error');
             }
         });
+
+        // Initialize Creator Points & Sliders for Friendly Range Selector
+        API.post('/stats/get', {}).then(res => {
+            if (res && res.success && res.data) {
+                const creatorPts = res.data.eligibility_pts ?? 100;
+                const minPts = res.data.min_player_pts ?? 0;
+                const maxPts = Math.max(1000, res.data.max_player_pts ?? 1000, creatorPts + 200);
+
+                MatchesController._creatorEligibilityPts = creatorPts;
+                MatchesController._sliderMinBound = minPts;
+                MatchesController._sliderMaxBound = maxPts;
+
+                const minS = document.getElementById('cm-eligible-min-slider');
+                const maxS = document.getElementById('cm-eligible-max-slider');
+                if (minS && maxS) {
+                    minS.min = minPts;
+                    minS.max = maxPts;
+                    minS.value = Math.max(minPts, creatorPts - 200);
+
+                    maxS.min = minPts;
+                    maxS.max = maxPts;
+                    maxS.value = Math.min(maxPts, creatorPts + 200);
+                }
+
+                MatchesController.updateFriendlyEligibility();
+            }
+        }).catch(() => {});
     },
 
     setToggle: function (fieldName, btn) {
-        document.getElementById('cm-' + fieldName.replace('_', '-')).value = btn.dataset.val;
+        const val = btn.dataset.val;
+        document.getElementById('cm-' + fieldName.replace('_', '-')).value = val;
         const container = btn.parentElement;
         const buttons = container.querySelectorAll('button');
         buttons.forEach(b => {
@@ -3635,10 +3672,72 @@ const MatchesController = {
         });
         btn.classList.add('active');
         let activeBg = 'var(--c-primary)';
-        if (btn.dataset.val === 'competition') activeBg = 'linear-gradient(135deg, #a17012 0%, #543908 100%)';
+        if (val === 'competition') activeBg = 'linear-gradient(135deg, #a17012 0%, #543908 100%)';
         else if (btn.textContent.includes('Women Only')) activeBg = 'var(--c-pink)';
         btn.style.background = activeBg;
         btn.style.color = '#fff';
+
+        if (fieldName === 'match_type') {
+            const friendlyBlock = document.getElementById('cm-friendly-eligibility-block');
+            if (friendlyBlock) {
+                friendlyBlock.style.display = (val === 'friendly') ? 'block' : 'none';
+            }
+        }
+    },
+
+    updateFriendlyEligibility: function () {
+        const minS = document.getElementById('cm-eligible-min-slider');
+        const maxS = document.getElementById('cm-eligible-max-slider');
+        const minValLabel = document.getElementById('cm-min-pts-val');
+        const maxValLabel = document.getElementById('cm-max-pts-val');
+        const badge = document.getElementById('cm-eligibility-badge');
+        const pin = document.getElementById('cm-creator-pin');
+        const pinText = document.getElementById('cm-creator-pin-text');
+
+        if (!minS || !maxS) return;
+
+        const creatorPts = this._creatorEligibilityPts || 100;
+        const minBound = this._sliderMinBound || 0;
+        const maxBound = this._sliderMaxBound || 1000;
+
+        let minVal = parseInt(minS.value) || 0;
+        let maxVal = parseInt(maxS.value) || 1000;
+
+        // Enforce creator MUST stay within range: minVal <= creatorPts <= maxVal
+        if (minVal > creatorPts) {
+            minVal = creatorPts;
+            minS.value = minVal;
+        }
+        if (maxVal < creatorPts) {
+            maxVal = creatorPts;
+            maxS.value = maxVal;
+        }
+        if (minVal > maxVal) {
+            minVal = maxVal;
+            minS.value = minVal;
+        }
+
+        if (minValLabel) minValLabel.textContent = minVal + ' pts';
+        if (maxValLabel) maxValLabel.textContent = maxVal + ' pts';
+        if (badge) badge.textContent = minVal + ' — ' + maxVal + ' pts';
+
+        // Update active highlighted band between the two thumbs on the single track
+        const highlight = document.getElementById('cm-slider-highlight');
+        if (highlight) {
+            const span = maxBound - minBound || 1;
+            const leftPct = Math.max(0, Math.min(100, ((minVal - minBound) / span) * 100));
+            const rightPct = Math.max(0, Math.min(100, 100 - (((maxVal - minBound) / span) * 100)));
+            highlight.style.left = leftPct + '%';
+            highlight.style.right = rightPct + '%';
+        }
+
+        // Position Creator Pin Marker on slider track
+        if (pin && pinText) {
+            pinText.textContent = `📍 You: ${creatorPts} pts`;
+            const rangeSpan = maxBound - minBound || 1;
+            const pct = Math.max(5, Math.min(95, ((creatorPts - minBound) / rangeSpan) * 100));
+            pin.style.left = pct + '%';
+        }
     },
 
     showMatchTypeInfo: function () {

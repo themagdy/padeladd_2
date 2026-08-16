@@ -124,6 +124,85 @@
       <input type="hidden" name="match_type" id="cm-match-type" value="competition">
     </div>
 
+    <!-- Friendly Eligibility Slider (visible only when Match Type = Friendly) -->
+    <div id="cm-friendly-eligibility-block" style="display:none; background:var(--c-bg-card); border-radius:var(--r-md); padding:20px 16px 16px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.06); animation:fadeIn 0.3s ease-out;">
+      <style>
+        .dual-range-thumb {
+          position: absolute;
+          top: -15px;
+          left: 0;
+          width: 100%;
+          height: 24px;
+          background: transparent;
+          -webkit-appearance: none;
+          pointer-events: none;
+          margin: 0;
+          outline: none;
+        }
+        .dual-range-thumb::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          pointer-events: auto;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: #ffffff;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 3px var(--c-primary);
+          cursor: grab;
+          transition: transform 0.1s ease;
+        }
+        .dual-range-thumb::-webkit-slider-thumb:active {
+          transform: scale(1.15);
+          cursor: grabbing;
+        }
+        .dual-range-thumb::-moz-range-thumb {
+          pointer-events: auto;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 3px var(--c-primary);
+          cursor: grab;
+        }
+      </style>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <label class="form-label" style="margin:0;">Points Eligibility Range</label>
+        <span id="cm-eligibility-badge" style="font-family:'Montserrat', sans-serif; font-size:12px; font-weight:800; color:var(--c-primary); background:rgba(27, 82, 206, 0.1); padding:4px 10px; border-radius:6px; border:1px solid rgba(27, 82, 206, 0.2);">
+          0 — 1500 pts
+        </span>
+      </div>
+
+      <!-- Single Track with Dual Thumbs (Handles) & Creator Pin Marker -->
+      <div style="position:relative; padding-top:28px; padding-bottom:12px; margin:0 8px;">
+        <!-- Creator Position Pin Marker -->
+        <div id="cm-creator-pin" style="position:absolute; top:0; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; z-index:5; pointer-events:none;">
+          <span id="cm-creator-pin-text" style="font-size:10px; font-weight:800; color:#fff; background:var(--c-primary); padding:2px 8px; border-radius:100px; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2);">📍 You: 100 pts</span>
+          <div style="width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--c-primary);"></div>
+        </div>
+
+        <!-- Single Horizontal Track Bar -->
+        <div style="position:relative; height:6px; background:rgba(255,255,255,0.1); border-radius:100px; width:100%;">
+          <!-- Active Highlighted Range Band -->
+          <div id="cm-slider-highlight" style="position:absolute; top:0; bottom:0; left:0%; right:0%; background:var(--c-primary); border-radius:100px;"></div>
+        </div>
+
+        <!-- Two Overlay Range Inputs on the exact same line -->
+        <div style="position:relative; height:0; width:100%;">
+          <input type="range" id="cm-eligible-min-slider" class="dual-range-thumb" min="0" max="1500" value="0" step="25"
+            oninput="MatchesController.updateFriendlyEligibility()" style="z-index:3;">
+          <input type="range" id="cm-eligible-max-slider" class="dual-range-thumb" min="0" max="1500" value="1500" step="25"
+            oninput="MatchesController.updateFriendlyEligibility()" style="z-index:4;">
+        </div>
+
+        <!-- Min / Max Display Labels -->
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--c-text-muted); font-weight:700; margin-top:20px;">
+          <span>From: <strong id="cm-min-pts-val" style="color:#fff;">0 pts</strong></span>
+          <span>To: <strong id="cm-max-pts-val" style="color:#fff;">1500 pts</strong></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Gender Toggle -->
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Gender</label>

@@ -2331,3 +2331,11 @@ Version 2.5.02 (Build 502) - 2026-08-16
 Version 2.5.03 (Build 503) - 2026-08-16
 ==================================================
 - Core Match Points Cap Removed: Removed the 25 pts match points cap in `/backend/helpers/ranking_helper.php` so match score points and new player multipliers (e.g., 14 x 2 = 28 pts) calculate in full without truncation.
+
+==================================================
+Version 2.5.04 (Build 504) - 2026-08-16
+==================================================
+- Friendly Match Dual Range Sliders: Integrated From (Min) and To (Max) points range sliders under Match Type toggle in `Create Match`, displaying live min/max player points bounds.
+- Creator Position Pin Marker: Integrated a visual position pin marker (`📍 You: X pts`) directly on the slider track to show the creator's exact points location, while enforcing range boundaries so the creator's points MUST remain inside `[From, To]`.
+- Conditional Slider Visibility: Slider section smooth-reveals only when `Friendly` is selected, and hides completely when `Competition` is active without affecting competition eligibility rules.
+- Backend Friendly Eligibility Range: Updated `/match/create` backend API to accept custom `eligible_min` and `eligible_max` parameters for friendly matches.

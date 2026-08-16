@@ -47,6 +47,15 @@ $elig_range  = ($match_type === 'competition') ? 150 : 400;
 $eligible_min = max(0, $creator_points - $elig_range);
 $eligible_max = $creator_points + $elig_range;
 
+if ($match_type === 'friendly') {
+    if (isset($data['eligible_min']) && $data['eligible_min'] !== '') {
+        $eligible_min = max(0, (int)$data['eligible_min']);
+    }
+    if (isset($data['eligible_max']) && $data['eligible_max'] !== '') {
+        $eligible_max = max($eligible_min, (int)$data['eligible_max']);
+    }
+}
+
 // --- Validation ---
 
 if ($court_name === '') {
