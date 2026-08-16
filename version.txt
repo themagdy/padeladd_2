@@ -2331,3 +2331,14 @@ Version 2.5.02 (Build 502) - 2026-08-16
 Version 2.5.03 (Build 503) - 2026-08-16
 ==================================================
 - Core Match Points Cap Removed: Removed the 25 pts match points cap in `/backend/helpers/ranking_helper.php` so match score points and new player multipliers (e.g., 14 x 2 = 28 pts) calculate in full without truncation.
+
+==================================================
+Version 2.5.04 (Build 504) - 2026-08-16
+==================================================
+- Single-Track Dual-Thumb Friendly Range Slider: Integrated a single-track dual-thumb range slider in `Create Match` with active range highlight band and creator position pin marker (`📍 You: X pts`).
+- Backend Friendly Match Eligibility: Updated `/match/create` API to accept custom `eligible_min` & `eligible_max` values for friendly matches.
+- Dynamic Scale & Bounds API: Updated `/stats/get` to return `min_player_pts` and `max_player_pts` for global slider track scaling.
+- Session Memory Caching: Cached `min_player_pts`, `max_player_pts`, and `creator_pts` in `Auth` session memory (`sessionStorage`) to render sliders instantly on page open with zero API calls.
+- Extreme Left-Edge Swipe Back Gesture: Tightened left-edge swipe back gesture activation zone from 50px to 25px in `frontend/js/app.js`, preventing accidental navigation while interacting with sliders or cards.
+- Match Details Eligibility Visual Track: Replaced text pill in `Match Details` with a visual eligibility track bar, active range highlight band, and user position pin marker.
+- CSS Stylesheet Consolidation: Consolidated all dual-thumb and eligibility track bar styles into `frontend/css/style.css` with WebKit & Moz track resets.
