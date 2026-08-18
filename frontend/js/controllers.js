@@ -7373,22 +7373,22 @@ const NotificationsController = {
                 let avatarHtml = '';
                 if (parseInt(n.sender_id) === 1000000) {
                     avatarHtml = `
-                        <div style="position:relative; flex-shrink:0;">
-                            <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden; background:#1e293b; display:flex; align-items:center; justify-content:center; padding:4px;">
+                        <div class="notif-avatar-wrap">
+                            <div class="notif-avatar-img system-logo">
                                 <img src="assets/logo_ico.png" style="width:100%; height:100%; object-fit:contain; border-radius:50%;">
                             </div>
-                            <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
+                            <div class="notif-badge-emoji">
                                 ${emoji}
                             </div>
                         </div>
                     `;
                 } else {
                     avatarHtml = `
-                        <div style="position:relative; flex-shrink:0;">
-                            <div style="width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.08); overflow:hidden;">
+                        <div class="notif-avatar-wrap">
+                            <div class="notif-avatar-img">
                                 ${UI.getAvatarHtml(thumb, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:100%; height:100%; border-radius:50%;', initials)}
                             </div>
-                            <div style="position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; background:var(--c-bg-card); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid var(--c-bg-card); box-shadow:0 2px 5px rgba(0,0,0,0.4); z-index:2;">
+                            <div class="notif-badge-emoji">
                                 ${emoji}
                             </div>
                         </div>
@@ -7397,13 +7397,13 @@ const NotificationsController = {
 
                 return `
                     ${avatarHtml}
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-size:13px; color:var(--c-text); line-height:1.4; font-weight:${isReadVisually ? '400' : '500'}; word-break:break-word;">
-                            ${n.message_text.replace(/: (.*)/, ': <span style="font-weight:700;">$1</span>')}${n.group_suffix || ''}
+                    <div class="notif-content-body">
+                        <div class="notif-text">
+                            ${n.message_text.replace(/: (.*)/, ': <span class="highlight-name">$1</span>')}${n.group_suffix || ''}
                         </div>
-                        <div style="font-size:11px; color:var(--c-text-muted); margin-top:4px; opacity:0.7;">${relTime(n.created_at)}</div>
+                        <div class="notif-time-stamp">${relTime(n.created_at)}</div>
                     </div>
-                    ${!isReadVisually ? '<div class="unread-dot" style="width:8px; height:8px; background:var(--c-primary); border-radius:50%; flex-shrink:0; margin-top:6px;"></div>' : ''}
+                    ${!isReadVisually ? '<div class="unread-dot notif-unread-dot"></div>' : ''}
                 `;
             };
 
@@ -7413,7 +7413,7 @@ const NotificationsController = {
                 // Add group header label
                 const header = document.createElement('div');
                 header.className = 'notif-header-label';
-                header.style.cssText = 'font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--c-text-muted); padding:16px 20px 8px; opacity:0.7;';
+                header.style.cssText = 'font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--c-text-muted); padding:16px 20px 10px 16px; opacity:0.75;';
                 header.textContent = label;
                 listEl.appendChild(header);
 
@@ -7581,7 +7581,7 @@ const NotificationsController = {
             <div id="notif-panel-overlay" onclick="NotificationsController.close()" style="position:fixed; inset:0; z-index:8998; background:rgba(0,0,0,0.5); display:none;"></div>
             <div id="notif-panel-inner" style="
                 position:fixed; top:0; right:0; height:100dvh; width:min(380px, 100vw);
-                background:var(--c-bg-card); border-left:1px solid var(--c-border);
+                background:rgba(18, 24, 36, 0.96); border-left:1px solid var(--c-border);
                 z-index:8999; display:flex; flex-direction:column;
                 transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
                 box-shadow:-8px 0 32px rgba(0,0,0,0.4);

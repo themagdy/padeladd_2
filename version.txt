@@ -2342,3 +2342,12 @@ Version 2.5.04 (Build 504) - 2026-08-16
 - Extreme Left-Edge Swipe Back Gesture: Tightened left-edge swipe back gesture activation zone from 50px to 25px in `frontend/js/app.js`, preventing accidental navigation while interacting with sliders or cards.
 - Match Details Eligibility Visual Track: Replaced text pill in `Match Details` with a visual eligibility track bar, active range highlight band, and user position pin marker.
 - CSS Stylesheet Consolidation: Consolidated all dual-thumb and eligibility track bar styles into `frontend/css/style.css` with WebKit & Moz track resets.
+
+==================================================
+Version 2.5.05 (Build 505) - 2026-08-18
+==================================================
+- Restyled Notification Item Cards: Redesigned notification items into floating rounded cards with glowing blue unread accent bars, micro-animation hover lifts, and 42px avatars with action emoji badges.
+- Notification Typography & Font Weights: Tuned font sizes (12px text, 10px timestamp) and font weights (500 read, 600 unread, 700 bold names/headers) for optimal mobile clarity.
+- Notification Panel Performance & Opacity: Optimized drawer sliding performance with 3D hardware acceleration and clean rgba background transparency (`rgba(18, 24, 36, 0.96)`).
+- Mobile Hero Banner Image: Enabled full 1000x526 (1.9:1) uncropped hero banner image (`assets/landing_banner.jpg`) on mobile login screens.
+
