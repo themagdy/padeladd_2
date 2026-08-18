@@ -268,10 +268,13 @@ const Router = {
                 e.preventDefault();
                 let href = target.getAttribute('href');
 
-                // Clear sub-tabs when navigating via main menu items
+                // Clear sub-tabs and search query when navigating via main menu items
                 if (target.classList.contains('nav-item')) {
                     sessionStorage.removeItem('last_sub_tab_play');
                     sessionStorage.removeItem('last_sub_tab_mine');
+                    if (typeof MatchesController !== 'undefined') {
+                        MatchesController._searchQuery = '';
+                    }
                 }
 
                 this.navigate(href);

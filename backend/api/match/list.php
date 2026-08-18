@@ -44,6 +44,7 @@ $totalMatches = 0;
 if ($mode === 'play_upcoming') {
     $filterType = $data['match_type'] ?? 'all';
     $filterGender = $data['gender_type'] ?? 'all';
+    $search = trim($data['search'] ?? '');
 
     $where = "
         WHERE m.status IN ('open', 'full')
@@ -63,12 +64,39 @@ if ($mode === 'play_upcoming') {
         $params[':gender_type'] = $filterGender;
     }
 
+    if ($search !== '') {
+        $where .= " AND (
+            m.match_code LIKE :s1
+            OR m.court_name LIKE :s2
+            OR v.name LIKE :s3
+            OR u.first_name LIKE :s4
+            OR u.last_name LIKE :s5
+            OR CONCAT(u.first_name, ' ', u.last_name) LIKE :s6
+            OR up.nickname LIKE :s7
+            OR up.player_code LIKE :s8
+            OR m.id IN (
+                SELECT mp.match_id FROM match_players mp 
+                JOIN users mu ON mp.user_id = mu.id 
+                LEFT JOIN user_profiles mup ON mp.user_id = mup.user_id 
+                WHERE mu.first_name LIKE :s9 OR mu.last_name LIKE :s10 OR CONCAT(mu.first_name, ' ', mu.last_name) LIKE :s11 OR mup.nickname LIKE :s12 OR mup.player_code LIKE :s13
+            )
+        )";
+        $sVal = '%' . $search . '%';
+        for ($i = 1; $i <= 13; $i++) {
+            $params[":s$i"] = $sVal;
+        }
+        if (!isset($data['limit'])) {
+            $limit = 100;
+        }
+    }
+
     // Total Count
     $countStmt = $pdo->prepare("
         SELECT COUNT(*) 
         FROM matches m 
         JOIN users u ON m.creator_id = u.id
         LEFT JOIN user_profiles up ON m.creator_id = up.user_id 
+        LEFT JOIN venues v ON m.venue_id = v.id
         $where
     ");
     $countStmt->execute($params);

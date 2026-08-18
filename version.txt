@@ -2351,3 +2351,14 @@ Version 2.5.05 (Build 505) - 2026-08-18
 - Notification Panel Performance & Opacity: Optimized drawer sliding performance with 3D hardware acceleration and clean rgba background transparency (`rgba(18, 24, 36, 0.96)`).
 - Mobile Hero Banner Image: Enabled full 1000x526 (1.9:1) uncropped hero banner image (`assets/landing_banner.jpg`) on mobile login screens.
 
+==================================================
+Version 2.5.06 (Build 506) - 2026-08-18
+==================================================
+- Server-Side Match Search: Integrated server-side SQL search in `/api/match/list.php` across match codes, court names, venue names, creator names, nicknames, and player codes, returning all matching database results.
+- Search Bar Query Persistence: Preserved search query string in `#ml-search` when returning from Match Details, while resetting search when switching to other main sections (Rank, Profile, Dashboard).
+- Playing Side Selection & Conflict Resolution: Added Playing Side selection toggle (`Left`, `Flexible`, `Right`) with clean labels in `Create Match` and auto-assigned gold `F` badge when creator and partner have matching side preferences.
+- Solo Join Available Side Selection Modal: Created `promptSoloSideSelection` overlay to prompt for available side selection upon solo join or jump-in, hiding occupied sides and pre-selecting user profile preferred side.
+- Approved Recent Partners Chips: Launched `/api/profile/recent_partners` endpoint to display the latest 3 approved explicit partners (both sent and received invitations) below the partner XCode input, hidden automatically when 0 approved partner invitations exist.
+
+
+

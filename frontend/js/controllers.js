@@ -3335,26 +3335,37 @@ const MatchesController = {
     // ── Create ──────────────────────────────────────────
 
     initCreate: function () {
-        UI.syncNav();
+        MatchesController._partnerData = null;
+        MatchesController._partnerEnabled = false;
+
+        MatchesController.loadRecentPartners('cm-recent-partners', 'cm-partner-code');
 
         const genderBtn = document.getElementById('cm-gender-restricted-btn');
-        if (genderBtn) {
-            const updateGenderLabel = (p) => {
-                if (!p || !p.gender) return;
+        const updateProfileDefaults = (p) => {
+            if (!p) return;
+            if (genderBtn && p.gender) {
                 const isFemale = p.gender.toLowerCase() === 'female';
                 genderBtn.textContent = isFemale ? 'Women Only' : 'Men Only';
                 if (isFemale && genderBtn.classList.contains('active')) {
                     genderBtn.style.background = 'var(--c-pink)';
                 }
-            };
-
-            if (DashboardController._currentProfile) {
-                updateGenderLabel(DashboardController._currentProfile);
-            } else {
-                API.post('/profile/get', {}).then(res => {
-                    if (res && res.success) updateGenderLabel(res.data.profile);
-                });
             }
+            if (p.playing_side) {
+                const s = p.playing_side.toLowerCase();
+                const targetVal = (s === 'left' || s === 'l') ? 'left' : (s === 'right' || s === 'r') ? 'right' : 'flexible';
+                const sideBtn = document.querySelector(`.cm-side-btn[data-val="${targetVal}"]`);
+                if (sideBtn) {
+                    MatchesController.setToggle('playing_side', sideBtn);
+                }
+            }
+        };
+
+        if (DashboardController._currentProfile) {
+            updateProfileDefaults(DashboardController._currentProfile);
+        } else {
+            API.post('/profile/get', {}).then(res => {
+                if (res && res.success) updateProfileDefaults(res.data.profile);
+            });
         }
 
         const dateScroller = document.getElementById('cm-date-scroller');
@@ -3525,13 +3536,10 @@ const MatchesController = {
                         const res = await API.post('/profile/check_code', { code: q });
                         if (res && res.success) {
                             partnerInput.value = q;
-                            partnerHelp.textContent = "✓ Player found";
-                            partnerHelp.style.color = "var(--c-text-blue)";
-                            if (badge) {
-                                badge.textContent = res.data.name;
-                                badge.style.display = 'block';
-                            }
+                            MatchesController._partnerData = res.data;
+                            MatchesController.updatePartnerSideBadge();
                         } else {
+                            MatchesController._partnerData = null;
                             partnerHelp.textContent = (res && res.message) ? res.message : "Player not found or invalid";
                             partnerHelp.style.color = "var(--c-danger)";
                             partnerInput.classList.add('error');
@@ -3589,7 +3597,8 @@ const MatchesController = {
                 match_datetime: combined,
                 duration_minutes: parseInt(form.duration_minutes.value) || 90,
                 gender_type: form.gender_type.value,
-                match_type: form.match_type.value
+                match_type: form.match_type.value,
+                playing_side: form.playing_side ? form.playing_side.value : 'flexible'
             };
 
             if (form.match_type.value === 'friendly') {
@@ -3655,6 +3664,37 @@ const MatchesController = {
         MatchesController.updateFriendlyEligibility();
     },
 
+    updatePartnerSideBadge: function () {
+        const partnerData = this._partnerData;
+        const badge = document.getElementById('cm-partner-badge');
+        const partnerHelp = document.getElementById('cm-partner-help');
+        if (!partnerData || !badge) return;
+
+        const creatorSide = document.getElementById('cm-playing-side')?.value || 'flexible';
+        const partnerPrefSide = partnerData.playing_side || 'flexible';
+        let partnerFinalSide = partnerPrefSide;
+
+        if (creatorSide === 'left' && partnerPrefSide === 'left') {
+            partnerFinalSide = 'flexible';
+        } else if (creatorSide === 'right' && partnerPrefSide === 'right') {
+            partnerFinalSide = 'flexible';
+        }
+
+        const isConflict = (partnerFinalSide === 'flexible' && partnerPrefSide !== 'flexible');
+
+        badge.innerHTML = safeHTML(`${partnerData.name}${isConflict ? ' <span class="side-indicator-mini flexible" style="margin-left:6px; vertical-align:middle;">F</span>' : ''}`);
+        badge.style.display = 'block';
+        if (partnerHelp) {
+            if (isConflict) {
+                partnerHelp.textContent = "✓ Partner set to Flexible (side conflict)";
+                partnerHelp.style.color = "var(--c-text-blue)";
+            } else {
+                partnerHelp.textContent = "✓ Player found";
+                partnerHelp.style.color = "var(--c-text-blue)";
+            }
+        }
+    },
+
     setToggle: function (fieldName, btn) {
         const val = btn.dataset.val;
         document.getElementById('cm-' + fieldName.replace('_', '-')).value = val;
@@ -3677,6 +3717,9 @@ const MatchesController = {
             if (friendlyBlock) {
                 friendlyBlock.style.display = (val === 'friendly') ? 'block' : 'none';
             }
+        }
+        if (fieldName === 'playing_side' && MatchesController._partnerData) {
+            MatchesController.updatePartnerSideBadge();
         }
     },
 
@@ -3812,8 +3855,11 @@ const MatchesController = {
         }
     },
 
-    // ── List ──────────────────────────────────────────
     initList: async function (mode = 'play') {
+        if (MatchesController._lastMode && MatchesController._lastMode !== mode) {
+            MatchesController._searchQuery = '';
+        }
+
         // Resolve sub-tab: check if we have a saved sub-tab for this mode
         const savedTab = sessionStorage.getItem('last_sub_tab_' + mode);
         let defaultSubTab = mode === 'play' ? 'play_upcoming' : 'mine_upcoming';
@@ -3915,6 +3961,14 @@ const MatchesController = {
         filterEl.style.display = isUpcomingPlay ? 'block' : 'none';
 
         if (isUpcomingPlay) {
+            // Sync search input box text and clear button
+            const searchInput = document.getElementById('ml-search');
+            if (searchInput) {
+                searchInput.value = MatchesController._searchQuery || '';
+                const clearBtn = document.getElementById('ml-search-clear');
+                if (clearBtn) clearBtn.style.display = MatchesController._searchQuery ? 'block' : 'none';
+            }
+
             // Sync active states for type buttons
             filterEl.querySelectorAll('.ml-type-filter-btn').forEach(btn => {
                 const isActive = btn.dataset.val === MatchesController._playFilterType;
@@ -3997,9 +4051,11 @@ const MatchesController = {
         const clearBtn = document.getElementById('ml-search-clear');
         if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
 
-        const cacheKey = `${this._currentTab}_${this._playFilterType}_${this._playFilterGender}`;
-        const allMatches = this._cache[cacheKey] || [];
-        this.renderList(allMatches);
+        clearTimeout(this._searchTimer);
+        this._searchTimer = setTimeout(() => {
+            MatchesController._offset = 0;
+            MatchesController.loadList();
+        }, 300);
     },
 
     clearSearch: function () {
@@ -4050,7 +4106,7 @@ const MatchesController = {
         if (!isSilent && !hasCache && list) list.style.display = 'none';
 
         // If we have cache, render it immediately while fetching
-        if (!isSilent && hasCache && MatchesController._offset === 0) {
+        if (!isSilent && hasCache && MatchesController._offset === 0 && !MatchesController._searchQuery) {
             MatchesController.renderList(hasCache);
             if (skeleton) skeleton.style.display = 'none';
             if (list) list.style.display = 'block';
@@ -4062,6 +4118,7 @@ const MatchesController = {
             mode: MatchesController._currentTab,
             match_type: MatchesController._playFilterType,
             gender_type: MatchesController._playFilterGender,
+            search: MatchesController._searchQuery || '',
             limit: isSilent ? Math.max(10, currentLength) : MatchesController._limit,
             offset: isSilent ? 0 : MatchesController._offset
         };
@@ -5579,10 +5636,16 @@ const MatchesController = {
                         }
 
                         input.value = q;
-                        help.textContent = "✓ Player found";
+                        const mySide = (MatchesController._currentUserSide || DashboardController._currentProfile?.playing_side || 'flexible').toLowerCase();
+                        const partnerSide = (res.data.playing_side || 'flexible').toLowerCase();
+                        let isConflict = false;
+                        if (mySide === 'left' && partnerSide === 'left') isConflict = true;
+                        if (mySide === 'right' && partnerSide === 'right') isConflict = true;
+
+                        help.textContent = isConflict ? "✓ Partner set to Flexible (side conflict)" : "✓ Player found";
                         help.style.color = "var(--c-text-blue)";
                         if (badge) {
-                            badge.textContent = res.data.name;
+                            badge.innerHTML = safeHTML(`${res.data.name}${isConflict ? ' <span class="side-indicator-mini flexible" style="margin-left:6px; vertical-align:middle;">F</span>' : ''}`);
                             badge.style.display = 'block';
                         }
                     } else {
@@ -5601,12 +5664,68 @@ const MatchesController = {
         };
     },
 
+    loadRecentPartners: async function (containerId, inputId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        try {
+            const res = await API.post('/profile/recent_partners', {});
+            if (!res || !res.success || !res.data || !res.data.partners || res.data.partners.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            const partners = res.data.partners;
+            let chipsHtml = '';
+            partners.forEach(p => {
+                const pCode = p.player_code;
+                const displayName = p.nickname || p.name;
+                const initials = displayName.substring(0, 2).toUpperCase();
+                const avatarHtml = UI.getAvatarHtml(p.profile_image_thumb || p.profile_image, 'width:100%; height:100%; border-radius:50%; object-fit:cover;', 'width:20px; height:20px; border-radius:50%; flex-shrink:0; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.15); color:#fff;', initials);
+
+                chipsHtml += `
+                    <div onclick="MatchesController.selectRecentPartner('${pCode}', '${inputId}')"
+                        style="display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:100px; padding:4px 10px 4px 6px; cursor:pointer; transition:all 0.2s; user-select:none;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.14)'; this.style.borderColor='var(--c-primary)';"
+                        onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='rgba(255,255,255,0.12)';">
+                        ${avatarHtml}
+                        <span style="font-weight:700; font-size:12px; color:#fff;">${displayName}</span>
+                        <span style="font-size:10px; font-weight:700; color:var(--c-orange); background:rgba(247,148,29,0.15); padding:1px 5px; border-radius:4px;">${pCode}</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = safeHTML(`
+                <div style="margin-top:10px;">
+                    <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px;">Recent Partners</div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        ${chipsHtml}
+                    </div>
+                </div>
+            `);
+            container.style.display = 'block';
+        } catch (err) {
+            console.error('Error loading recent partners:', err);
+            container.style.display = 'none';
+        }
+    },
+
+    selectRecentPartner: function (code, inputId) {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.value = code;
+            input.dispatchEvent(new Event('input'));
+        }
+    },
+
     showInvitePartner: function (isFull = false) {
         // Cancel solo selection mode if active
         MatchesController.cancelSelectionMode();
 
         const form = document.getElementById('mv-join-team-form');
         if (!form) return;
+
+        MatchesController.loadRecentPartners('mv-recent-partners', 'mv-partner-code-input');
 
         // Inject/update the waitlist notice at top of team form
         let noticeEl = document.getElementById('mv-team-waitlist-notice');
@@ -5765,33 +5884,119 @@ const MatchesController = {
         }
     },
 
+    promptSoloSideSelection: function (team_no) {
+        return new Promise((resolve) => {
+            const userDefaultSide = (DashboardController._currentProfile?.playing_side || MatchesController._currentUserSide || 'flexible').toLowerCase();
+
+            let teammateSide = null;
+            if (team_no) {
+                const teammate = (MatchesController._currentMatchSlots || []).find(s => parseInt(s.team_no) === parseInt(team_no));
+                if (teammate && teammate.playing_side) {
+                    teammateSide = teammate.playing_side.toLowerCase();
+                }
+            }
+
+            const availableOptions = [];
+            if (teammateSide !== 'left') availableOptions.push({ val: 'left', label: 'Left' });
+            availableOptions.push({ val: 'flexible', label: 'Flexible' });
+            if (teammateSide !== 'right') availableOptions.push({ val: 'right', label: 'Right' });
+
+            const isDefaultAvailable = availableOptions.some(o => o.val === userDefaultSide);
+            let selectedVal = isDefaultAvailable ? userDefaultSide : 'flexible';
+
+            let overlay = document.getElementById('solo-side-modal-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'solo-side-modal-overlay';
+                overlay.style.cssText = `
+                    position:fixed; top:0; left:0; width:100%; height:100%;
+                    background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+                    display:flex; flex-direction:column; align-items:center; justify-content:center;
+                    z-index:100000; opacity:0; pointer-events:none;
+                    transition:opacity 0.25s ease; padding:20px; box-sizing:border-box;
+                `;
+                document.body.appendChild(overlay);
+            }
+
+            const buttonsHtml = availableOptions.map(opt => {
+                const isSelected = opt.val === selectedVal;
+                return `
+                    <button type="button" class="solo-side-opt-btn ${isSelected ? 'active' : ''}" data-side="${opt.val}"
+                        style="flex:1; padding:12px 8px; border-radius:12px; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.1)'}; background:${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.04)'}; color:#fff; font-weight:700; font-size:14px; cursor:pointer; transition:all 0.2s; font-family:var(--font);">
+                        ${opt.label}${opt.val === userDefaultSide ? ' ⭐' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            overlay.innerHTML = safeHTML(`
+                <div id="solo-side-card" style="background:rgba(23, 23, 28, 0.98); border:1px solid rgba(255,255,255,0.1); border-radius:28px; padding:24px 20px; width:100%; max-width:340px; text-align:center; box-shadow:0 30px 60px rgba(0,0,0,0.6); transform:scale(0.9); opacity:0; transition:all 0.3s ease;">
+                    <div style="font-size:32px; margin-bottom:8px;">🎾</div>
+                    <h3 style="font-size:18px; font-weight:800; color:#fff; margin:0 0 6px 0;">Select Playing Side</h3>
+                    <p style="font-size:12px; color:var(--c-text-muted); margin:0 0 20px 0;">Choose your side for this match</p>
+                    
+                    <div id="solo-side-btn-container" style="display:flex; gap:8px; margin-bottom:20px;">
+                        ${buttonsHtml}
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <button id="solo-side-confirm-btn" style="width:100%; padding:14px; border-radius:14px; border:none; background:var(--c-primary); color:#fff; font-weight:800; font-size:14px; cursor:pointer; box-shadow:0 4px 12px rgba(27,82,206,0.3);">JOIN MATCH</button>
+                        <button id="solo-side-cancel-btn" style="width:100%; padding:10px; border-radius:14px; border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:13px; cursor:pointer;">Cancel</button>
+                    </div>
+                </div>
+            `);
+
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+
+            setTimeout(() => {
+                const card = document.getElementById('solo-side-card');
+                if (card) { card.style.transform = 'scale(1)'; card.style.opacity = '1'; }
+            }, 10);
+
+            const container = overlay.querySelector('#solo-side-btn-container');
+            if (container) {
+                container.querySelectorAll('.solo-side-opt-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        container.querySelectorAll('.solo-side-opt-btn').forEach(b => {
+                            b.classList.remove('active');
+                            b.style.border = '1px solid rgba(255,255,255,0.1)';
+                            b.style.background = 'rgba(255,255,255,0.04)';
+                        });
+                        btn.classList.add('active');
+                        btn.style.border = '1px solid var(--c-primary)';
+                        btn.style.background = 'var(--c-primary)';
+                        selectedVal = btn.dataset.side;
+                    };
+                });
+            }
+
+            const closeSelf = (val) => {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                resolve(val);
+            };
+
+            const confirmBtn = overlay.querySelector('#solo-side-confirm-btn');
+            if (confirmBtn) confirmBtn.onclick = () => closeSelf(selectedVal);
+
+            const cancelBtn = overlay.querySelector('#solo-side-cancel-btn');
+            if (cancelBtn) cancelBtn.onclick = () => closeSelf(null);
+
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeSelf(null);
+            };
+        });
+    },
+
     performJoinSolo: async function (match_id, btn, team_no = null, slot_no = null, force_waitlist = false) {
         let oldText = btn ? btn.innerText : '🎾 Join Solo';
 
         let sideOverride = null;
-        if (team_no && slot_no && !force_waitlist) {
-            const partner = (MatchesController._currentMatchSlots || []).find(s => parseInt(s.team_no) === team_no);
-            const mySide = MatchesController._currentUserSide;
-            if (partner && partner.playing_side && mySide && partner.playing_side !== 'flexible' && mySide !== 'flexible') {
-                if (partner.playing_side === mySide) {
-                    const result = await ConfirmModal.show({
-                        title: 'Side Conflict',
-                        message: `You are both ${mySide} players. How would you like to proceed?`,
-                        confirmText: 'Join as Flexible',
-                        thirdText: 'Join Waiting List',
-                        cancelText: 'Cancel'
-                    });
-
-                    if (result === 'third') {
-                        MatchesController.cancelSelectionMode();
-                        return MatchesController.joinWaitlist(match_id, btn);
-                    }
-                    if (!result) {
-                        MatchesController.cancelSelectionMode();
-                        return;
-                    }
-                    sideOverride = 'flexible';
-                }
+        if (!force_waitlist) {
+            sideOverride = await MatchesController.promptSoloSideSelection(team_no);
+            if (!sideOverride) {
+                MatchesController.cancelSelectionMode();
+                return;
             }
         }
 
@@ -6135,6 +6340,12 @@ const MatchesController = {
     },
 
     performJumpIn: async function (waitlist_id, match_id, btn, team_no = null, slot_no = null) {
+        const sideOverride = await MatchesController.promptSoloSideSelection(team_no);
+        if (!sideOverride) {
+            MatchesController.cancelSelectionMode();
+            return;
+        }
+
         if (btn) {
             btn.disabled = true;
             if (btn.classList.contains('mv-slot')) {
@@ -6144,7 +6355,7 @@ const MatchesController = {
             }
         }
 
-        const res = await API.post('/match/jump-in', { waitlist_id, match_id, team_no, slot_no });
+        const res = await API.post('/match/jump-in', { waitlist_id, match_id, team_no, slot_no, playing_side: sideOverride });
         if (res && res.success) {
             Toast.show('You joined the match! ⚡', 'success');
             await MatchesController.loadDetails({ match_id: match_id }, true);

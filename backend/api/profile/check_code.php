@@ -14,7 +14,7 @@ if ($code === '') {
 
 // Ensure the user is not querying their own code to play with themselves
 $stmt = $pdo->prepare("
-    SELECT u.first_name, up.nickname, up.user_id 
+    SELECT u.first_name, up.nickname, up.user_id, up.playing_side 
     FROM users u 
     JOIN user_profiles up ON u.id = up.user_id 
     WHERE up.player_code = ? AND u.status = 'active' AND u.id != " . ADMIN_SYSTEM_USER_ID . "
@@ -35,5 +35,6 @@ $displayName = !empty($player['nickname']) ? $player['nickname'] : $player['firs
 
 jsonResponse(true, 'Player found', [
     'name' => trim($displayName),
-    'user_id' => (int)$player['user_id']
+    'user_id' => (int)$player['user_id'],
+    'playing_side' => $player['playing_side'] ?: 'flexible'
 ]);

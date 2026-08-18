@@ -205,9 +205,8 @@ try {
             LEFT JOIN player_stats ps ON up.user_id = ps.user_id 
             WHERE up.user_id = ?
         ");
-        $stmt->execute([$targetUid]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        $side = $row ? $row['playing_side'] : 'flexible';
+        $sideInput = trim($data['playing_side'] ?? '');
+        $side = in_array($sideInput, ['left', 'right', 'flexible']) ? $sideInput : ($row ? $row['playing_side'] : 'flexible');
         $rp   = (int)($row['rank_points'] ?? 0);
         $bp   = (int)($row['current_buffer'] ?? 100);
 

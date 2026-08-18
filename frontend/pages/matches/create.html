@@ -160,6 +160,23 @@
       </div>
     </div>
 
+    <!-- Playing Side Toggle -->
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">Playing Side</label>
+      <div style="display:flex; background:var(--c-bg-secondary); border-radius:var(--r-md); padding:4px; gap:4px;">
+        <button type="button" class="cm-side-btn" data-val="left"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;"
+          onclick="MatchesController.setToggle('playing_side', this)">Left</button>
+        <button type="button" class="cm-side-btn active" data-val="flexible"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:var(--c-primary); color:#fff; font-weight:700; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.2); transition:all 0.2s;"
+          onclick="MatchesController.setToggle('playing_side', this)">Flexible</button>
+        <button type="button" class="cm-side-btn" data-val="right"
+          style="flex:1; padding:10px; border-radius:calc(var(--r-md) - 4px); border:none; background:transparent; color:var(--c-text-muted); font-weight:700; font-size:14px; transition:all 0.2s;"
+          onclick="MatchesController.setToggle('playing_side', this)">Right</button>
+      </div>
+      <input type="hidden" name="playing_side" id="cm-playing-side" value="flexible">
+    </div>
+
     <!-- Gender Toggle -->
     <div class="form-group" style="margin-bottom:24px;">
       <label class="form-label">Gender</label>
@@ -204,6 +221,7 @@
           <div id="cm-partner-badge" style="position:absolute; right:12px; font-size:12px; font-weight:700; color:var(--c-orange); background:rgba(247,148,29,0.1); padding:4px 8px; border-radius:6px; pointer-events:none; display:none; white-space:nowrap;"></div>
         </div>
         <span class="form-help" id="cm-partner-help">Enter your partner's player XCode</span>
+        <div id="cm-recent-partners" style="display:none;"></div>
       </div>
     </div>
 

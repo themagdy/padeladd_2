@@ -36,7 +36,10 @@ if (!in_array($match_type, ['friendly', 'competition'])) $match_type = 'competit
 $ups = $pdo->prepare("SELECT up.playing_side, ps.current_buffer, ps.rank_points, ps.buffer_matches_left FROM user_profiles up LEFT JOIN player_stats ps ON up.user_id = ps.user_id WHERE up.user_id = ?");
 $ups->execute([$uid]);
 $upRow = $ups->fetch();
-$creator_side   = $upRow ? $upRow['playing_side'] : 'flexible';
+$creator_side = trim($data['playing_side'] ?? '');
+if (!in_array($creator_side, ['left', 'right', 'flexible'])) {
+    $creator_side = $upRow ? $upRow['playing_side'] : 'flexible';
+}
 $creator_points = 100;
 if ($upRow) {
     $creator_points = (int)($upRow['rank_points'] ?? 0) + (int)($upRow['current_buffer'] ?? 0);

@@ -138,6 +138,9 @@ try {
         case 'profile/check_code':
             require __DIR__ . '/profile/check_code.php';
             break;
+        case 'profile/recent_partners':
+            require __DIR__ . '/profile/recent_partners.php';
+            break;
         case 'profile/upload_image':
             require __DIR__ . '/profile/upload_image.php';
             break;

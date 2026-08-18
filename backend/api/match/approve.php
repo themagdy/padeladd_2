@@ -84,14 +84,11 @@ try {
         $partnerProfileStmt->execute([$partner_id]);
         $partner_profile_side = $partnerProfileStmt->fetchColumn() ?: 'flexible';
 
-        $partner_side = 'flexible';
-        if ($creator_side === 'right') {
-            $partner_side = ($partner_profile_side === 'right') ? 'flexible' : 'left';
-        } elseif ($creator_side === 'left') {
-            $partner_side = ($partner_profile_side === 'left') ? 'flexible' : 'right';
-        } else {
-            // Creator is flexible -> no conflict, partner uses their preferred profile side
-            $partner_side = $partner_profile_side;
+        $partner_side = $partner_profile_side;
+        if ($creator_side === 'right' && $partner_profile_side === 'right') {
+            $partner_side = 'flexible';
+        } elseif ($creator_side === 'left' && $partner_profile_side === 'left') {
+            $partner_side = 'flexible';
         }
 
         $parRP = (int)($ptsMap[$partner_id]['rank_points'] ?? 0);
@@ -180,6 +177,11 @@ try {
     
     $req_side = $sidesMap[$requester_id] ?? 'flexible';
     $par_side = $data['playing_side'] ?? ($sidesMap[$partner_id] ?? 'flexible');
+    if ($req_side === 'left' && $par_side === 'left') {
+        $par_side = 'flexible';
+    } elseif ($req_side === 'right' && $par_side === 'right') {
+        $par_side = 'flexible';
+    }
 
     // ── Team-level Eligibility Check (per brief) ───────────────────────────
     // Friendly matches: check that team average points difference is <= 400
