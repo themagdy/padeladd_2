@@ -1275,6 +1275,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         App.addListener('backButton', () => {
+            // Priority 0: Handle /login native back button
+            const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+            if (path === '/login') {
+                if (typeof Router !== 'undefined') {
+                    Router.back();
+                }
+                return;
+            }
+
             // Priority 1: Close confirm modal if open
             if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
                 ConfirmModal.close(false);
@@ -1409,17 +1418,11 @@ const handleGlobalMobileAuthToggle = (e) => {
     if (showBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const page = document.querySelector('.auth-page');
-        if (page) {
-            page.classList.add('mobile-show-form');
-            const form = page.querySelector('#login-form');
-            if (form) {
-                if (typeof UI !== 'undefined' && UI.clearErrors) UI.clearErrors(form);
-                setTimeout(() => {
-                    if (typeof UI !== 'undefined' && UI.clearErrors) UI.clearErrors(form);
-                    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-                }, 50);
-            }
+        if (typeof Router !== 'undefined') {
+            Router.navigate('/login');
+        } else {
+            const page = document.querySelector('.auth-page');
+            if (page) page.classList.add('mobile-show-form');
         }
         return false;
     }
@@ -1428,13 +1431,11 @@ const handleGlobalMobileAuthToggle = (e) => {
     if (backBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const page = document.querySelector('.auth-page');
-        if (page) {
-            page.classList.remove('mobile-show-form');
-            const form = page.querySelector('#login-form');
-            if (form && typeof UI !== 'undefined' && UI.clearErrors) {
-                UI.clearErrors(form);
-            }
+        if (typeof Router !== 'undefined') {
+            Router.back();
+        } else {
+            const page = document.querySelector('.auth-page');
+            if (page) page.classList.remove('mobile-show-form');
         }
         return false;
     }

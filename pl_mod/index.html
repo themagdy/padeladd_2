@@ -21,49 +21,89 @@
             <span>MOD PANEL</span>
         </div>
 
-        <nav class="sidebar-nav">
-            <a href="#dashboard" class="nav-link active" data-page="dashboard">
+        <nav class="sidebar-nav custom-scroll">
+            <a href="#dashboard" class="nav-link active" data-page="dashboard" style="margin-bottom:8px;">
                 <span class="icon">📊</span> Dashboard
             </a>
-            <a href="#players" class="nav-link" data-page="players">
-                <span class="icon">👥</span> Players
-            </a>
-            <a href="#versions" class="nav-link" data-page="versions">
-                <span class="icon">📱</span> User Versions
-            </a>
-            <a href="#matches" class="nav-link" data-page="matches">
-                <span class="icon">🎾</span> Matches
-            </a>
-            <a href="#match_control" class="nav-link" data-page="match_control">
-                <span class="icon">🛠️</span> Match Control
-            </a>
-            <a href="#reports" class="nav-link" data-page="reports">
-                <span class="icon">🚩</span> Reports
-            </a>
-            <a href="#flags" class="nav-link" data-page="flags">
-                <span class="icon">🏳️</span> Flags
-            </a>
-            <a href="#violations" class="nav-link" data-page="violations">
-                <span class="icon">⚠️</span> Violations
-            </a>
-            <a href="#messages" class="nav-link" data-page="messages">
-                <span class="icon">📢</span> In-App Msgs
-            </a>
-            <a href="#announcements" class="nav-link" data-page="announcements">
-                <span class="icon">📣</span> Announcements
-            </a>
-            <a href="#venues" class="nav-link" data-page="venues">
-                <span class="icon">📍</span> Venues
-            </a>
-            <a href="#logs" class="nav-link" data-page="logs">
-                <span class="icon">📜</span> Log
-            </a>
-            <a href="#invitations" class="nav-link" data-page="invitations">
-                <span class="icon">✉️</span> Invitations
-            </a>
-            <a href="#system" class="nav-link" data-page="system">
-                <span class="icon">⚙️</span> System
-            </a>
+
+            <!-- Management Group -->
+            <div class="nav-accordion">
+                <button class="nav-accordion-header" onclick="AdminApp.toggleAccordion(this)">
+                    <span>📂 Management</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div class="nav-accordion-body">
+                    <a href="#players" class="nav-link" data-page="players">
+                        <span class="icon">👥</span> Players
+                    </a>
+                    <a href="#matches" class="nav-link" data-page="matches">
+                        <span class="icon">🎾</span> Matches
+                    </a>
+                    <a href="#match_control" class="nav-link" data-page="match_control">
+                        <span class="icon">🛠️</span> Match Control
+                    </a>
+                    <a href="#venues" class="nav-link" data-page="venues">
+                        <span class="icon">📍</span> Venues
+                    </a>
+                    <a href="#logs" class="nav-link" data-page="logs">
+                        <span class="icon">📜</span> Log
+                    </a>
+                </div>
+            </div>
+
+            <!-- Moderation Group -->
+            <div class="nav-accordion">
+                <button class="nav-accordion-header" onclick="AdminApp.toggleAccordion(this)">
+                    <span>🛡️ Moderation</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div class="nav-accordion-body">
+                    <a href="#reports" class="nav-link" data-page="reports">
+                        <span class="icon">🚩</span> Reports
+                    </a>
+                    <a href="#flags" class="nav-link" data-page="flags">
+                        <span class="icon">🏳️</span> Flags
+                    </a>
+                    <a href="#violations" class="nav-link" data-page="violations">
+                        <span class="icon">⚠️</span> Violations
+                    </a>
+                </div>
+            </div>
+
+            <!-- Communication Group -->
+            <div class="nav-accordion">
+                <button class="nav-accordion-header" onclick="AdminApp.toggleAccordion(this)">
+                    <span>💬 Communication</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div class="nav-accordion-body">
+                    <a href="#messages" class="nav-link" data-page="messages">
+                        <span class="icon">📢</span> In-App Msgs
+                    </a>
+                    <a href="#announcements" class="nav-link" data-page="announcements">
+                        <span class="icon">📣</span> Announcements
+                    </a>
+                </div>
+            </div>
+
+            <!-- System & Settings Group -->
+            <div class="nav-accordion">
+                <button class="nav-accordion-header" onclick="AdminApp.toggleAccordion(this)">
+                    <span>⚙️ System</span>
+                    <span class="chevron">▾</span>
+                </button>
+                <div class="nav-accordion-body">
+                    <a href="#versions" class="nav-link" data-page="versions">
+                        <span class="icon">📱</span> User Versions
+                    </a>
+                    <a href="#invitations" class="nav-link" data-page="invitations">
+                        <span class="icon">✉️</span> Invitations
+                    </a>
+                    <a href="#system" class="nav-link" data-page="system">
+                        <span class="icon">⚙️</span> Settings
+                    </a>
+                </div>
+            </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -99,7 +139,7 @@
 
     <div id="toast-container"></div>
 
-    <script src="js/controllers.js?v=2.0"></script>
+    <script src="js/controllers.js?v=2.7"></script>
     <script src="js/app.js"></script>
 </body>
 

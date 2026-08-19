@@ -2728,7 +2728,7 @@ form {
   }
 
   .auth-desk-header {
-    padding: 16px 0 !important;
+    padding: calc(36px + env(safe-area-inset-top, 0px)) 0 14px 0 !important;
   }
 
   .auth-desk-header-inner {
@@ -2755,13 +2755,17 @@ form {
 
   .marketing-img {
     margin-bottom: 20px !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
   }
 
   .marketing-img img {
+    width: 100% !important;
     height: auto !important;
-    max-height: 240px !important;
+    max-height: 280px !important;
     aspect-ratio: 1000 / 526 !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
+    border-radius: 16px !important;
     margin-bottom: 0 !important;
   }
 

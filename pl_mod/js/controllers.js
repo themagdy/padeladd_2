@@ -641,110 +641,334 @@ window.AdminControllers = {
 
     // ── Matches Controller ───────────────────────────────────────────────
     matches: {
+        page: 1,
+        limit: 30,
+        searchQuery: '',
+        statusFilter: 'all',
+        isLoading: false,
+        hasMore: true,
+        matches: [],
+        searchTimeout: null,
         currentReportTab: 'profile',
         currentData: null,
         logSort: { field: 'time', order: 'asc' },
+
         async init() {
-            this.bindInvestigate();
+            this.page = 1;
+            this.matches = [];
+            this.hasMore = true;
+            this.searchQuery = '';
+            this.statusFilter = 'all';
+
+            this.bindEvents();
+            this.bindScrollListener();
+            await this.loadMatches(true);
         },
-        bindInvestigate() {
-            // Wait a tiny bit for the header sync to finish
+
+        bindEvents() {
             setTimeout(() => {
-                const btn = document.querySelector('#header-actions button');
-                const input = document.getElementById('match-code-input');
-                if (btn && input) {
-                    btn.onclick = () => AdminControllers.matches.investigate();
-                    input.onkeypress = (e) => {
-                        if (e.key === 'Enter') AdminControllers.matches.investigate();
+                const btn = document.querySelector('#header-actions button') || document.getElementById('match-search-btn');
+                const input = document.querySelector('#header-actions input') || document.getElementById('match-search-input');
+
+                if (input) {
+                    input.oninput = (e) => {
+                        this.searchQuery = e.target.value.trim();
+                        if (this.searchTimeout) clearTimeout(this.searchTimeout);
+                        this.searchTimeout = setTimeout(() => {
+                            this.loadMatches(true);
+                        }, 350);
                     };
-                    console.log("Investigate button and input bound in header.");
-                }
-            }, 100);
-        },
-        async investigate() {
-            const btn = document.querySelector('#header-actions button');
-            const originalBtnText = btn ? btn.innerText : 'INVESTIGATE';
-
-            try {
-                const input = document.getElementById('match-code-input');
-                if (!input) return;
-
-                const code = input.value.trim();
-                if (!code) {
-                    AdminApp.toast("Please enter a match code.", 'error');
-                    return;
+                    input.onkeypress = (e) => {
+                        if (e.key === 'Enter') {
+                            if (this.searchTimeout) clearTimeout(this.searchTimeout);
+                            this.onSearchSubmit();
+                        }
+                    };
                 }
 
                 if (btn) {
-                    btn.disabled = true;
-                    btn.innerText = 'LOADING...';
+                    btn.onclick = () => this.onSearchSubmit();
                 }
+            }, 100);
+        },
 
-                const token = localStorage.getItem('admin_token');
+        bindScrollListener() {
+            const scrollContainer = document.querySelector('.admin-main') || window;
+            if (this._scrollHandler) {
+                scrollContainer.removeEventListener('scroll', this._scrollHandler);
+            }
+            this._scrollHandler = () => {
+                if (this.isLoading || !this.hasMore) return;
+                const containerHeight = scrollContainer === window ? window.innerHeight : scrollContainer.clientHeight;
+                const scrollTop = scrollContainer === window ? window.scrollY : scrollContainer.scrollTop;
+                const scrollHeight = scrollContainer === window ? document.documentElement.scrollHeight : scrollContainer.scrollHeight;
+
+                if (scrollTop + containerHeight >= scrollHeight - 350) {
+                    this.loadMore();
+                }
+            };
+            scrollContainer.addEventListener('scroll', this._scrollHandler);
+        },
+
+        onSearchSubmit() {
+            const input = document.querySelector('#header-actions input') || document.getElementById('match-search-input');
+            if (input) {
+                this.searchQuery = input.value.trim();
+            }
+            this.loadMatches(true);
+        },
+
+        setStatusFilter(status, btnEl) {
+            this.statusFilter = status;
+            document.querySelectorAll('.status-filter-pills .pill-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            this.loadMatches(true);
+        },
+
+        async loadMatches(isReset = false) {
+            if (this.isLoading) return;
+            if (isReset) {
+                this.page = 1;
+                this.matches = [];
+                this.hasMore = true;
+                const container = document.getElementById('admin-matches-list');
+                if (container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-text-muted);">Loading matches...</div>';
+            }
+
+            this.isLoading = true;
+            this.updateSentinel();
+
+            try {
+                const queryParams = new URLSearchParams({
+                    page: this.page,
+                    limit: this.limit,
+                    q: this.searchQuery,
+                    status: this.statusFilter
+                });
+
+                const res = await _admFetch(`../backend/api/admin/matches/list.php?${queryParams.toString()}`);
+                if (!res.ok) throw new Error("Failed to load matches");
+
+                const json = await res.json();
+                if (json.success && json.data) {
+                    const newMatches = json.data.matches || [];
+                    this.hasMore = json.data.has_more ?? (newMatches.length >= this.limit);
+
+                    if (isReset) {
+                        this.matches = newMatches;
+                    } else {
+                        this.matches = [...this.matches, ...newMatches];
+                    }
+
+                    const badge = document.getElementById('match-count-badge');
+                    if (badge) badge.innerText = json.data.total ?? this.matches.length;
+
+                    this.renderMatchesList(isReset, newMatches);
+                } else {
+                    AdminApp.toast(json.message || "Error loading matches.", 'error');
+                }
+            } catch (err) {
+                console.error("Match Control load error:", err);
+                AdminApp.toast("Failed to load matches.", 'error');
+            } finally {
+                this.isLoading = false;
+                this.updateSentinel();
+            }
+        },
+
+        async loadMore() {
+            if (this.isLoading || !this.hasMore) return;
+            this.page++;
+            await this.loadMatches(false);
+        },
+
+        updateSentinel() {
+            const spinner = document.getElementById('sentinel-spinner');
+            const endMsg = document.getElementById('sentinel-end-msg');
+
+            if (spinner) spinner.style.display = this.isLoading ? 'block' : 'none';
+            if (endMsg) endMsg.style.display = (!this.isLoading && !this.hasMore && this.matches.length > 0) ? 'block' : 'none';
+        },
+
+        renderMatchesList(isReset, newMatches) {
+            const container = document.getElementById('admin-matches-list');
+            if (!container) return;
+
+            if (isReset && this.matches.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align:center; padding:60px 20px; border-style:dashed;">
+                        <div style="font-size:36px; margin-bottom:12px; opacity:0.3;">🎾</div>
+                        <h4 style="color:#fff; margin:0 0 6px 0;">No Matches Found</h4>
+                        <p style="color:var(--c-text-muted); font-size:13px; margin:0;">Try adjusting your search criteria or status filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (isReset) {
+                container.innerHTML = '';
+            }
+
+            const itemsToRender = isReset ? this.matches : newMatches;
+
+            itemsToRender.forEach(m => {
+                const card = document.createElement('div');
+                card.className = 'adm-match-card';
+                card.id = `adm-match-card-${m.id}`;
+
+                const dt = m.match_datetime ? new Date(m.match_datetime.replace(' ', 'T')).toLocaleString('en-US', {
+                    weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : 'N/A';
+
+                const statusStyle = {
+                    'open': 'background:rgba(74,222,128,0.1); color:#4ade80; border:1px solid rgba(74,222,128,0.2);',
+                    'full': 'background:rgba(90,145,255,0.1); color:#5A91FF; border:1px solid rgba(90,145,255,0.2);',
+                    'on_hold': 'background:rgba(245,158,11,0.1); color:#f59e0b; border:1px solid rgba(245,158,11,0.2);',
+                    'completed': 'background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid rgba(168,85,247,0.2);',
+                    'cancelled': 'background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2);'
+                }[m.status] || 'background:rgba(255,255,255,0.1); color:#fff;';
+
+                const playersList = m.players || [];
+                const t1Players = playersList.filter(p => parseInt(p.team_no) === 1);
+                const t2Players = playersList.filter(p => parseInt(p.team_no) === 2);
+
+                const renderPlayerChip = (p) => {
+                    const initials = ((p.first_name?.[0] || '') + (p.last_name?.[0] || '')).toUpperCase() || 'P';
+                    const sideStr = p.playing_side ? ` (${p.playing_side})` : '';
+                    return `
+                        <div class="adm-player-chip">
+                            <div style="width:24px; height:24px; border-radius:50%; background:var(--c-primary); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;">${initials}</div>
+                            <div style="flex:1; min-width:0;">
+                                <div style="color:#fff; font-weight:700; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                    ${p.nickname || (p.first_name + ' ' + p.last_name)}
+                                </div>
+                                <div style="font-size:10px; color:var(--c-text-muted); white-space:nowrap;">
+                                    ${p.player_code || '---'}${sideStr}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                };
+
+                card.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.04); padding-bottom:14px;">
+                        <div>
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                                <span style="color:var(--c-primary); font-weight:900; font-size:16px; letter-spacing:0.5px;">${m.match_code}</span>
+                                <span style="font-size:10px; font-weight:800; text-transform:uppercase; padding:3px 10px; border-radius:20px; ${statusStyle}">
+                                    ${m.status}
+                                </span>
+                                <span style="font-size:11px; color:var(--c-text-muted); font-weight:600; text-transform:capitalize;">
+                                    ${m.match_type || 'competition'} • ${m.gender_type || 'open'}
+                                </span>
+                            </div>
+                            <div style="color:#fff; font-size:14px; font-weight:700; display:flex; align-items:center; gap:6px;">
+                                📍 ${m.venue_name}${m.court_name ? ' • ' + m.court_name : ''}
+                            </div>
+                            <div style="color:var(--c-text-muted); font-size:12px; margin-top:2px;">
+                                📅 ${dt} • Creator: <b style="color:rgba(255,255,255,0.85);">${m.creator_nickname || m.creator_name || '---'}</b> (${m.creator_code || '---'})
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button onclick="AdminControllers.matches.investigateCode('${m.match_code}')"
+                                style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#fff; padding:8px 14px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer; transition:background 0.2s;">
+                                🔍 INVESTIGATE
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div style="background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); border-radius:10px; padding:12px;">
+                            <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:0.5px;">Team 1</div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                ${t1Players.length > 0 ? t1Players.map(renderPlayerChip).join('') : '<div style="color:var(--c-text-dim); font-size:11px; grid-column:span 2;">No confirmed players</div>'}
+                            </div>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); border-radius:10px; padding:12px;">
+                            <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; margin-bottom:8px; letter-spacing:0.5px;">Team 2</div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                ${t2Players.length > 0 ? t2Players.map(renderPlayerChip).join('') : '<div style="color:var(--c-text-dim); font-size:11px; grid-column:span 2;">No confirmed players</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        },
+
+        investigateCode(code) {
+            const input = document.querySelector('#header-actions input') || document.getElementById('match-search-input');
+            if (input) input.value = code;
+            this.investigate(code);
+        },
+
+        async investigate(codeParam = null) {
+            const code = codeParam || (document.querySelector('#header-actions input') || document.getElementById('match-search-input'))?.value?.trim();
+            if (!code) {
+                AdminApp.toast("Please enter or select a match code.", 'error');
+                return;
+            }
+
+            try {
                 const res = await _admFetch(`../backend/api/admin/matches/investigate.php?code=${code}`);
                 if (!res.ok) throw new Error("Network error");
 
                 const data = await res.json();
-                if (data.success) {
-                    AdminControllers.matches.renderInvestigation(data.data);
+                if (data.success && data.data) {
+                    this.renderInvestigation(data.data);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    AdminApp.toast(data.message || "Match not found.", 'error');
+                    AdminApp.toast(data.message || "Match investigation data not found.", 'error');
                 }
             } catch (err) {
                 console.error("Investigate Error:", err);
-                AdminApp.toast("Failed to investigate match. Check console.", 'error');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = originalBtnText;
-                }
+                AdminApp.toast("Failed to investigate match.", 'error');
             }
         },
+
         renderInvestigation(data) {
-            try {
-                const container = document.getElementById('investigation-result');
-                const empty = document.getElementById('investigation-empty');
-                if (!container || !empty) {
-                    console.error('Investigation containers not found');
-                    return;
-                }
+            const container = document.getElementById('investigation-result');
+            if (!container) return;
 
-                if (!data || !data.match) {
-                    AdminApp.toast("No data found for this match code.", 'error');
-                    return;
-                }
+            if (!data || !data.match) {
+                AdminApp.toast("No data found for this match code.", 'error');
+                return;
+            }
 
-                this.currentData = data;
-                empty.style.display = 'none';
-                container.style.display = 'block';
+            this.currentData = data;
+            container.style.display = 'block';
 
-                const m = data.match;
-                const players = data.players || [];
-                const scores = data.scores || [];
-                const team1 = players.filter(p => p.team_no == 1);
-                const team2 = players.filter(p => p.team_no == 2);
+            const m = data.match;
+            const players = data.players || [];
+            const scores = data.scores || [];
+            const team1 = players.filter(p => p.team_no == 1);
+            const team2 = players.filter(p => p.team_no == 2);
 
-                container.innerHTML = `
-                    <div class="investigator-header" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
-                        <div class="card" style="margin-bottom:0; padding:20px;">
-                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1px;">Venue / Time</label>
-                            <div style="color:#fff; font-weight:700; font-size:16px; margin-top:4px;">${m.venue_name || m.venue_name_manual || 'Manual Venue'}</div>
+            container.innerHTML = `
+                <div class="card" style="border:1px solid var(--c-primary); background:rgba(6,78,59,0.1); padding:24px; position:relative;">
+                    <button onclick="document.getElementById('investigation-result').style.display='none'"
+                        style="position:absolute; right:16px; top:16px; background:rgba(255,255,255,0.1); border:none; color:#fff; width:28px; height:28px; border-radius:50%; cursor:pointer; font-weight:800;">✕</button>
+                    
+                    <h3 style="color:#fff; margin:0 0 16px 0; font-size:18px;">
+                        🔍 Investigation Details for <span style="color:var(--c-primary);">${m.match_code}</span>
+                    </h3>
+
+                    <div class="investigator-header">
+                        <div class="card" style="margin-bottom:0; padding:16px; background:rgba(255,255,255,0.02);">
+                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800;">Venue & Time</label>
+                            <div style="color:#fff; font-weight:700; font-size:15px; margin-top:4px;">${m.venue_name || m.court_name || 'Venue TBD'}</div>
                             <div style="font-size:12px; color:var(--c-text-muted)">${m.match_datetime ? new Date(m.match_datetime).toLocaleString() : 'N/A'}</div>
                         </div>
-                        <div class="card" style="margin-bottom:0; padding:20px; display:flex; flex-direction:column; justify-content:center;">
-                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1.5px; margin-bottom:10px; display:block;">Match Identity</label>
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="color:#fff; font-weight:800; font-size:18px; text-transform:capitalize; line-height:1;">${m.match_type || '---'}</div>
-                                <span class="status-tag ${m.status || 'open'}" style="font-size:10px; font-weight:900; text-transform:uppercase; padding:4px 10px; border-radius:100px;">
-                                    ${(m.status === 'open' ? 'Mixed' : (m.status === 'completed' ? 'Scores' : m.status)) || '---'}
-                                </span>
-                            </div>
-                            <div style="font-size:11px; color:var(--c-text-muted); margin-top:8px; font-weight:600; letter-spacing:0.5px;">CODE: <b style="color:var(--c-primary)">${m.match_code || '---'}</b></div>
+                        <div class="card" style="margin-bottom:0; padding:16px; background:rgba(255,255,255,0.02);">
+                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800;">Match Type & Status</label>
+                            <div style="color:#fff; font-weight:700; font-size:15px; margin-top:4px; text-transform:capitalize;">${m.match_type || 'competition'} • ${m.gender_type || 'open'}</div>
+                            <div style="font-size:12px; color:var(--c-text-muted)">Status: <b style="color:#fff;">${m.status}</b></div>
                         </div>
-                        <div class="card" style="margin-bottom:0; padding:20px;">
-                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800; letter-spacing:1px;">Point Calculation</label>
-                            <div style="color:var(--c-primary); font-weight:700; font-size:16px; margin-top:4px;">v2.2 Standard</div>
-                            <div style="font-size:11px; color:var(--c-text-muted)">Audit-ready logic</div>
+                        <div class="card" style="margin-bottom:0; padding:16px; background:rgba(255,255,255,0.02);">
+                            <label style="font-size:10px; text-transform:uppercase; color:var(--c-text-muted); font-weight:800;">Confirmed Players</label>
+                            <div style="color:var(--c-primary); font-weight:700; font-size:15px; margin-top:4px;">${players.length} / 4 Players</div>
+                            <div style="font-size:12px; color:var(--c-text-muted)">Score submissions: ${scores.length}</div>
                         </div>
                     </div>
 
@@ -763,9 +987,7 @@ window.AdminControllers = {
                         </div>
                     </div>
 
-                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:24px;" id="investigation-logs-card">
-                        <!-- Rendered by renderLogsTable -->
-                    </div>
+                    <div class="card" style="padding:0; overflow:hidden; margin-bottom:24px;" id="investigation-logs-card"></div>
 
                     <div class="card" style="padding:0; overflow:hidden;">
                         <div style="padding:16px 24px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); font-weight:800; color:#fff; font-size:12px; text-transform:uppercase;">Score Submissions</div>
@@ -788,14 +1010,12 @@ window.AdminControllers = {
                             </tbody>
                         </table>
                     </div>
-                `;
+                </div>
+            `;
 
-                this.renderLogsTable();
-            } catch (err) {
-                console.error("Render Investigation Error:", err);
-                AdminApp.toast("Error displaying match details. Check console.", 'error');
-            }
+            this.renderLogsTable();
         },
+
         sortLogs(field) {
             if (this.logSort.field === field) {
                 this.logSort.order = (this.logSort.order === 'asc') ? 'desc' : 'asc';
@@ -805,6 +1025,7 @@ window.AdminControllers = {
             }
             this.renderLogsTable();
         },
+
         renderLogsTable() {
             const container = document.getElementById('investigation-logs-card');
             if (!container || !this.currentData) return;
@@ -877,6 +1098,7 @@ window.AdminControllers = {
                 </table>
             `;
         },
+
         async toggleChatVisibility(chatId, currentHidden) {
             const token = localStorage.getItem('admin_token');
             const newStatus = currentHidden ? 0 : 1;
@@ -2822,25 +3044,41 @@ window.AdminControllers = {
 
     // ── Match Control Controller ──────────────────────────────────────────────
     match_control: {
+        page: 1,
+        limit: 30,
+        searchQuery: '',
+        isLoading: false,
+        hasMore: true,
         allMatches: [],
         activeMatchId: null,
         chatPollTimer: null,
         lastChatMsgId: 0,
         allVenues: [],
+        searchTimeout: null,
 
         async init() {
             console.log('Initializing Match Control Controller...');
             this.activeMatchId = null;
             this.lastChatMsgId = 0;
             this.stopChatPolling();
+            this.page = 1;
+            this.allMatches = [];
+            this.hasMore = true;
+            this.searchQuery = '';
+            this.isLoading = false;
 
-            // Fetch matches and venues
+            this.bindScrollListener();
+            this.bindSearchEvents();
+
+            // Fetch venues and initial matches
             await this.fetchVenues();
-            await this.fetchMatches();
+            await this.fetchMatches(true);
 
             // Setup detail views
-            document.getElementById('control-empty-state').style.display = 'flex';
-            document.getElementById('control-active-panel').style.display = 'none';
+            const emptyState = document.getElementById('control-empty-state');
+            const activePanel = document.getElementById('control-active-panel');
+            if (emptyState) emptyState.style.display = 'flex';
+            if (activePanel) activePanel.style.display = 'none';
 
             // Close venue dropdown on clicking outside
             document.addEventListener('click', (e) => {
@@ -2850,6 +3088,78 @@ window.AdminControllers = {
                     dropdown.style.display = 'none';
                 }
             });
+        },
+
+        bindScrollListener() {
+            const listEl = document.getElementById('control-match-list');
+            if (!listEl) return;
+
+            if (this._scrollHandler) {
+                listEl.removeEventListener('scroll', this._scrollHandler);
+            }
+
+            this._scrollHandler = () => {
+                if (this.isLoading || !this.hasMore) return;
+                if (listEl.scrollTop + listEl.clientHeight >= listEl.scrollHeight - 120) {
+                    this.loadMore();
+                }
+            };
+
+            listEl.addEventListener('scroll', this._scrollHandler);
+        },
+
+        bindSearchEvents() {
+            setTimeout(() => {
+                const headerInput = document.querySelector('#header-actions input');
+                const sidebarInput = document.getElementById('match-search');
+                const headerBtn = document.querySelector('#header-actions button');
+
+                const initialVal = (headerInput?.value || sidebarInput?.value || '').trim();
+                if (initialVal) {
+                    this.searchQuery = initialVal;
+                }
+
+                const syncAndSearch = (val) => {
+                    if (headerInput && document.activeElement !== headerInput) headerInput.value = val;
+                    if (sidebarInput && document.activeElement !== sidebarInput) sidebarInput.value = val;
+                    this.onSearchInput(val);
+                };
+
+                if (headerInput) {
+                    headerInput.oninput = (e) => syncAndSearch(e.target.value);
+                    headerInput.onkeypress = (e) => {
+                        if (e.key === 'Enter') this.onSearchSubmit();
+                    };
+                }
+                if (sidebarInput) {
+                    sidebarInput.oninput = (e) => syncAndSearch(e.target.value);
+                }
+                if (headerBtn) {
+                    headerBtn.onclick = () => this.onSearchSubmit();
+                }
+            }, 100);
+        },
+
+        onSearchInput(val) {
+            this.searchQuery = (val || '').trim();
+            const headerInput = document.querySelector('#header-actions input');
+            const sidebarInput = document.getElementById('match-search');
+            if (headerInput && document.activeElement !== headerInput) headerInput.value = this.searchQuery;
+            if (sidebarInput && document.activeElement !== sidebarInput) sidebarInput.value = this.searchQuery;
+
+            if (this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                this.fetchMatches(true);
+            }, 350);
+        },
+
+        onSearchSubmit() {
+            const headerInput = document.querySelector('#header-actions input');
+            const sidebarInput = document.getElementById('match-search');
+            const val = (headerInput?.value || sidebarInput?.value || '').trim();
+            this.searchQuery = val;
+            if (this.searchTimeout) clearTimeout(this.searchTimeout);
+            this.fetchMatches(true);
         },
 
         async fetchVenues() {
@@ -2901,18 +3211,70 @@ window.AdminControllers = {
             if (dropdown) dropdown.style.display = 'none';
         },
 
-        async fetchMatches() {
-            try {
-                const res = await _admFetch(`../backend/api/admin/matches/list.php`);
-                const data = await res.json();
-                if (data.success) {
-                    this.allMatches = data.data.matches || [];
-                    this.renderMatchList();
-                }
-            } catch (err) { console.error('Fetch matches error:', err); }
+        statusFilter: 'all',
+
+        setStatusFilter(status) {
+            this.statusFilter = status;
+            const selectEl = document.getElementById('ctrl-status-select');
+            if (selectEl) selectEl.value = status;
+            this.fetchMatches(true);
         },
 
-        renderMatchList() {
+        async fetchMatches(isReset = false) {
+            if (this.isLoading) return;
+
+            if (isReset) {
+                this.page = 1;
+                this.allMatches = [];
+                this.hasMore = true;
+                const container = document.getElementById('control-match-list');
+                if (container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">Loading matches...</div>';
+            }
+
+            this.isLoading = true;
+
+            try {
+                const queryParams = new URLSearchParams({
+                    page: this.page,
+                    limit: this.limit,
+                    q: this.searchQuery,
+                    status: this.statusFilter
+                });
+
+                const res = await _admFetch(`../backend/api/admin/matches/list.php?${queryParams.toString()}`);
+                const data = await res.json();
+
+                if (data.success && data.data) {
+                    const newMatches = data.data.matches || [];
+                    this.hasMore = data.data.has_more ?? (newMatches.length >= this.limit);
+
+                    if (isReset) {
+                        this.allMatches = newMatches;
+                    } else {
+                        this.allMatches = [...this.allMatches, ...newMatches];
+                    }
+
+                    this.renderMatchList(isReset, newMatches);
+                } else {
+                    const container = document.getElementById('control-match-list');
+                    if (container) container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">${data.message || 'No matches found.'}</div>`;
+                }
+            } catch (err) {
+                console.error('Fetch matches error:', err);
+                const container = document.getElementById('control-match-list');
+                if (container) container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-red); font-size:13px;">Failed to load matches.</div>';
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        async loadMore() {
+            if (this.isLoading || !this.hasMore) return;
+            this.page++;
+            await this.fetchMatches(false);
+        },
+
+        renderMatchList(isReset = true, newMatches = null) {
             const container = document.getElementById('control-match-list');
             if (!container) return;
 
@@ -2921,52 +3283,44 @@ window.AdminControllers = {
                 return;
             }
 
-            container.innerHTML = this.allMatches.map(m => {
-                const isSelected = this.activeMatchId == m.id;
-                const formattedTime = new Date(m.match_datetime.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                return `
-                    <div onclick="AdminControllers.match_control.selectMatch(${m.id})" style="padding:14px; background:${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.05)'}; border-radius:16px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}'">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                            <span style="font-weight:800; color:#fff; font-size:14px;">${m.match_code}</span>
-                            <span class="status-tag ${m.status || 'open'}" style="font-size:9px; padding:2px 6px;">${(m.status || 'open').toUpperCase()}</span>
-                        </div>
-                        <div style="font-size:12px; color:var(--c-text-muted); margin-bottom:2px;">📍 ${m.venue_name || 'No Venue'}</div>
-                        <div style="font-size:12px; color:var(--c-text-muted);">🕒 ${formattedTime}</div>
-                    </div>
-                `;
-            }).join('');
-        },
-
-        filterMatches() {
-            const q = (document.getElementById('match-search').value || '').toLowerCase();
-            const filtered = this.allMatches.filter(m =>
-                m.match_code.toLowerCase().includes(q) ||
-                (m.venue_name && m.venue_name.toLowerCase().includes(q)) ||
-                (m.creator_name && m.creator_name.toLowerCase().includes(q))
-            );
-
-            const container = document.getElementById('control-match-list');
-            if (!container) return;
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--c-text-muted); font-size:13px;">No matching matches.</div>';
-                return;
+            if (isReset) {
+                container.innerHTML = '';
             }
 
-            container.innerHTML = filtered.map(m => {
+            const itemsToRender = (newMatches && !isReset) ? newMatches : this.allMatches;
+
+            itemsToRender.forEach(m => {
                 const isSelected = this.activeMatchId == m.id;
-                const formattedTime = new Date(m.match_datetime.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-                return `
-                    <div onclick="AdminControllers.match_control.selectMatch(${m.id})" style="padding:14px; background:${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.05)'}; border-radius:16px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}'">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                            <span style="font-weight:800; color:#fff; font-size:14px;">${m.match_code}</span>
-                            <span class="status-tag ${m.status || 'open'}" style="font-size:9px; padding:2px 6px;">${(m.status || 'open').toUpperCase()}</span>
-                        </div>
-                        <div style="font-size:12px; color:var(--c-text-muted); margin-bottom:2px;">📍 ${m.venue_name || 'No Venue'}</div>
-                        <div style="font-size:12px; color:var(--c-text-muted);">🕒 ${formattedTime}</div>
+                let formattedTime = 'N/A';
+                if (m.match_datetime) {
+                    try {
+                        const dtStr = String(m.match_datetime).replace(' ', 'T');
+                        const dtObj = new Date(dtStr);
+                        if (!isNaN(dtObj.getTime())) {
+                            formattedTime = dtObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                        }
+                    } catch (e) {
+                        formattedTime = String(m.match_datetime);
+                    }
+                }
+                
+                const itemEl = document.createElement('div');
+                itemEl.setAttribute('onclick', `AdminControllers.match_control.selectMatch(${m.id})`);
+                itemEl.style.cssText = `padding:14px; background:${isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)'}; border:1px solid ${isSelected ? 'var(--c-primary)' : 'rgba(255,255,255,0.05)'}; border-radius:16px; cursor:pointer; transition:all 0.2s;`;
+                itemEl.onmouseover = () => itemEl.style.background = 'rgba(255,255,255,0.05)';
+                itemEl.onmouseout = () => itemEl.style.background = isSelected ? 'rgba(27, 82, 206, 0.15)' : 'rgba(255,255,255,0.02)';
+
+                itemEl.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="font-weight:800; color:#fff; font-size:14px;">${m.match_code}</span>
+                        <span class="status-tag ${m.status || 'open'}" style="font-size:9px; padding:2px 6px;">${(m.status || 'open').toUpperCase()}</span>
                     </div>
+                    <div style="font-size:12px; color:var(--c-text-muted); margin-bottom:2px;">📍 ${m.venue_name || 'No Venue'}</div>
+                    <div style="font-size:12px; color:var(--c-text-muted);">🕒 ${formattedTime}</div>
                 `;
-            }).join('');
+
+                container.appendChild(itemEl);
+            });
         },
 
         async selectMatch(matchId) {

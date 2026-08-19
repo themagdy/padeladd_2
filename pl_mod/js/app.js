@@ -50,14 +50,47 @@ window.AdminApp = {
     },
 
     updateActiveNavLink(page) {
+        let activeAccordion = null;
+
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.toggle('active', link.dataset.page === page);
+            const isActive = link.dataset.page === page;
+            link.classList.toggle('active', isActive);
+
+            if (isActive) {
+                activeAccordion = link.closest('.nav-accordion');
+            }
+        });
+
+        // Exclusive open state: keep active link accordion open, close others
+        document.querySelectorAll('.sidebar-nav .nav-accordion').forEach(acc => {
+            if (activeAccordion && acc === activeAccordion) {
+                acc.classList.add('open');
+            } else if (activeAccordion) {
+                acc.classList.remove('open');
+            }
         });
         
         const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
         if (activeLink) {
             this.titleEl.innerText = activeLink.innerText.trim().replace(/^.+?\s/, '');
         }
+    },
+
+    toggleAccordion(headerBtn) {
+        const accordion = headerBtn.closest('.nav-accordion');
+        if (!accordion) return;
+
+        const isCurrentlyOpen = accordion.classList.contains('open');
+
+        // Close all other accordions
+        document.querySelectorAll('.sidebar-nav .nav-accordion').forEach(acc => {
+            if (acc !== accordion) {
+                acc.classList.remove('open');
+            }
+        });
+
+        // Toggle current accordion state
+        accordion.classList.toggle('open', !isCurrentlyOpen);
     },
 
     async loadPage(page) {

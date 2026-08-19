@@ -54,11 +54,61 @@ body.modal-open .admin-sidebar {
 }
 
 .sidebar-nav {
-    padding: 24px 12px;
+    padding: 16px 12px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    overflow-y: auto;
+}
+
+.nav-accordion {
+    margin-top: 4px;
+}
+
+.nav-accordion-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: background 0.2s ease, color 0.2s ease;
+    user-select: none;
+}
+
+.nav-accordion-header:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.nav-accordion-header .chevron {
+    font-size: 11px;
+    transition: transform 0.25s ease;
+}
+
+.nav-accordion:not(.open) .nav-accordion-header .chevron {
+    transform: rotate(-90deg);
+}
+
+.nav-accordion-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: 6px;
+    overflow: hidden;
+}
+
+.nav-accordion:not(.open) .nav-accordion-body {
+    display: none;
 }
 
 .nav-link {

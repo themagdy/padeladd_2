@@ -1,15 +1,43 @@
 <div class="match-control-page"
     style="display:flex; gap:32px; height:calc(100vh - var(--header-h) - 80px); overflow:hidden;">
 
+    <!-- Header Search Bar (Synced to mod panel header by app.js) -->
+    <div id="page-search-source" style="display:none;">
+        <div class="search-wrap" style="position:relative; width:440px; max-width:100%;">
+            <input type="text" id="match-control-header-search" class="form-input" 
+                placeholder="Search match code, venue, player name, nickname, xcode..." 
+                oninput="AdminControllers.match_control.onSearchInput(this.value)"
+                style="padding-left:40px; padding-right:110px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:13px; color:#fff; border-radius:10px;">
+            <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+            <button id="match-control-search-btn" onclick="AdminControllers.match_control.onSearchSubmit()" 
+                style="position:absolute; right:6px; top:50%; transform:translateY(-50%); background:var(--c-primary); color:#fff; border-radius:8px; padding:6px 14px; font-size:11px; font-weight:800; border:none; cursor:pointer;">
+                SEARCH
+            </button>
+        </div>
+    </div>
+
     <!-- Left Column: Search & Match List -->
     <div
         style="width:340px; display:flex; flex-direction:column; gap:20px; background:#111827; border:1px solid rgba(255,255,255,0.05); border-radius:24px; padding:20px; flex-shrink:0; height:100%;">
         <div style="position:relative; width:100%;">
-            <input type="text" id="match-search" oninput="AdminControllers.match_control.filterMatches()"
-                class="form-input" placeholder="Search match code, player..."
+            <input type="text" id="match-search" oninput="AdminControllers.match_control.onSearchInput(this.value)"
+                class="form-input" placeholder="Search match code, venue, player, xcode..."
                 style="padding-left:40px; background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.1); height:44px; font-size:14px; width:100%;">
             <span
                 style="position:absolute; left:14px; top:50%; transform:translateY(-50%); opacity:0.5; font-size:14px;">🔍</span>
+        </div>
+
+        <!-- Status Filter Dropdown -->
+        <div>
+            <select id="ctrl-status-select" class="form-input" onchange="AdminControllers.match_control.setStatusFilter(this.value)"
+                style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); height:40px; font-size:12px; font-weight:700; color:#fff; border-radius:12px; width:100%; cursor:pointer; padding:0 12px;">
+                <option value="all" style="background:#111827; color:#fff;">All Statuses</option>
+                <option value="open" style="background:#111827; color:#fff;">Open</option>
+                <option value="full" style="background:#111827; color:#fff;">Full</option>
+                <option value="on_hold" style="background:#111827; color:#fff;">On Hold</option>
+                <option value="completed" style="background:#111827; color:#fff;">Completed</option>
+                <option value="cancelled" style="background:#111827; color:#fff;">Cancelled</option>
+            </select>
         </div>
 
         <div id="control-match-list" class="custom-scroll"
@@ -236,6 +264,28 @@
         background: rgba(255, 255, 255, 0.04);
     }
 
+    }
+
+    .ctrl-status-pills .ctrl-pill {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        color: var(--c-text-muted);
+        padding: 5px 10px;
+        border-radius: 14px;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    .ctrl-status-pills .ctrl-pill:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    .ctrl-status-pills .ctrl-pill.active {
+        background: var(--c-primary);
+        border-color: var(--c-primary);
+        color: #fff;
     }
 
     .autocomplete-dropdown li {

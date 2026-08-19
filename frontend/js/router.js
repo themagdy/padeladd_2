@@ -312,16 +312,21 @@ const Router = {
         const isAuthPage = publicRoutes.includes(path) || path === '';
 
         // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
+        const backBarRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
         const isDynamicBackBar = path.startsWith('/matches/M-') ||
             path.startsWith('/p/') ||
             path.startsWith('/announcement/') ||
             (path.startsWith('/profile/view/') && path !== '/profile/view');
         const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
-        if (hasBackBar && this.navDepth > 0) {
-            window.history.back();
-            return;
+        if (hasBackBar) {
+            if (this.navDepth > 0) {
+                window.history.back();
+                return;
+            } else if (path === '/login') {
+                this.navigate('/');
+                return;
+            }
         }
 
         // 2. If no back bar (main tabs) OR depth is 0, determine fallback

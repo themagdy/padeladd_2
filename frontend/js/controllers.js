@@ -892,6 +892,17 @@ const AuthController = {
             else Router.navigate('/profile/edit');
             return;
         }
+
+        const page = document.querySelector('.auth-page');
+        if (page) {
+            const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+            if (path === '/login') {
+                page.classList.add('mobile-show-form');
+            } else {
+                page.classList.remove('mobile-show-form');
+            }
+        }
+
         const form = document.getElementById('login-form');
         if (!form) return;
 
@@ -7128,8 +7139,8 @@ const ChatController = {
             const thumb = p.profile_image_thumb || p.profile_image;
 
             const avatarImg = thumb
-                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:26px; height:26px; border-radius:50%; object-fit:cover; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">`
-                : `<div style="width:26px; height:26px; border-radius:50%; background:var(--g-primary); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
+                ? `<img src="${CONFIG.ASSET_BASE}/${thumb}" style="width:26px; height:26px; min-width:26px; min-height:26px; flex-shrink:0; aspect-ratio:1/1; border-radius:50%; object-fit:cover; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">`
+                : `<div style="width:26px; height:26px; min-width:26px; min-height:26px; flex-shrink:0; aspect-ratio:1/1; border-radius:50%; background:var(--g-primary); color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--c-bg); margin-left:-8px; box-shadow: 0 2px 5px rgba(0,0,0,0.35);" title="${p.nickname || p.first_name || 'Player'}">${initials}</div>`;
             avatarsHtml += avatarImg;
         });
 
