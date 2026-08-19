@@ -2384,6 +2384,6 @@ Version 2.5.09 (Build 509) - 2026-08-19
 ==================================================
 Version 2.5.10 (Build 510) - 2026-08-19
 ==================================================
-- Sign-Out Redirection to Main Page: Updated Sign Out action across profile view, controllers, and top bar to navigate to root main page '/' instead of '/login'.
-- Main Page Guest Routing: Updated root route '/' to render main matches list view when unauthenticated.
+- Sign-Out Redirection to Main Landing Page: Updated Sign Out action across profile view, controllers, and top bar to navigate to root main landing page '/' instead of '/login'.
+- Router Mobile Routing Synchronization: Synchronized '/' and '/index.html' routes to render the main landing page (login.html), ensuring consistent sign-out destination on desktop and mobile Capacitor environments.
 - Stats Boxes Typography: Adjusted stat box typography to 600 font weight and reduced text sizes by 1-2px across values, labels, and subtext.
