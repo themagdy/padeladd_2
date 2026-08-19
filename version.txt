@@ -2399,3 +2399,9 @@ Version 2.5.12 (Build 512) - 2026-08-19
 ==================================================
 - Notification Panel Aesthetics & Refinements: Updated notification drawer to a translucent background with frosted glassmorphism blur, completely flat borderless solid notification cards (#1C2333 read, #172747 unread), increased vertical card spacing (12px), and scaled card typography by +1px across text, titles, and timestamps.
 - Match Details Pin Rendering Hardening: Reinforced details.php and MatchesController to safely extract player points (my_pts) directly from response payload for 100% reliable pin placement.
+
+==================================================
+Version 2.5.13 (Build 513) - 2026-08-19
+==================================================
+- Dashboard Action Buttons Styling: Updated Dashboard action buttons styling with a sleek dark royal-navy gradient.
+- Landing Page Real Scores API Inclusion Fix: Fixed database include path in app/app/api/latest_scores.php and app/app/api/latest_players.php to display real match scores and verified players on /app/index.html.
