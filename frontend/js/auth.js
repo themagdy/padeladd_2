@@ -217,7 +217,6 @@ const Auth = {
         }
     },
     clearAll: function() {
-        console.log('[Auth.clearAll] Wiping all session & local storage...');
         this._tokenCache = null;
         this._hasProfileCache = null;
         this._hasLevelCache = null;
@@ -230,7 +229,6 @@ const Auth = {
         try { localStorage.clear(); } catch(e) {}
         const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
         if (isCapacitor) {
-            console.log('[Auth.clearAll] Wiping SecureStorage keys...');
             const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;
             return Promise.all([
                 SecureStorage.remove({ key: 'auth_token' }).catch(() => {}),
@@ -244,19 +242,16 @@ const Auth = {
         return Promise.resolve();
     },
     logout: async function() {
-        console.log('[Auth.logout] Sign out clicked. Sending /logout request...');
         if (typeof API !== 'undefined') {
-            API.post('/logout', {}).catch(err => console.warn('[Auth.logout] Server /logout notice failed:', err));
+            API.post('/logout', {}).catch(() => {});
         }
         await this.clearAll();
-        console.log('[Auth.logout] Storage cleared. Token is now:', this.getToken());
         if (typeof ModalStack !== 'undefined') {
             ModalStack.stack = [];
             const container = document.getElementById('modal-stack-container');
             if (container) container.innerHTML = '';
             document.body.classList.remove('modal-open-body');
         }
-        console.log('[Auth.logout] Redirecting to /...');
         if (typeof Router !== 'undefined') {
             Router.navDepth = 0;
             Router.navigate('/', true, true);
