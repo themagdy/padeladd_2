@@ -122,6 +122,12 @@ const ModalStack = {
     }
 };
 
+setInterval(() => {
+    if (typeof ModalStack !== 'undefined') {
+        console.log(`[Modals Open] ${ModalStack.stack.length}`);
+    }
+}, 3000);
+
 const Router = {
     routes: {
         '/': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
@@ -351,6 +357,12 @@ const Router = {
         }
 
         window.addEventListener('popstate', (e) => {
+            // Rule 1: If any modal overlay is open, pop the top modal layer
+            if (typeof ModalStack !== 'undefined' && ModalStack.hasModals()) {
+                ModalStack.pop();
+                return;
+            }
+
             // 1. If we are popping back from the chat overlay, close it
             if (typeof ChatController !== 'undefined' && ChatController._isShowing) {
                 ChatController.close(true);
@@ -359,23 +371,12 @@ const Router = {
             if (e.state && e.state.ignoreRoute) return;
 
             const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const backBarRoutes = ['/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
-            const isDynamicBackBar = path.startsWith('/matches/M-') ||
-                path.startsWith('/p/') ||
-                path.startsWith('/announcement/') ||
-                (path.startsWith('/profile/view/') && path !== '/profile/view');
-            const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
 
-            // 2. If no back bar (main tab) and we are moving back, we should eventually land on Dashboard
-            if (!hasBackBar && path !== '/dashboard' && path !== '/login' && path !== '/' && path !== '/index.html') {
-                // If we land on a main tab (Play, Ranking, etc) via back button, 
-                // and it's not the dashboard, the user wants to go to dashboard.
-                // However, we let the browser pop naturally first. 
-                // If the new state has no depth or is 0, we force dashboard.
-                if (!e.state || e.state.depth === 0) {
-                    this.navigate('/dashboard', true, true);
-                    return;
-                }
+            // Rule 2: If on a main tab/page (Ranking, Play, Mine, Profile), navigate to Dashboard
+            const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
+            if (mainTabs.some(p => path === p || path.startsWith(p))) {
+                this.navigate('/dashboard', true, true);
+                return;
             }
 
             if (e.state && typeof e.state.depth !== 'undefined') {
@@ -438,6 +439,13 @@ const Router = {
 
         if (ModalStack.hasModals()) {
             ModalStack.pop();
+            return;
+        }
+
+        const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
+        const curPath = this.currentPath || window.location.pathname.replace(CONFIG.BASE_PATH, '');
+        if (mainTabs.some(p => curPath === p || curPath.startsWith(p))) {
+            this.navigate('/dashboard');
             return;
         }
 

@@ -1317,28 +1317,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Priority 5: Close open modal overlay stack layer if any modals exist
+            // Rule 1: Close open modal overlay if any modals exist
             if (typeof ModalStack !== 'undefined' && ModalStack.hasModals()) {
-                Router.back();
+                ModalStack.pop();
                 return;
             }
 
-            // Priority 6: Exit app immediately if on a root main tab (/dashboard, /ranking, /matches, /profile)
-            const activeTab = (typeof Router !== 'undefined' && (Router.currentBasePath || Router.currentPath)) ? (Router.currentBasePath || Router.currentPath) : path;
-            const rawPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            const mainTabs = ['/dashboard', '/ranking', '/matches', '/profile', '/', '', '/index.html', 'index.html'];
-            const isRootTab = mainTabs.includes(activeTab) || mainTabs.includes(rawPath);
+            const curPath = (typeof Router !== 'undefined' && (Router.currentPath || Router.currentBasePath))
+                ? (Router.currentPath || Router.currentBasePath)
+                : window.location.pathname.replace(CONFIG.BASE_PATH, '');
 
-            if (isRootTab) {
+            // Rule 3: Exit app immediately if on dashboard / home
+            const isDashboard = curPath === '/dashboard' || curPath === '/' || curPath === '' || curPath === '/index.html';
+            if (isDashboard) {
                 App.exitApp();
                 return;
             }
 
-            // Priority 7: Navigate back if in a sub-route history
+            // Rule 2: If in a main tab/page (Ranking, Play, Mine, Profile), go to Dashboard
+            const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
+            const isMainPage = mainTabs.some(p => curPath === p || curPath.startsWith(p));
+            if (isMainPage) {
+                if (typeof Router !== 'undefined') {
+                    Router.navigate('/dashboard');
+                }
+                return;
+            }
+
             if (typeof Router !== 'undefined' && Router.navDepth > 0) {
                 Router.back();
             } else {
-                App.exitApp();
+                Router.navigate('/dashboard');
             }
         });
     }

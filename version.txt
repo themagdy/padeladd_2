@@ -2436,3 +2436,9 @@ Version 2.5.17 (Build 517) - 2026-08-19
 - Max Modal Depth Limit: Configured ModalStack.push to silently cap max navigation depth to 5 nested modal layers.
 - Native Back Button App Exit: Updated Capacitor backButton event handler in app.js so pressing native back button while on root main tabs (/dashboard, /ranking, /matches, /profile) immediately calls App.exitApp() to close the mobile application.
 - Sign Out Landing Page Navigation & Storage Cleanup: Created unified Auth.logout() handler in auth.js that wipes both localStorage and Capacitor SecureStorage, closes active ModalStack overlay layers, and redirects directly to the main landing page (/). Updated mobile auth back button handler in app.js so tapping the back arrow (←) on the sign in screen cleanly returns to the landing page.
+
+==================================================
+Version 2.5.18 (Build 518) - 2026-08-19
+==================================================
+- Structured App Navigation & Back Button Flow: Standardized back button routing hierarchy across app.js and router.js: closing open modal layers first, redirecting main tab views (/ranking, /matches, /matches/my, /profile) back to dashboard, and exiting the app when on dashboard.
+- Live Match Cancellation UI Refresh: Fixed MatchesController.cancelMatch to pass { match_id } object to loadDetails(), activating the real-time Match Cancelled banner in actionArea immediately upon cancellation.

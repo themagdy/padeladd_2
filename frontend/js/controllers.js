@@ -6311,7 +6311,7 @@ const MatchesController = {
         console.log('[API CancelMatch]', res);
 
         if (res && res.success) {
-            Router.navigate('/matches/my');
+            await this.loadDetails({ match_id });
         } else {
             MatchesController.showActionError(res ? res.message : 'Could not cancel match');
             if (btn) { btn.disabled = false; btn.innerText = oldText; }
