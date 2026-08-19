@@ -5880,7 +5880,8 @@ const MatchesController = {
             }, 3000);
         } else {
             // Join the single available team automatically
-            return MatchesController.performJoinSolo(match_id, btn);
+            const singleTeam = Array.from(emptyTeams)[0] || null;
+            return MatchesController.performJoinSolo(match_id, btn, singleTeam);
         }
     },
 
