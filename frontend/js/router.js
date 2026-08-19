@@ -1,6 +1,6 @@
 const Router = {
     routes: {
-        '/': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
+        '/': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
         '/index.html': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
         '/login': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
         '/register': { template: 'frontend/pages/auth/register.html', init: () => AuthController.initRegister() },
@@ -556,7 +556,7 @@ const Router = {
             // Special case for logout on profile edit (only if new user)
             if (nPath === '/profile/edit' && tactions) {
                 if (!Auth.hasProfile()) {
-                    tactions.innerHTML = safeHTML(`<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`);
+                    tactions.innerHTML = safeHTML(`<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`);
                 } else {
                     tactions.innerHTML = '';
                 }

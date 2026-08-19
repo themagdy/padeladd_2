@@ -139,7 +139,7 @@
             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:#fff;">Edit Profile</span>
           </div>
-          <div onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/login'); })"
+          <div onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/'); })"
             style="flex:1; cursor:pointer; display:flex; align-items:center; justify-content:center; background:rgba(255,59,48,0.1); border-radius: var(--r-md); padding:16px; text-align:center; transition:transform 0.2s;"
             onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             <span style="font-size:14px; font-weight:700; letter-spacing:0.5px; color:var(--c-red);">Sign out</span>

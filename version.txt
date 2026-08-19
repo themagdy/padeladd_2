@@ -2380,4 +2380,11 @@ Version 2.5.09 (Build 509) - 2026-08-19
 - Match Code Search Normalization: Hardened backend SQL searching to match full (M-J766) and stripped (J766) match codes seamlessly.
 - Mod Panel Accordion Navigation: Grouped sidebar links into collapsible single-accordion categories (Overview, Management, Moderation, Communication, System) with Log moved under Management.
 - Server-Side Newest-First Ordering: Updated backend SQL query to order matches by m.id DESC, m.match_datetime DESC to list the newest created matches first.
-- OTA Web Bundle web-v2.4.96.8: Built minified production bundle web-v2.4.96.8.zip for mobile OTA updates.
+
+==================================================
+Version 2.5.10 (Build 510) - 2026-08-19
+==================================================
+- Sign-Out Redirection to Main Page: Updated Sign Out action across profile view, controllers, and top bar to navigate to root main page '/' instead of '/login'.
+- Main Page Guest Routing: Updated root route '/' to render main matches list view when unauthenticated.
+- Stats Boxes Typography: Adjusted stat box typography to 600 font weight and reduced text sizes by 1-2px across values, labels, and subtext.
+- OTA Web Bundle web-v2.4.96.9: Built minified production bundle web-v2.4.96.9.zip for mobile OTA updates.
