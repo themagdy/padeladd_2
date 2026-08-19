@@ -1,7 +1,7 @@
 const Router = {
     routes: {
         '/': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
-        '/index.html': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
+        '/index.html': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
         '/login': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
         '/register': { template: 'frontend/pages/auth/register.html', init: () => AuthController.initRegister() },
         '/verify': { template: 'frontend/pages/auth/verify.html', init: () => AuthController.initVerify() },
@@ -390,7 +390,7 @@ const Router = {
         }
 
         // If authenticated, don't allow hitting /login or /register
-        if (Auth.isAuthenticated() && (path === '/login' || path === '/register' || path === '/')) {
+        if (Auth.isAuthenticated() && (path === '/login' || path === '/register' || path === '/' || path === '/index.html')) {
             if (Auth.hasProfile() && Auth.hasLevel()) {
                 this.navigate('/dashboard');
                 return;
