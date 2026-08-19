@@ -2442,3 +2442,10 @@ Version 2.5.18 (Build 518) - 2026-08-19
 ==================================================
 - Structured App Navigation & Back Button Flow: Standardized back button routing hierarchy across app.js and router.js: closing open modal layers first, redirecting main tab views (/ranking, /matches, /matches/my, /profile) back to dashboard, and exiting the app when on dashboard.
 - Live Match Cancellation UI Refresh: Fixed MatchesController.cancelMatch to pass { match_id } object to loadDetails(), activating the real-time Match Cancelled banner in actionArea immediately upon cancellation.
+
+==================================================
+Version 2.5.19 (Build 519) - 2026-08-20
+==================================================
+- Transient Modal Stack Flushing: Updated form submission handlers across Create Match, Edit Profile, and Onboarding to flush temporary modals from memory and update base path state so Back navigation never returns to completed forms.
+- Navbar Active Item Highlight & SVG Styling: Updated router.js and style.css to evaluate active navigation highlights against Router.currentBasePath || path, ensuring active main tabs stay highlighted across modal popups and closing actions.
+- Email Verification Standalone Script: Added token verification script to app/app/verify_email/index.html to automatically update user verification status in database upon opening email verification links.

@@ -118,7 +118,32 @@ const ModalStack = {
             window.history.replaceState(null, '', CONFIG.BASE_PATH + (basePath.startsWith('/') ? basePath : '/' + basePath));
         }
 
+        if (typeof Router !== 'undefined' && typeof Router.updateNavVisibility === 'function') {
+            Router.updateNavVisibility(Router.currentBasePath || window.location.pathname);
+        }
+
         return true;
+    },
+
+    flushTop: function () {
+        if (!this.hasModals()) return false;
+        const topModal = this.stack.pop();
+        if (topModal && topModal.containerEl) {
+            topModal.containerEl.remove();
+        }
+        return true;
+    },
+
+    popAll: function () {
+        while (this.hasModals()) {
+            const topModal = this.stack.pop();
+            if (topModal && topModal.containerEl) {
+                topModal.containerEl.remove();
+            }
+        }
+        document.body.classList.remove('modal-open-body');
+        const container = document.getElementById('modal-stack-container');
+        if (container) container.innerHTML = '';
     }
 };
 
@@ -415,6 +440,13 @@ const Router = {
             finalPath = CONFIG.BASE_PATH + (finalPath === '/' ? '' : finalPath);
         }
 
+        const cleanPath = path.startsWith(CONFIG.BASE_PATH) ? path.slice(CONFIG.BASE_PATH.length) : path;
+        if (cleanPath === '/dashboard' || cleanPath === '/') {
+            if (typeof ModalStack !== 'undefined') ModalStack.popAll();
+            this.navDepth = 0;
+            replace = true;
+        }
+
         let currentPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
         if (currentPath.startsWith('/profile/view') || currentPath.startsWith('/p/')) {
             sessionStorage.setItem('profile_scroll_pos', window.scrollY);
@@ -442,9 +474,18 @@ const Router = {
             return;
         }
 
-        const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
+        if (this.currentBasePath === '/matches/my') {
+            this.navigate('/matches/my');
+            return;
+        }
+        if (this.currentBasePath === '/matches') {
+            this.navigate('/matches');
+            return;
+        }
+
+        const mainTabs = ['/ranking', '/matches/my', '/matches', '/profile', '/profile/view'];
         const curPath = this.currentPath || window.location.pathname.replace(CONFIG.BASE_PATH, '');
-        if (mainTabs.some(p => curPath === p || curPath.startsWith(p))) {
+        if (mainTabs.some(p => curPath === p || (p !== '/matches' && curPath.startsWith(p)))) {
             this.navigate('/dashboard');
             return;
         }
@@ -528,7 +569,10 @@ const Router = {
             }
         }
 
-        this.updateNavVisibility(path);
+        const mainBaseRoutes = ['/dashboard', '/ranking', '/matches', '/matches/my', '/profile/view', '/profile'];
+        if (mainBaseRoutes.includes(nPath)) this.currentBasePath = nPath;
+
+        this.updateNavVisibility(nPath);
 
         // Find route with parameter support
         let matchedParams = null;

@@ -1075,6 +1075,7 @@ const AuthController = {
                     if (Auth.hasProfile() && Auth.hasLevel()) {
                         Router.navigate('/dashboard');
                     } else {
+                        Auth.setOnboardingStep('terms');
                         Router.navigate('/terms');
                     }
                 }, 1500);
@@ -1232,6 +1233,8 @@ const AuthController = {
         const agreeContainer = document.getElementById('terms-agree-container');
         if (agreeContainer && Auth.getOnboardingStep() === 'terms') {
             agreeContainer.style.display = 'block';
+        } else if (agreeContainer) {
+            agreeContainer.style.display = 'none';
         }
 
         // Programmatic click binding to bypass DOMPurify sanitization
@@ -3257,10 +3260,11 @@ const ProfileController = {
                     }
                 } else if (isExisting) {
                     Auth.setHasLevel(true); // Existing profile means they already have a level (or we are just editing)
-                    Router.navigate('/profile/view');
+                    if (typeof ModalStack !== 'undefined') ModalStack.flushTop();
+                    Router.currentBasePath = '/dashboard';
+                    Router.navigate('/profile/view', true, true);
                 } else {
-                    // This case shouldn't normally happen for new profiles without level
-                    Router.navigate('/dashboard');
+                    Router.navigate('/dashboard', true, true);
                 }
             } else {
                 Toast.show(res ? res.message : 'Failed to save profile');
@@ -3321,8 +3325,11 @@ const ProfileController = {
                 document.body.style.overflow = '';
                 document.documentElement.style.overflow = '';
 
-                // Redirect to profile view
-                Router.navigate('/profile/view');
+                // Complete onboarding step
+                Auth.setOnboardingStep('completed');
+                if (typeof ModalStack !== 'undefined') ModalStack.popAll();
+                Router.navDepth = 0;
+                Router.navigate('/dashboard', true, true);
             } else {
                 Toast.show(res ? res.message : 'Failed to register level', 'error');
             }
@@ -3654,6 +3661,8 @@ const MatchesController = {
             if (res && res.success) {
                 Toast.show('Match created!', 'success');
                 SoundManager.play('success');
+                if (typeof ModalStack !== 'undefined') ModalStack.flushTop();
+                Router.currentBasePath = '/matches/my';
                 Router.navigate('/matches/' + res.data.match_code, true, true);
             } else {
                 btn.disabled = false;
