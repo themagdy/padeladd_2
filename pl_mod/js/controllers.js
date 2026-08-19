@@ -8,19 +8,39 @@ function _admFetch(url, opts = {}) {
 window.AdminControllers = {
     // ── Dashboard Controller ──────────────────────────────────────────────
     dashboard: {
+        _currentPreset: '7',
+
         async init() {
-            const token = localStorage.getItem('admin_token');
+            const today = new Date().toISOString().split('T')[0];
+            const past7 = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            const sInput = document.getElementById('chart-start-date');
+            const eInput = document.getElementById('chart-end-date');
+            if (sInput && !sInput.value) sInput.value = past7;
+            if (eInput && !eInput.value) eInput.value = today;
+
+            const select = document.getElementById('chart-preset-select');
+            const val = select ? select.value : '7';
+            if (val === 'custom') {
+                this.onCustomDateChange();
+            } else {
+                this.fetchData(`days=${val}`);
+            }
+        },
+
+        async fetchData(params = '') {
             try {
-                const res = await _admFetch(`../backend/api/admin/dashboard/stats.php`);
+                const url = `../backend/api/admin/dashboard/stats.php${params ? '?' + params : ''}`;
+                const res = await _admFetch(url);
                 const data = await res.json();
                 if (data.success) {
                     const s = data.data;
-                    document.getElementById('stat-players').innerText = s.total_players.toLocaleString();
-                    document.getElementById('stat-matches').innerText = s.matches_today.toLocaleString();
-                    document.getElementById('stat-played').innerText = s.played_matches.toLocaleString();
-                    document.getElementById('stat-scores').innerText = s.scores_submitted.toLocaleString();
-                    document.getElementById('stat-reports').innerText = s.pending_reports.toLocaleString();
-                    document.getElementById('stat-violations').innerText = s.pending_violations.toLocaleString();
+                    if (document.getElementById('stat-players')) document.getElementById('stat-players').innerText = s.total_players.toLocaleString();
+                    if (document.getElementById('stat-matches')) document.getElementById('stat-matches').innerText = s.matches_today.toLocaleString();
+                    if (document.getElementById('stat-played')) document.getElementById('stat-played').innerText = s.played_matches.toLocaleString();
+                    if (document.getElementById('stat-scores')) document.getElementById('stat-scores').innerText = s.scores_submitted.toLocaleString();
+                    if (document.getElementById('stat-reports')) document.getElementById('stat-reports').innerText = s.pending_reports.toLocaleString();
+                    if (document.getElementById('stat-violations')) document.getElementById('stat-violations').innerText = s.pending_violations.toLocaleString();
 
                     if (document.getElementById('stat-venues')) {
                         document.getElementById('stat-venues').innerText = s.venue_requests.toLocaleString();
@@ -29,6 +49,32 @@ window.AdminControllers = {
                     this.renderActivityChart(s.activity_chart);
                 }
             } catch (e) { console.error('Dashboard stats error:', e); }
+        },
+
+        onRangeChange() {
+            const select = document.getElementById('chart-preset-select');
+            const customWrap = document.getElementById('chart-custom-dates');
+            if (!select) return;
+
+            const val = select.value;
+            if (val === 'custom') {
+                if (customWrap) customWrap.style.display = 'flex';
+                this.onCustomDateChange();
+            } else {
+                if (customWrap) customWrap.style.display = 'none';
+                this.fetchData(`days=${val}`);
+            }
+        },
+
+        onCustomDateChange() {
+            const sInput = document.getElementById('chart-start-date');
+            const eInput = document.getElementById('chart-end-date');
+            if (!sInput || !eInput) return;
+            const start = sInput.value;
+            const end = eInput.value;
+            if (start && end) {
+                this.fetchData(`start_date=${start}&end_date=${end}`);
+            }
         },
         renderActivityChart(chartData) {
             const ctx = document.getElementById('activityChart');

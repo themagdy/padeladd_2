@@ -45,8 +45,24 @@
 </div>
 
 <div class="card" style="margin-top:32px; padding: 24px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <h3 style="color:#fff; margin:0;">Platform Activity (Last 7 Days)</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <h3 style="color:#fff; margin:0;" id="chart-title-label">Platform Activity</h3>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <select id="chart-preset-select" onchange="AdminControllers.dashboard.onRangeChange()" style="background:rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer; outline:none;">
+                    <option value="7" style="background:#0f172a; color:#fff;">Last 7 Days</option>
+                    <option value="14" style="background:#0f172a; color:#fff;">Last 14 Days</option>
+                    <option value="30" style="background:#0f172a; color:#fff;">Last 30 Days</option>
+                    <option value="90" style="background:#0f172a; color:#fff;">Last 90 Days</option>
+                    <option value="custom" style="background:#0f172a; color:#fff;">Custom Range</option>
+                </select>
+                <div id="chart-custom-dates" style="display:none; align-items:center; gap:8px;">
+                    <input type="date" id="chart-start-date" onchange="AdminControllers.dashboard.onCustomDateChange()" style="background:rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:5px 10px; font-size:12px; font-family:inherit; color-scheme:dark;">
+                    <span style="color:var(--c-text-muted); font-size:12px; font-weight:600;">to</span>
+                    <input type="date" id="chart-end-date" onchange="AdminControllers.dashboard.onCustomDateChange()" style="background:rgba(255,255,255,0.06); color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:5px 10px; font-size:12px; font-family:inherit; color-scheme:dark;">
+                </div>
+            </div>
+        </div>
         <div style="display:flex; gap:16px; font-size:12px; font-weight:700;">
             <span id="legend-0" onclick="AdminControllers.dashboard.toggleDataset(0)" style="color:var(--c-primary); cursor:pointer; user-select:none;">● Matches</span>
             <span id="legend-1" onclick="AdminControllers.dashboard.toggleDataset(1)" style="color:var(--c-orange); cursor:pointer; user-select:none;">● Players</span>

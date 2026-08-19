@@ -2360,5 +2360,13 @@ Version 2.5.06 (Build 506) - 2026-08-18
 - Solo Join Available Side Selection Modal: Created `promptSoloSideSelection` overlay to prompt for available side selection upon solo join or jump-in, hiding occupied sides and pre-selecting user profile preferred side.
 - Approved Recent Partners Chips: Launched `/api/profile/recent_partners` endpoint to display the latest 3 approved explicit partners (both sent and received invitations) below the partner XCode input, hidden automatically when 0 approved partner invitations exist.
 
+==================================================
+Version 2.5.07 (Build 507) - 2026-08-18
+==================================================
+- Admin Dashboard Graph Date Range Selector: Added quick range presets (7, 14, 30, 90 Days) and a Custom Range picker with dual dark-mode date inputs (start_date to end_date) to the Platform Activity graph in the Mod Panel.
+- Optimized Aggregated Backend Stats API: Refactored backend/api/admin/dashboard/stats.php to use grouped GROUP BY DATE(...) range queries, enabling high-performance multi-day chart rendering.
+
+
+
 
 
