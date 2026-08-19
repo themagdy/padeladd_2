@@ -11,6 +11,7 @@ const ModalStack = {
     },
 
     push: async function (path, route, params, html) {
+        if (this.stack.length >= 5) return false;
         const container = document.getElementById('modal-stack-container');
         if (!container) return;
 

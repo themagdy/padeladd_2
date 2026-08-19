@@ -4919,8 +4919,8 @@ const MatchesController = {
         });
 
         // --- Match Header Toggle for Completed Matches ---
-        const headerSection = document.getElementById('mv-header-section');
-        const headerToggleWrap = document.getElementById('mv-header-toggle-wrap');
+        const headerSection = getEl('mv-header-section');
+        const headerToggleWrap = getEl('mv-header-toggle-wrap');
         const isCompleted = match.status === 'completed';
         const hasApprovedScore = (scores || []).some(s => s.status === 'approved');
 
@@ -4992,8 +4992,8 @@ const MatchesController = {
             MatchesController._countdownInterval = null;
         }
 
-        const countdownWrap = document.getElementById('mv-countdown-wrap');
-        const countdownValue = document.getElementById('mv-countdown-value');
+        const countdownWrap = getEl('mv-countdown-wrap');
+        const countdownValue = getEl('mv-countdown-value');
 
         if (MatchesController._countdownInterval) {
             clearInterval(MatchesController._countdownInterval);
@@ -5040,14 +5040,14 @@ const MatchesController = {
         }
 
         // Action area
-        const actionArea = document.getElementById('mv-action-area');
-        const chatArea = document.getElementById('mv-chat-area');
+        const actionArea = getEl('mv-action-area');
+        const chatArea = getEl('mv-chat-area');
         if (chatArea) chatArea.innerHTML = '';
         if (actionArea) {
             // Unified Policy Violation Area
             const lateWithdrawals = res.data.late_withdrawals || (res.data.late_withdrawal ? [res.data.late_withdrawal] : []);
             const isLateCancel = (match.status === 'cancelled' && match.is_policy_violation);
-            const policyArea = document.getElementById('mv-policy-area');
+            const policyArea = getEl('mv-policy-area');
             if (policyArea) {
                 let combinedHtml = '';
 
@@ -5529,8 +5529,8 @@ const MatchesController = {
             }
         }
 
-        const wlSection = document.getElementById('mv-waiting-section');
-        const wlList = document.getElementById('mv-waiting-list');
+        const wlSection = getEl('mv-waiting-section');
+        const wlList = getEl('mv-waiting-list');
         const activeWl = (waiting_list || []).filter(w => w.request_status === 'approved');
 
         const isWaitlisted = my_waitlist_entry || my_pending_request;

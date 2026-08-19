@@ -2427,3 +2427,10 @@ Version 2.5.16 (Build 516) - 2026-08-19
 - Native iOS Modal Card-Stack Animations: Overhauled modal-layer CSS transitions (0.36s liquid spring curve) with 3D background page scale-down (scale 0.96, brightness 0.7, 20px top border-radius) on #app-content and parent modal layers when nested modals slide up.
 - Modal Cleanup & Padding Optimization: Synchronized ModalStack.pop() cleanup timer to 360ms for smooth exit slide-down, and reduced modal-layer & modal-layer page bottom padding from 60px/90px down to 20px to eliminate trailing whitespace.
 - Ranking Mobile Layout Optimization: Adjusted mobile points column width (60px) in rank-grid-full to tighten horizontal gaps and expand available space for player names.
+
+==================================================
+Version 2.5.17 (Build 517) - 2026-08-19
+==================================================
+- Modal-Scoped Element Query Fix: Updated MatchesController.loadDetails to use modal-scoped getEl() for all Match Details elements (action area, chat area, waiting list, policy area, countdown), fixing level 2+ nested Match Details modal populating.
+- Top-Anchored Card Stack Scaling: Added transform-origin: top center to .modal-layer.is-parent and #app-content so background cards scale down strictly from top edge without cropping bottom content.
+- Max Modal Depth Limit: Configured ModalStack.push to silently cap max navigation depth to 5 nested modal layers.
