@@ -1317,11 +1317,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Priority 2: Navigate back if we have history
-            if (Router.navDepth > 0) {
+            // Priority 5: Close open modal overlay stack layer if any modals exist
+            if (typeof ModalStack !== 'undefined' && ModalStack.hasModals()) {
+                Router.back();
+                return;
+            }
+
+            // Priority 6: Exit app immediately if on a root main tab (/dashboard, /ranking, /matches, /profile)
+            const activeTab = (typeof Router !== 'undefined' && (Router.currentBasePath || Router.currentPath)) ? (Router.currentBasePath || Router.currentPath) : path;
+            const rawPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+            const mainTabs = ['/dashboard', '/ranking', '/matches', '/profile', '/', '', '/index.html', 'index.html'];
+            const isRootTab = mainTabs.includes(activeTab) || mainTabs.includes(rawPath);
+
+            if (isRootTab) {
+                App.exitApp();
+                return;
+            }
+
+            // Priority 7: Navigate back if in a sub-route history
+            if (typeof Router !== 'undefined' && Router.navDepth > 0) {
                 Router.back();
             } else {
-                // Otherwise exit the app
                 App.exitApp();
             }
         });
@@ -1433,11 +1449,12 @@ const handleGlobalMobileAuthToggle = (e) => {
     if (backBtn) {
         e.preventDefault();
         e.stopPropagation();
+        const page = document.querySelector('.auth-page');
+        if (page && page.classList.contains('mobile-show-form')) {
+            page.classList.remove('mobile-show-form');
+        }
         if (typeof Router !== 'undefined') {
-            Router.back();
-        } else {
-            const page = document.querySelector('.auth-page');
-            if (page) page.classList.remove('mobile-show-form');
+            Router.navigate('/', true, true);
         }
         return false;
     }

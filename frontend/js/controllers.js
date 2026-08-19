@@ -2037,7 +2037,7 @@ const ProfileViewController = {
                         ${Auth.isAuthenticated() ? `
                             <div style="margin-top:40px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.05); width:100%;">
                                 <p style="color:var(--c-text-dim); font-size:14px; margin-bottom:12px;">Not you? Or having issues?</p>
-                                <button onclick="API.post('/logout', {}).then(() => { Auth.clearAll(); Router.navigate('/'); })" style="background:transparent; border:none; color:var(--c-orange); font-size:14px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>
+                                <button onclick="Auth.logout()" style="background:transparent; border:none; color:var(--c-orange); font-size:14px; font-weight:700; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>
                             </div>
                         ` : ''}
                     </div>

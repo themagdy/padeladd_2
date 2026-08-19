@@ -467,6 +467,7 @@ const Router = {
         if (path !== '/' && path.endsWith('/')) {
             path = path.slice(0, -1);
         }
+        this.currentPath = path;
 
         const appDiv = document.getElementById('app-content');
         if (!appDiv) return;
