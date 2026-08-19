@@ -7804,10 +7804,10 @@ const NotificationsController = {
             <div id="notif-panel-overlay" onclick="NotificationsController.close()" style="position:fixed; inset:0; z-index:8998; background:rgba(0,0,0,0.5); display:none;"></div>
             <div id="notif-panel-inner" style="
                 position:fixed; top:0; right:0; height:100dvh; width:min(380px, 100vw);
-                background:var(--c-nav-bg, #171C26); border-left:1px solid var(--c-border);
+                background:rgba(18, 24, 36, 0.78); backdrop-filter:blur(20px) saturate(180%); -webkit-backdrop-filter:blur(20px) saturate(180%); border-left:1px solid rgba(255,255,255,0.08);
                 z-index:8999; display:flex; flex-direction:column;
                 transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
-                box-shadow:-8px 0 32px rgba(0,0,0,0.6);
+                box-shadow:-8px 0 32px rgba(0,0,0,0.5);
             ">
                 <div style="display:flex; align-items:center; justify-content:space-between; padding:20px; border-bottom:1px solid var(--c-border); flex-shrink:0;">
                     <div class="section-title" style="font-size:14px;">Notifications</div>
@@ -7828,9 +7828,10 @@ const NotificationsController = {
         style.textContent = `
             #notif-panel.open #notif-panel-overlay { display:block !important; }
             #notif-panel.open #notif-panel-inner { transform:translateX(0) !important; }
-            .notif-item:hover { background:rgba(255,255,255,0.03); }
-            .notif-unread { background:rgba(var(--c-primary-rgb, 59,130,246),0.05); }
-            .notif-unread:hover { background:rgba(var(--c-primary-rgb, 59,130,246),0.08) !important; }
+            .notif-item { border:none !important; background:#1C2333 !important; }
+            .notif-item:hover { background:#242D42 !important; border:none !important; }
+            .notif-unread { background:#172747 !important; border:none !important; }
+            .notif-unread:hover { background:#1D325C !important; border:none !important; }
         `;
         document.head.appendChild(style);
     }
