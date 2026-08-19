@@ -1238,7 +1238,7 @@ form {
 }
 
 .stat-card .stat-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--c-text-muted);
   text-transform: uppercase;
@@ -1246,15 +1246,15 @@ form {
 }
 
 .stat-card .stat-value {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 600;
   color: var(--c-text);
   line-height: 1;
   letter-spacing: -1px;
 }
 
 .stat-card .stat-sub {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--c-text-dim);
 }
 
@@ -2227,15 +2227,15 @@ form {
 }
 
 .stat-box .val {
-  font-size: 34px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 600;
   color: var(--c-orange);
   line-height: 1;
   margin-bottom: 4px;
 }
 
 .stat-box .lbl {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: #fff;
   display: flex;
@@ -2243,7 +2243,7 @@ form {
 }
 
 .stat-box .sub {
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
   min-height: 14px;
   margin-top: 2px;
