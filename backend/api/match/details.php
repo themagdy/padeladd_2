@@ -274,6 +274,7 @@ jsonResponse(true, 'Match details loaded.', [
     'disputes' => $disputes,
     'viewer_id' => $uid,
     'viewer_gender' => $myGender,
+    'my_pts' => $myPoints,
 ]);
 
 

@@ -3655,7 +3655,7 @@ const MatchesController = {
         // Read cached session bounds instantly from Auth (0ms delay, zero API calls)
         const sessionMin = Auth.getMinPlayerPts();
         const sessionMax = Math.max(1000, Auth.getMaxPlayerPts());
-        const sessionCreatorPts = Auth.getCreatorPts();
+        const sessionCreatorPts = (DashboardController._currentProfile && DashboardController._currentProfile.points) ? DashboardController._currentProfile.points : Auth.getCreatorPts();
 
         MatchesController._creatorEligibilityPts = sessionCreatorPts;
         MatchesController._sliderMinBound = sessionMin;
@@ -4837,7 +4837,7 @@ const MatchesController = {
                 // Render User Pin Marker
                 const userPin = document.getElementById('mv-user-pin');
                 const userPinText = document.getElementById('mv-user-pin-text');
-                const userPts = Auth.getCreatorPts();
+                const userPts = (m.my_pts !== undefined && m.my_pts !== null) ? parseInt(m.my_pts) : (DashboardController._currentProfile ? DashboardController._currentProfile.points : Auth.getCreatorPts());
                 if (userPin && userPts !== null && userPts !== undefined) {
                     const userPct = Math.max(0, Math.min(100, ((userPts - minBound) / span) * 100));
                     userPin.style.left = userPct + '%';

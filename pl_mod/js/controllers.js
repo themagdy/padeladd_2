@@ -4011,5 +4011,142 @@ window.AdminControllers = {
                 AdminApp.toast('A network error occurred.', 'error');
             }
         }
+    },
+
+    // ── Verify Accounts Controller ──────────────────────────────────────────
+    verify_accounts: {
+        allUsers: [],
+        searchQuery: '',
+
+        async init() {
+            await this.loadData();
+        },
+
+        async loadData() {
+            try {
+                const res = await _admFetch('../backend/api/admin/verify_accounts.php');
+                const data = await res.json();
+                if (data.success) {
+                    this.allUsers = data.data.users || [];
+                    this.render();
+                } else {
+                    AdminApp.toast(data.message || 'Failed to load verifications', 'error');
+                }
+            } catch (err) {
+                console.error('Verify Accounts error:', err);
+                AdminApp.toast('Network error loading verifications', 'error');
+            }
+        },
+
+        setSearch(q) {
+            this.searchQuery = q.toLowerCase().trim();
+            this.render();
+        },
+
+        render() {
+            const container = document.getElementById('va-cards-container');
+            const empty = document.getElementById('va-empty-state');
+            const totalEl = document.getElementById('va-stat-total');
+            const emailEl = document.getElementById('va-stat-email');
+            const phoneEl = document.getElementById('va-stat-phone');
+            if (!container) return;
+
+            const pendingEmail = this.allUsers.filter(u => u.is_email_verified === 0).length;
+            const pendingPhone = this.allUsers.filter(u => u.is_phone_verified === 0).length;
+
+            if (totalEl) totalEl.innerText = this.allUsers.length;
+            if (emailEl) emailEl.innerText = pendingEmail;
+            if (phoneEl) phoneEl.innerText = pendingPhone;
+
+            let filtered = this.allUsers;
+            if (this.searchQuery) {
+                filtered = filtered.filter(u =>
+                    (u.first_name + ' ' + u.last_name).toLowerCase().includes(this.searchQuery) ||
+                    (u.email || '').toLowerCase().includes(this.searchQuery) ||
+                    (u.mobile || '').toLowerCase().includes(this.searchQuery)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+            if (empty) empty.style.display = 'none';
+
+            container.innerHTML = filtered.map(u => {
+                const codesHtml = (u.codes || []).map(c => {
+                    if (c.code_type === 'email') {
+                        return `
+                            <div style="background:rgba(0,0,0,0.2); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-top:8px;">
+                                <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:4px;">✉️ EMAIL VERIFICATION LINK</div>
+                                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                    <input type="text" readonly value="${c.verify_link}" style="flex:1; min-width:200px; background:transparent; border:none; color:var(--c-primary); font-size:12px; font-family:monospace;" />
+                                    <a href="${c.verify_link}" target="_blank" class="btn-badge" style="background:var(--c-primary); color:#fff; text-decoration:none; padding:6px 12px; font-size:11px; font-weight:700;">Open ↗</a>
+                                    <button onclick="navigator.clipboard.writeText('${c.verify_link}'); AdminApp.toast('Link copied!')" class="btn-badge" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 12px; font-size:11px; font-weight:700; cursor:pointer;">Copy Link</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div style="background:rgba(0,0,0,0.2); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-top:8px;">
+                                <div style="font-size:11px; font-weight:700; color:var(--c-text-muted); margin-bottom:4px;">💬 WHATSAPP OTP</div>
+                                <div style="display:flex; gap:12px; align-items:center;">
+                                    <span style="font-size:24px; font-weight:900; color:var(--c-green); font-family:monospace; letter-spacing:3px;">${c.code_value}</span>
+                                    <button onclick="navigator.clipboard.writeText('${c.code_value}'); AdminApp.toast('OTP copied!')" class="btn-badge" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 12px; font-size:11px; font-weight:700; cursor:pointer;">Copy OTP</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }).join('');
+
+                return `
+                    <div class="card" style="padding:20px; border-left: 4px solid ${u.is_email_verified === 0 && u.is_phone_verified === 0 ? 'var(--c-red)' : 'var(--c-orange)'};">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                            <div>
+                                <h3 style="margin:0; font-size:18px; color:#fff;">${u.first_name} ${u.last_name}</h3>
+                                <div style="font-size:13px; color:var(--c-text-muted); margin-top:4px;">
+                                    📧 ${u.email} • 📱 ${u.mobile}
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <span class="badge ${u.is_email_verified === 1 ? 'status-active' : 'status-inactive'}" style="background:${u.is_email_verified === 1 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; color:${u.is_email_verified === 1 ? 'var(--c-green)' : 'var(--c-red)'}; font-size:11px; padding:4px 10px;">
+                                    Email: ${u.is_email_verified === 1 ? 'Verified' : 'Pending'}
+                                </span>
+                                <span class="badge ${u.is_phone_verified === 1 ? 'status-active' : 'status-inactive'}" style="background:${u.is_phone_verified === 1 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)'}; color:${u.is_phone_verified === 1 ? 'var(--c-green)' : 'var(--c-red)'}; font-size:11px; padding:4px 10px;">
+                                    Phone: ${u.is_phone_verified === 1 ? 'Verified' : 'Pending'}
+                                </span>
+                                <button onclick="AdminControllers.verify_accounts.manualVerify(${u.id})" class="btn-badge" style="background:var(--c-primary); color:#fff; border:none; padding:6px 14px; font-weight:700; font-size:12px; cursor:pointer;">
+                                    ⚡ Manually Verify All
+                                </button>
+                            </div>
+                        </div>
+
+                        ${codesHtml || '<div style="font-size:12px; color:var(--c-text-muted); font-style:italic;">No active verification codes pending.</div>'}
+                    </div>
+                `;
+            }).join('');
+        },
+
+        async manualVerify(userId) {
+            if (!confirm('Manually mark this user as fully verified?')) return;
+            try {
+                const res = await _admFetch('../backend/api/admin/verify_accounts.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'manual_verify', user_id: userId, type: 'all' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    AdminApp.toast('User account verified successfully!');
+                    await this.loadData();
+                } else {
+                    AdminApp.toast(data.message || 'Verification failed', 'error');
+                }
+            } catch (err) {
+                console.error('Manual verify error:', err);
+                AdminApp.toast('Network error verifying user', 'error');
+            }
+        }
     }
 };

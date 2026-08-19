@@ -155,6 +155,10 @@ const Auth = {
                     if (p) {
                         this.setHasProfile(true);
                         this.setHasLevel(!!p.level);
+                        const totalPts = (parseInt(p.rank_points) || 0) + (parseInt(p.current_buffer) || 0);
+                        if (totalPts > 0) {
+                            this.setSessionBounds(this.getMinPlayerPts(), this.getMaxPlayerPts(), totalPts);
+                        }
                     } else {
                         this.setHasProfile(false);
                         this.setHasLevel(false);
@@ -193,16 +197,23 @@ const Auth = {
     getCreatorPts: function() {
         if (this._creatorPtsCache !== null) return this._creatorPtsCache;
         const stored = sessionStorage.getItem('creator_pts');
-        return stored !== null ? parseInt(stored) : 100;
+        if (stored !== null && !isNaN(parseInt(stored))) return parseInt(stored);
+        if (typeof DashboardController !== 'undefined' && DashboardController._currentProfile && DashboardController._currentProfile.points) {
+            return DashboardController._currentProfile.points;
+        }
+        return 0;
     },
     setSessionBounds: function(minPts, maxPts, creatorPts = null) {
         this._minPlayerPtsCache = parseInt(minPts) || 0;
         this._maxPlayerPtsCache = parseInt(maxPts) || 1000;
         sessionStorage.setItem('min_player_pts', String(this._minPlayerPtsCache));
         sessionStorage.setItem('max_player_pts', String(this._maxPlayerPtsCache));
-        if (creatorPts !== null) {
-            this._creatorPtsCache = parseInt(creatorPts) || 100;
-            sessionStorage.setItem('creator_pts', String(this._creatorPtsCache));
+        if (creatorPts !== null && creatorPts !== undefined) {
+            const parsed = parseInt(creatorPts);
+            if (!isNaN(parsed) && parsed > 0) {
+                this._creatorPtsCache = parsed;
+                sessionStorage.setItem('creator_pts', String(this._creatorPtsCache));
+            }
         }
     },
     clearAll: function() {
@@ -214,9 +225,7 @@ const Auth = {
         this._minPlayerPtsCache = null;
         this._maxPlayerPtsCache = null;
         this._creatorPtsCache = null;
-        sessionStorage.removeItem('min_player_pts');
-        sessionStorage.removeItem('max_player_pts');
-        sessionStorage.removeItem('creator_pts');
+        sessionStorage.clear();
         const isCapacitor = typeof window.Capacitor !== 'undefined' && window.Capacitor.Plugins && window.Capacitor.Plugins.SecureStoragePlugin;
         if (isCapacitor) {
             const SecureStorage = window.Capacitor.Plugins.SecureStoragePlugin;

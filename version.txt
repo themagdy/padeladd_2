@@ -2387,3 +2387,9 @@ Version 2.5.10 (Build 510) - 2026-08-19
 - Sign-Out Redirection to Main Landing Page: Updated Sign Out action across profile view, controllers, and top bar to navigate to root main landing page '/' instead of '/login'.
 - Router Mobile Routing Synchronization: Synchronized '/' and '/index.html' routes to render the main landing page (login.html), ensuring consistent sign-out destination on desktop and mobile Capacitor environments.
 - Stats Boxes Typography: Adjusted stat box typography to 600 font weight and reduced text sizes by 1-2px across values, labels, and subtext.
+
+==================================================
+Version 2.5.11 (Build 511) - 2026-08-19
+==================================================
+- Real Player Points Sync Across Match Views: Updated backend match details API (details.php) to return exact calculated database points (my_pts) and hardened Auth.syncWithServer() & MatchesController to render real points accurately on match details and match creation sliders.
+- Admin Verify Accounts Page Integration: Moved temp_verify.php into the Admin Mod Panel under System (#verify_accounts), featuring search, stats overview, WhatsApp OTP copy buttons, email link generation, and manual verification capabilities.

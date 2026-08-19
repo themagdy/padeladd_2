@@ -1,0 +1,46 @@
+<!-- Header / Stats Bar -->
+<div class="dashboard-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-bottom:24px;">
+
+    <div class="card" style="border-left: 4px solid var(--c-orange); padding: 16px 20px; margin-bottom:0;">
+        <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Pending Verifications</div>
+        <div id="va-stat-total" style="font-size:28px; font-weight:800; color:#fff; line-height:1.2;">--</div>
+        <div style="font-size:10px; color:var(--c-orange); margin-top:4px;">Unverified users/codes</div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--c-red); padding: 16px 20px; margin-bottom:0;">
+        <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Pending Email</div>
+        <div id="va-stat-email" style="font-size:28px; font-weight:800; color:#fff; line-height:1.2;">--</div>
+        <div style="font-size:10px; color:var(--c-red); margin-top:4px;">Email link required</div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #eab308; padding: 16px 20px; margin-bottom:0;">
+        <div style="font-size:10px; font-weight:800; color:var(--c-text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Pending Phone</div>
+        <div id="va-stat-phone" style="font-size:28px; font-weight:800; color:#fff; line-height:1.2;">--</div>
+        <div style="font-size:10px; color:#eab308; margin-top:4px;">WhatsApp OTP required</div>
+    </div>
+
+</div>
+
+<!-- Actions Header Bar -->
+<div class="page-header-actions" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+    <div id="page-search-source" style="flex:1; min-width:220px;">
+        <div class="search-box">
+            <span class="icon">🔍</span>
+            <input type="text" placeholder="Search by name, email, or mobile..." onkeyup="AdminControllers.verify_accounts.setSearch(this.value)">
+        </div>
+    </div>
+    <button onclick="AdminControllers.verify_accounts.loadData()" class="btn btn-secondary" style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#fff; padding:9px 16px; border-radius:8px; font-weight:700; cursor:pointer;">
+        🔄 Refresh List
+    </button>
+</div>
+
+<!-- List of Pending Verification Cards -->
+<div id="va-cards-container" style="display:flex; flex-direction:column; gap:16px;">
+    <!-- Loaded dynamically via JS -->
+</div>
+
+<div id="va-empty-state" class="empty-state card" style="display:none; padding:40px; text-align:center;">
+    <div class="empty-icon" style="font-size:40px; margin-bottom:12px;">✅</div>
+    <h3 style="color:#fff; margin-bottom:6px;">No Pending Verifications</h3>
+    <p style="color:var(--c-text-muted); font-size:14px;">All user accounts are currently verified.</p>
+</div>
