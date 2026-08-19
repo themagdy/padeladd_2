@@ -1323,9 +1323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const curPath = (typeof Router !== 'undefined' && (Router.currentPath || Router.currentBasePath))
-                ? (Router.currentPath || Router.currentBasePath)
-                : window.location.pathname.replace(CONFIG.BASE_PATH, '');
+            const curPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
 
             // Rule 3: Exit app immediately if on dashboard / home
             const isDashboard = curPath === '/dashboard' || curPath === '/' || curPath === '' || curPath === '/index.html';

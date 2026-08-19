@@ -2454,3 +2454,10 @@ Version 2.5.19 (Build 519) - 2026-08-20
 Version 2.5.20 (Build 520) - 2026-08-20
 ==================================================
 - Hero Landing Banner Asset Optimization: Updated and optimized mobile/landing hero banner image assets (`assets/landing_banner.jpg`), removing redundant backup copies.
+
+==================================================
+Version 2.5.21 (Build 521) - 2026-08-20
+==================================================
+- Max Modal Stack Depth & Navigation Refinement: Capped nested modal depth to 3 layers in router.js and synchronized ModalStack.pop(), flushTop(), & popAll() to decrement Router.navDepth and update history state cleanly.
+- Native Back Button App Exit: Updated app.js backButton listener to evaluate curPath via live window.location.pathname, ensuring returning from any modal page to dashboard exits the mobile application on the first tap.
+- iPad WebKit Scroll Bleed Lock: Added `-webkit-overflow-scrolling: auto !important` and `touch-action: none !important` to `.modal-layer.is-parent` and `body.modal-open-body #app-content` to prevent parent modal touch scrolling on iPad.

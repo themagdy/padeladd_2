@@ -6694,6 +6694,7 @@ html.modal-open-body,
 body.modal-open-body {
   overflow: hidden !important;
   touch-action: none;
+  -webkit-overflow-scrolling: auto !important;
 }
 
 body.modal-open-body #app-content {
@@ -6701,6 +6702,8 @@ body.modal-open-body #app-content {
   filter: brightness(0.7);
   border-radius: 20px 20px 0 0;
   overflow: hidden !important;
+  touch-action: none !important;
+  -webkit-overflow-scrolling: auto !important;
 }
 
 .modal-layer.is-parent {
@@ -6712,6 +6715,7 @@ body.modal-open-body #app-content {
   user-select: none !important;
   touch-action: none !important;
   overscroll-behavior: none !important;
+  -webkit-overflow-scrolling: auto !important;
 }
 
 .modal-layer.slide-enter {

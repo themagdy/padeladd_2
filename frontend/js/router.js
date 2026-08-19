@@ -11,7 +11,7 @@ const ModalStack = {
     },
 
     push: async function (path, route, params, html) {
-        if (this.stack.length >= 5) return false;
+        if (this.stack.length >= 3) return false;
         const container = document.getElementById('modal-stack-container');
         if (!container) return;
 
@@ -107,15 +107,21 @@ const ModalStack = {
             }, 360);
         }
 
+        if (typeof Router !== 'undefined' && Router.navDepth > 0) {
+            Router.navDepth--;
+        }
+
         const newTop = this.getTopModal();
         if (newTop && newTop.containerEl) {
             newTop.containerEl.classList.remove('is-parent');
             const targetPath = newTop.path;
-            window.history.replaceState(null, '', CONFIG.BASE_PATH + (targetPath.startsWith('/') ? targetPath : '/' + targetPath));
+            if (typeof Router !== 'undefined') Router.currentPath = targetPath;
+            window.history.replaceState({ depth: Router ? Router.navDepth : 0 }, null, CONFIG.BASE_PATH + (targetPath.startsWith('/') ? targetPath : '/' + targetPath));
         } else {
             document.body.classList.remove('modal-open-body');
             const basePath = Router.currentBasePath || '/dashboard';
-            window.history.replaceState(null, '', CONFIG.BASE_PATH + (basePath.startsWith('/') ? basePath : '/' + basePath));
+            if (typeof Router !== 'undefined') Router.currentPath = basePath;
+            window.history.replaceState({ depth: Router ? Router.navDepth : 0 }, null, CONFIG.BASE_PATH + (basePath.startsWith('/') ? basePath : '/' + basePath));
         }
 
         if (typeof Router !== 'undefined' && typeof Router.updateNavVisibility === 'function') {
@@ -131,6 +137,9 @@ const ModalStack = {
         if (topModal && topModal.containerEl) {
             topModal.containerEl.remove();
         }
+        if (typeof Router !== 'undefined' && Router.navDepth > 0) {
+            Router.navDepth--;
+        }
         return true;
     },
 
@@ -140,6 +149,10 @@ const ModalStack = {
             if (topModal && topModal.containerEl) {
                 topModal.containerEl.remove();
             }
+        }
+        if (typeof Router !== 'undefined') {
+            Router.navDepth = 0;
+            Router.currentPath = Router.currentBasePath || '/dashboard';
         }
         document.body.classList.remove('modal-open-body');
         const container = document.getElementById('modal-stack-container');
