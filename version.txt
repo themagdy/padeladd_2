@@ -2387,4 +2387,3 @@ Version 2.5.10 (Build 510) - 2026-08-19
 - Sign-Out Redirection to Main Page: Updated Sign Out action across profile view, controllers, and top bar to navigate to root main page '/' instead of '/login'.
 - Main Page Guest Routing: Updated root route '/' to render main matches list view when unauthenticated.
 - Stats Boxes Typography: Adjusted stat box typography to 600 font weight and reduced text sizes by 1-2px across values, labels, and subtext.
-- OTA Web Bundle web-v2.4.96.9: Built minified production bundle web-v2.4.96.9.zip for mobile OTA updates.
