@@ -6402,6 +6402,11 @@ body {
   padding-top: max(36px, env(safe-area-inset-top)) !important;
 }
 
+#notif-panel-inner {
+  background: #171C26 !important;
+  opacity: 1 !important;
+}
+
 .platform-ios #notif-panel-inner {
   padding-top: max(20px, env(safe-area-inset-top)) !important;
 }

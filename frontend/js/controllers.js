@@ -7804,10 +7804,10 @@ const NotificationsController = {
             <div id="notif-panel-overlay" onclick="NotificationsController.close()" style="position:fixed; inset:0; z-index:8998; background:rgba(0,0,0,0.5); display:none;"></div>
             <div id="notif-panel-inner" style="
                 position:fixed; top:0; right:0; height:100dvh; width:min(380px, 100vw);
-                background:rgba(18, 24, 36, 0.96); border-left:1px solid var(--c-border);
+                background:var(--c-nav-bg, #171C26); border-left:1px solid var(--c-border);
                 z-index:8999; display:flex; flex-direction:column;
                 transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
-                box-shadow:-8px 0 32px rgba(0,0,0,0.4);
+                box-shadow:-8px 0 32px rgba(0,0,0,0.6);
             ">
                 <div style="display:flex; align-items:center; justify-content:space-between; padding:20px; border-bottom:1px solid var(--c-border); flex-shrink:0;">
                     <div class="section-title" style="font-size:14px;">Notifications</div>
