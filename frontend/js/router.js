@@ -103,7 +103,7 @@ const ModalStack = {
             topModal.containerEl.classList.add('slide-exit');
             setTimeout(() => {
                 topModal.containerEl.remove();
-            }, 300);
+            }, 360);
         }
 
         const newTop = this.getTopModal();

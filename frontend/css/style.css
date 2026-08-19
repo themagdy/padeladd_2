@@ -4883,7 +4883,7 @@ form {
   }
 
   .rank-grid-full {
-    grid-template-columns: 45px 1fr 80px !important;
+    grid-template-columns: 45px 1fr 60px !important;
     gap: 12px;
   }
 
@@ -5176,7 +5176,7 @@ body {
   box-sizing: border-box;
 }
 
-.story-avatar-ring > * {
+.story-avatar-ring>* {
   border: 3px solid var(--c-bg) !important;
   box-sizing: border-box !important;
 }
@@ -6674,10 +6674,20 @@ body {
   overflow-x: hidden;
   pointer-events: auto;
   -webkit-overflow-scrolling: touch;
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
-  padding-bottom: 60px;
+  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease, filter 0.36s ease, border-radius 0.36s ease;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
+  padding-bottom: 20px;
   overscroll-behavior: contain;
+  will-change: transform, opacity, filter;
+}
+
+.modal-layer .page {
+  padding-bottom: 20px !important;
+}
+
+#app-content {
+  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), filter 0.36s ease, border-radius 0.36s ease;
+  will-change: transform, filter;
 }
 
 html.modal-open-body,
@@ -6686,8 +6696,18 @@ body.modal-open-body {
   touch-action: none;
 }
 
+body.modal-open-body #app-content {
+  transform: scale(0.96) translateY(-6px);
+  filter: brightness(0.7);
+  border-radius: 20px 20px 0 0;
+  overflow: hidden !important;
+}
+
 .modal-layer.is-parent {
-  overflow-y: hidden !important;
+  transform: scale(0.94) translateY(-10px) !important;
+  filter: brightness(0.65);
+  border-radius: 20px 20px 0 0 !important;
+  overflow: hidden !important;
   pointer-events: none !important;
   user-select: none !important;
   touch-action: none !important;
@@ -6696,7 +6716,7 @@ body.modal-open-body {
 
 .modal-layer.slide-enter {
   transform: translateY(100%);
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .modal-layer.slide-active {
@@ -6706,7 +6726,7 @@ body.modal-open-body {
 
 .modal-layer.slide-exit {
   transform: translateY(100%);
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .modal-layer .top-bar-nav {

@@ -2420,3 +2420,10 @@ Version 2.5.15 (Build 515) - 2026-08-19
 - Seamless Modal Back Navigation: Updated Router.back() to pop modal layers via ModalStack.pop() without triggering browser page reloads, and updated Router.currentBasePath URL state synchronization on pop.
 - Match Chat Routing & Code Payload: Standardized ChatController.open to pass human-readable match codes (e.g. M-C857) to /matches/:matchCode/chat and updated route mapping to render chat.html.
 - Scoped Stats UI & Modal Scroll Isolation: Updated StatsUI.update to scope element queries within active modal containers, preventing modal stat updates from altering background page elements, and added CSS overscroll isolation to modal layers.
+
+==================================================
+Version 2.5.16 (Build 516) - 2026-08-19
+==================================================
+- Native iOS Modal Card-Stack Animations: Overhauled modal-layer CSS transitions (0.36s liquid spring curve) with 3D background page scale-down (scale 0.96, brightness 0.7, 20px top border-radius) on #app-content and parent modal layers when nested modals slide up.
+- Modal Cleanup & Padding Optimization: Synchronized ModalStack.pop() cleanup timer to 360ms for smooth exit slide-down, and reduced modal-layer & modal-layer page bottom padding from 60px/90px down to 20px to eliminate trailing whitespace.
+- Ranking Mobile Layout Optimization: Adjusted mobile points column width (60px) in rank-grid-full to tighten horizontal gaps and expand available space for player names.
