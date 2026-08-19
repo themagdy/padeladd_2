@@ -1,3 +1,126 @@
+const ModalStack = {
+    stack: [],
+    _layerCounter: 0,
+
+    hasModals: function () {
+        return this.stack.length > 0;
+    },
+
+    getTopModal: function () {
+        return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
+    },
+
+    push: async function (path, route, params, html) {
+        const container = document.getElementById('modal-stack-container');
+        if (!container) return;
+
+        document.body.classList.add('modal-open-body');
+        const currentTop = this.getTopModal();
+        if (currentTop && currentTop.containerEl) {
+            currentTop.containerEl.classList.add('is-parent');
+        }
+
+        this._layerCounter++;
+        const layerId = `modal-layer-${this._layerCounter}`;
+        const zIndex = 8000 + this.stack.length * 10;
+
+        let maxW = '480px';
+        if (path === '/profile/edit') maxW = '500px';
+        else if (path === '/terms') maxW = '520px';
+        else if (path.startsWith('/p/') || (path.startsWith('/profile/view/') && path !== '/profile/view')) maxW = '1200px';
+        else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) maxW = '900px';
+        else if (path === '/rules' || path.startsWith('/announcement/')) maxW = '800px';
+
+        const isChat = path.includes('/chat');
+        const layerEl = document.createElement('div');
+        layerEl.className = 'modal-layer slide-enter';
+        layerEl.id = layerId;
+        layerEl.style.zIndex = zIndex;
+
+        if (isChat) {
+            layerEl.style.paddingBottom = '0px';
+            layerEl.style.overflow = 'hidden';
+            layerEl.style.display = 'flex';
+            layerEl.style.flexDirection = 'column';
+        }
+
+        layerEl.innerHTML = safeHTML(`
+            <header class="top-bar-nav fixed-top-bar" style="display:flex; flex-shrink:0;">
+                <div class="top-bar-inner" style="width:100%; max-width:${maxW}; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:100%;">
+                    <button class="top-bar-back" onclick="Router.back()" style="display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; background:transparent; border:none; color:var(--c-text); text-decoration:none; margin-left:-12px; cursor:pointer;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <div class="top-bar-title" style="font-size:15px; font-weight:700; color:var(--c-text); text-transform:uppercase; letter-spacing:1px;"></div>
+                    <div class="top-bar-actions" style="display:flex; align-items:center;"></div>
+                </div>
+            </header>
+            <div class="modal-body-content" style="width:100%; ${isChat ? 'flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden;' : ''}">
+                ${html}
+            </div>
+        `);
+
+        container.appendChild(layerEl);
+
+        const backBtn = layerEl.querySelector('.top-bar-back');
+        if (backBtn) {
+            backBtn.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                Router.back();
+            };
+        }
+
+        const layerState = {
+            id: layerId,
+            path: path,
+            params: params,
+            containerEl: layerEl,
+            route: route,
+            data: {}
+        };
+
+        this.stack.push(layerState);
+
+        requestAnimationFrame(() => {
+            layerEl.classList.add('slide-active');
+        });
+
+        if (typeof route.init === 'function') {
+            await route.init(params, layerEl, layerState);
+        }
+
+        return layerState;
+    },
+
+    pop: function () {
+        if (!this.hasModals()) return false;
+
+        const topModal = this.stack.pop();
+        if (topModal && topModal.containerEl) {
+            topModal.containerEl.classList.remove('slide-active');
+            topModal.containerEl.classList.add('slide-exit');
+            setTimeout(() => {
+                topModal.containerEl.remove();
+            }, 300);
+        }
+
+        const newTop = this.getTopModal();
+        if (newTop && newTop.containerEl) {
+            newTop.containerEl.classList.remove('is-parent');
+            const targetPath = newTop.path;
+            window.history.replaceState(null, '', CONFIG.BASE_PATH + (targetPath.startsWith('/') ? targetPath : '/' + targetPath));
+        } else {
+            document.body.classList.remove('modal-open-body');
+            const basePath = Router.currentBasePath || '/dashboard';
+            window.history.replaceState(null, '', CONFIG.BASE_PATH + (basePath.startsWith('/') ? basePath : '/' + basePath));
+        }
+
+        return true;
+    }
+};
+
 const Router = {
     routes: {
         '/': { template: 'frontend/pages/auth/login.html', init: () => AuthController.initLogin() },
@@ -21,7 +144,7 @@ const Router = {
         '/matches/join': { template: 'frontend/pages/matches/list.html', init: () => MatchesController.initList('play') },
         '/matches/view/:id': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView({ id: params.id }) },
         '/matches/:matchCode': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params) },
-        '/matches/:matchCode/chat': { template: 'frontend/pages/matches/view.html', init: (params) => MatchesController.initView(params, true) },
+        '/matches/:matchCode/chat': { template: 'frontend/pages/matches/chat.html', init: (params, container, state) => ChatController.init(params, container, state) },
         '/ranking': { template: 'frontend/pages/ranking.html', init: () => RankingController.init() },
         '/rules': {
             template: 'frontend/pages/rules.html',
@@ -307,42 +430,22 @@ const Router = {
     },
 
     back: function () {
-        const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-        const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms', '/privacy'];
-        const isAuthPage = publicRoutes.includes(path) || path === '';
-
-        // 1. If we are on a page with a back bar/button, go back in history
-        const backBarRoutes = ['/login', '/register', '/verify', '/forgot-password', '/reset-password', '/profile/edit', '/matches/create', '/rules', '/terms', '/privacy'];
-        const isDynamicBackBar = path.startsWith('/matches/M-') ||
-            path.startsWith('/p/') ||
-            path.startsWith('/announcement/') ||
-            (path.startsWith('/profile/view/') && path !== '/profile/view');
-        const hasBackBar = backBarRoutes.includes(path) || isDynamicBackBar;
-
-        if (hasBackBar) {
-            if (this.navDepth > 0) {
-                window.history.back();
-                return;
-            } else if (path === '/login') {
-                this.navigate('/');
-                return;
-            }
+        if (typeof ChatController !== 'undefined' && ChatController._isShowing) {
+            ChatController.stop();
+            ChatController._isShowing = false;
         }
 
-        // 2. If no back bar (main tabs) OR depth is 0, determine fallback
-        if (path === '/dashboard' || isAuthPage) {
-            // If on dashboard or login, "close" the app
-            if (navigator.app && navigator.app.exitApp) {
-                navigator.app.exitApp();
-            } else if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
-                window.Capacitor.Plugins.App.exitApp();
-            } else {
-                window.close();
-            }
-        } else {
-            // If on Play/Ranking/etc without back bar, go to Dashboard
-            this.navigate('/dashboard', true, true);
+        if (ModalStack.hasModals()) {
+            ModalStack.pop();
+            return;
         }
+
+        if (this.navDepth > 0) {
+            window.history.back();
+            return;
+        }
+
+        this.navigate('/dashboard', true, true);
     },
 
     handleRoute: async function () {
@@ -373,7 +476,8 @@ const Router = {
 
         // Skip global loader ONLY for main list tabs to prevent flickering (they handle their own skeletons/cache)
         // Detail pages (Matches/Profiles) will show the global loader for a better user experience
-        const isMainTab = (nPath === '/dashboard' || nPath === '/matches' || nPath === '/matches/my' || nPath === '/ranking');
+        const mainTabs = ['/dashboard', '/matches', '/matches/my', '/ranking', '/', '/login', '/register', '/index.html'];
+        const isMainTab = mainTabs.includes(nPath);
 
         const loader = document.getElementById('global-loader');
         if (loader && !isMainTab) loader.style.display = 'flex';
@@ -455,10 +559,25 @@ const Router = {
                     const response = await fetch(targetUrl, { cache: 'no-cache' });
                     if (!response.ok) throw new Error('Template not found');
                     html = await response.text();
-
                     this._templateCache[route.template] = html;
                 }
 
+                if (!isMainTab) {
+                    if (!appDiv.querySelector('.page') || appDiv.querySelector('#mv-skeleton')) {
+                        const dashRoute = this.routes['/dashboard'];
+                        if (dashRoute) {
+                            const dashHtml = this._templateCache[dashRoute.template] || await (await fetch(CONFIG.BASE_PATH + '/' + dashRoute.template)).text();
+                            appDiv.innerHTML = safeHTML(dashHtml);
+                            if (typeof dashRoute.init === 'function') await dashRoute.init();
+                        }
+                    }
+
+                    await ModalStack.push(path, route, matchedParams, html);
+                    if (loader) loader.style.display = 'none';
+                    return;
+                }
+
+                this.currentBasePath = path;
                 appDiv.innerHTML = safeHTML(html);
                 if (typeof CONFIG !== 'undefined' && CONFIG.APP_BUILD_REF) {
                     appDiv.querySelectorAll('.app-version-placeholder').forEach(el => {
@@ -526,49 +645,10 @@ const Router = {
 
         const needsBackBar = backBarRoutes.includes(nPath) || isDynamicBackBar;
 
-        if (needsBackBar) {
-            tbar.style.display = 'flex';
-            document.body.classList.add('has-fixed-bar');
+        if (tbar) tbar.style.display = 'none';
+        document.body.classList.remove('has-fixed-bar');
 
-            const tbarInner = document.getElementById('top-bar-inner');
-            if (tbarInner) {
-                if (nPath === '/profile/edit') {
-                    tbarInner.style.maxWidth = '500px';
-                    tbarInner.style.padding = '0 20px';
-                } else if (nPath === '/terms') {
-                    tbarInner.style.maxWidth = '520px';
-                    tbarInner.style.padding = '0 20px';
-                } else if (nPath.startsWith('/p/') || (nPath.startsWith('/profile/view/') && nPath !== '/profile/view')) {
-                    tbarInner.style.maxWidth = '1200px';
-                    tbarInner.style.padding = '0 16px';
-                } else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) {
-                    tbarInner.style.maxWidth = '900px';
-                    tbarInner.style.padding = '0 16px';
-                } else if (nPath === '/rules' || nPath.startsWith('/announcement/')) {
-                    tbarInner.style.maxWidth = '800px';
-                    tbarInner.style.padding = '0 16px';
-                } else {
-                    tbarInner.style.maxWidth = '480px';
-                    tbarInner.style.padding = '0 16px';
-                }
-            }
-
-            // Special case for logout on profile edit (only if new user)
-            if (nPath === '/profile/edit' && tactions) {
-                if (!Auth.hasProfile()) {
-                    tactions.innerHTML = safeHTML(`<button onclick="API.post('/logout').then(() => { Auth.clearAll(); Router.navigate('/'); })" style="background: transparent; border: none; color: var(--c-text-muted); font-size: 14px; font-weight: 700; cursor: pointer; text-transform:uppercase; letter-spacing:1px;">Sign Out</button>`);
-                } else {
-                    tactions.innerHTML = '';
-                }
-            } else {
-                if (tactions) tactions.innerHTML = '';
-            }
-        } else {
-            tbar.style.display = 'none';
-            document.body.classList.remove('has-fixed-bar');
-        }
-
-        const hideNavBar = isAuthPage || needsBackBar;
+        const hideNavBar = isAuthPage;
 
         if (Auth.isAuthenticated() && Auth.hasProfile() && !hideNavBar) {
             nav.style.display = 'flex';

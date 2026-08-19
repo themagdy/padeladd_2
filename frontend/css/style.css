@@ -6649,3 +6649,70 @@ body {
   background: var(--c-primary);
   border-radius: 100px;
 }
+
+/* ═════════════════════════════════════════════════════════════════════
+   MODAL STACK NAVIGATION SYSTEM
+   ═════════════════════════════════════════════════════════════════════ */
+#modal-stack-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 8000;
+}
+
+.modal-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--c-bg);
+  overflow-y: auto;
+  overflow-x: hidden;
+  pointer-events: auto;
+  -webkit-overflow-scrolling: touch;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+  padding-bottom: 60px;
+  overscroll-behavior: contain;
+}
+
+html.modal-open-body,
+body.modal-open-body {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+.modal-layer.is-parent {
+  overflow-y: hidden !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
+.modal-layer.slide-enter {
+  transform: translateY(100%);
+  opacity: 0.8;
+}
+
+.modal-layer.slide-active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-layer.slide-exit {
+  transform: translateY(100%);
+  opacity: 0.5;
+}
+
+.modal-layer .top-bar-nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}

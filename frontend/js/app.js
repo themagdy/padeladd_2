@@ -1042,8 +1042,10 @@ const StatsUI = {
      * @param {Object} stats - The stats object from the API
      * @param {String} prefix - The ID prefix for the elements (e.g., 'dash' or 'pv')
      */
-    update: function (stats, prefix) {
+    update: function (stats, prefix, scope = document) {
         if (!stats) return;
+
+        const getEl = (id) => (scope && scope.querySelector) ? (scope.querySelector('#' + id) || document.getElementById(id)) : document.getElementById(id);
 
         const getUpIcon = () => {
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1074,14 +1076,14 @@ const StatsUI = {
         };
 
         for (const [key, val] of Object.entries(elMap)) {
-            const el = document.getElementById(`${prefix}-${key}`) || document.getElementById(`${prefix}-${key}-count`);
+            const el = getEl(`${prefix}-${key}`) || getEl(`${prefix}-${key}-count`);
             if (el) {
                 el.innerHTML = ''; // Clear previous
                 el.textContent = val;
             }
         }
 
-        const rcEl = document.getElementById(`${prefix}-ranking-change`) || document.getElementById(`${prefix}-highest-rank`);
+        const rcEl = getEl(`${prefix}-ranking-change`) || getEl(`${prefix}-highest-rank`);
         if (rcEl) {
             rcEl.innerHTML = '';
             const trend = document.createElement('span');
@@ -1100,7 +1102,7 @@ const StatsUI = {
             rcEl.appendChild(trend);
         }
 
-        const pwEl = document.getElementById(`${prefix}-points-week`);
+        const pwEl = getEl(`${prefix}-points-week`);
         if (pwEl) {
             pwEl.innerHTML = '';
 
@@ -1133,7 +1135,7 @@ const StatsUI = {
             }
         }
 
-        const matchesSubEl = document.getElementById(`${prefix}-matches-sub`);
+        const matchesSubEl = getEl(`${prefix}-matches-sub`);
         if (matchesSubEl && stats.matches_played > 0) {
             const compCount = stats.comp_played ?? 0;
             const friendlyCount = stats.friendly_played ?? 0;
@@ -1143,7 +1145,7 @@ const StatsUI = {
             matchesSubEl.style.letterSpacing = '0.5px';
         }
 
-        const wlEl = document.getElementById(`${prefix}-wl`);
+        const wlEl = getEl(`${prefix}-wl`);
         if (wlEl && stats.matches_played > 0) {
             wlEl.innerHTML = safeHTML(`<span style="color:#4ebd79;">${stats.matches_won}W</span> <span style="opacity:0.5; margin:0 5px;">/</span> <span style="color:#e57373;">${stats.matches_lost}L</span>`);
             wlEl.style.fontSize = '12px';

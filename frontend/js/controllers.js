@@ -1966,7 +1966,17 @@ const ProfileViewController = {
     _targetUserId: null,
     _cacheMatches: [],
     _lastRequestId: 0,
-    init: async function (params, isSilent = false, reqId = null) {
+    init: async function (params, containerEl = null, layerState = null, isSilent = false, reqId = null) {
+        if (typeof containerEl === 'boolean') {
+            reqId = layerState;
+            isSilent = containerEl;
+            containerEl = null;
+            layerState = null;
+        }
+
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const getEl = (id) => scope.querySelector('#' + id) || document.getElementById(id);
+
         // Guard: All profile views require authentication
         if (!Auth.isAuthenticated()) {
             Router.navigate('/login');
@@ -1977,7 +1987,7 @@ const ProfileViewController = {
             UI.syncNav();
             // Instantly hide the full-screen spinner so the layout structure, details, 
             // and match skeleton placeholders render dynamically on page load.
-            const loader = document.getElementById('global-loader');
+            const loader = getEl('global-loader');
             if (loader) loader.style.display = 'none';
         }
 
@@ -2002,7 +2012,7 @@ const ProfileViewController = {
 
             // Trigger silent background fetch for SWR
             setTimeout(() => {
-                ProfileViewController.init(params, true, currentReqId);
+                ProfileViewController.init(params, containerEl, layerState, true, currentReqId);
             }, 10);
         } else {
             // Full network load
@@ -2014,7 +2024,7 @@ const ProfileViewController = {
         }
         if (!res || !res.success) {
             if (currentReqId !== ProfileViewController._lastRequestId) return;
-            const pageEl = document.querySelector('.page.active');
+            const pageEl = scope.querySelector('.page.active') || document.querySelector('.page.active');
             if (pageEl) {
                 pageEl.innerHTML = safeHTML(`
                     <div style="width:100%; max-width:500px; margin:0 auto; padding:90px 20px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
@@ -2046,9 +2056,9 @@ const ProfileViewController = {
 
         if (hasProfileChanged) {
             // Avatar with Story Ring
-            const av = document.getElementById('prof-avatar');
-            const ring = document.getElementById('prof-ring');
-            const avWrap = document.getElementById('prof-avatar-wrap');
+            const av = getEl('prof-avatar');
+            const ring = getEl('prof-ring');
+            const avWrap = getEl('prof-avatar-wrap');
 
             if (av) {
                 const thumb = profile.profile_image_thumb || profile.profile_image;
@@ -2073,17 +2083,17 @@ const ProfileViewController = {
                 }
             }
 
-            const actionsRow = document.querySelector('.prof-actions-row');
+            const actionsRow = scope.querySelector('.prof-actions-row') || document.querySelector('.prof-actions-row');
             if (actionsRow) {
                 if (is_self) {
                     actionsRow.style.display = 'none';
                 } else {
                     actionsRow.style.display = 'flex';
 
-                    const followContainer = document.getElementById('prof-follow-container');
+                    const followContainer = getEl('prof-follow-container');
                     if (followContainer) {
                         followContainer.style.display = 'block';
-                        const followBtn = document.getElementById('prof-follow-btn');
+                        const followBtn = getEl('prof-follow-btn');
                         if (followBtn) {
                             followBtn.style.height = '32px';
                             followBtn.style.fontSize = '11px';
@@ -2100,7 +2110,7 @@ const ProfileViewController = {
                         }
                     }
 
-                    const reportContainer = document.getElementById('prof-report-container');
+                    const reportContainer = getEl('prof-report-container');
                     if (reportContainer) {
                         reportContainer.style.display = 'block';
                     }
@@ -2108,13 +2118,13 @@ const ProfileViewController = {
             }
 
             // Action cards visibility (only for self)
-            const actionCards = document.getElementById('prof-action-cards');
+            const actionCards = getEl('prof-action-cards');
             if (actionCards) {
                 actionCards.style.display = is_self ? 'flex' : 'none';
             }
 
             // Invite button visibility (only for self)
-            const inviteRow = document.getElementById('prof-invite-row');
+            const inviteRow = getEl('prof-invite-row');
             if (inviteRow) {
                 if (is_self) {
                     ProfileViewController.initInviteButton();
@@ -2124,11 +2134,11 @@ const ProfileViewController = {
             }
 
             // Report player button (only for others)
-            const reportContainer = document.getElementById('prof-report-container');
+            const reportContainer = getEl('prof-report-container');
             if (reportContainer) {
                 if (!is_self) {
                     reportContainer.style.display = 'block';
-                    const reportBtn = document.getElementById('prof-report-btn');
+                    const reportBtn = getEl('prof-report-btn');
                     if (reportBtn) {
                         reportBtn.onclick = () => ProfileController.reportPlayer(user.id);
                     }
@@ -2138,10 +2148,10 @@ const ProfileViewController = {
             }
 
             // Names (Nickname + Full Name)
-            const nickEl = document.getElementById('prof-nickname');
+            const nickEl = getEl('prof-nickname');
             if (nickEl) nickEl.textContent = profile?.nickname || user.first_name;
 
-            const fullEl = document.getElementById('prof-fullname');
+            const fullEl = getEl('prof-fullname');
             if (fullEl) {
                 if (profile?.nickname) {
                     fullEl.textContent = user.first_name + ' ' + user.last_name;
@@ -2152,7 +2162,7 @@ const ProfileViewController = {
             }
 
             // Player code
-            const codeEl = document.getElementById('prof-code');
+            const codeEl = getEl('prof-code');
             if (codeEl) {
                 if (profile?.player_code) {
                     codeEl.innerHTML = safeHTML(`
@@ -2174,26 +2184,30 @@ const ProfileViewController = {
             }
 
             // Followers Counts
-            const followersCountsEl = document.getElementById('prof-followers-counts');
+            const followersCountsEl = getEl('prof-followers-counts');
             if (followersCountsEl) {
                 if (profile?.player_code) {
                     followersCountsEl.style.display = 'flex';
-                    document.getElementById('prof-followers-num').textContent = followers_count || 0;
-                    document.getElementById('prof-following-num').textContent = following_count || 0;
+                    const fNum = getEl('prof-followers-num');
+                    if (fNum) fNum.textContent = followers_count || 0;
+                    const fgNum = getEl('prof-following-num');
+                    if (fgNum) fgNum.textContent = following_count || 0;
 
-                    const followersBtn = document.getElementById('prof-followers-btn');
-                    const followingBtn = document.getElementById('prof-following-btn');
+                    const followersBtn = getEl('prof-followers-btn');
+                    const followingBtn = getEl('prof-following-btn');
 
-                    if (is_self) {
-                        followersBtn.style.cursor = 'pointer';
-                        followingBtn.style.cursor = 'pointer';
-                        followersBtn.onclick = () => ProfileViewController.showFollowsList('followers');
-                        followingBtn.onclick = () => ProfileViewController.showFollowsList('following');
-                    } else {
-                        followersBtn.style.cursor = 'default';
-                        followingBtn.style.cursor = 'default';
-                        followersBtn.onclick = null;
-                        followingBtn.onclick = null;
+                    if (followersBtn && followingBtn) {
+                        if (is_self) {
+                            followersBtn.style.cursor = 'pointer';
+                            followingBtn.style.cursor = 'pointer';
+                            followersBtn.onclick = () => ProfileViewController.showFollowsList('followers');
+                            followingBtn.onclick = () => ProfileViewController.showFollowsList('following');
+                        } else {
+                            followersBtn.style.cursor = 'default';
+                            followingBtn.style.cursor = 'default';
+                            followersBtn.onclick = null;
+                            followingBtn.onclick = null;
+                        }
                     }
                 } else {
                     followersCountsEl.style.display = 'none';
@@ -2201,7 +2215,7 @@ const ProfileViewController = {
             }
 
             // Meta pills (location, hand)
-            const metaEl = document.getElementById('prof-meta');
+            const metaEl = getEl('prof-meta');
             if (metaEl) {
                 const items = [];
                 const metaStyle = `display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.02); padding:4px 12px 4px 4px; border-radius:30px; border:1px solid rgba(255,255,255,0.05);`;
@@ -2239,14 +2253,14 @@ const ProfileViewController = {
             }
 
             // Bio
-            const bioEl = document.getElementById('prof-bio');
+            const bioEl = getEl('prof-bio');
             if (bioEl && profile?.bio) {
                 bioEl.textContent = profile.bio;
                 bioEl.style.display = 'block';
             }
 
             // Level badge update
-            const levelBadge = document.getElementById('prof-level-badge');
+            const levelBadge = getEl('prof-level-badge');
             if (levelBadge && stats) {
                 const pts = stats.points ?? 0;
                 const buf = stats.current_buffer ?? 0;
@@ -2256,16 +2270,16 @@ const ProfileViewController = {
             }
 
             // Stats cards
-            StatsUI.update(stats, 'pv');
+            StatsUI.update(stats, 'pv', scope);
 
             // Update achievements empty msg based on context
-            const achMsg = document.getElementById('prof-achievements-empty-msg');
+            const achMsg = getEl('prof-achievements-empty-msg');
             if (achMsg) {
                 achMsg.textContent = is_self ? 'Complete matches to earn trophies and special badges!' : 'This player hasn\'t earned any trophies yet.';
             }
 
             // Final reveal for the profile header and stats
-            const contentEl = document.getElementById('prof-view-content');
+            const contentEl = getEl('prof-view-content');
             if (contentEl) contentEl.style.opacity = '1';
         }
 
@@ -2279,7 +2293,7 @@ const ProfileViewController = {
             window.removeEventListener('scroll', ProfileViewController.handleScroll);
             window.addEventListener('scroll', ProfileViewController.handleScroll);
 
-            const listEl = document.getElementById('pv-matches-list');
+            const listEl = getEl('pv-matches-list');
             if (listEl && listEl.innerHTML.trim() === '') {
                 listEl.innerHTML = ScoreUI.renderSkeleton(2);
                 listEl._lastHtml = ''; // Clear to force-render on initial data arrival
@@ -2291,10 +2305,13 @@ const ProfileViewController = {
 
         if (currentReqId !== ProfileViewController._lastRequestId) return;
 
-        await ProfileViewController.loadMatches(isSilent, false, currentReqId);
+        await ProfileViewController.loadMatches(isSilent, false, currentReqId, containerEl);
     },
 
-    loadMatches: async function (isSilent = false, isLoadMore = false, reqId = null) {
+    loadMatches: async function (isSilent = false, isLoadMore = false, reqId = null, containerEl = null) {
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const getEl = (id) => scope.querySelector('#' + id) || document.getElementById(id);
+
         const currentReqId = reqId || ProfileViewController._lastRequestId;
         if (currentReqId !== ProfileViewController._lastRequestId) return;
         if (ProfileViewController._isLoading) return;
@@ -2302,7 +2319,7 @@ const ProfileViewController = {
 
         if (isLoadMore) {
             ProfileViewController._isLoading = true;
-            const listEl = document.getElementById('pv-matches-list');
+            const listEl = getEl('pv-matches-list');
             if (listEl && !listEl.querySelector('.pagination-loader')) {
                 listEl.insertAdjacentHTML('beforeend', `<div class="pagination-loader"><div class="pagination-spinner"></div></div>`);
             }
@@ -2320,7 +2337,7 @@ const ProfileViewController = {
         if (currentReqId !== ProfileViewController._lastRequestId) return;
         ProfileViewController._isLoading = false;
 
-        const listEl = document.getElementById('pv-matches-list');
+        const listEl = getEl('pv-matches-list');
         if (!listEl) return;
 
         const newMatches = matchRes?.data?.matches || [];
@@ -2328,7 +2345,7 @@ const ProfileViewController = {
         ProfileViewController._hasMore = matchRes?.data?.has_more || false;
 
         if (!isLoadMore && achievements) {
-            ProfileViewController.renderAchievements(achievements);
+            ProfileViewController.renderAchievements(achievements, containerEl);
         }
 
         if (isLoadMore) {
@@ -2419,11 +2436,14 @@ const ProfileViewController = {
         }
     },
 
-    renderAchievements: function (achievements) {
-        const skelEl = document.getElementById('prof-achievements-skeleton');
-        const listEl = document.getElementById('prof-achievements-list');
-        const wrapperEl = document.getElementById('prof-honors-wrapper');
-        const sepEl = document.getElementById('prof-honors-separator');
+    renderAchievements: function (achievements, containerEl = null) {
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const getEl = (id) => scope.querySelector('#' + id) || document.getElementById(id);
+
+        const skelEl = getEl('prof-achievements-skeleton');
+        const listEl = getEl('prof-achievements-list');
+        const wrapperEl = getEl('prof-honors-wrapper');
+        const sepEl = getEl('prof-honors-separator');
         if (!listEl) return;
 
         if (skelEl) skelEl.style.display = 'none';
@@ -4505,14 +4525,14 @@ const MatchesController = {
     },
 
     // ── View (detail) ──────────────────────────────────
-    initView: async function (params, autoOpenChat = false) {
+    initView: async function (params, autoOpenChat = false, containerEl = null, layerState = null) {
         UI.syncNav();
         let match_id = parseInt(params?.id || 0);
         const match_code = params?.matchCode || '';
 
         if (!match_id && !match_code) { Router.navigate('/matches'); return; }
 
-        const result = await MatchesController.loadDetails({ match_id, match_code });
+        const result = await MatchesController.loadDetails({ match_id, match_code }, false, containerEl, layerState);
         if (result && result.id) match_id = result.id;
 
         // Fallback: use the match_id that loadDetails stored in state
@@ -4532,18 +4552,17 @@ const MatchesController = {
             console.warn('[Chat Permalink] autoOpenChat=true but match_id is still 0, cannot open chat');
         }
 
-
-
         if (typeof PollManager !== 'undefined') {
-            PollManager.start('match_details', () => MatchesController.loadDetails({ match_id, match_code }, true), 5000);
+            PollManager.start('match_details', () => MatchesController.loadDetails({ match_id, match_code }, true, containerEl, layerState), 5000);
         }
     },
 
-    loadDetails: async function (query, isSilent = false) {
+    loadDetails: async function (query, isSilent = false, containerEl = null, layerState = null) {
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const getEl = (id) => scope.querySelector('#' + id) || document.getElementById(id);
 
-
-        const skeleton = document.getElementById('mv-skeleton');
-        const content = document.getElementById('mv-content');
+        const skeleton = getEl('mv-skeleton');
+        const content = getEl('mv-content');
 
         const cacheKey = query.match_id ? `id_${query.match_id}` : `code_${query.match_code}`;
         const hasCache = MatchesController._viewCache[cacheKey];
@@ -4554,11 +4573,12 @@ const MatchesController = {
             // Render instantly from cache
             res = { success: true, data: hasCache };
             if (skeleton) skeleton.style.display = 'none';
+            if (content) content.style.display = 'block';
 
             // Trigger silent background fetch for SWR
             setTimeout(() => {
                 query._isSWR = true;
-                MatchesController.loadDetails(query, true);
+                MatchesController.loadDetails(query, true, containerEl, layerState);
             }, 10);
         } else {
             // Full network load
@@ -4567,6 +4587,7 @@ const MatchesController = {
 
             res = await API.post('/match/details', query);
             if (!isSilent && skeleton) skeleton.style.display = 'none';
+            if (!isSilent && content) content.style.display = 'block';
 
             if (res && res.success && res.data) {
                 MatchesController._viewCache[cacheKey] = res.data;
@@ -4614,8 +4635,6 @@ const MatchesController = {
         MatchesController._lastMatchId = parseInt(match.id);
         MatchesController._lastMatchState = currentStateKey;
 
-
-
         MatchesController._currentMatchId = match.id;
         MatchesController._currentMatchGenderType = match.gender_type;
         MatchesController._currentMatchSlotsCount = slots.length;
@@ -4623,7 +4642,6 @@ const MatchesController = {
         MatchesController._currentMatchWaitlist = waiting_list;
         MatchesController._currentUserSide = res.data.user_playing_side;
         MatchesController._myWaitlistEntry = my_waitlist_entry;
-
 
         // Collect all IDs currently in the match or waiting list
         const playerIds = new Set();
@@ -4644,10 +4662,8 @@ const MatchesController = {
         const dateStr = UI.formatMatchDateOnly(match.match_datetime);
         const timeStr = dt.toLocaleTimeString('en-EG', { hour: '2-digit', minute: '2-digit' });
 
-
-
         // Hide withdrawal warning for past matches
-        const withdrawalWarning = document.querySelector('.mv-withdrawal-warning');
+        const withdrawalWarning = scope.querySelector('.mv-withdrawal-warning') || document.querySelector('.mv-withdrawal-warning');
         if (withdrawalWarning) {
             const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
             const isNotEligible = player_eligible === false;
@@ -4682,9 +4698,8 @@ const MatchesController = {
             };
         }
 
-        const statusBadgeContainer = document.getElementById('mv-status-badge');
-
-        const titleEl = document.getElementById('mv-title');
+        const statusBadgeContainer = getEl('mv-status-badge');
+        const titleEl = getEl('mv-title');
         if (titleEl) {
             const isPast = dt < new Date();
             let label = match.status.charAt(0).toUpperCase() + match.status.slice(1);
@@ -4734,7 +4749,7 @@ const MatchesController = {
             `;
 
             // Programmatic click binding to bypass DOMPurify event stripping
-            const copyCodePill = document.getElementById('mv-match-code-copy');
+            const copyCodePill = getEl('mv-match-code-copy');
             if (copyCodePill) {
                 copyCodePill.onclick = () => {
                     navigator.clipboard.writeText(matchCode).then(() => {
@@ -4747,7 +4762,7 @@ const MatchesController = {
             }
         }
 
-        const metaEl = document.getElementById('mv-meta');
+        const metaEl = getEl('mv-meta');
         if (metaEl) {
             metaEl.className = 'match-meta-row';
             metaEl.style.flexDirection = 'column';
@@ -4765,7 +4780,7 @@ const MatchesController = {
             `;
         }
 
-        const disputeEl = document.getElementById('mv-creator-dispute-row');
+        const disputeEl = getEl('mv-creator-dispute-row');
         if (disputeEl) {
             disputeEl.innerHTML = `
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:12px; width:100%;">
@@ -4792,14 +4807,14 @@ const MatchesController = {
         const team1Sum = getTeamSum(1);
         const team2Sum = getTeamSum(2);
 
-        const t1p = document.getElementById('mv-team1-points');
+        const t1p = getEl('mv-team1-points');
         if (t1p) t1p.innerHTML = safeHTML((team1Sum !== null) ? `${team1Sum} pts` : 'EMPTY');
-        const t2p = document.getElementById('mv-team2-points');
+        const t2p = getEl('mv-team2-points');
         if (t2p) t2p.innerHTML = safeHTML((team2Sum !== null) ? `${team2Sum} pts` : 'EMPTY');
 
         // Eligibility Range Track Bar
-        const rangeEl = document.getElementById('mv-eligibility-range');
-        const rangeValEl = document.getElementById('mv-range-val');
+        const rangeEl = getEl('mv-eligibility-range');
+        const rangeValEl = getEl('mv-range-val');
         if (rangeEl) {
             const isMatchPast = dt < new Date() || match.status === 'completed' || match.status === 'cancelled';
             if (isMatchPast || match.eligible_min === undefined || match.eligible_min === null) {
@@ -4821,15 +4836,15 @@ const MatchesController = {
                 const leftPct = Math.max(0, Math.min(100, ((eMin - minBound) / span) * 100));
                 const rightPct = Math.max(0, Math.min(100, 100 - (((eMax - minBound) / span) * 100)));
 
-                const highlight = document.getElementById('mv-slider-highlight');
+                const highlight = getEl('mv-slider-highlight');
                 if (highlight) {
                     highlight.style.left = leftPct + '%';
                     highlight.style.right = rightPct + '%';
                 }
 
                 // Render User Pin Marker
-                const userPin = document.getElementById('mv-user-pin');
-                const userPinText = document.getElementById('mv-user-pin-text');
+                const userPin = getEl('mv-user-pin');
+                const userPinText = getEl('mv-user-pin-text');
                 const myPtsRaw = (match && match.my_pts !== undefined && match.my_pts !== null) ? match.my_pts : (res.data && res.data.my_pts !== undefined ? res.data.my_pts : null);
                 const userPts = myPtsRaw !== null ? parseInt(myPtsRaw) : (DashboardController._currentProfile ? DashboardController._currentProfile.points : Auth.getCreatorPts());
                 if (userPin && userPts !== null && userPts !== undefined) {
@@ -4846,7 +4861,7 @@ const MatchesController = {
         // Render slot elements
         [[1, 1], [1, 2], [2, 1], [2, 2]].forEach(([team, slot]) => {
             const s = slots.find(x => parseInt(x.team_no) === team && parseInt(x.slot_no) === slot);
-            const el = document.getElementById(`mv-team${team}-slot${slot}`);
+            const el = getEl(`mv-team${team}-slot${slot}`);
             if (!el) return;
             if (s) {
                 const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || (s.nickname?.[0] || '?').toUpperCase();
@@ -5487,7 +5502,7 @@ const MatchesController = {
             if (isAuthorized) {
                 chatBtnHtml += `
                         <!-- Premium Chat Button (Obvious Modern Glass Effect) -->
-                        <button type="button" onclick="ChatController.open(${match.id}); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+                        <button type="button" onclick="ChatController.open('${match.match_code || match.id}'); return false;" class="btn" style="width:100%; padding:18px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:800; border-radius:18px; background:linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%); border:1px solid rgba(255, 255, 255, 0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); color:#fff; box-shadow:0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15); text-transform:uppercase; letter-spacing:1.5px; position:relative; transition: all 0.25s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.boxShadow='0 12px 40px 0 rgba(27, 82, 206, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 10px rgba(27, 82, 206, 0.25)';" onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.02) 100%)'; this.style.borderColor='rgba(255, 255, 255, 0.12)'; this.style.boxShadow='0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2), inset 0 -1px 8px rgba(27, 82, 206, 0.15)';" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
                             <img src="assets/icons/chat_3d.png" style="width:24px; height:24px; object-fit:contain;" alt="Chat"> 
                             <span style="background: linear-gradient(to right, #ffffff, #a5c2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Match Chat</span>
                             ${badgeHtml}
@@ -6393,6 +6408,11 @@ const ChatController = {
 
 
     open: function (match_id) {
+        let code = (typeof match_id === 'string' && match_id.startsWith('M-')) ? match_id : (MatchesController._currentMatchCode || match_id);
+        if (code) {
+            Router.navigate('/matches/' + code + '/chat');
+            return;
+        }
         this._matchId = match_id;
         this._isShowing = true;
         this._lastSenderId = 0;
@@ -6442,9 +6462,9 @@ const ChatController = {
 
 
 
-    renderPlayerBar: function () {
-
-        const bar = document.getElementById('chat-player-bar');
+    renderPlayerBar: function (containerEl = null) {
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const bar = scope.querySelector('#chat-player-bar') || document.getElementById('chat-player-bar');
         if (!bar) return;
 
         // Use slot data from MatchesController
@@ -6470,7 +6490,7 @@ const ChatController = {
             if (w.partner_id) add({ user_id: w.partner_id, nickname: w.par_nickname, first_name: w.par_first, last_name: w.par_last, profile_image: w.par_profile, profile_image_thumb: w.par_profile_thumb, player_code: w.par_code, gender: w.par_gender, mobile: w.par_mobile });
         });
 
-        const currentUserId = this._viewerId || 0;
+        const currentUserId = Number((typeof Auth !== 'undefined' ? Auth.getUserId() : 0) || this._viewerId || 0);
         const onlineSet = new Set((this._onlineUsers || []).map(id => String(id)));
 
         let meUser = null;
@@ -6732,18 +6752,79 @@ const ChatController = {
         }
     },
 
-    init: function (match_id) {
-        this._matchId = match_id;
+    init: async function (match_id, containerEl = null, layerState = null) {
+        const query = {};
 
+        if (typeof match_id === 'number' && match_id > 0) {
+            query.match_id = match_id;
+        } else if (typeof match_id === 'string' && /^\d+$/.test(match_id)) {
+            query.match_id = parseInt(match_id);
+        } else if (typeof match_id === 'string' && match_id.startsWith('M-')) {
+            query.match_code = match_id;
+        } else if (typeof match_id === 'object' && match_id !== null) {
+            containerEl = containerEl || arguments[1];
+            const raw = match_id.matchCode || match_id.id;
+            if (typeof raw === 'string' && raw.startsWith('M-')) {
+                query.match_code = raw;
+            } else if (raw) {
+                query.match_id = parseInt(raw);
+            }
+        }
+
+        if (!query.match_id && !query.match_code) {
+            if (MatchesController._currentMatchCode) {
+                query.match_code = MatchesController._currentMatchCode;
+            } else if (MatchesController._currentMatchId) {
+                query.match_id = parseInt(MatchesController._currentMatchId);
+            }
+        }
+
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+
+        const form = scope.querySelector('#chat-form') || document.getElementById('chat-form');
+        if (form) {
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                ChatController.send(containerEl);
+            };
+        }
+
+        let resolvedId = query.match_id || 0;
+        let resolvedCode = query.match_code || '';
+
+        if (query.match_id || query.match_code) {
+            const res = await API.post('/match/details', query);
+            if (res && res.success && res.data && res.data.match) {
+                const m = res.data.match;
+                resolvedId = parseInt(m.id);
+                resolvedCode = m.match_code;
+                MatchesController._currentMatchId = resolvedId;
+                MatchesController._currentMatchCode = resolvedCode;
+                MatchesController._currentMatchSlots = res.data.slots || [];
+                MatchesController._currentMatchWaitlist = res.data.waiting_list || [];
+
+                if (resolvedCode && window.location.pathname.includes('/matches/') && !window.location.pathname.includes('/matches/' + resolvedCode)) {
+                    window.history.replaceState(history.state, '', CONFIG.BASE_PATH + '/matches/' + resolvedCode + '/chat');
+                }
+            }
+        }
+
+        const titleEl = scope.querySelector('.top-bar-title');
+        if (titleEl) {
+            titleEl.textContent = 'MATCH CHAT';
+        }
+
+        this._matchId = parseInt(resolvedId || MatchesController._currentMatchId || 0);
         this._lastId = 0;
 
-        const indicator = document.getElementById('chat-online-indicator');
+        const indicator = scope.querySelector('#chat-online-indicator') || document.getElementById('chat-online-indicator');
         if (indicator) indicator.style.display = 'flex';
 
         this._shownActionIds.clear();
-        this.loadMessages(true);
+        this.renderPlayerBar(containerEl);
+        await this.loadMessages(true, containerEl);
 
-        this.startPoll();
+        this.startPoll(containerEl);
     },
 
 
@@ -7159,28 +7240,35 @@ const ChatController = {
 
 
 
-    sendMessage: async function () {
+    sendMessage: async function (containerEl = null) {
         if (this._sending) return;
-        const input = document.getElementById('chat-input');
+        const scope = (containerEl && containerEl.querySelector) ? containerEl : (ModalStack.getTopModal() ? ModalStack.getTopModal().containerEl : document);
+        const input = scope.querySelector('#chat-input') || document.getElementById('chat-input');
         if (!input) return;
         const text = input.value.trim();
         if (!text) return;
+
+        const matchId = parseInt(this._matchId || MatchesController._currentMatchId || 0);
+        if (!matchId) {
+            Toast.show('Match ID is missing', 'error');
+            return;
+        }
 
         // Instant clear to prevent double-sends and provide fast feedback
         input.value = '';
         this.autoResize(input);
 
         this._sending = true;
-        const btn = document.getElementById('chat-send-btn');
+        const btn = scope.querySelector('#chat-send-btn') || document.getElementById('chat-send-btn');
         if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
 
-        const res = await API.post('/chat/send', { match_id: this._matchId, message_text: text });
+        const res = await API.post('/chat/send', { match_id: matchId, message_text: text });
 
         this._sending = false;
         if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
 
         if (res && res.success) {
-            await this.loadMessages(false, true);
+            await this.loadMessages(false, containerEl);
         } else {
             // Restore text so the user doesn't lose their message on failure
             input.value = text;
@@ -8711,14 +8799,19 @@ const RankingController = {
                 row.onmouseout = function () { this.style.background = 'transparent'; };
             }
 
-            listEl.appendChild(row);
+            if (!row.isConnected) {
+                const loader = listEl.querySelector('#ranking-scroll-loader');
+                if (loader) listEl.insertBefore(row, loader);
+                else listEl.appendChild(row);
+            }
         });
 
         const savedScroll = sessionStorage.getItem('ranking_scroll_pos');
         if (savedScroll !== null) {
+            sessionStorage.removeItem('ranking_scroll_pos');
+            const targetPos = parseInt(savedScroll);
             setTimeout(() => {
-                window.scrollTo(0, parseInt(savedScroll));
-                sessionStorage.removeItem('ranking_scroll_pos');
+                window.scrollTo(0, targetPos);
             }, 100);
         }
     }

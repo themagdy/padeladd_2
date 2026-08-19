@@ -1,0 +1,67 @@
+<div class="page active" id="match-chat-page" style="background:var(--c-bg); display:flex; flex-direction:column; height:100%; width:100%; min-height:0; overflow:hidden; position:relative; padding-bottom:0 !important;">
+  
+  <!-- Player Avatars Bar -->
+  <div style="width:100%; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.05); flex-shrink:0; position:relative;">
+    <div id="chat-player-bar"
+      style="max-width:900px; margin:0 auto; padding:10px 16px; display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; height:62px; align-items:center;">
+      <!-- Avatars injected dynamically -->
+    </div>
+  </div>
+
+  <!-- Inline Player Actions (Sliding directly under Player Avatars Bar) -->
+  <div id="chat-player-actions-bar"
+    style="display:none; width:100%; background:linear-gradient(135deg, #111827, #1F2937); border-bottom:1px solid rgba(255,255,255,0.1); z-index:100; box-shadow:0 6px 20px rgba(0,0,0,0.4); flex-shrink:0;">
+    <div
+      style="max-width:900px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:12px; overflow-x:auto; scrollbar-width:none;">
+      <div id="chat-selected-player-name"
+        style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:800; color:#fff; white-space:nowrap;"></div>
+      <div id="chat-inline-actions" style="display:flex; align-items:center; gap:10px;"></div>
+      <div onclick="ChatController.closePlayerMenu()"
+        style="margin-left:auto; display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.08); font-size:12px; cursor:pointer; color:var(--c-text-muted); flex-shrink:0; transition:background 0.2s;">
+        ✕</div>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div id="chat-messages-container"
+    style="width:100%; flex:1; overflow-y:auto; display:flex; flex-direction:column; align-items:center; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; min-height:0;">
+    <div id="chat-messages-inner"
+      style="width:100%; max-width:900px; padding:16px; display:flex; flex-direction:column; gap:10px; margin-top:auto;">
+      <div id="chat-empty-state"
+        style="display:flex; align-items:center; justify-content:center; color:var(--c-text-muted); font-size:13px; text-align:center; padding:40px 0; flex:1;">
+        No messages yet.<br>Be the first to say something! 🎾
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Input Area (Pinned flush to bottom) -->
+  <div style="width:100%; background:var(--c-bg-card); border-top:1px solid rgba(255,255,255,0.08); padding:12px 16px max(16px, env(safe-area-inset-bottom)); flex-shrink:0; box-sizing:border-box;">
+    <div style="max-width:900px; margin:0 auto; display:flex; gap:10px; align-items:center;">
+      <textarea id="chat-input" placeholder="Type a message…" maxlength="500" rows="1"
+        oninput="ChatController.autoResize(this)" onkeydown="ChatController.handleKey(event)"
+        style="flex:1; background:var(--g-card); border:1px solid var(--c-border); border-radius:14px; padding:12px 16px; font-size:14px; color:var(--c-text); font-family:var(--font); resize:none; outline:none; line-height:1.4; max-height:100px; overflow:hidden; transition:all 0.2s;"></textarea>
+      <button id="chat-send-btn" onclick="ChatController.sendMessage()"
+        style="background:var(--g-primary); border:none; border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:18px; transition:opacity 0.2s; color:#fff; box-shadow:0 4px 14px rgba(27,82,206,0.4);">➤</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Mobile Player Menu (Bottom Sheet) -->
+<div id="chat-sheet-overlay" onclick="ChatController.closePlayerMenu()"
+  style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:4000; backdrop-filter:blur(4px); transition:opacity 0.3s;">
+</div>
+
+<div id="chat-bottom-sheet"
+  style="display:none; position:fixed; bottom:0; left:0; right:0; background:var(--c-bg-card); border-radius:24px 24px 0 0; z-index:4001; padding:20px; transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform:translateY(100%);">
+  <div style="width:40px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; margin:0 auto 20px;"></div>
+  <div id="chat-sheet-title"
+    style="font-size:18px; font-weight:800; color:var(--c-text); margin-bottom:20px; text-align:center;">Player Name
+  </div>
+  <div id="chat-sheet-options" style="display:flex; flex-direction:column; gap:8px;">
+    <!-- Options injected dynamically -->
+  </div>
+  <div onclick="ChatController.closePlayerMenu()"
+    style="margin-top:16px; padding:16px; text-align:center; font-weight:700; color:var(--c-text-muted); cursor:pointer;">
+    Cancel</div>
+</div>
