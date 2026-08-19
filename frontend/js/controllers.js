@@ -2407,19 +2407,7 @@ const ProfileViewController = {
             listEl._lastHtml = finalHtml;
         }
 
-        // Restore scroll position for profile views after dynamic scores render (only if popstate/back navigation)
-        const savedScroll = sessionStorage.getItem('profile_scroll_pos');
-        const isBackNav = sessionStorage.getItem('is_back_navigation') === 'true';
 
-        // Always clean up flags so they don't leak into subsequent forward navigations
-        sessionStorage.removeItem('profile_scroll_pos');
-        sessionStorage.removeItem('is_back_navigation');
-
-        if (savedScroll !== null && isBackNav) {
-            requestAnimationFrame(() => {
-                window.scrollTo(0, parseInt(savedScroll));
-            });
-        }
     },
 
     handleScroll: function () {
@@ -8692,7 +8680,6 @@ const RankingController = {
                 row.setAttribute('data-player-code', r.player_code);
                 row.style.cssText = 'padding:18px 15px 18px 10px; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); cursor:pointer; transition:all 0.2s;';
                 row.onclick = () => {
-                    sessionStorage.setItem('ranking_scroll_pos', window.scrollY);
                     Router.navigate('/profile/view/' + r.player_code);
                 };
                 row.onmouseover = function () { this.style.background = 'rgba(255,255,255,0.02)'; };
@@ -8815,14 +8802,7 @@ const RankingController = {
             }
         });
 
-        const savedScroll = sessionStorage.getItem('ranking_scroll_pos');
-        if (savedScroll !== null) {
-            sessionStorage.removeItem('ranking_scroll_pos');
-            const targetPos = parseInt(savedScroll);
-            setTimeout(() => {
-                window.scrollTo(0, targetPos);
-            }, 100);
-        }
+
     }
 
 };

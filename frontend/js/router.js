@@ -84,6 +84,7 @@ const ModalStack = {
 
         this.stack.push(layerState);
 
+        void layerEl.offsetHeight; // Force layout calculation to prevent 1st-frame flicker
         requestAnimationFrame(() => {
             layerEl.classList.add('slide-active');
         });
@@ -420,7 +421,6 @@ const Router = {
             if (e.state && typeof e.state.depth !== 'undefined') {
                 this.navDepth = e.state.depth;
             }
-            sessionStorage.setItem('is_back_navigation', 'true');
             this.handleRoute();
         });
 
@@ -460,10 +460,6 @@ const Router = {
             replace = true;
         }
 
-        let currentPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-        if (currentPath.startsWith('/profile/view') || currentPath.startsWith('/p/')) {
-            sessionStorage.setItem('profile_scroll_pos', window.scrollY);
-        }
 
         if (addToHistory) {
             if (replace) {
@@ -544,7 +540,7 @@ const Router = {
         const isMainTab = mainTabs.includes(nPath);
 
         const loader = document.getElementById('global-loader');
-        if (loader && !isMainTab) loader.style.display = 'flex';
+        if (loader) loader.style.display = 'none';
 
         // Global Protection: Redirect to login if not authenticated and trying to access private route
         const publicRoutes = ['/', '/login', '/register', '/forgot-password', '/reset-password', '/index.html', '/verify-email', '/verify', '/terms', '/privacy'];
@@ -652,9 +648,7 @@ const Router = {
                     });
                 }
                 // Skip scrolling to top if we have a saved ranking scroll position to restore
-                if (!sessionStorage.getItem('ranking_scroll_pos') || path !== '/ranking') {
-                    window.scrollTo(0, 0);
-                }
+                window.scrollTo(0, 0);
 
                 // Initialize specific route logic
                 if (typeof route.init === 'function') {

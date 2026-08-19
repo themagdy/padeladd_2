@@ -2461,3 +2461,10 @@ Version 2.5.21 (Build 521) - 2026-08-20
 - Max Modal Stack Depth & Navigation Refinement: Capped nested modal depth to 3 layers in router.js and synchronized ModalStack.pop(), flushTop(), & popAll() to decrement Router.navDepth and update history state cleanly.
 - Native Back Button App Exit: Updated app.js backButton listener to evaluate curPath via live window.location.pathname, ensuring returning from any modal page to dashboard exits the mobile application on the first tap.
 - iPad WebKit Scroll Bleed Lock: Added `-webkit-overflow-scrolling: auto !important` and `touch-action: none !important` to `.modal-layer.is-parent` and `body.modal-open-body #app-content` to prevent parent modal touch scrolling on iPad.
+
+==================================================
+Version 2.5.22 (Build 522) - 2026-08-20
+==================================================
+- Modal Open Flicker & Loading Overlay Fix: Disabled global-loader black screen flash on modal routes in router.js and added synchronous reflow calculation before slide transitions.
+- Obsolete Scroll Tracking Cleanup: Cleaned up obsolete profile_scroll_pos and is_back_navigation manual scroll tracking code from router.js and controllers.js.
+- Background Modal Scale Lock: Removed transform scale-down and brightness dimming on parent page containers when modal overlays are active.
