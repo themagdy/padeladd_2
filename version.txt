@@ -2393,3 +2393,9 @@ Version 2.5.11 (Build 511) - 2026-08-19
 ==================================================
 - Real Player Points Sync Across Match Views: Updated backend match details API (details.php) to return exact calculated database points (my_pts) and hardened Auth.syncWithServer() & MatchesController to render real points accurately on match details and match creation sliders.
 - Admin Verify Accounts Page Integration: Moved temp_verify.php into the Admin Mod Panel under System (#verify_accounts), featuring search, stats overview, WhatsApp OTP copy buttons, email link generation, and manual verification capabilities.
+
+==================================================
+Version 2.5.12 (Build 512) - 2026-08-19
+==================================================
+- Notification Panel Aesthetics & Refinements: Updated notification drawer to a translucent background with frosted glassmorphism blur, completely flat borderless solid notification cards (#1C2333 read, #172747 unread), increased vertical card spacing (12px), and scaled card typography by +1px across text, titles, and timestamps.
+- Match Details Pin Rendering Hardening: Reinforced details.php and MatchesController to safely extract player points (my_pts) directly from response payload for 100% reliable pin placement.
