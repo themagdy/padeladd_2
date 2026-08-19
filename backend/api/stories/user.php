@@ -55,8 +55,9 @@ foreach ($stories as $s) {
     $s['score_data'] = $s['score_data_json'] ? json_decode($s['score_data_json'], true) : null;
     unset($s['score_data_json']);
     
-    // If it's my story, fetch the viewers
-    if ($targetId === $myId) {
+    // Fetch story viewers for match participants only (excluding current user $myId)
+    $isMine = ($targetId === $myId || (isset($s['is_mine']) && (int)$s['is_mine'] === 1)) ? 1 : 0;
+    if ($isMine) {
         $viewersStmt = $pdo->prepare("
             SELECT u.id, u.first_name, u.last_name, up.nickname, up.profile_image, up.profile_image_thumb, up.player_code, up.level
             FROM story_seen ss

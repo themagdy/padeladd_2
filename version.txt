@@ -2405,3 +2405,10 @@ Version 2.5.13 (Build 513) - 2026-08-19
 ==================================================
 - Dashboard Action Buttons Styling: Updated Dashboard action buttons styling with a sleek dark royal-navy gradient.
 - Landing Page Real Scores API Inclusion Fix: Fixed database include path in app/app/api/latest_scores.php and app/app/api/latest_players.php to display real match scores and verified players on /app/index.html.
+
+==================================================
+Version 2.5.14 (Build 514) - 2026-08-19
+==================================================
+- Search Query Tab Reset: Updated MatchesController.switchTab() to clear search input state (_searchQuery = '') when switching tabs, preventing search queries typed in Upcoming from filtering the Scores tab.
+- Stories Tray Avatar & Ring Polish: Refined dashboard story tray item sizing (74px ring diameter, 80px container width, 2px ring thickness) and added a 3px solid background gap around the inner avatar picture.
+- Story Viewers Privacy & Cache Sync: Restricted story viewers list visibility to match participants only (is_mine === 1), excluding the user's own avatar from their view while allowing other match participants to see who viewed their match story. Hardened StoriesController.initTray() & markSeen() to keep localStorage story cache continuously synchronized with the database.

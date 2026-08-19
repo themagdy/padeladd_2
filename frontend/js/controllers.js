@@ -212,28 +212,18 @@ const StoriesController = {
         // 2. Refresh from API in background
         const res = await API.post('/stories/list');
         if (res && res.success) {
-            const newStoriesJson = JSON.stringify(res.data.stories);
-            const oldStoriesJson = JSON.stringify(this._cache);
+            const sorted = this.sortStories(res.data.stories);
+            this._activeStories = sorted;
+            this._cache = sorted;
+            this.renderTray();
 
-            if (newStoriesJson !== oldStoriesJson) {
-                const sorted = this.sortStories(res.data.stories);
-                this._activeStories = sorted;
-                this._cache = sorted;
-                this.renderTray();
+            try {
+                localStorage.setItem('stories_cache', JSON.stringify(res.data.stories));
+            } catch (e) { }
 
-                // Persist new data
-                try {
-                    localStorage.setItem('stories_cache', newStoriesJson);
-                } catch (e) { }
-
-                // Trigger animation if not already revealed
-                setTimeout(() => {
-                    tray.classList.add('revealed');
-                }, 100);
-            } else if (this._activeStories.length > 0) {
-                // Even if data is same, ensure it's revealed
+            setTimeout(() => {
                 tray.classList.add('revealed');
-            }
+            }, 100);
         }
     },
 
@@ -303,7 +293,7 @@ const StoriesController = {
         // 2. Build tray items with seen status and sort priority
         const trayItems = Object.values(playerGroups).map(group => {
             // A player bubble is "seen" only if ALL its stories are seen
-            const isSeen = group.stories.every(s => !!s.is_seen || parseInt(s.is_mine) === 1);
+            const isSeen = group.stories.every(s => parseInt(s.is_seen) === 1);
             // Latest story date for sorting
             const latestDate = Math.max(...group.stories.map(s => new Date(s.match_datetime).getTime()));
 
@@ -458,7 +448,7 @@ const StoriesController = {
         const profileId = headerPlayer?.player_code || headerPlayer?.player_xcode || headerPlayer?.id; const isMine = parseInt(story.is_mine) === 1;
         const viewers = story.viewers || [];
         let viewersHtml = '';
-        if (isMine && viewers.length > 0) {
+        if (isMine && viewers && viewers.length > 0) {
             const limit = 4;
             const displayViewers = viewers.slice(0, limit);
             const extra = viewers.length - displayViewers.length;
@@ -856,19 +846,19 @@ const StoriesController = {
     },
 
     markSeen: async function (storyId) {
-        const story = this._currentFeed.find(s => parseInt(s.id) === parseInt(storyId));
-        if (!story) return;
+        const story = this._currentFeed ? this._currentFeed.find(s => parseInt(s.id) === parseInt(storyId)) : null;
+        const activeStory = this._activeStories ? this._activeStories.find(s => parseInt(s.id) === parseInt(storyId)) : null;
+        const target = story || activeStory;
 
-        // Do not record views when watching your own story bubble
-        const currentUserId = DashboardController._currentUser?.id || Auth.getUserId();
-        if (story._overlayPlayer && parseInt(story._overlayPlayer.id) === currentUserId) return;
+        if (target && !target.is_seen) {
+            target.is_seen = 1;
 
-        if (!story.is_seen) {
-            story.is_seen = 1;
-
-            // Sync with active stories list if present to update dashboard tray instantly
-            const activeStory = this._activeStories.find(s => parseInt(s.id) === parseInt(storyId));
             if (activeStory) activeStory.is_seen = 1;
+            if (story) story.is_seen = 1;
+
+            try {
+                localStorage.setItem('stories_cache', JSON.stringify(this._activeStories));
+            } catch (e) { }
 
             this.renderTray();
             await API.post('/stories/mark_seen', { story_id: storyId });
@@ -4077,6 +4067,9 @@ const MatchesController = {
 
     switchTab: async function (tab) {
         MatchesController._currentTab = tab;
+        MatchesController._searchQuery = '';
+        const searchInput = document.getElementById('ml-search');
+        if (searchInput) searchInput.value = '';
         sessionStorage.setItem('last_sub_tab_' + MatchesController._lastMode, tab);
 
         await MatchesController.updatePlayFiltersUI();
