@@ -4837,7 +4837,8 @@ const MatchesController = {
                 // Render User Pin Marker
                 const userPin = document.getElementById('mv-user-pin');
                 const userPinText = document.getElementById('mv-user-pin-text');
-                const userPts = (m.my_pts !== undefined && m.my_pts !== null) ? parseInt(m.my_pts) : (DashboardController._currentProfile ? DashboardController._currentProfile.points : Auth.getCreatorPts());
+                const myPtsRaw = (match && match.my_pts !== undefined && match.my_pts !== null) ? match.my_pts : (res.data && res.data.my_pts !== undefined ? res.data.my_pts : null);
+                const userPts = myPtsRaw !== null ? parseInt(myPtsRaw) : (DashboardController._currentProfile ? DashboardController._currentProfile.points : Auth.getCreatorPts());
                 if (userPin && userPts !== null && userPts !== undefined) {
                     const userPct = Math.max(0, Math.min(100, ((userPts - minBound) / span) * 100));
                     userPin.style.left = userPct + '%';

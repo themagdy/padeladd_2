@@ -247,6 +247,7 @@ jsonResponse(true, 'Match details loaded.', [
         'eligible_min' => (int) ($m['eligible_min'] ?? 0),
         'eligible_max' => (int) ($m['eligible_max'] ?? 0),
         'duration_minutes' => (int) ($m['duration_minutes'] ?? 0),
+        'my_pts' => $myPoints,
     ],
     'slots' => $slots,
     'waiting_list' => $waiting_list,
