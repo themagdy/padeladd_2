@@ -6462,6 +6462,10 @@ const MatchesController = {
         document.body.style.overflow = '';
         const activePage = document.querySelector('.page.active') || document.getElementById('match-view-page');
         if (activePage) { activePage.style.overflow = ''; activePage.style.touchAction = ''; }
+        if (typeof ModalStack !== 'undefined') {
+            const topModal = ModalStack.getTopModal();
+            if (topModal && topModal.containerEl) topModal.containerEl.classList.remove('is-parent');
+        }
         if (!overlay) return;
         overlay.style.opacity = '0';
         const card = overlay.querySelector('.peek-stats-card-inner');
@@ -6482,6 +6486,10 @@ const MatchesController = {
         document.body.style.overflow = 'hidden';
         const activePage = document.querySelector('.page.active') || document.getElementById('match-view-page');
         if (activePage) { activePage.style.overflow = 'hidden'; activePage.style.touchAction = 'none'; }
+        if (typeof ModalStack !== 'undefined') {
+            const topModal = ModalStack.getTopModal();
+            if (topModal && topModal.containerEl) topModal.containerEl.classList.add('is-parent');
+        }
 
         if (!this._peekProfileCache) this._peekProfileCache = {};
 

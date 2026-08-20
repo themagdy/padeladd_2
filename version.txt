@@ -2497,3 +2497,4 @@ Version 2.4.97 (Build 497) - 2026-08-20
 ==================================================
 - App Version Bump: Updated app version to 2.4.97 (Build 497) across package.json, config.js, build.gradle, and Info.plist.
 - iOS Push Notifications Integration: Configured native APNs handlers in AppDelegate.swift, UIBackgroundModes in Info.plist, listener registration ordering in app.js, and high-priority APNs payload formatting in fcm_helper.php.
+- Player Peek Modal Scroll Lock Alignment: Toggled is-parent class on ModalStack.getTopModal().containerEl in showPlayerStatsModal and closePlayerStatsModal so top-level match detail modals remain locked during player stats peek.
