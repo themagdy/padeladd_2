@@ -2498,3 +2498,10 @@ Version 2.4.97 (Build 497) - 2026-08-20
 - App Version Bump: Updated app version to 2.4.97 (Build 497) across package.json, config.js, build.gradle, and Info.plist.
 - iOS Push Notifications Integration: Configured native APNs handlers in AppDelegate.swift, UIBackgroundModes in Info.plist, listener registration ordering in app.js, and high-priority APNs payload formatting in fcm_helper.php.
 - Player Peek Modal Scroll Lock Alignment: Toggled is-parent class on ModalStack.getTopModal().containerEl in showPlayerStatsModal and closePlayerStatsModal so top-level match detail modals remain locked during player stats peek.
+
+==================================================
+Version 2.4.98 (Build 498) - 2026-08-20
+==================================================
+- Earlybirds Landing Page & Submission Handler: Created edge-to-edge dark luxury early access page (/app/app/earlybirds/index.html & submit.php) with red field validation, daily device/IP rate limiting, and per-user JSON file storage.
+- Chat Notification Target Match Resolution: Fixed ChatController.open in controllers.js to prioritize passed match_id over stale MatchesController._currentMatchCode when opening match chats via push/in-app notifications.
+- Router Profile Modal URL Restoration: Updated router.js and index.html to normalize relative navigation paths and prevent modal subpages (/profile/view) from overwriting currentBasePath, properly restoring the base tab URL (/padeladd4/dashboard) in the address bar when closing modals.

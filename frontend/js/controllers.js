@@ -6659,7 +6659,7 @@ const ChatController = {
 
 
     open: function (match_id) {
-        let code = (typeof match_id === 'string' && match_id.startsWith('M-')) ? match_id : (MatchesController._currentMatchCode || match_id);
+        let code = match_id || MatchesController._currentMatchCode;
         if (code) {
             Router.navigate('/matches/' + code + '/chat');
             return;

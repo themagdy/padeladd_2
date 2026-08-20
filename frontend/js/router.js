@@ -120,7 +120,8 @@ const ModalStack = {
             window.history.replaceState({ depth: Router ? Router.navDepth : 0 }, null, CONFIG.BASE_PATH + (targetPath.startsWith('/') ? targetPath : '/' + targetPath));
         } else {
             document.body.classList.remove('modal-open-body');
-            const basePath = Router.currentBasePath || '/dashboard';
+            let basePath = Router.currentBasePath || '/dashboard';
+            if (basePath.startsWith('/profile')) basePath = '/dashboard';
             if (typeof Router !== 'undefined') Router.currentPath = basePath;
             window.history.replaceState({ depth: Router ? Router.navDepth : 0 }, null, CONFIG.BASE_PATH + (basePath.startsWith('/') ? basePath : '/' + basePath));
         }
@@ -160,12 +161,6 @@ const ModalStack = {
         if (container) container.innerHTML = '';
     }
 };
-
-setInterval(() => {
-    if (typeof ModalStack !== 'undefined') {
-        console.log(`[Modals Open] ${ModalStack.stack.length}`);
-    }
-}, 3000);
 
 const Router = {
     routes: {
@@ -447,9 +442,10 @@ const Router = {
     },
 
     navigate: function (path, addToHistory = true, replace = false) {
+        if (path && !path.startsWith('/')) path = '/' + path;
         let finalPath = path;
         // Auto-prefix with BASE_PATH if needed
-        if (finalPath.startsWith('/') && !finalPath.startsWith(CONFIG.BASE_PATH)) {
+        if (CONFIG.BASE_PATH && !finalPath.startsWith(CONFIG.BASE_PATH)) {
             finalPath = CONFIG.BASE_PATH + (finalPath === '/' ? '' : finalPath);
         }
 
@@ -578,7 +574,7 @@ const Router = {
             }
         }
 
-        const mainBaseRoutes = ['/dashboard', '/ranking', '/matches', '/matches/my', '/profile/view', '/profile'];
+        const mainBaseRoutes = ['/dashboard', '/ranking', '/matches', '/matches/my'];
         if (mainBaseRoutes.includes(nPath)) this.currentBasePath = nPath;
 
         this.updateNavVisibility(nPath);

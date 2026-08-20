@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Padeladd Earlybirds - Join Early Access</title>
+
+    <!-- Primary SEO Meta Tags -->
+    <meta name="description"
+        content="Reserve your early access spot for Padeladd - Egypt's Premier Padel Network. Sign up today as an Earlybird player.">
+    <meta name="keywords" content="padel, padeladd earlybirds, egypt padel, padel app, early access padel">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://padeladd.com/app/app/earlybirds/">
+
+    <!-- OpenGraph Social Share Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://padeladd.com/app/app/earlybirds/">
+    <meta property="og:title" content="Padeladd Earlybirds - Join Early Access">
+    <meta property="og:description"
+        content="Reserve your early access spot for Padeladd - Egypt's Premier Padel Network.">
+    <meta property="og:image" content="https://padeladd.com/app/plshare.jpg">
+
+    <link rel="icon" type="image/jpeg" href="https://padeladd.com/app/padeladd_icon.jpg">
+    <link rel="shortcut icon" type="image/jpeg" href="https://padeladd.com/app/padeladd_icon.jpg">
+    <link rel="apple-touch-icon" href="https://padeladd.com/app/padeladd_icon.jpg">
+
+    <!-- Fonts & Shared Theme CSS -->
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        /* Custom Earlybirds Form Layout Styles */
+        .earlybirds-wrapper {
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 20px 24px 64px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .earlybirds-card {
+            background: var(--card-bg, rgba(12, 16, 26, 0.75));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
+            border-radius: 28px;
+            padding: 36px 32px;
+            width: 100%;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .earlybirds-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue, #38bdf8), var(--accent-orange, #f97316), #ec4899);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .intro-question {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent-orange, #f97316);
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        .form-title {
+            width: 100%;
+            margin-bottom: 14px;
+            font-family: 'Outfit', 'Montserrat', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .title-line {
+            display: block;
+            width: 100%;
+            line-height: 1.02;
+            letter-spacing: -0.03em;
+            text-align: center;
+        }
+
+        .title-line-1 {
+            font-size: clamp(30px, 9vw, 48px);
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .title-line-2 {
+            font-size: clamp(32px, 9.8vw, 52px);
+        }
+
+        .form-sub {
+            font-size: 14.5px;
+            color: var(--text-sub, #94a3b8);
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-label .req {
+            color: var(--accent-orange, #f97316);
+            font-weight: 800;
+        }
+
+        .input-control {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-family: var(--font-app);
+            font-size: 14.5px;
+            font-weight: 500;
+            color: #ffffff;
+            outline: none;
+            transition: all 0.25s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-control::placeholder {
+            color: #64748b;
+        }
+
+        .input-control:focus {
+            border-color: var(--primary-blue, #38bdf8);
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        select.input-control {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 44px;
+            cursor: pointer;
+        }
+
+        select.input-control option {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 12px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f3e5ab 0%, #e6ca65 45%, #c59b27 100%);
+            border: 1px solid rgba(255, 223, 118, 0.6);
+            padding: 16px 28px;
+            border-radius: 18px;
+            color: #0a0d14;
+            font-size: 16px;
+            font-weight: 800;
+            font-family: var(--font-app);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 14px 38px rgba(212, 175, 55, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #fcf0be 0%, #ebd379 45%, #d1a732 100%);
+            box-shadow: 0 20px 48px rgba(212, 175, 55, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.985);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(10, 13, 20, 0.3);
+            border-top-color: #0a0d14;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Success Animation Container */
+        .success-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 36px 12px 24px;
+            animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon-ring {
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);
+            animation: successPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes successPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(16, 185, 129, 0.45);
+            }
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #ffffff;
+            font-family: 'Outfit', 'Montserrat', sans-serif;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .success-text {
+            font-size: 15px;
+            color: var(--text-sub, #94a3b8);
+            line-height: 1.65;
+            margin-bottom: 0;
+            max-width: 400px;
+            font-weight: 400;
+        }
+
+        .input-control.is-invalid {
+            border-color: #f87171 !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15) !important;
+        }
+
+        .field-error-msg {
+            display: none;
+            color: #f87171;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            letter-spacing: 0.2px;
+            animation: fadeInError 0.25s ease forwards;
+        }
+
+        @keyframes fadeInError {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .earlybirds-wrapper {
+                padding: 16px 16px 48px;
+                width: 100%;
+            }
+
+            .earlybirds-card {
+                padding: 30px 18px;
+                border-radius: 24px;
+                width: 100%;
+            }
+
+            .title-line-1 {
+                font-size: clamp(28px, 8.8vw, 38px);
+            }
+
+            .title-line-2 {
+                font-size: clamp(30px, 9.6vw, 42px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Minimal Luxury Top Navbar -->
+    <header class="navbar">
+        <a href="https://padeladd.com" class="brand-logo">
+            <img src="../../../assets/logo.png" alt="Padeladd" class="logo-img"
+                onerror="this.onerror=null; this.src='https://padeladd.com/assets/logo.png';">
+        </a>
+        <div class="nav-badge">
+            <span class="pulse-dot"></span> Early Access
+        </div>
+    </header>
+
+    <!-- Main Earlybirds Wrapper -->
+    <main class="earlybirds-wrapper">
+        <div class="earlybirds-card">
+
+            <!-- Active Registration Form -->
+            <form id="earlybirds-form" novalidate>
+                <div class="form-header">
+                    <p class="intro-question">Padel Player?</p>
+                    <h1 class="form-title">
+                        <span class="title-line title-line-1">SOMETHING BIG</span>
+                        <span class="title-line title-line-2"><span class="gradient-text">IS COMING.</span></span>
+                    </h1>
+                    <p class="form-sub">
+                        Request early access. Limited invitations.
+                    </p>
+                </div>
+
+                <!-- Global Alert Box -->
+                <div id="form-alert"
+                    style="display:none; padding:12px 16px; border-radius:14px; font-size:13px; font-weight:600; margin-bottom:20px; text-align:center;">
+                </div>
+
+                <!-- 1. Full Name -->
+                <div class="form-group">
+                    <label for="full_name" class="form-label">
+                        <span>Full Name</span>
+                        <span class="req">*</span>
+                    </label>
+                    <input type="text" id="full_name" name="full_name" class="input-control"
+                        placeholder="e.g. Ahmed Magdy" autocomplete="name">
+                    <span id="error-full_name" class="field-error-msg"></span>
+                </div>
+
+                <!-- 2. Phone -->
+                <div class="form-group">
+                    <label for="phone" class="form-label">
+                        <span>Phone Number</span>
+                        <span class="req">*</span>
+                    </label>
+                    <input type="tel" id="phone" name="phone" class="input-control" placeholder="e.g. +20 100 123 4567"
+                        autocomplete="tel">
+                    <span id="error-phone" class="field-error-msg"></span>
+                </div>
+
+                <!-- 3. Level (App Levels Dropdown) -->
+                <div class="form-group">
+                    <label for="level" class="form-label">
+                        <span>Level</span>
+                        <span class="req">*</span>
+                    </label>
+                    <select id="level" name="level" class="input-control">
+                        <option value="" disabled selected>Select your level...</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Initiation Intermediate">Initiation Intermediate</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Intermediate High">Intermediate High</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Competition">Competition</option>
+                        <option value="Professional">Professional</option>
+                    </select>
+                    <span id="error-level" class="field-error-msg"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="btn-submit">
+                    <span id="btn-text">Request Access</span>
+                    <span id="btn-spinner" class="spinner"></span>
+                </button>
+            </form>
+
+            <!-- Success Confirmation Screen -->
+            <div id="success-screen" class="success-state">
+                <div class="success-icon-ring">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h2 class="success-title">ACCESS REQUESTED</h2>
+                <p id="success-msg" class="success-text">
+                    Your request has been received. We will be in touch with your invitation soon.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Minimal Luxury Footer -->
+    <footer class="footer-bar">
+        <div class="copyright">&copy; 2026 Padeladd. All rights reserved.</div>
+    </footer>
+
+    <!-- Form Handler Logic with Sequential Field Validation -->
+    <script>
+        const form = document.getElementById('earlybirds-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const alertBox = document.getElementById('form-alert');
+        const successScreen = document.getElementById('success-screen');
+        const successMsg = document.getElementById('success-msg');
+
+        const fullNameInput = document.getElementById('full_name');
+        const phoneInput = document.getElementById('phone');
+        const levelSelect = document.getElementById('level');
+
+        const errorFullName = document.getElementById('error-full_name');
+        const errorPhone = document.getElementById('error-phone');
+        const errorLevel = document.getElementById('error-level');
+
+        function clearAllErrors() {
+            [fullNameInput, phoneInput, levelSelect].forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+            [errorFullName, errorPhone, errorLevel].forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            alertBox.style.display = 'none';
+        }
+
+        function showFieldError(inputEl, errorEl, message) {
+            inputEl.classList.add('is-invalid');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            inputEl.focus();
+        }
+
+        // Live input event listeners to clear error when user types/changes
+        fullNameInput.addEventListener('input', function () {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                errorFullName.style.display = 'none';
+            }
+        });
+
+        phoneInput.addEventListener('input', function () {
+            if (this.value.trim() !== '') {
+                this.classList.remove('is-invalid');
+                errorPhone.style.display = 'none';
+            }
+        });
+
+        levelSelect.addEventListener('change', function () {
+            if (this.value !== '') {
+                this.classList.remove('is-invalid');
+                errorLevel.style.display = 'none';
+            }
+        });
+
+        function validateSequentially() {
+            clearAllErrors();
+
+            const fullName = fullNameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const level = levelSelect.value;
+
+            // Sequential Check 1: Full Name
+            if (!fullName) {
+                showFieldError(fullNameInput, errorFullName, 'Please enter your full name.');
+                return false;
+            }
+
+            if (fullName.length < 3) {
+                showFieldError(fullNameInput, errorFullName, 'Please enter a valid name (at least 3 characters).');
+                return false;
+            }
+
+            // Sequential Check 2: Phone Number
+            if (!phone) {
+                showFieldError(phoneInput, errorPhone, 'Please enter your phone number.');
+                return false;
+            }
+
+            const cleanPhone = phone.replace(/[\s\-\+\(\)]/g, '');
+            if (cleanPhone.length < 8 || !/^\d+$/.test(cleanPhone)) {
+                showFieldError(phoneInput, errorPhone, 'Please enter a valid phone number (e.g. +20 100 123 4567).');
+                return false;
+            }
+
+            // Sequential Check 3: Level Dropdown
+            if (!level) {
+                showFieldError(levelSelect, errorLevel, 'Please select your player level.');
+                return false;
+            }
+
+            return true;
+        }
+
+        function showAlert(msg) {
+            alertBox.style.display = 'block';
+            alertBox.style.background = 'rgba(239, 68, 68, 0.12)';
+            alertBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+            alertBox.style.color = '#f87171';
+            alertBox.textContent = msg;
+        }
+
+        function getDeviceTodayCount() {
+            const today = new Date().toISOString().split('T')[0];
+            const data = JSON.parse(localStorage.getItem('eb_limit_log') || '{}');
+            return data[today] || 0;
+        }
+
+        function recordDeviceSubmission() {
+            const today = new Date().toISOString().split('T')[0];
+            const data = JSON.parse(localStorage.getItem('eb_limit_log') || '{}');
+            data[today] = (data[today] || 0) + 1;
+            localStorage.setItem('eb_limit_log', JSON.stringify(data));
+        }
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Client-side Device Rate Limit Check
+            if (getDeviceTodayCount() >= 3) {
+                showAlert('You have reached the maximum limit of 3 requests per day on this device.');
+                return;
+            }
+
+            // Run sequential validation
+            if (!validateSequentially()) {
+                return;
+            }
+
+            const fullName = fullNameInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const level = levelSelect.value;
+
+            // Start loading state
+            submitBtn.disabled = true;
+            btnText.style.opacity = '0.4';
+            btnSpinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('submit.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        phone: phone,
+                        level: level
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    recordDeviceSubmission();
+                    form.style.display = 'none';
+                    successMsg.textContent = result.message || 'Your request has been received. We will be in touch with your invitation soon.';
+                    successScreen.style.display = 'flex';
+                } else {
+                    showAlert(result.message || 'Registration failed. Please check your details.');
+                }
+            } catch (err) {
+                console.error('Submission error:', err);
+                showAlert('Network error. Please try submitting again.');
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.opacity = '1';
+                btnSpinner.style.display = 'none';
+            }
+        });
+
+        function resetForm() {
+            form.reset();
+            clearAllErrors();
+            successScreen.style.display = 'none';
+            form.style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
