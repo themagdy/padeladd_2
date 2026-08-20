@@ -28,7 +28,7 @@ const ModalStack = {
         let maxW = '480px';
         if (path === '/profile/edit') maxW = '500px';
         else if (path === '/terms') maxW = '520px';
-        else if (path.startsWith('/p/') || (path.startsWith('/profile/view/') && path !== '/profile/view')) maxW = '1200px';
+        else if (path.startsWith('/p/') || path.startsWith('/profile/view') || path === '/profile') maxW = '1200px';
         else if (path.startsWith('/matches/M-') || path.startsWith('/matches/view/')) maxW = '900px';
         else if (path === '/rules' || path.startsWith('/announcement/')) maxW = '800px';
 

@@ -2500,8 +2500,9 @@ Version 2.4.97 (Build 497) - 2026-08-20
 - Player Peek Modal Scroll Lock Alignment: Toggled is-parent class on ModalStack.getTopModal().containerEl in showPlayerStatsModal and closePlayerStatsModal so top-level match detail modals remain locked during player stats peek.
 
 ==================================================
-Version 2.4.98 (Build 498) - 2026-08-20
+Version 2.4.97.1 (Build 498.1) - 2026-08-20
 ==================================================
-- Earlybirds Landing Page & Submission Handler: Created edge-to-edge dark luxury early access page (/app/app/earlybirds/index.html & submit.php) with red field validation, daily device/IP rate limiting, and per-user JSON file storage.
-- Chat Notification Target Match Resolution: Fixed ChatController.open in controllers.js to prioritize passed match_id over stale MatchesController._currentMatchCode when opening match chats via push/in-app notifications.
-- Router Profile Modal URL Restoration: Updated router.js and index.html to normalize relative navigation paths and prevent modal subpages (/profile/view) from overwriting currentBasePath, properly restoring the base tab URL (/padeladd4/dashboard) in the address bar when closing modals.
+- Dynamic Stats Consistency & Friendlies Filter: Updated backend/api/profile/get.php to calculate matches_played, comp_played, friendly_played, matches_won, matches_lost, and win_rate dynamically from approved scores in a single query. Friendlies are included in total matches but excluded from win rate calculations.
+- Player Peek Card Breakdown Subtitle: Added 🏆 comp | 🤝 friendly breakdown subtitle under Matches in player peek modal card (frontend/js/controllers.js).
+- Profile Modal Header Desktop Alignment: Updated router.js maxW to 1200px for /profile/view, fixing desktop back button alignment.
+- OTA Web Bundle web-v2.4.97.1: Built minified production bundle web-v2.4.97.1.zip for mobile OTA updates.

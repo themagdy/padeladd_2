@@ -6507,6 +6507,7 @@ const MatchesController = {
         let matchesVal = cached ? (cached.matches_played ?? 0) : skelPill;
         let winRateVal = cached ? (cached.win_rate !== undefined ? cached.win_rate + '%' : '0%') : skelPill;
         let recVal = cached ? `${cached.matches_won || 0}W / ${cached.matches_lost || 0}L` : skelRec;
+        let breakdownVal = cached ? `🏆 ${cached.comp_played || 0} | 🤝 ${cached.friendly_played || 0}` : skelRec;
 
         // Origin calculation for smooth popup animation from slot/thumbnail center
         let tx = 0, ty = 0;
@@ -6582,7 +6583,8 @@ const MatchesController = {
                 <div style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; text-align:left; background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius:18px; min-height:68px;">
                     <div>
                         <div id="peek-stat-matches" style="font-size:20px; font-weight:700; color:var(--c-orange); line-height:1.1;">${matchesVal}</div>
-                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px;">Matches</div>
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:3px;">Matches</div>
+                        <div id="peek-stat-breakdown" style="font-size:9px; font-weight:800; color:rgba(255,255,255,0.6); margin-top:2px;">${breakdownVal}</div>
                     </div>
                     <div style="flex-shrink:0;"><img src="assets/icons/padel_racket_3d.png" style="width:30px; height:30px; object-fit:contain; border-radius:4px; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));" alt="Matches"></div>
                 </div>
@@ -6627,12 +6629,14 @@ const MatchesController = {
                     const mEl = document.getElementById('peek-stat-matches');
                     const wEl = document.getElementById('peek-stat-winrate');
                     const recEl = document.getElementById('peek-stat-record');
+                    const bkEl = document.getElementById('peek-stat-breakdown');
 
                     if (rEl) rEl.innerHTML = safeHTML(st.ranking ? '#' + st.ranking : '—');
                     if (pEl) pEl.innerHTML = safeHTML(st.points ?? 0);
                     if (mEl) mEl.innerHTML = safeHTML(st.matches_played ?? 0);
                     if (wEl) wEl.innerHTML = safeHTML(st.win_rate !== undefined ? st.win_rate + '%' : '0%');
                     if (recEl) recEl.innerHTML = safeHTML(`${st.matches_won || 0}W / ${st.matches_lost || 0}L`);
+                    if (bkEl) bkEl.innerHTML = safeHTML(`🏆 ${st.comp_played || 0} | 🤝 ${st.friendly_played || 0}`);
                 }
             }).catch(() => { });
         }

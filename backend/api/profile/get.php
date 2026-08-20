@@ -137,29 +137,38 @@ $followingStmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id =
 $followingStmt->execute([$viewingId]);
 $followingCount = (int)$followingStmt->fetchColumn();
 
-// Fetch dynamic scores played (competition + friendly)
+// Fetch dynamic scores played, wins, and losses from scores table
 $totalPlayed = 0;
 $compPlayed = 0;
 $friendlyPlayed = 0;
+$matchesWon = 0;
+$matchesLost = 0;
+$winRate = 0;
+
 if ($stats) {
-    $countStmt = $pdo->prepare("
-        SELECT m.match_type, COUNT(DISTINCT s.id) AS cnt
+    $scoreStmt = $pdo->prepare("
+        SELECT s.*, m.match_type
         FROM scores s
-        JOIN match_players mp ON s.match_id = mp.match_id
         JOIN matches m ON s.match_id = m.id
-        WHERE mp.user_id = ? AND s.status = 'approved' AND m.status = 'completed'
-        GROUP BY m.match_type
+        WHERE s.status = 'approved' AND m.status = 'completed'
+          AND (s.t1_p1_user_id = ? OR s.t1_p2_user_id = ? OR s.t2_p1_user_id = ? OR s.t2_p2_user_id = ?)
     ");
-    $countStmt->execute([$viewingId]);
-    $counts = $countStmt->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($counts as $c) {
-        if ($c['match_type'] === 'competition') {
-            $compPlayed = (int)$c['cnt'];
-        } elseif ($c['match_type'] === 'friendly') {
-            $friendlyPlayed = (int)$c['cnt'];
+    $scoreStmt->execute([$viewingId, $viewingId, $viewingId, $viewingId]);
+    foreach ($scoreStmt->fetchAll(PDO::FETCH_ASSOC) as $s) {
+        if ($s['match_type'] === 'friendly') {
+            $friendlyPlayed++;
+            continue;
         }
+        $compPlayed++;
+
+        $isT1 = ((int)$s['t1_p1_user_id'] === $viewingId || (int)$s['t1_p2_user_id'] === $viewingId);
+        $t1Won = (($s['t1_set1'] > $s['t2_set1']) + ($s['t1_set2'] > $s['t2_set2']) + ($s['t1_set3'] > $s['t2_set3'])) > 1;
+
+        if (($isT1 && $t1Won) || (!$isT1 && !$t1Won)) $matchesWon++;
+        else $matchesLost++;
     }
     $totalPlayed = $compPlayed + $friendlyPlayed;
+    $winRate = $compPlayed > 0 ? intval(($matchesWon * 100) / $compPlayed) : 0;
 }
 
 jsonResponse(true, 'Profile loaded.', [
@@ -192,8 +201,8 @@ jsonResponse(true, 'Profile loaded.', [
         'matches_played'   => $totalPlayed,
         'comp_played'      => $compPlayed,
         'friendly_played'  => $friendlyPlayed,
-        'matches_won'      => (int)$stats['matches_won'],
-        'matches_lost'     => (int)$stats['matches_lost'],
+        'matches_won'      => $matchesWon,
+        'matches_lost'     => $matchesLost,
         'ranking'          => $currentRanking,
         'ranking_change'   => $rankingChange,
         'highest_ranking'  => $stats['highest_ranking'],
