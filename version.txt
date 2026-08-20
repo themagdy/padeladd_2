@@ -2485,3 +2485,5 @@ Version 2.5.24 (Build 524) - 2026-08-20
 - Peek Card Shimmer Preloader: Added pulsing shimmer skeleton pills for stat numbers while fetching profile stats.
 - Haptics Refinement: Adjusted tactile haptics to light impact tap.
 - Body Scroll Lock on Peek Card: Locked body scrolling and touchmove bleed when player peek stats modal is active.
+- Standalone Match View Scroll Lock: Locked active page container scrolling during player peek modal.
+- Score Cards Typography Refinement: Refined score values font-size styling across match cards and score wrappers.

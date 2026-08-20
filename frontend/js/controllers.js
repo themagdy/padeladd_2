@@ -6460,6 +6460,8 @@ const MatchesController = {
         const overlay = document.getElementById('player-stats-modal-overlay');
         document.body.classList.remove('modal-open-body');
         document.body.style.overflow = '';
+        const activePage = document.querySelector('.page.active') || document.getElementById('match-view-page');
+        if (activePage) { activePage.style.overflow = ''; activePage.style.touchAction = ''; }
         if (!overlay) return;
         overlay.style.opacity = '0';
         const card = overlay.querySelector('.peek-stats-card-inner');
@@ -6478,6 +6480,8 @@ const MatchesController = {
 
         document.body.classList.add('modal-open-body');
         document.body.style.overflow = 'hidden';
+        const activePage = document.querySelector('.page.active') || document.getElementById('match-view-page');
+        if (activePage) { activePage.style.overflow = 'hidden'; activePage.style.touchAction = 'none'; }
 
         if (!this._peekProfileCache) this._peekProfileCache = {};
 

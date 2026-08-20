@@ -4631,9 +4631,14 @@ form {
 .approved-score-wrapper .msc-premium-score-val,
 .pending-score-container .msc-premium-score-val,
 .disputed-score-container .msc-premium-score-val {
-  font-size: 24px;
+  font-size: 26px;
   width: 24px;
   font-weight: 600;
+}
+
+.dash-match-card .msc-premium-score-val {
+  font-size: 19px;
+  width: 14px;
 }
 
 .dash-match-card {
@@ -6737,10 +6742,12 @@ body.modal-open-body #app-content {
     opacity: 0;
     transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.15);
   }
+
   70% {
     opacity: 1;
     transform: translate(0px, 0px) scale(1.03);
   }
+
   100% {
     opacity: 1;
     transform: translate(0px, 0px) scale(1);
@@ -6752,6 +6759,7 @@ body.modal-open-body #app-content {
     opacity: 1;
     transform: translate(0px, 0px) scale(1);
   }
+
   100% {
     opacity: 0;
     transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.15);
@@ -6759,7 +6767,15 @@ body.modal-open-body #app-content {
 }
 
 @keyframes skeletonPulse {
-  0% { opacity: 0.3; }
-  50% { opacity: 0.85; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
 }
