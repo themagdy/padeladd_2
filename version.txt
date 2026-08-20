@@ -2474,3 +2474,4 @@ Version 2.5.23 (Build 523) - 2026-08-20
 ==================================================
 - Ranking Table Search Clear DOM Order Fix: Updated `RankingController.render()` in `frontend/js/controllers.js` to always re-order/re-append DOM row elements in sequence, preventing search results from misplacing pinned users or causing out-of-order rows (e.g. Rank 3433 between Rank 1 and Rank 2) when clearing search.
 - Ranking Search Instant Skeleton Loader: Updated `RankingController.handleSearch()` to immediately render animated skeleton loader rows (`RankingUI.renderSkeleton(5)`) as soon as the user types or clears text in the search input.
+- Horizontal Modal Slide Animation: Updated modal layer entrance and exit CSS transitions in `frontend/css/style.css` to slide in from right-to-left and exit to the right.

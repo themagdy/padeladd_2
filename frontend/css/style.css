@@ -6674,11 +6674,11 @@ body {
   overflow-x: hidden;
   pointer-events: auto;
   -webkit-overflow-scrolling: touch;
-  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease, filter 0.36s ease, border-radius 0.36s ease;
+  transition: transform 0.22s ease-out;
   box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.7);
   padding-bottom: 20px;
   overscroll-behavior: contain;
-  will-change: transform, opacity, filter;
+  will-change: transform;
 }
 
 .modal-layer .page {
@@ -6712,18 +6712,15 @@ body.modal-open-body #app-content {
 }
 
 .modal-layer.slide-enter {
-  transform: translateY(100%);
-  opacity: 0.9;
+  transform: translateX(100%);
 }
 
 .modal-layer.slide-active {
-  transform: translateY(0);
-  opacity: 1;
+  transform: translateX(0);
 }
 
 .modal-layer.slide-exit {
-  transform: translateY(100%);
-  opacity: 0.4;
+  transform: translateX(100%);
 }
 
 .modal-layer .top-bar-nav {

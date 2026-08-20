@@ -105,7 +105,7 @@ const ModalStack = {
             topModal.containerEl.classList.add('slide-exit');
             setTimeout(() => {
                 topModal.containerEl.remove();
-            }, 360);
+            }, 220);
         }
 
         if (typeof Router !== 'undefined' && Router.navDepth > 0) {
