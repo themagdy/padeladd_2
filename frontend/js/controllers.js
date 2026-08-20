@@ -8551,12 +8551,18 @@ const RankingController = {
 
     handleSearch: function (query) {
         const q = query.trim();
+        const prevQuery = this._searchQuery;
         this._searchQuery = q;
 
         const clearBtn = document.getElementById('rank-search-clear');
         if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
 
         if (this._searchTimer) clearTimeout(this._searchTimer);
+
+        const listEl = document.getElementById('ranking-full-list');
+        if (listEl && q !== prevQuery) {
+            listEl.innerHTML = RankingUI.renderSkeleton(5);
+        }
 
         this._searchTimer = setTimeout(() => {
             this._offset = 0;
@@ -8795,11 +8801,9 @@ const RankingController = {
                 row.onmouseout = function () { this.style.background = 'transparent'; };
             }
 
-            if (!row.isConnected) {
-                const loader = listEl.querySelector('#ranking-scroll-loader');
-                if (loader) listEl.insertBefore(row, loader);
-                else listEl.appendChild(row);
-            }
+            const loader = listEl.querySelector('#ranking-scroll-loader');
+            if (loader) listEl.insertBefore(row, loader);
+            else listEl.appendChild(row);
         });
 
 
