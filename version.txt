@@ -2487,3 +2487,7 @@ Version 2.5.24 (Build 524) - 2026-08-20
 - Body Scroll Lock on Peek Card: Locked body scrolling and touchmove bleed when player peek stats modal is active.
 - Standalone Match View Scroll Lock: Locked active page container scrolling during player peek modal.
 - Score Cards Typography Refinement: Refined score values font-size styling across match cards and score wrappers.
+- iOS Remote Notifications Fix: Added missing didRegisterForRemoteNotificationsWithDeviceToken and didFailToRegisterForRemoteNotificationsWithError handlers to AppDelegate.swift for Capacitor iOS Push Notifications.
+- iOS Background Push Modes: Configured UIBackgroundModes remote-notification key in Info.plist for background push handling.
+- Push Registration Event Order: Attached push notification listeners before calling PushNotifications.register() in app.js to eliminate registration token race conditions.
+- FCM iOS APNs High-Priority Payload: Added apns-priority 10 header and explicit aps alert/sound/badge payload dictionary in fcm_helper.php.

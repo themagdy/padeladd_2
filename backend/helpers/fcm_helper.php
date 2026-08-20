@@ -59,7 +59,21 @@ class FCMHelper {
                     'tag' => 'padeladd_check_updates'
                 ]
             ];
-            $payload['message']['apns'] = ['payload' => ['aps' => ['sound' => 'default']]];
+            $payload['message']['apns'] = [
+                'headers' => [
+                    'apns-priority' => '10'
+                ],
+                'payload' => [
+                    'aps' => [
+                        'alert' => [
+                            'title' => (string)$title,
+                            'body' => (string)$body
+                        ],
+                        'sound' => 'default',
+                        'badge' => 1
+                    ]
+                ]
+            ];
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);

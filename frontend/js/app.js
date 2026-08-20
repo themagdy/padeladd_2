@@ -689,12 +689,12 @@ var PushNotificationsController = {
                 return;
             }
 
+            // Listeners MUST be attached before calling register() to prevent missing token events
+            this.setupListeners(PushNotifications);
+
             // Safe Registration
             console.log('[PushNotifications] Registering...');
             await PushNotifications.register();
-
-            // Listeners
-            this.setupListeners(PushNotifications);
 
         } catch (e) {
             console.error('[PushNotifications] Initialization crash prevented:', e);
