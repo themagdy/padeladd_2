@@ -2491,3 +2491,9 @@ Version 2.5.24 (Build 524) - 2026-08-20
 - iOS Background Push Modes: Configured UIBackgroundModes remote-notification key in Info.plist for background push handling.
 - Push Registration Event Order: Attached push notification listeners before calling PushNotifications.register() in app.js to eliminate registration token race conditions.
 - FCM iOS APNs High-Priority Payload: Added apns-priority 10 header and explicit aps alert/sound/badge payload dictionary in fcm_helper.php.
+
+==================================================
+Version 2.4.97 (Build 497) - 2026-08-20
+==================================================
+- App Version Bump: Updated app version to 2.4.97 (Build 497) across package.json, config.js, build.gradle, and Info.plist.
+- iOS Push Notifications Integration: Configured native APNs handlers in AppDelegate.swift, UIBackgroundModes in Info.plist, listener registration ordering in app.js, and high-priority APNs payload formatting in fcm_helper.php.
