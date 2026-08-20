@@ -4865,13 +4865,83 @@ const MatchesController = {
                 const isMe = parseInt(s.user_id) === myUserId && myUserId > 0;
                 const profileUrl = `/p/${s.player_code}`;
                 el.className = 'mv-slot' + (isMe ? ' slot-mine' : '');
-                if (!isMe) {
-                    el.style.cursor = 'pointer';
-                    el.onclick = () => Router.navigate(profileUrl);
-                } else {
-                    el.style.cursor = 'default';
-                    el.onclick = null;
-                }
+
+                // Press-and-hold peek stats & quick-click profile navigation
+                el.style.cursor = 'pointer';
+                let pressTimer = null;
+                let isLongPress = false;
+                let startX = 0, startY = 0;
+
+                const startPress = (e) => {
+                    if (e.type === 'mousedown' && e.button !== 0) return;
+                    isLongPress = false;
+                    const touch = e.touches ? e.touches[0] : e;
+                    startX = touch ? touch.clientX : e.clientX;
+                    startY = touch ? touch.clientY : e.clientY;
+
+                    if (pressTimer) clearTimeout(pressTimer);
+                    pressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        try {
+                            if (window.Capacitor?.Plugins?.Haptics) {
+                                window.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' }).catch(() => { });
+                            } else if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+                                try { navigator.vibrate(10); } catch (_) { }
+                            }
+                        } catch (err) { }
+                        MatchesController.showPlayerStatsModal(s, el.getBoundingClientRect());
+                    }, 350);
+                };
+
+                const endPress = () => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                    if (isLongPress) {
+                        MatchesController.closePlayerStatsModal();
+                    }
+                };
+
+                const movePress = (e) => {
+                    if (isLongPress) return;
+                    if (!pressTimer) return;
+                    const touch = e.touches ? e.touches[0] : e;
+                    const curX = touch ? touch.clientX : e.clientX;
+                    const curY = touch ? touch.clientY : e.clientY;
+                    if (Math.abs(curX - startX) > 25 || Math.abs(curY - startY) > 25) {
+                        if (pressTimer) {
+                            clearTimeout(pressTimer);
+                            pressTimer = null;
+                        }
+                    }
+                };
+
+                el.addEventListener('contextmenu', (e) => {
+                    if (isLongPress) e.preventDefault();
+                });
+
+                el.addEventListener('touchstart', startPress, { passive: true });
+                el.addEventListener('touchmove', movePress, { passive: true });
+                el.addEventListener('touchend', endPress, { passive: true });
+                el.addEventListener('touchcancel', endPress, { passive: true });
+
+                el.addEventListener('mousedown', startPress);
+                el.addEventListener('mousemove', movePress);
+                el.addEventListener('mouseup', endPress);
+
+                el.onclick = (e) => {
+                    if (isLongPress) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        setTimeout(() => { isLongPress = false; }, 50);
+                        return false;
+                    }
+                    if (!isMe) {
+                        Router.navigate(profileUrl);
+                    }
+                };
                 const rawName = s.nickname || s.first_name;
                 const isMob = window.innerWidth < 600;
                 const limit = isMob ? 10 : 13;
@@ -6382,7 +6452,179 @@ const MatchesController = {
             MatchesController.cancelSelectionMode();
             await MatchesController.loadDetails({ match_id: match_id }, true);
         }
-    }
+    },
+
+    _peekProfileCache: {},
+
+    closePlayerStatsModal: function () {
+        const overlay = document.getElementById('player-stats-modal-overlay');
+        document.body.classList.remove('modal-open-body');
+        document.body.style.overflow = '';
+        if (!overlay) return;
+        overlay.style.opacity = '0';
+        const card = overlay.querySelector('.peek-stats-card-inner');
+        if (card) {
+            card.style.animation = 'shrinkToThumbnail 0.15s cubic-bezier(0.4, 0, 1, 1) forwards';
+        }
+        setTimeout(() => {
+            const el = document.getElementById('player-stats-modal-overlay');
+            if (el) el.remove();
+        }, 150);
+    },
+
+    showPlayerStatsModal: function (s, originRect) {
+        if (!s) return;
+        this.closePlayerStatsModal();
+
+        document.body.classList.add('modal-open-body');
+        document.body.style.overflow = 'hidden';
+
+        if (!this._peekProfileCache) this._peekProfileCache = {};
+
+        const initials = ((s.first_name?.[0] || '') + (s.last_name?.[0] || '')).toUpperCase() || (s.nickname?.[0] || '?').toUpperCase();
+        const fullName = (s.first_name || '') + ' ' + (s.last_name || '');
+        const nickname = s.nickname || s.first_name || 'Player';
+
+        // Check if exact profile stats are cached from /profile/get
+        const cached = this._peekProfileCache[s.user_id];
+        const skelPill = `<span style="display:inline-block; width:38px; height:18px; background:rgba(255,139,0,0.25); border-radius:5px; animation:skeletonPulse 0.9s infinite ease-in-out; vertical-align:middle;"></span>`;
+        const skelRec = `<span style="display:inline-block; width:44px; height:9px; background:rgba(255,255,255,0.18); border-radius:4px; animation:skeletonPulse 0.9s infinite ease-in-out; margin-top:2px; vertical-align:middle;"></span>`;
+
+        let rankVal = cached ? (cached.ranking ? '#' + cached.ranking : '—') : skelPill;
+        let ptsVal = cached ? (cached.points ?? 0) : skelPill;
+        let matchesVal = cached ? (cached.matches_played ?? 0) : skelPill;
+        let winRateVal = cached ? (cached.win_rate !== undefined ? cached.win_rate + '%' : '0%') : skelPill;
+        let recVal = cached ? `${cached.matches_won || 0}W / ${cached.matches_lost || 0}L` : skelRec;
+
+        // Origin calculation for smooth popup animation from slot/thumbnail center
+        let tx = 0, ty = 0;
+        if (originRect) {
+            const slotCenterX = originRect.left + originRect.width / 2;
+            const slotCenterY = originRect.top + originRect.height / 2;
+            tx = Math.round(slotCenterX - (window.innerWidth / 2));
+            ty = Math.round(slotCenterY - (window.innerHeight / 2));
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'player-stats-modal-overlay';
+        overlay.style.cssText = 'position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:20px; pointer-events:none; transition:opacity 0.15s ease-out; opacity:1; touch-action:none;';
+        overlay.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+
+        const card = document.createElement('div');
+        card.className = 'peek-stats-card-inner';
+        card.style.cssText = `
+            background: linear-gradient(145deg, #1A2234 0%, #101623 100%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 28px;
+            padding: 24px 22px 22px;
+            width: 100%;
+            max-width: 330px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85), 0 0 40px rgba(91, 139, 255, 0.12);
+            position: relative;
+            text-align: center;
+            pointer-events: auto;
+            --tx: ${tx}px;
+            --ty: ${ty}px;
+            transform-origin: center center;
+            animation: popFromThumbnail 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+        `;
+
+        card.innerHTML = safeHTML(`
+            <!-- Top glowing accent bar -->
+            <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:60px; height:3px; background:linear-gradient(90deg, var(--c-primary), var(--c-orange)); border-radius:0 0 4px 4px; opacity:0.8;"></div>
+
+            <!-- Avatar -->
+            <div style="width:68px; height:68px; border-radius:50%; margin:4px auto 12px; position:relative; box-shadow:0 0 0 3px rgba(255,255,255,0.1), 0 12px 28px rgba(0,0,0,0.5);">
+                ${UI.getAvatarHtml(s.profile_image_thumb || s.profile_image, 'width:100%;height:100%;object-fit:cover;border-radius:50%;', 'width:100%;height:100%;border-radius:50%;', initials)}
+            </div>
+
+            <!-- Names & Code -->
+            <h3 style="font-size:19px; font-weight:800; color:#fff; margin:0 0 4px 0; letter-spacing:-0.4px;">${nickname}</h3>
+            <div style="font-size:12px; color:rgba(255,255,255,0.6); margin:0 0 18px 0; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <span>${fullName}</span>
+                <span style="color:rgba(255,255,255,0.3);">•</span>
+                <span style="font-family:monospace; background:rgba(91,139,255,0.15); color:var(--c-text-blue); padding:2px 7px; border-radius:6px; font-weight:700; font-size:11px; letter-spacing:0.5px;">${s.player_code || ''}</span>
+            </div>
+
+            <!-- Stats Grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <!-- Rank -->
+                <div style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; text-align:left; background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius:18px; min-height:68px;">
+                    <div>
+                        <div id="peek-stat-rank" style="font-size:20px; font-weight:700; color:var(--c-orange); line-height:1.1;">${rankVal}</div>
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px;">Rank</div>
+                    </div>
+                    <div style="flex-shrink:0;"><img src="assets/icons/trophy_3d.png" style="width:30px; height:30px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));" alt="Rank"></div>
+                </div>
+
+                <!-- Points -->
+                <div style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; text-align:left; background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius:18px; min-height:68px;">
+                    <div>
+                        <div id="peek-stat-points" style="font-size:20px; font-weight:700; color:var(--c-orange); line-height:1.1;">${ptsVal}</div>
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px;">Points</div>
+                    </div>
+                    <div style="flex-shrink:0;"><img src="assets/icons/coin_3d.png" style="width:30px; height:30px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));" alt="Points"></div>
+                </div>
+
+                <!-- Matches -->
+                <div style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; text-align:left; background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius:18px; min-height:68px;">
+                    <div>
+                        <div id="peek-stat-matches" style="font-size:20px; font-weight:700; color:var(--c-orange); line-height:1.1;">${matchesVal}</div>
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px;">Matches</div>
+                    </div>
+                    <div style="flex-shrink:0;"><img src="assets/icons/padel_racket_3d.png" style="width:30px; height:30px; object-fit:contain; border-radius:4px; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));" alt="Matches"></div>
+                </div>
+
+                <!-- Win Rate -->
+                <div style="padding:12px 14px; display:flex; align-items:center; justify-content:space-between; text-align:left; background:linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.08); border-radius:18px; min-height:68px;">
+                    <div>
+                        <div id="peek-stat-winrate" style="font-size:20px; font-weight:700; color:var(--c-orange); line-height:1.1;">${winRateVal}</div>
+                        <div style="font-size:10px; font-weight:800; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.8px; margin-top:3px;">Win Rate</div>
+                        <div id="peek-stat-record" style="font-size:9px; font-weight:800; color:rgba(255,255,255,0.6); margin-top:2px;">${recVal}</div>
+                    </div>
+                    <div style="flex-shrink:0;"><img src="assets/icons/bullseye_3d.png" style="width:30px; height:30px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));" alt="Win Rate"></div>
+                </div>
+            </div>
+        `);
+
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+
+        // Global release listeners on window so releasing finger/mouse anywhere closes the peek card
+        const handleGlobalRelease = () => {
+            window.removeEventListener('mouseup', handleGlobalRelease);
+            window.removeEventListener('touchend', handleGlobalRelease);
+            window.removeEventListener('touchcancel', handleGlobalRelease);
+            MatchesController.closePlayerStatsModal();
+        };
+
+        setTimeout(() => {
+            window.addEventListener('mouseup', handleGlobalRelease, { once: true });
+            window.addEventListener('touchend', handleGlobalRelease, { once: true });
+            window.addEventListener('touchcancel', handleGlobalRelease, { once: true });
+        }, 50);
+
+        // Asynchronously fetch exact stats from /profile/get (same Profile API used by profile page)
+        if (!cached && (s.player_code || s.user_id)) {
+            API.post('/profile/get', { player_code: s.player_code, target_id: s.user_id }).then(res => {
+                if (res && res.success && res.data && res.data.stats) {
+                    const st = res.data.stats;
+                    MatchesController._peekProfileCache[s.user_id] = st;
+                    const rEl = document.getElementById('peek-stat-rank');
+                    const pEl = document.getElementById('peek-stat-points');
+                    const mEl = document.getElementById('peek-stat-matches');
+                    const wEl = document.getElementById('peek-stat-winrate');
+                    const recEl = document.getElementById('peek-stat-record');
+
+                    if (rEl) rEl.innerHTML = safeHTML(st.ranking ? '#' + st.ranking : '—');
+                    if (pEl) pEl.innerHTML = safeHTML(st.points ?? 0);
+                    if (mEl) mEl.innerHTML = safeHTML(st.matches_played ?? 0);
+                    if (wEl) wEl.innerHTML = safeHTML(st.win_rate !== undefined ? st.win_rate + '%' : '0%');
+                    if (recEl) recEl.innerHTML = safeHTML(`${st.matches_won || 0}W / ${st.matches_lost || 0}L`);
+                }
+            }).catch(() => { });
+        }
+    },
 };
 
 

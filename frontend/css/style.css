@@ -6730,3 +6730,36 @@ body.modal-open-body #app-content {
   width: 100%;
   z-index: 100;
 }
+
+/* Modal Peek Card Thumbnail Animations */
+@keyframes popFromThumbnail {
+  0% {
+    opacity: 0;
+    transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.15);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes shrinkToThumbnail {
+  0% {
+    opacity: 1;
+    transform: translate(0px, 0px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.15);
+  }
+}
+
+@keyframes skeletonPulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.3; }
+}

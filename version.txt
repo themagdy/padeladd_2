@@ -2475,3 +2475,13 @@ Version 2.5.23 (Build 523) - 2026-08-20
 - Ranking Table Search Clear DOM Order Fix: Updated `RankingController.render()` in `frontend/js/controllers.js` to always re-order/re-append DOM row elements in sequence, preventing search results from misplacing pinned users or causing out-of-order rows (e.g. Rank 3433 between Rank 1 and Rank 2) when clearing search.
 - Ranking Search Instant Skeleton Loader: Updated `RankingController.handleSearch()` to immediately render animated skeleton loader rows (`RankingUI.renderSkeleton(5)`) as soon as the user types or clears text in the search input.
 - Horizontal Modal Slide Animation: Updated modal layer entrance and exit CSS transitions in `frontend/css/style.css` to slide in from right-to-left and exit to the right.
+==================================================
+Version 2.5.24 (Build 524) - 2026-08-20
+==================================================
+- Player Slot Long-Press Peek Card & Thumbnail Animation: Added press-and-hold player stats peek modal in Match Details page featuring 3D stats boxes (Rank, Points, Matches, Win Rate) and spring popup/shrink animation originating from slot thumbnail.
+- Finger Movement Handling on Peek Card: Ignored micro-finger movement once peek card is open so card remains open while holding finger down.
+- Peek Card Typography & Accent Colors: Refined stat numbers to 20px font-weight 700 and set all stat numbers to brand orange (`var(--c-orange)`).
+- Profile API Endpoint Payload Fix: Fixed profile stats fetch in peek modal by sending target player payload to `API.post('/profile/get', { player_code, target_id })`.
+- Peek Card Shimmer Preloader: Added pulsing shimmer skeleton pills for stat numbers while fetching profile stats.
+- Haptics Refinement: Adjusted tactile haptics to light impact tap.
+- Body Scroll Lock on Peek Card: Locked body scrolling and touchmove bleed when player peek stats modal is active.
