@@ -741,13 +741,22 @@ var PushNotificationsController = {
     },
 
     updateServerToken: async function (token) {
-        if (typeof Auth !== 'undefined' && !Auth.isAuthenticated()) return;
+        if (token) this._lastToken = token;
+        const tokenToUse = token || this._lastToken;
+        if (!tokenToUse) return;
+
+        if (typeof Auth !== 'undefined' && !Auth.isAuthenticated()) {
+            console.log('[PushNotifications] User not authenticated yet; caching token for post-auth sync.');
+            this._pendingToken = tokenToUse;
+            return;
+        }
         const platform = window.Capacitor?.getPlatform?.() || 'web';
         console.log('[PushNotifications] Updating server token...');
         await API.post('/profile/update_device_token', {
-            token: token,
+            token: tokenToUse,
             platform: platform
         });
+        this._pendingToken = null;
     }
 };
 
@@ -1215,6 +1224,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof UI !== 'undefined' && UI.syncNav) {
                 UI.syncNav();
             }
+        }
+        // Force flush any cached device token
+        if (PushNotificationsController._pendingToken || PushNotificationsController._lastToken) {
+            PushNotificationsController.updateServerToken();
         }
     });
 

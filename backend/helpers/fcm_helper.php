@@ -61,7 +61,9 @@ class FCMHelper {
             ];
             $payload['message']['apns'] = [
                 'headers' => [
-                    'apns-priority' => '10'
+                    'apns-priority' => '10',
+                    'apns-push-type' => 'alert',
+                    'apns-topic' => 'com.padeladd.app'
                 ],
                 'payload' => [
                     'aps' => [
@@ -98,7 +100,11 @@ class FCMHelper {
         $results = [];
         foreach ($curl_handles as $ch) {
             $response = curl_multi_getcontent($ch);
-            $results[] = json_decode($response, true);
+            $decoded = json_decode($response, true);
+            $results[] = $decoded;
+            if (isset($decoded['error'])) {
+                error_log("[FCM Error] User $to_user_id FCM send failed: " . json_encode($decoded['error']));
+            }
             curl_multi_remove_handle($mh, $ch);
             curl_close($ch);
         }
