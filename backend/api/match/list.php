@@ -65,25 +65,12 @@ if ($mode === 'play_upcoming') {
     }
 
     if ($search !== '') {
-        $where .= " AND (
-            m.match_code LIKE :s1
-            OR m.court_name LIKE :s2
-            OR v.name LIKE :s3
-            OR u.first_name LIKE :s4
-            OR u.last_name LIKE :s5
-            OR CONCAT(u.first_name, ' ', u.last_name) LIKE :s6
-            OR up.nickname LIKE :s7
-            OR up.player_code LIKE :s8
-            OR m.id IN (
-                SELECT mp.match_id FROM match_players mp 
-                JOIN users mu ON mp.user_id = mu.id 
-                LEFT JOIN user_profiles mup ON mp.user_id = mup.user_id 
-                WHERE mu.first_name LIKE :s9 OR mu.last_name LIKE :s10 OR CONCAT(mu.first_name, ' ', mu.last_name) LIKE :s11 OR mup.nickname LIKE :s12 OR mup.player_code LIKE :s13
-            )
-        )";
-        $sVal = '%' . $search . '%';
-        for ($i = 1; $i <= 13; $i++) {
-            $params[":s$i"] = $sVal;
+        foreach (array_values(array_filter(explode(' ', $search))) as $i => $w) {
+            $ka = ":sw{$i}a";
+            $kb = ":sw{$i}b";
+            $where .= " AND (CONCAT_WS(' ', m.match_code, m.court_name, v.name, u.first_name, u.last_name, up.nickname, up.player_code) LIKE {$ka} OR m.id IN (SELECT mp.match_id FROM match_players mp JOIN users mu ON mp.user_id = mu.id LEFT JOIN user_profiles mup ON mp.user_id = mup.user_id WHERE CONCAT_WS(' ', mu.first_name, mu.last_name, mup.nickname, mup.player_code) LIKE {$kb}))";
+            $params[$ka] = "%{$w}%";
+            $params[$kb] = "%{$w}%";
         }
         if (!isset($data['limit'])) {
             $limit = 100;
@@ -102,7 +89,8 @@ if ($mode === 'play_upcoming') {
     $countStmt->execute($params);
     $totalMatches = (int)$countStmt->fetchColumn();
 
-    $params[':my_pts'] = $myPoints;
+    $params[':my_pts1'] = $myPoints;
+    $params[':my_pts2'] = $myPoints;
 
     $sql = "
         SELECT m.*, v.name AS official_venue_name, 
@@ -114,8 +102,8 @@ if ($mode === 'play_upcoming') {
         $where
         ORDER BY 
           (CASE 
-            WHEN m.match_type = 'competition' AND (:my_pts BETWEEN m.eligible_min AND m.eligible_max) THEN 1
-            WHEN m.match_type = 'friendly' THEN 2
+            WHEN (:my_pts1 BETWEEN m.eligible_min AND m.eligible_max) AND m.status = 'open' THEN 1
+            WHEN (:my_pts2 BETWEEN m.eligible_min AND m.eligible_max) AND m.status = 'full' THEN 2
             ELSE 3
           END) ASC,
           m.match_datetime ASC 
@@ -353,8 +341,8 @@ foreach ($matches as $m) {
         ? ($m['match_type'] === 'competition' ? 'Eligible' : 'Friendly')
         : 'Not Eligible';
 
-    // Sort key: 1 = eligible competition, 2 = eligible friendly, 3 = not eligible
-    $sortKey = !$playerEligible ? 3 : ($m['match_type'] === 'competition' ? 1 : 2);
+    // Sort key: 1 = eligible open, 2 = eligible waitlist, 3 = ineligible
+    $sortKey = !$playerEligible ? 3 : (($m['status'] === 'full' || $confirmedCount >= 4) ? 2 : 1);
 
     $result[] = [
         'id'                   => $mid,

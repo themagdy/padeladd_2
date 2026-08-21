@@ -2117,6 +2117,35 @@ form {
   }
 }
 
+/* Match Section Titles */
+.match-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 32px 0 14px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.match-section-title.first {
+  padding-top: 12px;
+}
+.match-section-title .emoji-icon {
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* Achievements Responsive Grid */
 .prof-achievements-grid {
   display: grid;

@@ -41,6 +41,8 @@ function getNotificationUrl(PDO $pdo, string $type, ?int $id): string {
     }
 
     switch ($type) {
+        case 'availability_alert':
+            return $match_code ? "/matches/{$match_code}" : "/matches";
         case 'match_joined':
         case 'match_confirmed':
         case 'match_cancelled':
@@ -49,7 +51,6 @@ function getNotificationUrl(PDO $pdo, string $type, ?int $id): string {
         case 'score_approved':
         case 'score_approved_partial':
         case 'score_reminder':
-        case 'availability_alert':
         case 'late_withdrawal':
         case 'match_on_hold':
             return $match_code ? "/matches/{$match_code}" : "/dashboard";

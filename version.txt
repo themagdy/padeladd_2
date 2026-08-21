@@ -2506,3 +2506,13 @@ Version 2.4.97.1 (Build 498.1) - 2026-08-20
 - Player Peek Card Breakdown Subtitle: Added 🏆 comp | 🤝 friendly breakdown subtitle under Matches in player peek modal card (frontend/js/controllers.js).
 - Profile Modal Header Desktop Alignment: Updated router.js maxW to 1200px for /profile/view, fixing desktop back button alignment.
 - OTA Web Bundle web-v2.4.97.1: Built minified production bundle web-v2.4.97.1.zip for mobile OTA updates.
+
+==================================================
+Version 2.4.97.2 (Build 498.2) - 2026-08-21
+==================================================
+- Open Match Notifications Cron Job: Created backend/scripts/cronjobs/notify_open_matches.php to aggregate open match notifications per player and deliver single summary alerts. Added RUN NOW trigger to Admin System control panel.
+- Deep Linking Navigation Fix: Updated notification click handler to route multi-match summary alerts straight to the Play tab (/matches) without attempting to open an invalid match details modal.
+- Play Tab Categorization & Section Headers: Reorganized Play > Upcoming matches into 3 distinct sections (Open Matches, Waitlist Matches, Out of Your Level) with clean uppercase typography, glassmorphic emoji icon badges, and section dividers in style.css.
+- Database Query ORDER BY Optimization: Updated SQL ORDER BY in backend/api/match/list.php to return Open Matches first, then Waitlist Matches, then Ineligible Matches for optimal pagination.
+- Multi-Word Search Engine: Updated search query logic in backend/api/match/list.php to support multi-word search queries across match codes, courts, venues, creators, and participants.
+- OTA Web Bundle web-v2.4.97.2: Built minified production bundle web-v2.4.97.2.zip for mobile OTA updates.

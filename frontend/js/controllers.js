@@ -4321,9 +4321,41 @@ const MatchesController = {
 
         MatchesController._currentFilter = 'all';
 
+        if (MatchesController._currentTab === 'play_upcoming') {
+            matches.sort((a, b) => {
+                const secA = !a.player_eligible ? 3 : ((a.status === 'full' || a.slots_confirmed >= 4) ? 2 : 1);
+                const secB = !b.player_eligible ? 3 : ((b.status === 'full' || b.slots_confirmed >= 4) ? 2 : 1);
+                const dateA = new Date((a.match_datetime || a.scheduled_at || '').replace(' ', 'T'));
+                const dateB = new Date((b.match_datetime || b.scheduled_at || '').replace(' ', 'T'));
+                return secA - secB || dateA - dateB;
+            });
+        }
+
         let html = '';
+        let lastSection = null;
+        const sectionConfig = {
+            1: { title: 'Open Matches', icon: '🎾' },
+            2: { title: 'Waitlist Matches', icon: '⏳' },
+            3: { title: 'Out of Your Level', icon: '🔒' }
+        };
+
         matches.forEach(m => {
             const isCompletedTab = MatchesController._currentTab === 'mine_completed' || MatchesController._currentTab === 'play_past';
+            
+            if (MatchesController._currentTab === 'play_upcoming') {
+                const section = !m.player_eligible ? 3 : ((m.status === 'full' || m.slots_confirmed >= 4) ? 2 : 1);
+                if (section !== lastSection) {
+                    const isFirst = lastSection === null;
+                    const cfg = sectionConfig[section];
+                    html += `
+                        <div class="match-section-title ${isFirst ? 'first' : ''}">
+                            <span class="emoji-icon">${cfg.icon}</span>
+                            <span>${cfg.title}</span>
+                        </div>`;
+                    lastSection = section;
+                }
+            }
+
             if (m.status === 'completed' && m.scores && m.scores.length > 0 && isCompletedTab) {
                 m.scores.forEach(s => { html += MatchesController.renderMatchCard(m, s); });
             } else {
@@ -8056,7 +8088,12 @@ const NotificationsController = {
         this.close();
 
         // 3. Navigate based on type
-        let navPath = n.match_code ? `/matches/${n.match_code}` : `/matches/view/${n.reference_id}`;
+        let navPath = '/matches';
+        if (n.match_code) {
+            navPath = `/matches/${n.match_code}`;
+        } else if (n.reference_id) {
+            navPath = `/matches/view/${n.reference_id}`;
+        }
 
         switch (n.type) {
             case 'match_joined':
