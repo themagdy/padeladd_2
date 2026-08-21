@@ -1187,7 +1187,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (deltaX > 70 && deltaY < 50 && deltaX > deltaY * 1.5) {
                 isEdgeSwipeCandidate = false;
-                if (typeof Router !== 'undefined' && Router.back) {
+                if (window._nativeBack) {
+                    window._nativeBack();
+                } else if (typeof Router !== 'undefined' && Router.back) {
                     Router.back();
                 }
             }
@@ -1223,6 +1225,83 @@ document.addEventListener('DOMContentLoaded', () => {
         StatusBar.setBackgroundColor({ color: '#0D1117' }); // old: #11161E
         StatusBar.setStyle({ style: 'DARK' });
     }
+
+    // Native Back Button Handler (shared by Android & iOS gestures)
+    window._nativeBack = () => {
+        // Priority 0: Handle /login native back button
+        const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+        if (path === '/login') {
+            if (typeof Router !== 'undefined') {
+                Router.back();
+            }
+            return;
+        }
+
+        // Priority 1: Close confirm modal if open
+        if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
+            ConfirmModal.close(false);
+            return;
+        }
+
+        // Priority 2: Close match score submission modal if open
+        const scoringModal = document.getElementById('scoring-modal-overlay');
+        if (scoringModal && typeof ScoringController !== 'undefined') {
+            ScoringController.closeModal();
+            return;
+        }
+
+        // Priority 3: Close exclusive invites (coupon codes) if open
+        if (typeof InviteModal !== 'undefined' && InviteModal._isOpen) {
+            InviteModal.close();
+            return;
+        }
+
+        // Priority 3: Close stories overlay if viewing stories
+        if (typeof StoriesController !== 'undefined' && StoriesController._isShowing) {
+            StoriesController.closePlayer();
+            return;
+        }
+
+        // Priority 4: Close notifications if open
+        if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
+            NotificationsController.close();
+            return;
+        }
+
+        // Rule 1: Close open modal overlay if any modals exist
+        if (typeof ModalStack !== 'undefined' && ModalStack.hasModals()) {
+            ModalStack.pop();
+            return;
+        }
+
+        const curPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
+
+        // Rule 3: Exit app immediately if on dashboard / home
+        const isDashboard = curPath === '/dashboard' || curPath === '/' || curPath === '' || curPath === '/index.html';
+        if (isDashboard) {
+            const AppPlugin = window.Capacitor?.Plugins?.App;
+            if (AppPlugin && typeof AppPlugin.exitApp === 'function') {
+                AppPlugin.exitApp();
+            }
+            return;
+        }
+
+        // Rule 2: If in a main tab/page (Ranking, Play, Mine, Profile), go to Dashboard
+        const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
+        const isMainPage = mainTabs.some(p => curPath === p || curPath.startsWith(p));
+        if (isMainPage) {
+            if (typeof Router !== 'undefined') {
+                Router.navigate('/dashboard');
+            }
+            return;
+        }
+
+        if (typeof Router !== 'undefined' && Router.navDepth > 0) {
+            Router.back();
+        } else {
+            Router.navigate('/dashboard');
+        }
+    };
 
     // Android Physical Back Button & App State Handler
     const App = window.Capacitor?.Plugins?.App;
@@ -1276,78 +1355,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        App.addListener('backButton', () => {
-            // Priority 0: Handle /login native back button
-            const path = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-            if (path === '/login') {
-                if (typeof Router !== 'undefined') {
-                    Router.back();
-                }
-                return;
-            }
-
-            // Priority 1: Close confirm modal if open
-            if (typeof ConfirmModal !== 'undefined' && ConfirmModal._isOpen) {
-                ConfirmModal.close(false);
-                return;
-            }
-
-            // Priority 2: Close match score submission modal if open
-            const scoringModal = document.getElementById('scoring-modal-overlay');
-            if (scoringModal && typeof ScoringController !== 'undefined') {
-                ScoringController.closeModal();
-                return;
-            }
-
-            // Priority 3: Close exclusive invites (coupon codes) if open
-            if (typeof InviteModal !== 'undefined' && InviteModal._isOpen) {
-                InviteModal.close();
-                return;
-            }
-
-            // Priority 3: Close stories overlay if viewing stories
-            if (typeof StoriesController !== 'undefined' && StoriesController._isShowing) {
-                StoriesController.closePlayer();
-                return;
-            }
-
-            // Priority 4: Close notifications if open
-            if (typeof NotificationsController !== 'undefined' && NotificationsController._isOpen) {
-                NotificationsController.close();
-                return;
-            }
-
-            // Rule 1: Close open modal overlay if any modals exist
-            if (typeof ModalStack !== 'undefined' && ModalStack.hasModals()) {
-                ModalStack.pop();
-                return;
-            }
-
-            const curPath = window.location.pathname.replace(CONFIG.BASE_PATH, '');
-
-            // Rule 3: Exit app immediately if on dashboard / home
-            const isDashboard = curPath === '/dashboard' || curPath === '/' || curPath === '' || curPath === '/index.html';
-            if (isDashboard) {
-                App.exitApp();
-                return;
-            }
-
-            // Rule 2: If in a main tab/page (Ranking, Play, Mine, Profile), go to Dashboard
-            const mainTabs = ['/ranking', '/matches', '/matches/my', '/profile', '/profile/view'];
-            const isMainPage = mainTabs.some(p => curPath === p || curPath.startsWith(p));
-            if (isMainPage) {
-                if (typeof Router !== 'undefined') {
-                    Router.navigate('/dashboard');
-                }
-                return;
-            }
-
-            if (typeof Router !== 'undefined' && Router.navDepth > 0) {
-                Router.back();
-            } else {
-                Router.navigate('/dashboard');
-            }
-        });
+        App.addListener('backButton', window._nativeBack);
     }
 
     // Capacitor Specific Logic

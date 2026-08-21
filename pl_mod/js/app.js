@@ -69,7 +69,7 @@ window.AdminApp = {
                 acc.classList.remove('open');
             }
         });
-        
+
         const activeLink = document.querySelector(`.nav-link[data-page="${page}"]`);
         if (activeLink) {
             this.titleEl.innerText = activeLink.innerText.trim().replace(/^.+?\s/, '');
@@ -96,7 +96,7 @@ window.AdminApp = {
     async loadPage(page) {
         console.log(`Loading page: ${page}...`);
         this.contentDiv.innerHTML = '<div class="loader" style="color:#fff; padding:40px; text-align:center;">Loading...</div>';
-        
+
         // Clear previous header actions
         const headerActions = document.getElementById('header-actions');
         if (headerActions) headerActions.innerHTML = '';
@@ -104,10 +104,10 @@ window.AdminApp = {
         try {
             const response = await fetch(`pages/${page}.html?v=${Date.now()}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
+
             const html = await response.text();
             this.contentDiv.innerHTML = html;
-            
+
             // Sync Search/Actions to header
             this.syncHeaderActions();
 
@@ -143,7 +143,7 @@ window.AdminApp = {
             console.warn(`No controller found for page: ${page}`);
         }
     },
-    
+
     toast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -154,7 +154,7 @@ window.AdminApp = {
             <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
             <span class="toast-msg">${message}</span>
         `;
-        
+
         container.appendChild(toast);
 
         // Auto-remove
@@ -163,7 +163,7 @@ window.AdminApp = {
             setTimeout(() => toast.remove(), 400);
         }, 4000);
     },
-    
+
     updateModalScrollLock() {
         let isAnyModalVisible = false;
         document.querySelectorAll('.modal-overlay').forEach(modal => {
@@ -186,15 +186,15 @@ window.AdminApp = {
         document.body.classList.toggle('modal-open', isAnyModalVisible);
         document.documentElement.classList.toggle('modal-open', isAnyModalVisible);
     },
-    
+
     initModalObserver() {
         const observer = new MutationObserver(() => this.updateModalScrollLock());
 
-        observer.observe(document.body, { 
-            attributes: true, 
-            subtree: true, 
+        observer.observe(document.body, {
+            attributes: true,
+            subtree: true,
             childList: true, // Watch for new modals being added to the DOM
-            attributeFilter: ['style', 'class'] 
+            attributeFilter: ['style', 'class']
         });
     }
 };

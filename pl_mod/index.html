@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Padeladd | Mod Panel</title>
     <link rel="stylesheet" href="css/frontend-style.css">
-    <link rel="stylesheet" href="css/admin.css?v=1.3">
+    <link rel="stylesheet" href="css/admin.css?v=2.1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="js/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -16,9 +16,12 @@
 
     <!-- Sidebar Navigation -->
     <aside class="admin-sidebar">
-        <div class="sidebar-header">
-            <img src="../assets/logo_ico.png" alt="Logo">
-            <span>MOD PANEL</span>
+        <div class="sidebar-header" onclick="document.querySelector('.admin-sidebar').classList.toggle('collapsed')" style="cursor:pointer;" title="Toggle Menu">
+            <div class="sidebar-brand" style="display:flex; align-items:center; gap:12px;">
+                <img src="../assets/logo_ico.png" alt="Logo">
+                <span>MOD PANEL</span>
+            </div>
+            <span class="sidebar-handle">☰</span>
         </div>
 
         <nav class="sidebar-nav custom-scroll">

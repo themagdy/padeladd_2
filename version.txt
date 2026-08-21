@@ -2516,3 +2516,10 @@ Version 2.4.97.2 (Build 498.2) - 2026-08-21
 - Database Query ORDER BY Optimization: Updated SQL ORDER BY in backend/api/match/list.php to return Open Matches first, then Waitlist Matches, then Ineligible Matches for optimal pagination.
 - Multi-Word Search Engine: Updated search query logic in backend/api/match/list.php to support multi-word search queries across match codes, courts, venues, creators, and participants.
 - OTA Web Bundle web-v2.4.97.2: Built minified production bundle web-v2.4.97.2.zip for mobile OTA updates.
+
+==================================================
+Version 2.4.97.3 (Build 498.3) - 2026-08-21
+==================================================
+- Mod Panel Mobile Layout Fix: Removed 100vh lock from .admin-main and added touch horizontal scrolling to html/body in pl_mod/css/admin.css, allowing mobile devices to scroll horizontally across the full 1500px admin layout without cropping.
+- Mod Panel Menu Handle: Added unified 26px bold white ☰ toggle handle to pl_mod/index.html and pl_mod/css/admin.css.
+- iOS Edge-Swipe Back Navigation: Shared window._nativeBack handler between iOS left-edge swipe gestures and Android hardware back button events in frontend/js/app.js, ensuring 100% identical priority back behavior across both platforms.
