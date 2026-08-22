@@ -144,6 +144,8 @@ jobs:
               <key>com.padeladd.app</key>
               <string>4ee18fce-e920-4f44-bd59-11d06d2b5efb</string>
             </dict>
+            <key>aps-environment</key>
+            <string>production</string>
           </dict>
           </plist>
           EOF
