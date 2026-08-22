@@ -2518,12 +2518,10 @@ Version 2.4.97.2 (Build 498.2) - 2026-08-21
 - OTA Web Bundle web-v2.4.97.2: Built minified production bundle web-v2.4.97.2.zip for mobile OTA updates.
 
 ==================================================
-Version 2.4.98 (Build 498) - 2026-08-21
+Version 2.4.99 (Build 499) - 2026-08-22
 ==================================================
-- App Version Bump: Updated App Store & Play Store native release version to 2.4.98 (Build 498) across package.json, config.js, build.gradle, and Info.plist.
-- Mod Panel Mobile Layout Fix: Removed 100vh lock from .admin-main and added touch horizontal scrolling to html/body in pl_mod/css/admin.css, allowing mobile devices to scroll horizontally across the full 1500px admin layout without cropping.
-- Mod Panel Menu Handle: Added unified 26px bold white ☰ toggle handle to pl_mod/index.html and pl_mod/css/admin.css.
-- iOS Edge-Swipe Back Navigation: Shared window._nativeBack handler between iOS left-edge swipe gestures and Android hardware back button events in frontend/js/app.js, ensuring 100% identical priority back behavior across both platforms.
-- iOS Push Notification Native Bridge: Configured FirebaseApp.configure() and Messaging.messaging().apnsToken = deviceToken in AppDelegate.swift and linked Firebase/Core & Firebase/Messaging pods.
-- APNs FCM Payload Headers: Added mandatory apns-topic (com.padeladd.app) and apns-push-type (alert) headers to backend/helpers/fcm_helper.php.
-- Push Token Race Condition Fix: Cached fast-registering iOS tokens in PushNotificationsController and synced them automatically post-authentication in app.js and auth.js.
+- App Version Bump: Updated App Store & Play Store native release version to 2.4.99 (Build 499) across package.json, config.js, build.gradle, and Info.plist.
+- Xcode Push Capabilities: Registered com.apple.Push system capability under App target in project.pbxproj.
+- Native APNs Token Delegation: Configured AppDelegate.swift to delegate APNs Data tokens directly to Capacitor's native Swift bridge.
+- FCM APNs Payload Headers: Added mandatory apns-topic (com.padeladd.app) and apns-push-type (alert) headers to backend/helpers/fcm_helper.php.
+- Unconditional JS Push Registration: Isolated requestPermissions and register into independent try blocks in app.js.
