@@ -60,8 +60,9 @@ const Auth = {
         } else {
             localStorage.setItem('auth_token', token);
         }
-        if (typeof PushNotificationsController !== 'undefined' && PushNotificationsController.updateServerToken) {
-            PushNotificationsController.updateServerToken();
+        if (typeof PushNotificationsController !== 'undefined') {
+            if (PushNotificationsController.init) PushNotificationsController.init();
+            if (PushNotificationsController.updateServerToken) PushNotificationsController.updateServerToken();
         }
     },
     clearToken: function() {

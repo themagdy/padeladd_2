@@ -15,6 +15,10 @@ if ($token === '') {
 }
 
 // Upsert the token
+$logFile = __DIR__ . '/../../logs/token_debug.log';
+$logDir = dirname($logFile);
+if (!is_dir($logDir)) { @mkdir($logDir, 0777, true); }
+
 $stmt = $pdo->prepare("
     INSERT INTO user_device_tokens (user_id, token, platform)
     VALUES (?, ?, ?)
@@ -25,7 +29,9 @@ $stmt = $pdo->prepare("
 ");
 
 if ($stmt->execute([$uid, $token, $platform])) {
+    @file_put_contents($logFile, date('[Y-m-d H:i:s] ') . "SUCCESS: User {$uid}, Platform {$platform}, Token: " . substr($token, 0, 20) . "...\n", FILE_APPEND);
     jsonResponse(true, 'Device token updated.');
 } else {
+    @file_put_contents($logFile, date('[Y-m-d H:i:s] ') . "FAILED: User {$uid}, Platform {$platform}, Token: {$token}\n", FILE_APPEND);
     jsonResponse(false, 'Failed to update device token.');
 }

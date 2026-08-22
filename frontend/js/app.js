@@ -676,24 +676,19 @@ var PushNotificationsController = {
 
         try {
             console.log('[PushNotifications] Starting registration flow...');
+            // Listeners MUST be attached BEFORE calling register() to catch native APNs token event
+            this.setupListeners(PushNotifications);
+
             // Check current status first
             let permStatus = await PushNotifications.checkPermissions();
-            console.log('[PushNotifications] Permission status:', permStatus.receive);
+            console.log('[PushNotifications] Permission status:', JSON.stringify(permStatus));
 
-            if (permStatus.receive === 'prompt') {
+            if (permStatus.receive === 'prompt' || permStatus.display === 'prompt') {
                 permStatus = await PushNotifications.requestPermissions();
             }
 
-            if (permStatus.receive !== 'granted') {
-                console.log('[PushNotifications] Permission not granted');
-                return;
-            }
-
-            // Listeners MUST be attached before calling register() to prevent missing token events
-            this.setupListeners(PushNotifications);
-
-            // Safe Registration
-            console.log('[PushNotifications] Registering...');
+            // Unconditional Registration call to trigger native APNs token event
+            console.log('[PushNotifications] Registering native push notifications...');
             await PushNotifications.register();
 
         } catch (e) {
@@ -707,8 +702,9 @@ var PushNotificationsController = {
         try {
             // On success, we get a token
             PushNotifications.addListener('registration', (token) => {
-                console.log('[PushNotifications] Registration success');
-                this.updateServerToken(token.value);
+                console.log('[PushNotifications] Registration success:', token);
+                const val = typeof token === 'object' ? (token.value || token.token) : token;
+                this.updateServerToken(val);
             });
 
             // On error
@@ -1218,8 +1214,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize sound engine
         SoundManager.init();
 
+        // Initialize push notifications unconditionally on app startup
+        PushNotificationsController.init();
+
         if (typeof Auth !== 'undefined' && Auth.isAuthenticated()) {
-            PushNotificationsController.init();
             InAppMessagesController.init();
             if (typeof UI !== 'undefined' && UI.syncNav) {
                 UI.syncNav();
