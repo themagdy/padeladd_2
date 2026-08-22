@@ -134,7 +134,7 @@ jobs:
           <plist version="1.0">
           <dict>
             <key>method</key>
-            <string>app-store</string>
+            <string>ad-hoc</string>
             <key>teamID</key>
             <string>QZ23FAU7R2</string>
             <key>signingStyle</key>
