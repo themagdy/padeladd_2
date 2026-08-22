@@ -674,25 +674,24 @@ var PushNotificationsController = {
         // Give native bridge 2 seconds to breathe before registration
         await new Promise(resolve => setTimeout(resolve, 2000));
 
+        // Listeners MUST be attached BEFORE calling register() to catch native APNs token event
+        this.setupListeners(PushNotifications);
+
+        // Request permissions safely in an isolated try block
         try {
-            console.log('[PushNotifications] Starting registration flow...');
-            // Listeners MUST be attached BEFORE calling register() to catch native APNs token event
-            this.setupListeners(PushNotifications);
-
-            // Check current status first
-            let permStatus = await PushNotifications.checkPermissions();
-            console.log('[PushNotifications] Permission status:', JSON.stringify(permStatus));
-
-            if (permStatus.receive === 'prompt' || permStatus.display === 'prompt') {
-                permStatus = await PushNotifications.requestPermissions();
+            if (PushNotifications.requestPermissions) {
+                await PushNotifications.requestPermissions();
             }
+        } catch (e) {
+            console.warn('[PushNotifications] Request permissions warning:', e);
+        }
 
-            // Unconditional Registration call to trigger native APNs token event
+        // Unconditional Registration call in an independent try block
+        try {
             console.log('[PushNotifications] Registering native push notifications...');
             await PushNotifications.register();
-
         } catch (e) {
-            console.error('[PushNotifications] Initialization crash prevented:', e);
+            console.error('[PushNotifications] Register crash prevented:', e);
         }
     },
 
