@@ -2529,10 +2529,10 @@ Version 2.4.98 (Build 498) - 2026-08-21
 - Push Token Race Condition Fix: Cached fast-registering iOS tokens in PushNotificationsController and synced them automatically post-authentication in app.js and auth.js.
 
 ==================================================
-Version 2.4.99 (Build 499) - 2026-08-22
+Version 2.4.99.1 (Build 500) - 2026-08-22
 ==================================================
-- App Version Bump: Updated App Store & Play Store native release version to 2.4.99 (Build 499) across package.json, config.js, build.gradle, and Info.plist.
+- App Version Bump: Updated App Store & Play Store native release version to 2.4.99.1 (Build 500) across package.json, config.js, build.gradle, and Info.plist.
 - Xcode Push Capabilities: Registered com.apple.Push system capability under App target in project.pbxproj.
-- Native APNs Token Delegation: Configured AppDelegate.swift to delegate APNs Data tokens directly to Capacitor's native Swift bridge.
-- FCM APNs Payload Headers: Added mandatory apns-topic (com.padeladd.app) and apns-push-type (alert) headers to backend/helpers/fcm_helper.php.
-- Unconditional JS Push Registration: Isolated requestPermissions and register into independent try blocks in app.js.
+- Firebase FCM Token Delegation: Configured AppDelegate.swift to delegate APNs tokens to Firebase Messaging to generate valid FCM registration tokens for iOS devices.
+- Cloud Export Entitlements: Injected aps-environment production entitlement into exportOptions.plist in build-ios.yml.
+- Push Diagnostic Endpoint: Created test_push.php for verifying registered device tokens and testing FCM notification delivery.

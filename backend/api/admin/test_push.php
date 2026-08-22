@@ -1,19 +1,23 @@
 <?php
 // Simple push notification diagnostic endpoint
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json; charset=UTF-8');
-require_once __DIR__ . '/../../db.php';
+require_once __DIR__ . '/../../core/db.php';
 require_once __DIR__ . '/../../helpers/fcm_helper.php';
 
 $userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 1;
 
 try {
+    $pdo = getDB();
     $stmt = $pdo->prepare("SELECT id, user_id, token, platform, last_updated FROM user_device_tokens WHERE user_id = ? ORDER BY id DESC");
     $stmt->execute([$userId]);
     $tokens = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $sendResult = null;
     if (isset($_GET['send']) && $_GET['send'] === 'true' && !empty($tokens)) {
-        $sendResult = sendFCMNotification([$userId], "Test Push Notification", "This is a test notification from Padeladd API!");
+        $sendResult = FCMHelper::send($userId, "Test Push Notification", "This is a test notification from Padeladd API!");
     }
 
     echo json_encode([
